@@ -12,6 +12,8 @@ export interface LockApi {
   requestSetup(): void;
   /** Re-read keyring state after a change (lock method, recovery confirmed). */
   refresh(): void;
+  /** Switch to a new encrypted store (after key rotation). */
+  replaceStore(store: EncryptedStore): Promise<void>;
   /** Remove the vault and everything in it from this device. */
   destroyAll(): Promise<void>;
 }

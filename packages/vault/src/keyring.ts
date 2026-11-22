@@ -106,6 +106,40 @@ export class Keyring {
     return { store: createEncryptedStore(this.db, keys), keys, recoveryKey: text };
   }
 
+  /**
+   * Set up this device for an existing vault (docs/FLOWS.md F9): same Vault Key from the recovery
+   * key, with this device's own lock method. Records then arrive through sync.
+   */
+  async adopt(recoveryKey: string, input: LockInput): Promise<{ store: EncryptedStore; keys: VaultKeys }> {
+    if (this.meta) throw new Error('A vault already exists on this device.');
+    const parsed = parseKey(recoveryKey);
+    if (!parsed.ok) throw new UnlockError(KEY_PROBLEMS[parsed.reason]);
+    const keys = await deriveVaultKeys(parsed.bytes);
+    const wrap = await this.wrap(input, parsed.bytes);
+    this.meta = { version: 1, vaultId: keys.vaultId, createdAt: new Date().toISOString(), recoveryConfirmed: true, wraps: [wrap] };
+    await this.db.setMeta('vault', this.meta);
+    return { store: createEncryptedStore(this.db, keys), keys };
+  }
+
+  /**
+   * Rotate the Vault Key (docs/PRIVACY.md §7): a new key, every record re-encrypted, a new lock and
+   * a new recovery kit. Devices that hold the old key lose access; this is also how a device is revoked.
+   */
+  async rotate(proof: UnlockInput, next: LockInput, store: EncryptedStore): Promise<{ store: EncryptedStore; keys: VaultKeys; recoveryKey: string; oldAuthSecret: string }> {
+    const oldKeys = await deriveVaultKeys(await this.vaultKey(proof));
+    const old = createEncryptedStore(this.db, oldKeys);
+    const records = await old.load();
+    const { bytes, text } = generateKey();
+    const keys = await deriveVaultKeys(bytes);
+    const fresh = createEncryptedStore(this.db, keys);
+    await fresh.replaceAll(records);
+    const wrap = await this.wrap(next, bytes);
+    this.meta = { version: 1, vaultId: keys.vaultId, createdAt: this.meta!.createdAt, recoveryConfirmed: false, wraps: [wrap] };
+    await this.db.setMeta('vault', this.meta);
+    store.lock();
+    return { store: fresh, keys, recoveryKey: text, oldAuthSecret: oldKeys.authSecret };
+  }
+
   private async vaultKey(input: UnlockInput): Promise<Bytes> {
     if (!this.meta) throw new UnlockError('There is no vault on this device yet.');
     if (input.kind === 'recovery') {

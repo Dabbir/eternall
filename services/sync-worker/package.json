@@ -1,0 +1,12 @@
+{
+  "name": "@eternall/sync-worker",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": { ".": "./src/index.ts", "./*": "./src/*.ts" },
+  "scripts": {
+    "dev": "wrangler dev --port 8788",
+    "db:local": "wrangler d1 migrations apply DB --local",
+    "deploy": "wrangler deploy"
+  }
+}

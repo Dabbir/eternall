@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "ETERNALL — a private publishing house for your life.",
+  "description": "ETERNALL \u2014 a private publishing house for your life.",
   "workspaces": [
     "apps/*",
     "packages/*",
@@ -17,7 +17,9 @@
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
-    "lint": "oxlint --deny-warnings apps packages modules services"
+    "lint": "oxlint --deny-warnings apps packages modules services",
+    "dev:keys": "node scripts/dev-keys.mjs",
+    "dev:api": "npm run dev:keys && cd services/sync-worker && wrangler d1 migrations apply DB --local && wrangler dev --port 8788"
   },
   "engines": {
     "node": ">=22"
@@ -57,6 +59,9 @@
     "vite": "^8.3.8",
     "vite-plugin-pwa": "^2.0.0",
     "vitest": "^5.1.0",
-    "workbox-window": "^7.4.1"
+    "workbox-precaching": "^7.4.1",
+    "workbox-routing": "^7.4.1",
+    "workbox-window": "^7.4.1",
+    "wrangler": "^4.164.0"
   }
 }

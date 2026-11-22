@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Keyring, Vault, VaultProvider, createMemoryStore, useVault, useVaultVersion, type EncryptedStore, type LockInput, type RecordStore, type UnlockInput, type VaultRecord } from '@eternall/vault';
+import { EMPTY_SYNC, Keyring, SYNC_META_KEY, SyncApi, Vault, VaultProvider, createMemoryStore, useVault, useVaultVersion, type EncryptedStore, type LockInput, type RecordStore, type UnlockInput, type VaultRecord } from '@eternall/vault';
 import { Button, ToastProvider, useToast } from '@eternall/ui';
 import { LEGACY_DONE_KEY, markLegacyMigrated, readLegacy } from '../boot/legacy';
 import { PLAIN_KEY } from '../boot/localStore';
@@ -10,6 +10,8 @@ import { LockSetup } from '../vault/LockSetup';
 import { RecoveryKit } from '../vault/RecoveryKit';
 import { UnlockScreen } from '../vault/UnlockScreen';
 import { useAutoLock } from '../vault/useAutoLock';
+import { SyncProvider } from '../vault/SyncProvider';
+import { UpdatePrompt } from './UpdatePrompt';
 import { ErrorBoundary } from './ErrorBoundary';
 import { Shell } from './Shell';
 import type { ImprintId } from '@eternall/core';
@@ -157,6 +159,10 @@ export function Root({ store, today, idb }: RootProps) {
     lock,
     requestSetup: () => window.dispatchEvent(new Event('eternall:setup')),
     refresh,
+    replaceStore: async (s) => {
+      await state.vault.setStore(s);
+      setState({ ...state, store: s });
+    },
     destroyAll: async () => {
       await state.vault.destroy();
       await state.keyring?.destroy();
@@ -170,7 +176,9 @@ export function Root({ store, today, idb }: RootProps) {
       <VaultProvider vault={state.vault}>
         <ToastProvider>
           <LockContext.Provider value={api} key={version}>
-            <Shell {...(today ? { today } : {})} />
+            <SyncProvider>
+              <Shell {...(today ? { today } : {})} />
+            </SyncProvider>
             {!state.secured && (
               <VaultSetup
                 keyring={state.keyring}
@@ -181,6 +189,7 @@ export function Root({ store, today, idb }: RootProps) {
               />
             )}
             {state.secured && state.store && <AutoLock enabled={api.canLock} onLock={lock} />}
+            {import.meta.env.PROD && <UpdatePrompt />}
           </LockContext.Provider>
         </ToastProvider>
       </VaultProvider>
@@ -202,6 +211,7 @@ function VaultSetup({ keyring, onCreated }: { keyring: Keyring | null; onCreated
   useVaultVersion();
   const toast = useToast();
   const [dismissed, setDismissed] = useState(false);
+  const [forced, setForced] = useState<null | 'create' | 'adopt'>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [recovery, setRecovery] = useState<string | null>(null);
@@ -209,7 +219,10 @@ function VaultSetup({ keyring, onCreated }: { keyring: Keyring | null; onCreated
   const hasData = vault.hasRecordsOutside([SETTINGS_PATH]);
 
   useEffect(() => {
-    const on = () => setDismissed(false);
+    const on = (e: Event) => {
+      setDismissed(false);
+      setForced((e as CustomEvent<{ mode?: 'adopt' }>).detail?.mode === 'adopt' ? 'adopt' : 'create');
+    };
     window.addEventListener('eternall:setup', on);
     return () => window.removeEventListener('eternall:setup', on);
   }, []);
@@ -227,15 +240,26 @@ function VaultSetup({ keyring, onCreated }: { keyring: Keyring | null; onCreated
 
   if (!keyring) return null;
 
-  const create = async (input: LockInput) => {
+  const create = async (input: LockInput, recoveryKey?: string) => {
     setBusy(true);
     setError(null);
     try {
-      const { store, recoveryKey } = await keyring.create(input);
+      if (recoveryKey) {
+        // Another device's vault (F9): same Vault Key, this device's own lock; sync brings the records.
+        const { store, keys } = await keyring.adopt(recoveryKey, input);
+        await vault.setStore(store);
+        forgetPlaintext();
+        const status = await new SyncApi(keys.authSecret).status().catch(() => null);
+        if (status?.exists) await store.setMeta(SYNC_META_KEY, { ...EMPTY_SYNC, enabled: true });
+        toast({ message: status?.exists ? 'This device is joined to your vault. Your records are arriving.' : 'Vault opened. Turn on sync on your other device to bring your records here.', tone: 'accent' });
+        onCreated(store);
+        return;
+      }
+      const { store, recoveryKey: key } = await keyring.create(input);
       await vault.setStore(store);
       forgetPlaintext();
       created.current = store;
-      setRecovery(recoveryKey);
+      setRecovery(key);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Couldn’t create a private vault in this browser.');
     } finally {
@@ -258,7 +282,7 @@ function VaultSetup({ keyring, onCreated }: { keyring: Keyring | null; onCreated
     );
   }
 
-  if (!hasData) return null;
+  if (!hasData && !forced) return null;
   if (dismissed) {
     return (
       <div className="vault-banner" role="status">
@@ -269,7 +293,18 @@ function VaultSetup({ keyring, onCreated }: { keyring: Keyring | null; onCreated
       </div>
     );
   }
-  return <LockSetup busy={busy} error={error} onCreate={(i) => void create(i)} onClose={() => setDismissed(true)} />;
+  return (
+    <LockSetup
+      busy={busy}
+      error={error}
+      startAdopt={forced === 'adopt'}
+      onCreate={(i, rk) => void create(i, rk)}
+      onClose={() => {
+        setDismissed(true);
+        setForced(null);
+      }}
+    />
+  );
 }
 
 function Splash() {

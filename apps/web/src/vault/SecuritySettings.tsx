@@ -6,6 +6,9 @@ import { useSettings } from '../shell/hooks';
 import { LockSetup } from './LockSetup';
 import { RecoveryKit } from './RecoveryKit';
 import { useLock } from './lockContext';
+import { useSync } from './SyncProvider';
+import { usePatron } from './patron';
+import { SyncApi } from '@eternall/vault';
 
 const LABEL: Record<LockKind, string> = { passphrase: 'Passphrase', passkey: 'Passkey', device: 'This device only (no lock)' };
 const AUTO = [
@@ -93,7 +96,9 @@ export function SecuritySettings() {
   const api = useLock();
   const toast = useToast();
   const [settings, updateSettings] = useSettings();
-  const [step, setStep] = useState<null | { kind: 'prove-change' } | { kind: 'choose'; proof: UnlockInput } | { kind: 'prove-reveal' } | { kind: 'reveal'; key: string }>(null);
+  const [step, setStep] = useState<null | { kind: 'prove-change' } | { kind: 'choose'; proof: UnlockInput } | { kind: 'prove-reveal' } | { kind: 'reveal'; key: string } | { kind: 'prove-rotate' } | { kind: 'rotate'; proof: UnlockInput }>(null);
+  const sync = useSync();
+  const patron = usePatron();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const ring = api.keyring;
@@ -138,6 +143,9 @@ export function SecuritySettings() {
             Lock now
           </Button>
         )}
+        <Button variant="quiet" onClick={() => setStep({ kind: 'prove-rotate' })}>
+          Rotate vault key…
+        </Button>
       </div>
       {api.canLock && <Segmented label="Lock automatically after" hideLabel={false} options={AUTO} value={String(settings.autoLockMinutes) as (typeof AUTO)[number]['value']} onChange={(v) => updateSettings({ autoLockMinutes: Number(v) })} />}
 
@@ -161,6 +169,41 @@ export function SecuritySettings() {
                 api.refresh();
               })
               .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Couldn’t change the lock.'))
+              .finally(() => setBusy(false));
+          }}
+        />
+      )}
+      {step?.kind === 'prove-rotate' && (
+        <Prove
+          title="Rotate vault key"
+          onClose={() => setStep(null)}
+          onProof={async (proof) => {
+            await ring.unlock(proof);
+            setStep({ kind: 'rotate', proof });
+          }}
+        />
+      )}
+      {step?.kind === 'rotate' && (
+        <LockSetup
+          busy={busy}
+          error={error}
+          onClose={() => setStep(null)}
+          onCreate={(input: LockInput) => {
+            setBusy(true);
+            setError(null);
+            void (async () => {
+              // F12: new key, every record re-encrypted, other devices lose access; the cloud copy moves too.
+              const wasSyncing = sync.state.enabled;
+              const rotated = await ring.rotate(step.proof, input, api.store!);
+              if (wasSyncing) await new SyncApi(rotated.oldAuthSecret).unregister().catch(() => undefined);
+              await sync.disable(false);
+              await api.replaceStore(rotated.store);
+              if (wasSyncing && patron.token) await new SyncApi(rotated.keys.authSecret).register(patron.token).catch(() => undefined);
+              setStep({ kind: 'reveal', key: rotated.recoveryKey });
+              toast({ message: 'Vault key rotated. Devices with the old key can no longer open or sync it.', tone: 'accent' });
+              api.refresh();
+            })()
+              .catch((e: unknown) => setError(e instanceof Error ? e.message : 'Rotation failed; nothing was changed.'))
               .finally(() => setBusy(false));
           }}
         />

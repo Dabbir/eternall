@@ -9,3 +9,5 @@ export * from './encryptedStore';
 export * from './keyring';
 export { passkeysSupported } from './passkey';
 export * from './sealed';
+export * from './protocol';
+export * from './sync';

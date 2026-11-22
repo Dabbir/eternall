@@ -89,6 +89,9 @@ export function Onboarding({ startAt = 'welcome', enabled = [] }: { startAt?: 'w
             <p className="welcome__privacy faint rise" style={{ ['--i' as string]: 4 }}>
               Private by design — everything stays on this device.
             </p>
+            <button type="button" className="welcome__adopt rise" style={{ ['--i' as string]: 4 }} onClick={() => window.dispatchEvent(new CustomEvent('eternall:setup', { detail: { mode: 'adopt' } }))}>
+              I already have an ETERNALL vault on another device
+            </button>
             {enabled.length > 0 && (
               <nav className="welcome__doors rise" style={{ ['--i' as string]: 5 }} aria-label="Or start with one imprint">
                 <p className="eyebrow">Or start with one imprint</p>

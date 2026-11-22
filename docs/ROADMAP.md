@@ -92,6 +92,15 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 - Trademark and domain checks (`BRAND.md` §8).
 - AMAZEEN domain redirect plan.
 
+**Built (2026-11-22):**
+- `services/sync-worker`: one Worker serving the app (door fallbacks) and `/api/*` (vaults, sync, licences, dev checkout, signed webhook, read-only AMAZEEN legacy door), on D1. Tested on real SQLite, including two devices syncing through the real handler and the server holding only ciphertext.
+- Client sync engine (`syncOnce`, `SyncProvider`), Settings → Sync, "I already have a vault" (F9), key rotation (F12), the Patron page with checkout and claim (F8), immersive modes gated by the licence (dev builds count as Patron).
+- F15 path 2: moving an AMAZEEN journal in with its sync key.
+- PWA: one service worker for every door (`injectManifest`), update prompt, production `_headers` (CSP, HSTS).
+- Run locally: `npm run dev:api` (wrangler on :8788, proxied by Vite at `/api`).
+
+**Still the owner's (cannot be done in code):** payment provider and prices, trademark and domain checks, the independent privacy review, a real-device regression on WebKit, Firefox, Android and iOS, and creating the D1 database.
+
 **Exit criteria:**
 - The privacy review is done with findings resolved.
 - Pricing is decided (`BUSINESS.md` §3).

@@ -3,16 +3,17 @@ import { mergeData } from '../domain/backup';
 import { parseAppData } from '../domain/storage';
 import { createVaultAdapter, readFromVault, type VaultLike } from './vaultAdapter';
 import styles from './MoveIn.module.css';
+import { importWithSyncKey } from './legacyImport';
 
 /**
- * Where an existing AMAZEEN journal moves into ETERNALL (docs/FLOWS.md F15).
- * AMAZEEN v1.5 opens this page in a popup and hands its archive over with postMessage.
- * Only allow-listed AMAZEEN origins are trusted, and every exchange carries a one-time nonce.
+ * Where an existing AMAZEEN journal moves into ETERNALL (docs/FLOWS.md F15). AMAZEEN v1.5 opens this page in a
+ * popup and hands its archive over with postMessage; only allow-listed origins are trusted, with a one-time nonce.
  */
 export const AMAZEEN_ORIGINS: readonly string[] = (import.meta.env.VITE_AMAZEEN_ORIGINS ?? 'https://amazeen.app')
   .split(',')
   .map((s: string) => s.trim())
   .filter(Boolean);
+
 
 type State = { step: 'waiting' } | { step: 'done'; added: number; updated: number } | { step: 'error'; message: string } | { step: 'no-opener' };
 
@@ -77,6 +78,7 @@ export function MoveIn({ vault, onOpenDesk }: { vault: VaultLike; onOpenDesk(): 
       {state.step === 'no-opener' && (
         <>
           <h1 className={styles.title}>Bring your AMAZEEN journal</h1>
+          <SyncKeyForm vault={vault} onDone={(added, updated) => setState({ step: 'done', added, updated })} />
           <ol className={styles.steps}>
             <li>Open AMAZEEN where you write today and go to the Office.</li>
             <li>Choose <strong>Move to ETERNALL</strong>. This page opens and your journal arrives in one step.</li>
@@ -88,5 +90,38 @@ export function MoveIn({ vault, onOpenDesk }: { vault: VaultLike; onOpenDesk(): 
         </>
       )}
     </section>
+  );
+}
+
+function SyncKeyForm({ vault, onDone }: { vault: VaultLike; onDone(added: number, updated: number): void }) {
+  const [key, setKey] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  return (
+    <form
+      className={styles.form}
+      onSubmit={(e) => {
+        e.preventDefault();
+        setBusy(true);
+        setError(null);
+        void importWithSyncKey(vault, key)
+          .then((r) => onDone(r.added, r.updated))
+          .catch((err: unknown) => setError(err instanceof Error ? err.message : 'That didn’t work.'))
+          .finally(() => setBusy(false));
+      }}
+    >
+      <label className={styles.label} htmlFor="amazeen-sync-key">
+        Used AMAZEEN sync? Enter your sync key
+      </label>
+      <input id="amazeen-sync-key" className={styles.input} value={key} autoComplete="off" spellCheck={false} placeholder="K7QF-2M9T-…" onChange={(e) => setKey(e.target.value)} aria-describedby={error ? 'amazeen-sync-err' : undefined} />
+      {error && (
+        <p id="amazeen-sync-err" className={styles.error} role="alert">
+          {error}
+        </p>
+      )}
+      <button type="submit" className={styles.button} disabled={!key || busy}>
+        {busy ? 'Bringing it over…' : 'Bring my journal'}
+      </button>
+    </form>
   );
 }

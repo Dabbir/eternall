@@ -81,7 +81,8 @@ AMAZEEN's wire format uses readable record IDs (`e:<id>`, `meta`). ETERNALL repl
 Sync is AMAZEEN's design, generalised to the whole vault:
 - **Transport:** same-origin HTTPS to `services/sync-worker` (Cloudflare Worker + D1), with `Authorization: Bearer <AS>`. The server stores `SHA-256(AS)` as the vault ID.
 - **Records:** `{ rid, updatedAt, deleted, blob }`; incremental pull by server change number; transactional batch push; newest-wins per record with tombstones; server clamps timestamps to now + 5 minutes.
-- **Licence check:** a sync vault must be **bound** to an active licence (§8). The server checks the binding, never the content.
+- **Licence check:** a sync vault must be **bound** to an active licence (§8). The server checks the binding, never the content. Pushing needs an active licence (paid period + 14 days grace); pulling keeps working for 90 more days, so a lapsed patron can always bring their copy home.
+- **Moving AMAZEEN in by sync key (F15 path 2):** `/api/legacy/amazeen/sync` is a read-only, GET-only door to AMAZEEN's old sync database. The journal is decrypted on the device with AMAZEEN's own keys and re-encrypted into the vault; the sync key never leaves the device.
 - **What the server can see:**
 
 | Can see | Cannot see |
@@ -106,14 +107,16 @@ Sync is AMAZEEN's design, generalised to the whole vault:
 
   Devices holding the old key lose sync access. This is the revocation mechanism, and the UI says so plainly.
 
+  **As built (Release 1):** `Keyring.rotate` re-encrypts every record locally under a new VK and a new lock, the old cloud copy is deleted with the old AS, the new vault is registered with the same licence, and the new recovery kit is shown at once. `Keyring.adopt` is the add-a-device path: the same VK from the recovery key, wrapped with this device's own lock.
+
 ## 8. Licences without accounts
 
 Sync and immersive modes require an active licence (`BUSINESS.md`). The licence design keeps **content** zero-knowledge and minimises **linkability**:
 
 1. Checkout happens at the payment provider. Its webhook tells `sync-worker` a subscription is active and returns a **claim code** (single-use, short-lived) to the success page.
-2. The app redeems the claim code: `POST /api/licence/claim { code, binding: HMAC(LK, licenceId) }`. The worker returns a **licence token**, signed with ECDSA P-256: `{ lid, tier, exp, bind }`.
+2. The app redeems the claim code: `POST /api/licence/claim { code }`. The worker returns a **licence token**, signed with ECDSA P-256: `{ v, lid, tier, exp, iat }` (`exp` already includes the 14-day grace). Codes are stored only as SHA-256 hashes, are single-use and expire after 24 hours.
 3. The token is stored **inside the vault** (encrypted, synced). The app verifies it **offline** with the embedded public key, so immersive modes work offline until `exp`.
-4. For sync, the vault presents its AS and the token. The server binds `vaultId ↔ lid`.
+4. For sync, the vault presents its AS and the token (`POST /api/vault`). The server binds `vaultId ↔ lid`, **one vault per licence**; deleting the cloud copy (or rotating keys) frees the licence. As built, binding happens at registration rather than through a `bind` field in the token: it reveals the same link and is simpler to revoke.
 5. Renewal: the provider webhook extends `lid`, and the app refreshes the token with `POST /api/licence/refresh`.
 
 **What we can link, stated plainly:** the payment provider knows who paid, and our server knows *which licence* a sync vault uses. So with both datasets, a payer could be linked to a sync vault's existence and size, **never to its content**.

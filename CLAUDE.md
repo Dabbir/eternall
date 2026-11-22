@@ -18,6 +18,7 @@ npm test           # Vitest across all workspaces
 npm run typecheck  # one root tsc over every workspace
 npm run lint       # oxlint, zero warnings
 npm run build      # typecheck + production build + bundle budgets (scripts/check-budgets.mjs)
+npm run dev:api    # sync + licence API on :8788 (services/sync-worker); writes dev keys first
 ```
 
 ## Docs map

@@ -14,6 +14,12 @@ export interface EncryptedStore extends RecordStore {
   readonly unreadable: number;
   lock(): void;
   readonly keys: VaultKeys | null;
+  /** Merge ciphertext from sync: newest wins per rid, a live record beats a deletion on a tie. Returns the winners. */
+  mergeWire(records: readonly WireRecord[]): Promise<WireRecord[]>;
+  getMeta<T>(key: string): Promise<T | undefined>;
+  setMeta(key: string, value: unknown): Promise<void>;
+  /** Replace every record (key rotation). */
+  replaceAll(records: readonly VaultRecord[]): Promise<void>;
 }
 
 /**
@@ -61,6 +67,25 @@ export function createEncryptedStore(db: VaultDb, initialKeys: VaultKeys): Encry
     },
     clear: () => db.clearRecords(),
     wire: () => db.allRecords(),
+    async mergeWire(incoming) {
+      const local = new Map((await db.allRecords()).map((w) => [w.rid, w]));
+      const winners = incoming.filter((r) => {
+        const cur = local.get(r.rid);
+        if (!cur) return true;
+        if (r.updatedAt !== cur.updatedAt) return r.updatedAt > cur.updatedAt;
+        return cur.deleted && !r.deleted;
+      });
+      if (winners.length) await db.putRecords(winners);
+      return winners;
+    },
+    getMeta: (key) => db.getMeta(key),
+    setMeta: (key, value) => db.setMeta(key, value),
+    async replaceAll(records) {
+      const k = need();
+      const wire = await Promise.all(records.map((r) => encode(k, r)));
+      await db.clearRecords();
+      await db.putRecords(wire);
+    },
     lock() {
       keys = null;
     },

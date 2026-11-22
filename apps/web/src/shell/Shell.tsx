@@ -15,6 +15,7 @@ import { navigate, parseLocation, useHref } from './router';
 import { useApplyTheme } from './theme';
 import { useLock } from '../vault/lockContext';
 import { detectImmersive } from '@eternall/stage';
+import { usePatron } from '../vault/patron';
 
 export function Shell({ today: fixedToday }: { today?: string }) {
   const vault = useVault();
@@ -27,6 +28,7 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   const [settings, updateSettings] = useSettings();
   const toast = useToast();
   const lockApi = useLock();
+  const patron = usePatron();
   const [primary, setPrimary] = useState<PrimaryAction | null>(null);
   const [doorsOpen, setDoorsOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -68,9 +70,9 @@ export function Shell({ today: fixedToday }: { today?: string }) {
         if (!settings.dismissed.includes(key)) updateSettings({ dismissed: [...settings.dismissed, key] });
       },
       isDismissed: (key) => settings.dismissed.includes(key),
-      immersive: detectImmersive({ flatPages: settings.flatPages }),
+      immersive: detectImmersive({ flatPages: settings.flatPages, licensed: import.meta.env.DEV || patron.active }),
     }),
-    [today, profile, toast, providers, enabled, others, ctx, settings, updateSettings],
+    [today, profile, toast, providers, enabled, others, ctx, settings, updateSettings, patron.active],
   );
 
   const house = useMemo(() => makeHouse(current), [makeHouse, current]);

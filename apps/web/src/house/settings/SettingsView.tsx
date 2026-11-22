@@ -4,6 +4,7 @@ import { useHouse } from '@eternall/kit';
 import { Button, Dialog, Segmented, TextField, useToast } from '@eternall/ui';
 import { isSealedArchive, openSealedArchive, useVault, type SealedArchive, type VaultRecord } from '@eternall/vault';
 import { SecuritySettings, exportSealed } from '../../vault/SecuritySettings';
+import { SyncSettings } from '../../vault/SyncSettings';
 import { useLock } from '../../vault/lockContext';
 import { LIMITS, PROFILE_PATH, validateProfile, type ProfileInput, type ThemePreference } from '../domain/house';
 import { useSettings } from '../../shell/hooks';
@@ -178,6 +179,18 @@ export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[
         </div>
         <div className="settings-block__body">
           <SecuritySettings />
+        </div>
+      </section>
+
+      <section className="settings-block rise" style={{ ['--i' as string]: 4 }} aria-labelledby="set-sync">
+        <div className="settings-block__intro">
+          <h2 id="set-sync" className="display">
+            Sync
+          </h2>
+          <p className="faint">One vault across your devices, end-to-end encrypted. Part of Patron.</p>
+        </div>
+        <div className="settings-block__body">
+          <SyncSettings />
         </div>
       </section>
 

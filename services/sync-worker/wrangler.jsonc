@@ -1,0 +1,23 @@
+{
+  // ETERNALL: one Worker serves the built app (apps/web/dist) and answers /api/*.
+  "name": "eternall",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "../../apps/web/dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
+    "not_found_handling": "none"
+  },
+  "d1_databases": [
+    // Create with `wrangler d1 create eternall-sync`, then put its id here (an identifier, not a secret).
+    { "binding": "DB", "database_name": "eternall-sync", "database_id": "TODO-set-after-wrangler-d1-create", "migrations_dir": "migrations" }
+    // Optional, for moving AMAZEEN journals in with their sync key (F15 path 2):
+    // { "binding": "LEGACY_DB", "database_name": "amazeen-sync", "database_id": "<amazeen's existing id>" }
+  ],
+  "vars": {
+    "PAYMENT_PROVIDER": "dev",
+    "PUBLIC_ORIGIN": "https://eternall.app"
+  }
+  // Secrets (wrangler secret put …): LICENCE_PRIVATE_JWK, WEBHOOK_SECRET
+}

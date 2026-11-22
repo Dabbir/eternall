@@ -54,6 +54,7 @@ Placeholders for the owner to decide:
   2. A claim code is returned to the app.
   3. The app redeems it for a signed licence token stored *inside the vault*.
   4. The token is verified offline and bound to the sync vault.
+- **As built (Release 1):** `PAYMENT_PROVIDER=dev` simulates a purchase end to end (used for development and tests). A real provider plugs in through `POST /api/webhooks/payment` (HMAC-SHA256 of the raw body with a shared secret, header `x-eternall-signature`; events `subscription.created|updated|cancelled`, `claim.reissue`). Choosing the provider and wiring its checkout URL is the remaining owner TODO.
 - **What ETERNALL holds:**
   - A licence id with tier and expiry.
   - The provider's subscription reference.

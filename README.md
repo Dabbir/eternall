@@ -7,6 +7,7 @@ npm install
 npm run dev        # http://localhost:5173
 npm test           # 46 unit + integration tests
 npm run build      # type-check + production build
+npm run dev:api    # local sync + licence API (wrangler, :8788; Vite proxies /api)
 ```
 
 Choose **Explore a sample life** on the welcome screen to see a fully populated archive, then erase it from Settings when you're ready to start your own.
