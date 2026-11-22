@@ -1,0 +1,365 @@
+.shell {
+  min-height: 100dvh;
+}
+
+.skip {
+  position: fixed;
+  left: 12px;
+  top: -60px;
+  z-index: 200;
+  padding: 10px 16px;
+  background: var(--press);
+  color: var(--press-ink);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  border-radius: 2px;
+  transition: top 160ms var(--ease-out);
+}
+.skip:focus {
+  top: 12px;
+}
+
+/* ── Spine (wide screens) ──────────────────────────────── */
+.spine {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 50;
+  width: var(--spine-w);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 0 18px;
+  background: var(--spine);
+  color: var(--spine-ink);
+  /* the spine's fold: a soft highlight along the binding edge */
+  box-shadow: inset -1px 0 0 rgb(255 255 255 / 0.06), 6px 0 24px -12px rgb(0 0 0 / 0.45);
+}
+
+.brand {
+  display: block;
+  border-radius: 8px;
+}
+
+.brandTile {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9px;
+  background: var(--press);
+  color: #f2ede3;
+  transition: transform 400ms var(--ease-spring);
+}
+.brand:hover .brandTile,
+.topBrand:hover .brandTile {
+  transform: rotate(-8deg) scale(1.06);
+}
+
+.brandGlyph {
+  width: 28px;
+  height: auto;
+  margin: 1px 1px 0 0; /* optical centring: the swash pulls the visual mass left */
+}
+
+.spineNav {
+  margin-top: 28px;
+}
+
+.spineNav ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.spineLink {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: var(--spine-w);
+  padding: 14px 0;
+  color: var(--spine-dim);
+  text-decoration: none;
+  transition: color 200ms;
+}
+
+/* the active section: a vermilion tab protruding from the spine's edge */
+.spineLink::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  right: -1px;
+  width: 4px;
+  background: var(--press);
+  transform: scaleY(0);
+  transition: transform 360ms var(--ease-out);
+}
+
+.spineLink:hover {
+  color: var(--spine-ink);
+}
+
+.spineLink[aria-current='page'] {
+  color: var(--spine-ink);
+}
+.spineLink[aria-current='page']::after {
+  transform: scaleY(1);
+}
+
+.spineLink:focus-visible {
+  outline-color: var(--spine-ink);
+  outline-offset: -4px;
+}
+
+.spineIndex {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  color: var(--press);
+}
+
+.spineLabel {
+  text-orientation: sideways;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--font-display);
+  font-size: 1.12rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: letter-spacing 300ms var(--ease-out);
+}
+.spineLink:hover .spineLabel {
+  letter-spacing: 0.08em;
+}
+
+.spineTitle {
+  text-orientation: sideways;
+  flex: 1;
+  min-height: 0;
+  margin: 24px 0;
+  overflow: hidden;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--spine-ink);
+  opacity: 0.18;
+  font-variation-settings: 'SOFT' 100, 'WONK' 1;
+  mask-image: linear-gradient(to top, black 70%, transparent);
+  -webkit-mask-image: linear-gradient(to top, black 70%, transparent);
+}
+.spineTitle::before {
+  content: attr(data-text);
+}
+
+.spineSync {
+  margin-bottom: 4px;
+}
+
+.spineToggle {
+  margin-bottom: 22px;
+}
+
+.deadline {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+}
+
+.deadlineValue {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--spine-ink);
+}
+
+.deadlineLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--spine-dim);
+}
+
+.pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--press);
+  animation: pulse 2.2s ease-out infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgb(212 58 36 / 0.6); }
+  70% { box-shadow: 0 0 0 10px rgb(212 58 36 / 0); }
+  100% { box-shadow: 0 0 0 0 rgb(212 58 36 / 0); }
+}
+
+/* ── Content frame ─────────────────────────────────────── */
+.frame {
+  margin-left: var(--spine-w);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.banner {
+  margin: 16px var(--gutter) 0;
+  padding: 12px 16px;
+  border: 1.5px solid var(--press);
+  border-left-width: 6px;
+  background: var(--press-soft);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 56px) var(--gutter) clamp(64px, 9vw, 120px);
+  outline: none;
+}
+
+/* ── Phones and small tablets ──────────────────────────── */
+.topbar,
+.tabs {
+  display: none;
+}
+
+@media (max-width: 899px) {
+  .spine {
+    display: none;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    height: var(--topbar-h);
+    padding: 0 16px;
+    background: var(--spine);
+    color: var(--spine-ink);
+  }
+
+  .topBrand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    text-decoration: none;
+  }
+
+  .topBrand .brandTile {
+    width: 34px;
+    height: 34px;
+    border-radius: 7px;
+  }
+
+  .topBrand .brandGlyph {
+    width: 22px;
+  }
+
+  .topTitle {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: 1.05rem;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .topSync {
+    margin-left: auto;
+  }
+
+  .topSync + .topToggle {
+    margin-left: 0;
+  }
+
+  .topToggle {
+    margin-left: auto;
+  }
+
+  .topMeta {
+    flex: none;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    color: var(--spine-dim);
+  }
+
+  .main {
+    padding-bottom: calc(120px + env(safe-area-inset-bottom));
+  }
+
+  /* Index tabs along the bottom edge, like a thumb-indexed reference book. */
+  .tabs {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 60;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    align-items: end;
+    padding: 0 8px env(safe-area-inset-bottom);
+    background: var(--spine);
+  }
+
+  .tab,
+  .tabWrite {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    padding: 10px 0 9px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--spine-dim);
+    border-top: 3px solid transparent;
+    transition: color 200ms, border-color 200ms;
+  }
+
+  .tab[aria-current='page'] {
+    color: var(--spine-ink);
+    border-top-color: var(--press);
+  }
+
+  .tabWrite {
+    margin-top: -14px;
+    padding-top: 12px;
+    background: var(--press);
+    color: var(--press-ink);
+    border-radius: 6px 6px 0 0;
+    box-shadow: 0 -10px 24px -14px rgb(212 58 36 / 0.8);
+  }
+}
+
+/* Narrow phones: the masthead and the edition switch get the room; the countdown lives on the Desk. */
+@media (max-width: 430px) {
+  .topMeta {
+    display: none;
+  }
+}

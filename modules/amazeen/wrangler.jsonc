@@ -1,0 +1,37 @@
+{
+  // AMAZEEN on Cloudflare Workers: the built app is served as static assets, and a small Worker
+  // answers /api/* (the sync service, backed by D1). `name` must match the Worker's name in the
+  // dashboard, or Workers Builds will refuse to deploy.
+  "name": "amazeen-app",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-11-01",
+  "assets": {
+    "directory": "./dist",
+    // Unknown paths get the app, so deep links like /issue/2026-W46?p=3 work.
+    "not_found_handling": "single-page-application",
+    // Only the API runs the Worker; everything else is served straight from the assets.
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "amazeen-sync",
+      // The ID of the production D1 database (dashboard → Storage & databases → D1 → amazeen-sync).
+      // It's an identifier, not a secret, so it's fine to commit. Local development (`npm run dev:api`)
+      // ignores it and uses a local database instead.
+      "database_id": "68e5379a-ca0f-4af6-84ba-1af7f6ff422f"
+    }
+  ],
+  // Preview builds (pull requests and other branches) get their own database, so trying sync in a
+  // preview never touches real journals. Cloudflare's `wrangler preview` refuses to build without
+  // this. The tables come from the same migrations/0001_init.sql, run once in its Console.
+  "previews": {
+    "d1_databases": [
+      {
+        "binding": "DB",
+        "database_name": "amazeen-sync-preview",
+        "database_id": "9b0e536a-314a-4178-988f-17106b66ee2a"
+      }
+    ]
+  }
+}

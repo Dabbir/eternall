@@ -1,0 +1,155 @@
+.panel {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
+.state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.stateDot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ink-3);
+}
+
+.state[data-phase='idle'] .stateDot {
+  background: var(--ok);
+}
+.state[data-phase='syncing'] .stateDot {
+  background: var(--proof);
+  animation: blink 1s ease-in-out infinite;
+}
+.state[data-phase='offline'] .stateDot {
+  background: #b25d00;
+}
+.state[data-phase='error'] .stateDot,
+.state[data-phase='auth'] .stateDot {
+  background: var(--press-text);
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+
+.facts {
+  margin: 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 8px;
+  color: var(--ink-2);
+}
+
+.note {
+  margin: 0;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+}
+
+.buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+/* The key: set large and grouped, selectable in one click, never truncated. */
+.keyBox {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  margin: 18px 0 10px;
+  padding: 16px;
+  border: 1.5px dashed var(--proof);
+  background: var(--proof-soft);
+  font-family: var(--font-mono);
+  font-size: clamp(1.1rem, 4.4vw, 1.5rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  user-select: all;
+}
+
+.keyGroup {
+  white-space: nowrap;
+}
+
+.keyActions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.warning {
+  margin: 0 0 14px;
+  padding: 10px 12px;
+  border-left: 4px solid var(--press);
+  background: var(--press-soft);
+  font-size: 0.95rem;
+}
+
+.confirm {
+  margin-top: 8px;
+}
+
+.confirmInput,
+.keyInput {
+  font-family: var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+}
+
+/* The little status dot beside the lamp. */
+.dot {
+  position: relative;
+  flex: none; /* never squeezed below a comfortable tap target in a crowded top bar */
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  text-decoration: none;
+}
+
+.dot::before {
+  content: '';
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #4fc58a;
+  box-shadow: 0 0 0 3px rgb(79 197 138 / 0.2);
+}
+
+.dot[data-phase='syncing']::before {
+  background: #8ea4ff;
+  box-shadow: 0 0 0 3px rgb(142 164 255 / 0.25);
+  animation: blink 1s ease-in-out infinite;
+}
+.dot[data-phase='offline']::before {
+  background: #f2a33a;
+  box-shadow: 0 0 0 3px rgb(242 163 58 / 0.25);
+}
+.dot[data-phase='error']::before,
+.dot[data-phase='auth']::before {
+  background: #ff6b55;
+  box-shadow: 0 0 0 3px rgb(255 107 85 / 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .state[data-phase='syncing'] .stateDot,
+  .dot[data-phase='syncing']::before {
+    animation: none;
+  }
+}

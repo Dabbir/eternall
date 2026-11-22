@@ -1,0 +1,374 @@
+/* ─────────────────────────────────────────────────────────────
+   AMAZEEN · "The Production Room"
+   The app is a small magazine's production room: an ink-black spine,
+   paper stock, vermilion for action, and non-photo "proof blue" for
+   the editor's annotations. Fraunces sets display type, Newsreader
+   sets copy, JetBrains Mono speaks for production notes.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  color-scheme: light;
+  --paper: #efe9dd;
+  --paper-2: #e5dccb;
+  --paper-3: #d8cdb8;
+  --sheet: #f8f4ec;
+  --ink: #15130f;
+  --ink-2: #46403a;
+  --ink-3: #655d52;
+  --rule: rgb(21 19 15 / 0.92);
+  --hairline: rgb(21 19 15 / 0.16);
+
+  /* --press for fills and large type (≥3:1); --press-text for small red text on paper (≥4.5:1). */
+  --press: #cc3720;
+  --press-ink: #fff8ef;
+  --press-text: #b92e1a;
+  --press-soft: rgb(212 58 36 / 0.1);
+
+  /* Non-photo blue: editor's marks and production notes. */
+  --proof: #2747c9;
+  --proof-soft: rgb(39 71 201 / 0.08);
+
+  /* The spine (navigation). Stays ink-black in both themes. */
+  --spine: #15130f;
+  --spine-ink: #efe9dd;
+  --spine-dim: #9a9285;
+  --spine-w: 76px;
+
+  --ok: #1d7a4c;
+  --shadow-paper: 0 1px 0 rgb(21 19 15 / 0.06), 0 14px 32px -14px rgb(40 28 10 / 0.3), 0 34px 70px -34px rgb(40 28 10 / 0.28);
+  --shadow-lift: 0 22px 40px -18px rgb(40 28 10 / 0.38);
+
+  --riso-blue: #2f5bd3;
+  --riso-teal: #00808a;
+  --riso-violet: #6f4fb8;
+  --riso-orange: #ff6a2b;
+  --riso-yellow: #ffd60a;
+  --riso-pink: #ff4fa3;
+  --riso-green: #11a35f;
+
+  --font-display: 'Fraunces Variable', 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-text: 'Newsreader Variable', 'Newsreader', 'Iowan Old Style', Georgia, serif;
+  --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-ui: var(--font-mono);
+
+  --step--2: clamp(0.72rem, 0.7rem + 0.08vw, 0.78rem);
+  --step--1: clamp(0.76rem, 0.74rem + 0.1vw, 0.82rem);
+  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
+  --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
+  --step-2: clamp(1.5rem, 1.3rem + 1vw, 2.1rem);
+  --step-3: clamp(2rem, 1.6rem + 2vw, 3.2rem);
+  --step-4: clamp(2.6rem, 1.9rem + 3.6vw, 5rem);
+  --step-5: clamp(3.4rem, 2rem + 7vw, 9rem);
+  --step-6: clamp(5rem, 2rem + 16vw, 17rem);
+
+  --gutter: clamp(16px, 4vw, 56px);
+  --max: 1360px;
+  --radius: 3px;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --topbar-h: 0px;
+}
+
+/* Night edition. Applied when chosen explicitly (data-theme="dark", set by the theme switch)
+   or when following a dark system setting and the person hasn't chosen Day. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --paper: #12100d;
+    --paper-2: #1c1915;
+    --paper-3: #2a261f;
+    --sheet: #1a1713;
+    --ink: #ece4d4;
+    --ink-2: #c3baa9;
+    --ink-3: #a29a8c;
+    --rule: rgb(236 228 212 / 0.85);
+    --hairline: rgb(236 228 212 / 0.14);
+    --press: #ff5a42;
+    --press-ink: #1b0c08;
+    --press-text: #ff6b55;
+    --press-soft: rgb(255 90 66 / 0.14);
+    --proof: #8ea4ff;
+    --proof-soft: rgb(142 164 255 / 0.1);
+    --spine: #070605;
+    --shadow-paper: 0 1px 0 rgb(0 0 0 / 0.4), 0 18px 44px -18px rgb(0 0 0 / 0.8);
+    --shadow-lift: 0 22px 40px -18px rgb(0 0 0 / 0.8);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #12100d;
+  --paper-2: #1c1915;
+  --paper-3: #2a261f;
+  --sheet: #1a1713;
+  --ink: #ece4d4;
+  --ink-2: #c3baa9;
+  --ink-3: #a29a8c;
+  --rule: rgb(236 228 212 / 0.85);
+  --hairline: rgb(236 228 212 / 0.14);
+  --press: #ff5a42;
+  --press-ink: #1b0c08;
+  --press-text: #ff6b55;
+  --press-soft: rgb(255 90 66 / 0.14);
+  --proof: #8ea4ff;
+  --proof-soft: rgb(142 164 255 / 0.1);
+  --spine: #070605;
+  --shadow-paper: 0 1px 0 rgb(0 0 0 / 0.4), 0 18px 44px -18px rgb(0 0 0 / 0.8);
+  --shadow-lift: 0 22px 40px -18px rgb(0 0 0 / 0.8);
+}
+
+@media (max-width: 899px) {
+  :root {
+    --spine-w: 0px;
+    --topbar-h: 56px;
+  }
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: calc(var(--topbar-h) + 16px);
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--step-0);
+  line-height: 1.55;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Paper stock: a static turbulence grain, a few hundred bytes. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) body::before {
+    mix-blend-mode: screen;
+    opacity: 0.1;
+  }
+}
+:root[data-theme='dark'] body::before {
+  mix-blend-mode: screen;
+  opacity: 0.1;
+}
+
+#root {
+  position: relative;
+  z-index: 1;
+  isolation: isolate;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--press);
+  color: var(--press-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--proof);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Typographic atoms ─────────────────────────────────── */
+
+/* Production label: mono, tracked. */
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Editor's annotation in proof blue. */
+.annot {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  color: var(--proof);
+  letter-spacing: 0.01em;
+}
+
+.numeral {
+  font-family: var(--font-display);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+kbd {
+  font-family: var(--font-mono);
+  font-size: 0.78em;
+  font-weight: 600;
+  padding: 0.05em 0.4em;
+  border: 1px solid currentColor;
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  opacity: 0.75;
+}
+
+/* ── Scroll-driven reveals (progressive enhancement) ────── */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 28%;
+    }
+    .reveal-x {
+      animation: reveal-x linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 30%;
+    }
+  }
+}
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(42px);
+  }
+}
+@keyframes reveal-x {
+  from {
+    opacity: 0;
+    transform: translateX(-28px) rotate(-1.5deg);
+  }
+}
+
+/* ── Page transitions (View Transitions API) ────────────── */
+::view-transition-old(root) {
+  animation: 260ms var(--ease-in-out) both vt-out;
+}
+::view-transition-new(root) {
+  animation: 420ms var(--ease-out) both vt-in;
+}
+::view-transition-group(*) {
+  animation-duration: 520ms;
+  animation-timing-function: var(--ease-out);
+}
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: translateX(-2%);
+    filter: blur(2px);
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateX(3%);
+    clip-path: inset(0 0 0 12%);
+  }
+}
+
+/* Switching editions: the new theme spills out from the switch as a circle of ink. */
+:root[data-vt='theme']::view-transition-old(root) {
+  animation: none;
+}
+:root[data-vt='theme']::view-transition-new(root) {
+  animation: theme-reveal 720ms var(--ease-in-out) both;
+}
+:root[data-vt='theme']::view-transition-group(*) {
+  animation: none;
+}
+@keyframes theme-reveal {
+  from {
+    clip-path: circle(0 at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+  to {
+    clip-path: circle(var(--theme-r, 150vmax) at var(--theme-x, 50%) var(--theme-y, 50%));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@page {
+  size: letter portrait;
+  margin: 0.5in;
+}
+
+@media print {
+  body {
+    background: #fff;
+    color: #15130f;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  body::before {
+    display: none;
+  }
+}

@@ -1,0 +1,261 @@
+.page {
+  /* Issue Zero: a dark stage with its own local palette, so shared components adapt. */
+  --paper: #15130f;
+  --paper-2: #221e19;
+  --sheet: #1c1915;
+  --ink: #efe9dd;
+  --ink-2: #c3baa9;
+  --ink-3: #9a9285;
+  --rule: rgb(239 233 221 / 0.85);
+  --hairline: rgb(239 233 221 / 0.18);
+  --proof: #8ea4ff;
+  --press: #ff5a42;
+  --press-text: #ff6b55;
+  --press-ink: #1b0c08;
+  min-height: 100dvh;
+  overflow-x: clip;
+  padding: 0 var(--gutter) 56px;
+  background:
+    radial-gradient(ellipse 60% 70% at 78% 45%, rgb(255 106 43 / 0.16), transparent 70%),
+    var(--spine);
+  color: var(--ink);
+}
+
+.page > * {
+  max-width: var(--max);
+  margin-inline: auto;
+}
+
+.strip {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1.5px solid var(--rule);
+  font-family: var(--font-ui);
+  font-size: var(--step--1);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: center;
+  padding-top: clamp(24px, 5vw, 64px);
+}
+
+/* Logo lockup: monogram ≈ 1.23 × cap height (0.7em), on the baseline; mirrors assets/logo. */
+.wordmark {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.18em;
+  font-size: clamp(2.9rem, 1.3rem + 5.6vw, 6.6rem);
+  font-weight: 900;
+  line-height: 0.8;
+  letter-spacing: 0;
+  font-variation-settings: 'SOFT' 30, 'WONK' 0, 'opsz' 144;
+}
+
+.mark {
+  flex: none;
+  width: 1.317em;
+  height: 0.86em;
+  color: var(--press);
+  animation: stamp-in 800ms var(--ease-spring) both;
+}
+
+.letters {
+  display: flex;
+  /* align the caps' baseline with the monogram's foot */
+  line-height: 0.7;
+}
+
+.letters span {
+  display: inline-block;
+  animation: drop 700ms var(--ease-spring) both;
+}
+
+@keyframes stamp-in {
+  from {
+    opacity: 0;
+    transform: scale(1.6) rotate(-14deg);
+  }
+}
+
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-40%) rotate(-8deg);
+  }
+}
+
+.lede {
+  margin-top: clamp(20px, 3vw, 32px);
+  max-width: 34ch;
+  font-size: var(--step-1);
+  line-height: 1.4;
+  color: var(--ink-2);
+  animation: rise 700ms 300ms var(--ease-out) both;
+}
+
+.lede em {
+  color: var(--ink);
+  font-style: italic;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.form {
+  margin-top: clamp(28px, 4vw, 44px);
+  display: grid;
+  gap: 28px;
+  max-width: 520px;
+  animation: rise 700ms 450ms var(--ease-out) both;
+}
+
+.titleInput {
+  font-size: var(--step-2);
+  font-weight: 700;
+}
+
+.optional {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  color: var(--ink-3);
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.suggestion {
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--ink-2);
+  transition: border-color 140ms, color 140ms, background-color 140ms;
+}
+
+.suggestion:hover {
+  border-color: var(--ink);
+  color: var(--ink);
+  background: var(--paper-2);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.privacy {
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  color: var(--ink-3);
+}
+
+.preview {
+  position: relative;
+  justify-self: center;
+  width: min(440px, 100%);
+  animation: float-in 900ms 200ms var(--ease-out) both;
+}
+
+/* A huge outlined "Nº0" behind the cover: the issue before the first issue. */
+.zero {
+  position: absolute;
+  top: -14%;
+  right: -16%;
+  z-index: -1;
+  display: flex;
+  align-items: flex-start;
+  font-family: var(--font-display);
+  font-size: clamp(14rem, 8rem + 18vw, 30rem);
+  font-weight: 900;
+  line-height: 0.8;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgb(239 233 221 / 0.22);
+  user-select: none;
+  pointer-events: none;
+}
+
+.zero span {
+  font-size: 0.24em;
+  margin-top: 0.24em;
+  -webkit-text-stroke: 1.5px rgb(255 90 66 / 0.6);
+}
+
+.preview > :first-child {
+  transform: rotate(2.5deg);
+  filter: drop-shadow(0 30px 40px rgb(40 28 10 / 0.3));
+  transition: transform 500ms var(--ease-spring);
+}
+
+.preview:hover > :first-child {
+  transform: rotate(0deg) scale(1.01);
+}
+
+.caption {
+  margin-top: 20px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink-3);
+}
+
+@keyframes float-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px) rotate(6deg);
+  }
+}
+
+@media (max-width: 860px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  /* The logo leads on small screens; the sample cover follows the form as a preview. */
+  .preview {
+    width: min(300px, 78%);
+  }
+  .strip span:nth-child(2) {
+    display: none;
+  }
+}
+
+
+.restore {
+  justify-self: start;
+  padding: 6px 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  background: transparent;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--step-0);
+  color: var(--ink-2);
+  transition: color 160ms;
+}
+
+.restore:hover {
+  color: var(--ink);
+}

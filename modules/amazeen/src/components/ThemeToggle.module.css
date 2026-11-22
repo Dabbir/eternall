@@ -1,0 +1,242 @@
+/* The edition lamp: a pendant shade with a pull cord.
+   Colours are fixed (not theme tokens) because the lamp always hangs on an ink-black surface
+   (the spine or a top bar), and it shows the state of the light, not of the page. */
+.lamp {
+  --shade: #efe9dd;
+  --rim: #d8cdb8;
+  --bulb: #ffd60a;
+  --cord: #9a9285;
+  --bead: #cc3720;
+  --pull: 0px;
+  --cord-len: 30px;
+  position: relative;
+  display: inline-grid;
+  justify-items: center;
+  align-content: start;
+  width: 56px;
+  padding: 0 0 4px;
+  border: 0;
+  background: transparent;
+  color: #efe9dd;
+  cursor: grab;
+  touch-action: none; /* the cord is dragged vertically */
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.lamp[data-dragging] {
+  cursor: grabbing;
+}
+
+.lamp:focus-visible {
+  outline: 2px solid #8ea4ff;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── Fixture: shade + bulb + glow ─────────────────────── */
+.fixture {
+  position: relative;
+  width: 40px;
+  height: 30px;
+  transform-origin: 50% 0;
+}
+
+.shade {
+  position: relative;
+  z-index: 1;
+  width: 40px;
+  height: 28px;
+  overflow: visible;
+}
+
+.stem {
+  stroke: var(--cord);
+  stroke-width: 1.5;
+}
+
+.hood {
+  fill: var(--shade);
+  transition: fill 500ms;
+}
+
+.rim {
+  stroke: var(--rim);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transition: stroke 500ms;
+}
+
+.bulb {
+  position: absolute;
+  left: 50%;
+  top: 21px;
+  width: 11px;
+  height: 7px;
+  border-radius: 0 0 6px 6px;
+  transform: translateX(-50%);
+  background: var(--bulb);
+  box-shadow: 0 0 10px 3px rgb(255 214 10 / 0.75);
+  transition: background-color 400ms, box-shadow 500ms;
+}
+
+/* Cone of light falling from the lamp (day) */
+.glow {
+  position: absolute;
+  left: 50%;
+  top: 22px;
+  width: 64px;
+  height: 46px;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse 50% 100% at 50% 0, rgb(255 214 10 / 0.32), transparent 72%);
+  clip-path: polygon(38% 0, 62% 0, 100% 100%, 0 100%);
+  pointer-events: none;
+  transition: opacity 500ms;
+}
+
+/* ── Pull cord ────────────────────────────────────────── */
+.cord {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  margin-top: -2px;
+  transform-origin: 50% 0;
+}
+
+.string {
+  width: 1.5px;
+  height: calc(var(--cord-len) + var(--pull));
+  background: var(--cord);
+  transition: height 420ms var(--ease-spring);
+}
+
+.bead {
+  width: 11px;
+  height: 11px;
+  margin-top: -1px;
+  border-radius: 50%;
+  background: var(--bead);
+  box-shadow: inset -2px -2px 0 rgb(0 0 0 / 0.25), 0 0 0 1.5px rgb(239 233 221 / 0.25);
+  transition: transform 220ms var(--ease-spring);
+}
+
+.lamp[data-dragging] .string {
+  transition: none;
+}
+
+.lamp:hover .bead {
+  transform: scale(1.15);
+}
+
+/* Idle invitation: the cord sways gently on hover */
+.lamp:hover:not([data-dragging]) .cord {
+  animation: sway 1.6s ease-in-out infinite;
+}
+
+@keyframes sway {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(4deg); }
+  75% { transform: rotate(-4deg); }
+}
+
+/* After a pull: a tug, then the cord and shade swing and settle */
+.swing .cord {
+  animation: tug 700ms var(--ease-out);
+}
+
+.swing .fixture {
+  animation: rock 900ms var(--ease-out);
+}
+
+@keyframes tug {
+  0% { transform: translateY(0) rotate(0); }
+  18% { transform: translateY(8px) rotate(0); }
+  40% { transform: translateY(-2px) rotate(9deg); }
+  62% { transform: rotate(-6deg); }
+  82% { transform: rotate(3deg); }
+  100% { transform: rotate(0); }
+}
+
+@keyframes rock {
+  0%, 100% { transform: rotate(0); }
+  30% { transform: rotate(-5deg); }
+  60% { transform: rotate(3deg); }
+  80% { transform: rotate(-1deg); }
+}
+
+.label {
+  margin-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #b9b0a1;
+}
+
+/* ── Night: lights out ───────────────────────────────── */
+.lamp[data-theme-state='dark'] {
+  --shade: #2a261f;
+  --rim: #4a443b;
+}
+
+.lamp[data-theme-state='dark'] .bulb {
+  background: #4a443b;
+  box-shadow: none;
+}
+
+.lamp[data-theme-state='dark'] .glow {
+  opacity: 0;
+}
+
+/* ── Hanging from a top bar (phones, reader) ─────────── */
+/* The shade sits in the bar; the cord dangles below its edge into the page. */
+.lamp[data-orientation='horizontal'] {
+  --cord-len: 26px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  align-content: center;
+}
+
+.lamp[data-orientation='horizontal'] .fixture {
+  transform: scale(0.82);
+  transform-origin: 50% 50%;
+}
+
+.lamp[data-orientation='horizontal'] .glow {
+  display: none;
+}
+
+.lamp[data-orientation='horizontal'] .cord {
+  position: absolute;
+  top: 34px;
+  left: 50%;
+  margin-left: -5.5px;
+  width: 11px;
+}
+
+.lamp[data-orientation='horizontal'] .label {
+  display: none;
+}
+
+.lamp[data-orientation='horizontal'][data-size='small'] {
+  --cord-len: 20px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp:hover:not([data-dragging]) .cord,
+  .swing .cord,
+  .swing .fixture {
+    animation: none;
+  }
+  .string,
+  .bead,
+  .hood,
+  .rim,
+  .bulb,
+  .glow {
+    transition: none;
+  }
+}
