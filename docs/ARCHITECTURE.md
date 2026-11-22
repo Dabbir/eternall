@@ -94,7 +94,7 @@ export interface WeekContribution {
 
 ## 4. Monorepo layout
 
-npm workspaces only, with no Nx, Turborepo or pnpm (ADR 0001). TypeScript project references give incremental builds.
+npm workspaces only, with no Nx, Turborepo or pnpm (ADR 0001). One root `tsconfig.json` typechecks every workspace (simpler than project references and fast with TypeScript 7); one root `vitest.config.ts` runs every workspace's tests.
 
 ```
 eternall/
@@ -105,7 +105,8 @@ eternall/
 ├─ packages/
 │  ├─ core/                   week math, ISO dates, types, validation, Imprint contract, i18n helpers
 │  ├─ vault/                  encrypted store, keys, lock, sync client, licence verification
-│  ├─ ui/                     behavioural primitives (Dialog, Field, Toast, Segmented, Menu, Sheet), unstyled
+│  ├─ kit/                    the imprint SDK: useHouse(), usePrimaryAction(), capabilities, toasts, gathered memories/facts
+│  ├─ ui/                     behavioural primitives (Dialog, Field, Toast, Segmented, Menu, Sheet), skinned by shared token names
 │  └─ stage/                  capability detection, on-demand render loop, three.js loader, 2D fallback switch
 ├─ modules/
 │  ├─ amazeen/  envoi/  folio/  almanack/  refrain/  prologue/  kindred/  marginalia/

@@ -1,0 +1,197 @@
+/* ─────────────────────────────────────────────────────────────
+   FOLIO · a bookbinder's shelf (docs/design/folio.md)
+   Spatial system: decade shelves of variable-width spines; opened chapters
+   follow the Van de Graaf canon (inner 1/9, outer 2/9, top 1/9, bottom 2/9).
+   ───────────────────────────────────────────────────────────── */
+[data-imprint='folio'] {
+  --paper: #f4efe4;
+  --paper-sunk: #e9e2d2;
+  --paper-raised: #fbf8f1;
+  --ink: #221d17;
+  --ink-2: #544b40;
+  --ink-3: #6d6355;
+  --rule: rgb(34 29 23 / 0.12);
+  --rule-strong: rgb(34 29 23 / 0.24);
+  --accent: #2f4a3a;
+  --accent-deep: #1f3328;
+  --accent-soft: rgb(47 74 58 / 0.12);
+  --accent-2: #7a5f18;
+  --on-accent: #f4efe4;
+  --gilt: #d9b864;
+  --plank: #6b4a2e;
+  --plank-edge: #4a3220;
+  --veil: rgb(20 18 15 / 0.45);
+  --font-display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --font-ui: 'Crimson Pro', 'Iowan Old Style', Georgia, serif;
+  --font-mono: 'Crimson Pro', Georgia, serif;
+  --spine-h: clamp(190px, 26vw, 260px);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 1.0625rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) [data-imprint='folio'] {
+    --paper: #121410;
+    --paper-sunk: #0c0e0b;
+    --paper-raised: #1a1d18;
+    --ink: #e8e2d2;
+    --ink-2: #b3ac9b;
+    --ink-3: #938c7c;
+    --rule: rgb(232 226 210 / 0.1);
+    --rule-strong: rgb(232 226 210 / 0.22);
+    --accent: #7fae8f;
+    --accent-deep: #5f8d6f;
+    --accent-soft: rgb(127 174 143 / 0.14);
+    --accent-2: #d4b25c;
+    --on-accent: #0d140f;
+    --plank: #3b291a;
+    --plank-edge: #24180e;
+    --veil: rgb(0 0 0 / 0.62);
+  }
+}
+:root[data-theme='dark'] [data-imprint='folio'] {
+  --paper: #121410;
+  --paper-sunk: #0c0e0b;
+  --paper-raised: #1a1d18;
+  --ink: #e8e2d2;
+  --ink-2: #b3ac9b;
+  --ink-3: #938c7c;
+  --rule: rgb(232 226 210 / 0.1);
+  --rule-strong: rgb(232 226 210 / 0.22);
+  --accent: #7fae8f;
+  --accent-deep: #5f8d6f;
+  --accent-soft: rgb(127 174 143 / 0.14);
+  --accent-2: #d4b25c;
+  --on-accent: #0d140f;
+  --plank: #3b291a;
+  --plank-edge: #24180e;
+  --veil: rgb(0 0 0 / 0.62);
+}
+
+.folio { max-width: 1320px; margin: 0 auto; padding: clamp(28px, 5vw, 64px) var(--gutter) 120px; }
+
+/* ---------- head ---------- */
+.folio-head { display: grid; gap: 14px; margin-bottom: 56px; }
+.folio-eyebrow { font-family: var(--font-display); font-size: 0.75rem; letter-spacing: 0.24em; color: var(--accent-2); }
+.folio-title { font-family: var(--font-ui); font-weight: 400; font-size: clamp(2.4rem, 1.5rem + 3.4vw, 4.4rem); line-height: 1.02; letter-spacing: -0.01em; max-width: 18ch; text-wrap: balance; }
+.folio-title em { color: var(--accent); }
+
+/* ---------- life bar ---------- */
+.folio-lifebar { margin-top: 18px; max-width: 980px; }
+.folio-lifebar__track { position: relative; height: 22px; background: var(--paper-sunk); box-shadow: inset 0 0 0 1px var(--rule); }
+.folio-lifebar__lived { position: absolute; inset: 0 auto 0 0; background: repeating-linear-gradient(135deg, var(--rule) 0 1px, transparent 1px 6px); }
+.folio-lifebar__seg { position: absolute; top: 3px; bottom: 3px; background: var(--c); }
+.folio-lifebar__now { position: absolute; top: -5px; bottom: -5px; width: 2px; margin-left: -1px; background: var(--seal); }
+.folio-lifebar__ticks { position: relative; height: 18px; margin-top: 6px; font-family: var(--font-display); font-size: 0.6875rem; color: var(--ink-3); }
+.folio-lifebar__ticks span { position: absolute; transform: translateX(-50%); }
+.folio-lifebar__ticks span:first-child { transform: none; }
+.folio-lifebar__ticks span:last-child { transform: translateX(-100%); }
+
+/* ---------- shelves ---------- */
+.folio-shelves { display: grid; gap: 64px; }
+.folio-shelf { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 20px; align-items: end; }
+.folio-shelf__label { display: grid; gap: 2px; font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; letter-spacing: 0.12em; color: var(--ink-2); padding-bottom: 18px; }
+.folio-shelf__sub { font-family: var(--font-ui); letter-spacing: 0; font-size: 0.8125rem; color: var(--ink-3); font-style: italic; }
+.folio-plank {
+  position: relative; display: flex; align-items: flex-end; gap: 2px; flex-wrap: nowrap;
+  min-height: calc(var(--spine-h) + 14px); padding: 0 14px 14px; overflow-x: auto; scrollbar-width: thin;
+  background: linear-gradient(to bottom, transparent calc(100% - 14px), var(--plank) calc(100% - 14px), var(--plank-edge) 100%);
+}
+.folio-plank li { flex: none; animation: rise 700ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 60ms); }
+@media (max-width: 720px) { .folio-shelf { grid-template-columns: 1fr; gap: 8px; } .folio-shelf__label { grid-auto-flow: column; justify-content: start; gap: 12px; padding: 0; } }
+
+/* ---------- a spine ---------- */
+.folio-spine {
+  position: relative; display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+  width: var(--w); height: var(--spine-h); padding: 16px 0;
+  background:
+    linear-gradient(to right, rgb(0 0 0 / 0.22), transparent 18%, rgb(255 255 255 / 0.08) 50%, transparent 82%, rgb(0 0 0 / 0.28)),
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.04) 0 1px, transparent 1px 3px),
+    var(--c);
+  color: var(--gilt);
+  box-shadow: 0 1px 0 rgb(0 0 0 / 0.2), 2px 0 3px -1px rgb(0 0 0 / 0.35);
+  transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+  transform-origin: bottom center;
+}
+.folio-spine:hover, .folio-spine:focus-visible { transform: translateY(-8px); box-shadow: 0 10px 16px -8px rgb(0 0 0 / 0.5); }
+.folio-spine:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 3px; }
+.folio-spine.is-ongoing { transform: rotate(4deg); transform-origin: bottom left; margin-left: 6px; }
+.folio-spine.is-ongoing:hover { transform: rotate(2deg) translateY(-6px); }
+.folio-spine__band { width: 70%; height: 6px; border-top: 1.5px solid var(--gilt); border-bottom: 1.5px solid var(--gilt); opacity: 0.85; }
+.folio-spine__title {
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  font-family: var(--font-display); font-weight: 600; font-size: clamp(0.72rem, 0.65rem + 0.25vw, 0.86rem); letter-spacing: 0.16em; text-transform: uppercase;
+  max-height: calc(var(--spine-h) - 70px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.35);
+}
+.folio-spine--blank { background: repeating-linear-gradient(0deg, transparent 0 3px, var(--rule) 3px 4px), var(--paper-sunk); color: var(--ink-3); box-shadow: inset 0 0 0 1px var(--rule-strong); }
+.folio-spine--blank .folio-spine__title { text-shadow: none; font-weight: 400; }
+.folio-spine__tip {
+  position: absolute; bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); white-space: nowrap; pointer-events: none;
+  background: var(--ink); color: var(--paper); padding: 6px 10px; font-family: var(--font-ui); font-size: 0.875rem; letter-spacing: 0;
+  opacity: 0; transition: opacity 160ms;
+}
+.folio-spine:hover .folio-spine__tip, .folio-spine:focus-visible .folio-spine__tip { opacity: 1; }
+
+.folio-empty { display: grid; justify-items: start; gap: 18px; max-width: 560px; }
+.folio-empty .folio-plank { width: 220px; }
+.folio-empty__text { font-style: italic; font-size: 1.2rem; color: var(--ink-2); }
+
+/* ---------- opened chapter: a two-page spread ---------- */
+.folio-back { display: inline-flex; align-items: center; gap: 6px; font-size: 0.95rem; color: var(--ink-2); margin-bottom: 24px; }
+.folio-back:hover { color: var(--ink); }
+.folio-book {
+  display: grid; grid-template-columns: 1fr 1fr; max-width: 1180px; margin: 0 auto;
+  background: var(--paper-raised);
+  box-shadow: 0 30px 60px -30px rgb(30 20 10 / 0.45), 0 0 0 1px var(--rule);
+  animation: folio-open 800ms var(--ease-out) both;
+  transform-origin: left center;
+}
+@keyframes folio-open { from { opacity: 0; transform: perspective(1400px) rotateY(-22deg) translateX(-30px); } }
+.folio-page {
+  position: relative; min-height: min(78vh, 760px);
+  /* Van de Graaf: on a 2:3 page the text block sits 1/9 from the gutter and top, 2/9 from the outside and bottom. */
+  padding: calc(100% / 9 * 1.5) calc(100% / 9 * 2) calc(100% / 9 * 3) calc(100% / 9);
+}
+.folio-page--verso { padding: calc(100% / 9 * 1.5) calc(100% / 9) calc(100% / 9 * 3) calc(100% / 9 * 2); background: linear-gradient(to left, rgb(0 0 0 / 0.08), transparent 12%); }
+.folio-page--recto { background: linear-gradient(to right, rgb(0 0 0 / 0.1), transparent 10%); }
+.folio-running { position: absolute; top: 4%; left: calc(100% / 9 * 2); font-family: var(--font-display); font-size: 0.6875rem; letter-spacing: 0.24em; color: var(--ink-3); }
+.folio-running--right { left: auto; right: calc(100% / 9 * 2); }
+.folio-titlepage { display: grid; justify-items: center; text-align: center; gap: 18px; padding-top: 10%; }
+.folio-titlepage__rule { width: 72px; height: 7px; border-top: 1px solid var(--accent-2); border-bottom: 1px solid var(--accent-2); }
+.folio-titlepage__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.6rem); letter-spacing: 0.08em; line-height: 1.2; text-transform: uppercase; color: var(--c); }
+.folio-titlepage__dates { font-variant: small-caps; letter-spacing: 0.08em; color: var(--ink-2); font-variant-numeric: lining-nums tabular-nums; }
+.folio-ongoing { color: var(--accent); font-style: italic; font-variant: normal; }
+.folio-titlepage__note { font-style: italic; font-size: 1.25rem; line-height: 1.5; max-width: 30ch; }
+.folio-titlepage__facts { font-size: 0.95rem; color: var(--ink-3); }
+.folio-page__actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-top: 40px; }
+.folio-contents__title { font-family: var(--font-display); font-weight: 400; font-size: 1.05rem; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 24px; color: var(--ink-2); }
+.folio-contents { display: grid; gap: 2px; }
+.folio-contents__row { display: flex; align-items: baseline; gap: 8px; width: 100%; text-align: left; padding: 6px 0; }
+.folio-contents__row:hover .folio-contents__name { color: var(--accent); }
+.folio-contents__name { font-size: 1.1rem; line-height: 1.3; transition: color 160ms; max-width: 70%; }
+.folio-contents__leader { flex: 1; border-bottom: 1px dotted var(--rule-strong); transform: translateY(-4px); min-width: 20px; }
+.folio-contents__date { font-variant-numeric: lining-nums tabular-nums; font-size: 0.9rem; color: var(--ink-3); }
+.folio-contents__empty { font-style: italic; color: var(--ink-2); }
+.folio-folio { position: absolute; bottom: 5%; right: calc(100% / 9 * 2); font-size: 0.875rem; color: var(--ink-3); font-variant-numeric: oldstyle-nums; }
+@media (max-width: 860px) {
+  .folio-book { grid-template-columns: 1fr; }
+  .folio-page, .folio-page--verso { min-height: auto; padding: 56px 28px 72px; }
+}
+
+/* ---------- editor ---------- */
+.folio-title-input { font-family: var(--font-display) !important; letter-spacing: 0.06em; text-transform: uppercase; font-size: 1.6rem !important; }
+.folio-cloths { display: flex; flex-wrap: wrap; gap: 10px; border: 0; padding: 0; margin: 0; }
+.folio-cloths legend { padding: 0; margin-bottom: 8px; font-size: var(--fs-small); font-weight: 500; color: var(--ink-2); }
+.folio-cloth { position: relative; display: grid; justify-items: center; gap: 6px; cursor: pointer; }
+.folio-cloth input { position: absolute; opacity: 0; pointer-events: none; }
+.folio-cloth__swatch {
+  width: 44px; height: 58px;
+  background: repeating-linear-gradient(45deg, rgb(255 255 255 / 0.07) 0 1px, transparent 1px 3px), repeating-linear-gradient(-45deg, rgb(0 0 0 / 0.08) 0 1px, transparent 1px 3px), var(--c);
+  box-shadow: 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  transition: transform 200ms var(--ease-out);
+}
+.folio-cloth:has(input:checked) .folio-cloth__swatch { transform: translateY(-5px); box-shadow: 0 0 0 2px var(--paper-raised), 0 0 0 4px var(--ink); }
+.folio-cloth:has(input:focus-visible) .folio-cloth__swatch { outline: 2px solid var(--accent-2); outline-offset: 4px; }
+.folio-cloth__name { font-size: 0.8125rem; color: var(--ink-2); }

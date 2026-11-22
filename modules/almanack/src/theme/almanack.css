@@ -1,0 +1,134 @@
+/* ─────────────────────────────────────────────────────────────
+   ALMANACK · an antique almanac (docs/design/almanack.md)
+   Spatial system: dense two-column tables, hairline rules, dot leaders,
+   three information layers (figure · unit · note). Plates interrupt the columns.
+   ───────────────────────────────────────────────────────────── */
+[data-imprint='almanack'] {
+  --paper: #ece4d0;
+  --paper-sunk: #e1d7bf;
+  --paper-raised: #f4eedf;
+  --ink: #241b12;
+  --ink-2: #5a4a36;
+  --ink-3: #6c5c47;
+  --rule: rgb(36 27 18 / 0.16);
+  --rule-strong: rgb(36 27 18 / 0.32);
+  --accent: #1f3d6b;
+  --accent-deep: #142a4c;
+  --accent-soft: rgb(31 61 107 / 0.1);
+  --accent-2: #a3341f;
+  --on-accent: #f4eedf;
+  --veil: rgb(20 15 10 / 0.45);
+  --font-display: 'IM Fell English', 'Iowan Old Style', Georgia, serif;
+  --font-sc: 'IM Fell English SC', 'IM Fell English', Georgia, serif;
+  --font-ui: 'Spectral', Georgia, serif;
+  --font-mono: 'Spectral', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) [data-imprint='almanack'] {
+    --paper: #0e1220;
+    --paper-sunk: #090c17;
+    --paper-raised: #151a2b;
+    --ink: #e6dcc4;
+    --ink-2: #a9a08b;
+    --ink-3: #8e8673;
+    --rule: rgb(230 220 196 / 0.14);
+    --rule-strong: rgb(230 220 196 / 0.28);
+    --accent: #9db4e8;
+    --accent-deep: #7d96cf;
+    --accent-soft: rgb(157 180 232 / 0.14);
+    --accent-2: #f07d5f;
+    --on-accent: #0b1020;
+    --veil: rgb(0 0 0 / 0.62);
+  }
+}
+:root[data-theme='dark'] [data-imprint='almanack'] {
+  --paper: #0e1220;
+  --paper-sunk: #090c17;
+  --paper-raised: #151a2b;
+  --ink: #e6dcc4;
+  --ink-2: #a9a08b;
+  --ink-3: #8e8673;
+  --rule: rgb(230 220 196 / 0.14);
+  --rule-strong: rgb(230 220 196 / 0.28);
+  --accent: #9db4e8;
+  --accent-deep: #7d96cf;
+  --accent-soft: rgb(157 180 232 / 0.14);
+  --accent-2: #f07d5f;
+  --on-accent: #0b1020;
+  --veil: rgb(0 0 0 / 0.62);
+}
+
+.alm { max-width: 1080px; margin: 0 auto; padding: clamp(28px, 5vw, 64px) var(--gutter) 120px; font-variant-numeric: lining-nums tabular-nums; }
+
+.alm-head { text-align: center; display: grid; gap: 6px; padding-bottom: 22px; margin-bottom: 30px; border-bottom: 3px double var(--rule-strong); }
+.alm-eyebrow { font-family: var(--font-sc); font-size: 0.875rem; letter-spacing: 0.18em; color: var(--accent); }
+.alm-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(3rem, 2rem + 4vw, 5.6rem); line-height: 0.95; letter-spacing: -0.01em; }
+.alm-sub { font-family: var(--font-sc); font-size: clamp(1rem, 0.9rem + 0.4vw, 1.25rem); letter-spacing: 0.08em; }
+.alm-date { font-style: italic; color: var(--ink-2); font-size: 0.95rem; }
+
+.alm-note { border: 1px solid var(--rule-strong); padding: 12px 16px; margin-bottom: 28px; font-style: italic; }
+.alm-link { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; font-style: normal; }
+
+.alm-plate { display: grid; justify-items: center; gap: 12px; padding: 26px 0 30px; margin: 0 0 30px; border-bottom: 1px solid var(--rule-strong); }
+.alm-orrery { width: min(360px, 82vw); height: auto; color: var(--accent); }
+.alm-orrery__planet { fill: var(--accent-2); }
+:root[data-theme='dark'] .alm-orrery, :root:not([data-theme='light']) .alm-orrery { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 35%, transparent)); }
+.alm-plate figcaption { font-style: italic; color: var(--ink-2); text-align: center; max-width: 52ch; }
+.alm-plate__no { font-family: var(--font-sc); font-style: normal; letter-spacing: 0.08em; color: var(--ink); }
+
+.alm-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 28px; margin-bottom: 32px; }
+.alm-cols > section { padding: 0 0 4px; }
+.alm-cols > section:first-child { padding-right: 28px; border-right: 1px solid var(--rule-strong); }
+@media (max-width: 960px) {
+  .alm-cols { grid-template-columns: 1fr; gap: 28px; }
+  .alm-cols > section:first-child { border-right: 0; padding-right: 0; }
+}
+
+.alm-h2 { font-family: var(--font-sc); font-weight: 400; font-size: 1.15rem; letter-spacing: 0.12em; padding-bottom: 6px; margin-bottom: 4px; border-bottom: 1px solid var(--ink); }
+.alm-h2-note { font-style: italic; color: var(--ink-3); font-size: 0.9rem; margin: 4px 0 8px; }
+.alm-empty { font-style: italic; color: var(--ink-2); padding: 10px 0; }
+
+.alm-table { width: 100%; border-collapse: collapse; line-height: 1.25; }
+.alm-table th, .alm-table td { padding: 7px 0; border-bottom: 0.5px solid var(--rule); vertical-align: baseline; }
+.alm-table th { text-align: left; font-weight: 400; position: relative; }
+.alm-table th::after { content: ''; position: absolute; left: 0; right: 8px; bottom: 0.55em; border-bottom: 1px dotted var(--rule-strong); z-index: 0; }
+.alm-table__label { position: relative; z-index: 1; background: var(--paper); padding-right: 6px; }
+.alm-table__note { position: relative; z-index: 1; display: block; font-style: italic; font-size: 0.8125rem; color: var(--ink-3); background: var(--paper); width: fit-content; padding-right: 6px; margin-top: 2px; }
+.alm-table td { text-align: right; font-size: 1.25rem; font-weight: 600; white-space: nowrap; padding-left: 8px; }
+.alm-table tr.is-rubric td { color: var(--accent-2); }
+.alm-table tr:focus-within th, .alm-table tr:hover th { box-shadow: inset 0 -1.5px 0 var(--accent); }
+.alm-table--compact td { font-size: 1rem; }
+
+.alm-section { margin-bottom: 36px; }
+.alm-echoes { display: grid; }
+.alm-echo { display: grid; grid-template-columns: 7.5em 1fr auto; gap: 12px; align-items: baseline; width: 100%; text-align: left; padding: 8px 0; border-bottom: 0.5px solid var(--rule); }
+.alm-echo:hover .alm-echo__title { color: var(--accent); }
+.alm-echo__ago { font-family: var(--font-sc); font-size: 0.875rem; color: var(--accent-2); letter-spacing: 0.06em; }
+.alm-echo__title { font-family: var(--font-display); font-size: 1.2rem; line-height: 1.2; transition: color 150ms; }
+.alm-echo__date { font-style: italic; color: var(--ink-3); font-size: 0.875rem; }
+
+.alm-red { display: grid; }
+.alm-red__row { display: grid; grid-template-columns: 1.4em 9em 1fr; gap: 10px; align-items: baseline; width: 100%; text-align: left; padding: 8px 0; border-bottom: 0.5px solid var(--rule); }
+.alm-red__row:hover .alm-red__label { color: var(--accent); }
+.alm-red__mark { color: var(--accent-2); }
+.alm-red__date { color: var(--accent-2); font-weight: 600; }
+
+/* Charts in the engraved idiom: hatched bars, text in text colours, a table on request. */
+.alm-weather { width: 100%; border-collapse: collapse; }
+.alm-weather th { text-align: left; font-weight: 400; padding: 6px 12px 6px 0; width: 6.5em; }
+.alm-weather td { padding: 6px 0; border-bottom: 0.5px solid var(--rule); }
+.alm-weather__bar span { display: block; height: 10px; background: repeating-linear-gradient(90deg, var(--c) 0 2px, transparent 2px 4px); box-shadow: inset 0 0 0 1px var(--c); min-width: 2px; }
+.alm-weather__n { text-align: right; width: 3em; font-weight: 600; }
+.alm-weather__pct { text-align: right; width: 4em; font-style: italic; color: var(--ink-3); }
+
+.alm-years { display: grid; gap: 10px; justify-items: start; }
+.alm-years__plot { position: relative; display: flex; align-items: flex-end; gap: 2px; width: 100%; height: 180px; border-bottom: 1px solid var(--ink); background-image: linear-gradient(to top, var(--rule) 1px, transparent 1px); background-size: 100% 45px; }
+.alm-years__bar { flex: 1; height: 100%; display: flex; align-items: flex-end; justify-content: center; }
+.alm-years__bar span { width: max(3px, 60%); background: repeating-linear-gradient(45deg, var(--accent) 0 1.5px, transparent 1.5px 4px); box-shadow: inset 0 0 0 1px var(--accent); transform-origin: bottom; animation: alm-grow 900ms var(--ease-out) both; }
+.alm-years__bar.is-hover span, .alm-years__bar:focus-visible span { background: var(--accent); }
+@keyframes alm-grow { from { transform: scaleY(0); } }
+.alm-years__tip { position: absolute; top: -10px; transform: translate(-50%, -100%); background: var(--ink); color: var(--paper); padding: 5px 9px; font-size: 0.8125rem; white-space: nowrap; pointer-events: none; }
+.alm-years__axis { display: flex; justify-content: space-between; width: 100%; font-style: italic; font-size: 0.8125rem; color: var(--ink-3); }

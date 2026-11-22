@@ -4,20 +4,19 @@ ETERNALL is **a private publishing house for your life**. It is one local-first,
 
 ## Current state (read this before changing anything)
 
-- **Phase 0 (documents) is in review.** No platform code exists yet. **Don't start Phase 1 work until the owner approves the docs** (`docs/ROADMAP.md`).
-- This repo currently contains the **original single-app ETERNALL** (Vite + React 18, `src/`). It becomes `apps/web` + `packages/*` + `modules/*` in Phase 1 (`docs/ARCHITECTURE.md` §10).
+- The owner approved the docs and asked to build through every phase. Work happens on branch `platform`, one commit per verified phase, never pushed (`docs/ROADMAP.md` tracks progress).
+- **Phase 1 is done:** the monorepo (`apps/web`, `packages/{core,vault,kit,ui}`, `modules/{envoi,folio,almanack}`) replaces the original single app. The vault is still a plaintext localStorage store until Phase 2.
 - **AMAZEEN lives in `~/orca/amazeen-app`. Never modify it in place.** It is imported via `git subtree` in Phase 3 (`docs/adr/0006`). Changes to it need the owner's explicit approval.
 
 ## Commands
 
-Current app (until Phase 1):
 ```bash
-npm run dev        # Vite dev server
-npm test           # Vitest (46 tests)
-npm run typecheck  # tsc -b
-npm run build      # typecheck + production build
+npm run dev        # Vite dev server for apps/web on :5181 (every door: /, /envoi/, /folio/, /almanack/)
+npm test           # Vitest across all workspaces
+npm run typecheck  # one root tsc over every workspace
+npm run lint       # oxlint, zero warnings
+npm run build      # typecheck + production build + bundle budgets (scripts/check-budgets.mjs)
 ```
-After Phase 1, commands run per workspace (`npm run <script> -w <workspace>`) and from the root (`npm test`, `npm run lint`, `npm run test:e2e`, `npm run build`). Update this section when that lands.
 
 ## Docs map
 

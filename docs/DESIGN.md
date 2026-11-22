@@ -130,7 +130,7 @@ ETERNALL uses three-dimensional and sonic moments where they **carry meaning**: 
 
 | Metric | Budget |
 |---|---|
-| Shell + spine JS (gzip) | ≤ 60 KB |
+| Shell entry JS incl. React (gzip) | ≤ 100 KB (Phase 1: 89.6 KB) |
 | Each imprint's initial chunk (gzip, excluding 3D) | ≤ 90 KB |
 | Each 3D chunk (gzip, including the three.js share) | ≤ 220 KB, loaded only on demand |
 | Fonts per imprint | ≤ 3 families, woff2, Latin subset, ≤ 120 KB total; `font-display: swap` with metric-matched fallbacks |

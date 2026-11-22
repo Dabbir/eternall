@@ -18,7 +18,7 @@ Conventions:
 | Entity | Fields |
 |---|---|
 | `house/profile` | `name`, `birthDate`, `horizonYears` (50–120), `hemisphere` (`north`/`south`, for PROLOGUE seasons), `createdAt` |
-| `house/settings` | `theme` per imprint (`system`/`light`/`dark`), `flatPages` (disable 3D), `lens` (`moments`/`chapters`/`plain`), `enabledImprints`, `dismissedSuggestions`, `autoLock` |
+| `house/settings` | `theme` (`system`/`light`/`dark`, one preference for the whole house; every imprint has its own light and dark palette), `flatPages` (disable 3D), `lens` (`moments`/`chapters`/`plain`), `hidden` (imprints hidden from the doors), `dismissed` (one-time hints and suggestions), `autoLockMinutes` |
 | `house/inscription` | `date`, `title` (≤ 80), `body` (≤ 10k), `tone` (shared tones). The **lightweight "mark this week"** from today's app, kept for people who don't use AMAZEEN; it colours the *Moments* lens. When AMAZEEN is enabled, "Inscribe this week" offers *a quick inscription* or *a piece in AMAZEEN*. |
 
 **Lifeline:** combines all imprints' `WeekContribution`s per week.
@@ -62,7 +62,7 @@ Conventions:
 
 | Entity | Fields |
 |---|---|
-| `folio/chapter` | `title` (≤ 60), `start`, `end` (null = still being written), `cloth` (bookcloth index 1–6), `note` (≤ 400) |
+| `folio/chapter` | `title` (≤ 60), `start`, `end` (null = still being written), `cloth` (bookcloth 1–6: ochre, cobalt, madder, viridian, violet, rose), `note` (≤ 400) |
 
 - **Rules (existing, kept):** no overlapping chapters; an ongoing chapter can't start in the future; chapters fit within the horizon (or ±120 years without profile).
 - **Lifeline contribution:** cloth colour for every week in range (*Chapters* lens), marker `chapter-start` on the first week, line *"Chapter · <title>"*.

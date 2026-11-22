@@ -25,6 +25,8 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 - CI: lint, types, unit, e2e and axe, plus the bundle budget script.
 - The `--ink-3` contrast correction (`design/eternall.md`).
 
+**Done (2026-11-22):** besides the skeleton, the 2D designs of ENVOI, FOLIO and ALMANACK (`docs/design/*`) were pulled forward into this phase so their UI is written once; Phase 4 keeps their 3D modes. The old app's data migrates automatically from `eternall:archive`.
+
 **Exit criteria:**
 - All existing behaviour is reproduced, and the existing tests pass in the new locations.
 - Each door URL serves its own manifest, and the house is installable.
