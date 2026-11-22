@@ -1,0 +1,186 @@
+import { cleanText, diffDays, finish, isLeapYear, isValidISO, requireText, type FieldErrors, type ISODate, type Validation } from '@eternall/core';
+
+/**
+ * KINDRED's domain (docs/MODULES.md §8, docs/design/kindred.md): a card per person, notes of when
+ * you saw them, and dates to remember. People never receive anything and are never contacted.
+ * No scores, no "overdue": time since you last met is shown plainly, as distance in the sky.
+ */
+export const PERSON_PATH = 'kindred/person';
+export const SEEN_PATH = 'kindred/seen';
+export const LIMITS = { name: 60, drawer: 30, howWeMet: 200, note: 280, dateLabel: 40, dates: 8 } as const;
+export const CLOSENESS = ['inner', 'close', 'around'] as const;
+export type Closeness = (typeof CLOSENESS)[number];
+export const CLOSENESS_LABEL: Record<Closeness, string> = { inner: 'Inner circle', close: 'Close', around: 'Around' };
+export const RECENT_DAYS = 14;
+
+export interface PersonDate {
+  label: string;
+  date: ISODate;
+  yearly: boolean;
+}
+
+export interface Person {
+  id: string;
+  name: string;
+  drawer: string;
+  closeness: Closeness;
+  howWeMet: string;
+  dates: PersonDate[];
+  createdAt: string;
+}
+
+export interface Seen {
+  id: string;
+  personId: string;
+  date: ISODate;
+  note: string;
+}
+
+/** One "seen" per person per day. */
+export const seenId = (personId: string, date: ISODate) => `${personId}_${date}`;
+
+export function lastSeen(seen: readonly Seen[], personId: string): ISODate | null {
+  let last: ISODate | null = null;
+  for (const s of seen) if (s.personId === personId && (!last || s.date > last)) last = s.date;
+  return last;
+}
+
+/** The next time a date comes round (yearly dates roll over; Feb 29 falls on Feb 28 in common years). */
+export function nextOccurrence(d: PersonDate, today: ISODate): ISODate | null {
+  if (!d.yearly) return d.date >= today ? d.date : null;
+  const md = d.date.slice(5);
+  const at = (y: number) => (md === '02-29' && !isLeapYear(y) ? `${y}-02-28` : `${y}-${md}`);
+  const y = Number(today.slice(0, 4));
+  return at(y) >= today ? at(y) : at(y + 1);
+}
+
+export interface Upcoming {
+  person: Person;
+  label: string;
+  date: ISODate;
+  days: number;
+  /** For yearly dates with a known first year: the age or anniversary being reached. */
+  turns: number | null;
+}
+
+export function upcomingDates(people: readonly Person[], today: ISODate, within = 30): Upcoming[] {
+  const out: Upcoming[] = [];
+  for (const p of people) {
+    for (const d of p.dates) {
+      const next = nextOccurrence(d, today);
+      if (!next) continue;
+      const days = diffDays(today, next);
+      if (days > within) continue;
+      const turns = d.yearly ? Number(next.slice(0, 4)) - Number(d.date.slice(0, 4)) : null;
+      out.push({ person: p, label: d.label, date: next, days, turns: turns && turns > 0 ? turns : null });
+    }
+  }
+  return out.sort((a, b) => a.days - b.days || a.person.name.localeCompare(b.person.name));
+}
+
+export interface Drawer {
+  label: string;
+  auto: boolean;
+  people: Person[];
+}
+
+/** The card file: an automatic "Recently seen" drawer first, then your drawers, A–Z. */
+export function drawers(people: readonly Person[], seen: readonly Seen[], today: ISODate): Drawer[] {
+  const byName = (a: Person, b: Person) => a.name.localeCompare(b.name);
+  const recent = people
+    .map((p) => ({ p, last: lastSeen(seen, p.id) }))
+    .filter((x) => x.last && diffDays(x.last, today) <= RECENT_DAYS)
+    .sort((a, b) => b.last!.localeCompare(a.last!))
+    .map((x) => x.p);
+  const groups = new Map<string, Person[]>();
+  for (const p of people) groups.set(p.drawer || 'Unfiled', [...(groups.get(p.drawer || 'Unfiled') ?? []), p]);
+  const named = [...groups.entries()].sort((a, b) => a[0].localeCompare(b[0])).map(([label, ps]) => ({ label, auto: false, people: ps.sort(byName) }));
+  return recent.length ? [{ label: 'Recently seen', auto: true, people: recent }, ...named] : named;
+}
+
+export interface Star {
+  id: string;
+  name: string;
+  /** -1…1 around the centre (you). */
+  x: number;
+  y: number;
+  /** 1 (around) … 3 (inner circle). */
+  size: number;
+  days: number | null;
+  drawer: string;
+}
+
+/**
+ * The constellation: angle = drawer (one sector each), distance = time since last seen (log-scaled,
+ * never seen sits at the edge), size = closeness. Deterministic, so it never drifts on its own.
+ */
+export function constellation(people: readonly Person[], seen: readonly Seen[], today: ISODate): Star[] {
+  const labels = [...new Set(people.map((p) => p.drawer || 'Unfiled'))].sort();
+  const sector = (Math.PI * 2) / Math.max(1, labels.length);
+  const maxLog = Math.log1p(730);
+  return labels.flatMap((label, si) => {
+    const members = people.filter((p) => (p.drawer || 'Unfiled') === label).sort((a, b) => a.name.localeCompare(b.name));
+    return members.map((p, i) => {
+      const last = lastSeen(seen, p.id);
+      const days = last ? Math.max(0, diffDays(last, today)) : null;
+      const r = 0.22 + 0.74 * (days === null ? 1 : Math.min(1, Math.log1p(days) / maxLog));
+      const a = -Math.PI / 2 + si * sector + sector * ((i + 1) / (members.length + 1));
+      return { id: p.id, name: p.name, x: Math.cos(a) * r, y: Math.sin(a) * r, size: p.closeness === 'inner' ? 3 : p.closeness === 'close' ? 2 : 1, days, drawer: label };
+    });
+  });
+}
+
+export function searchPeople(people: readonly Person[], query: string): Person[] {
+  const q = query.trim().toLocaleLowerCase();
+  if (!q) return [];
+  return people
+    .filter((p) => p.name.toLocaleLowerCase().includes(q))
+    .sort((a, b) => Number(!a.name.toLocaleLowerCase().startsWith(q)) - Number(!b.name.toLocaleLowerCase().startsWith(q)) || a.name.localeCompare(b.name));
+}
+
+export function sinceLabel(days: number | null): string {
+  if (days === null) return 'not seen yet';
+  if (days === 0) return 'seen today';
+  if (days === 1) return 'seen yesterday';
+  if (days < 14) return `seen ${days} days ago`;
+  if (days < 60) return `seen ${Math.round(days / 7)} weeks ago`;
+  if (days < 730) return `seen ${Math.round(days / 30.44)} months ago`;
+  return `seen ${Math.floor(days / 365.25)} years ago`;
+}
+
+export interface PersonInput {
+  name: string;
+  drawer: string;
+  closeness: string;
+  howWeMet: string;
+  dates: { label: string; date: string; yearly: boolean }[];
+}
+
+export function validatePerson(input: PersonInput): Validation<Omit<Person, 'id' | 'createdAt'>, keyof PersonInput> {
+  const errors: FieldErrors<keyof PersonInput> = {};
+  const name = requireText(input.name, LIMITS.name, 'A name');
+  if (name.error) errors.name = name.value ? name.error : 'A card needs a name.';
+  const drawer = cleanText(input.drawer);
+  if (drawer.length > LIMITS.drawer) errors.drawer = `Keep the drawer name under ${LIMITS.drawer} characters.`;
+  if (!(CLOSENESS as readonly string[]).includes(input.closeness)) errors.closeness = 'Choose how close.';
+  const howWeMet = cleanText(input.howWeMet);
+  if (howWeMet.length > LIMITS.howWeMet) errors.howWeMet = `Keep it under ${LIMITS.howWeMet} characters.`;
+  const dates = input.dates.filter((d) => d.label.trim() || d.date);
+  if (dates.length > LIMITS.dates) errors.dates = `Keep at most ${LIMITS.dates} dates.`;
+  for (const d of dates) {
+    if (!d.label.trim()) errors.dates = 'Each date needs a label, like “Birthday”.';
+    else if (!isValidISO(d.date)) errors.dates = `Enter a valid date for “${d.label.trim()}”.`;
+  }
+  return finish(errors, () => ({
+    name: name.value,
+    drawer,
+    closeness: input.closeness as Closeness,
+    howWeMet,
+    dates: dates.map((d) => ({ label: cleanText(d.label).slice(0, LIMITS.dateLabel), date: d.date, yearly: d.yearly })),
+  }));
+}
+
+export function kindredStats(people: readonly Person[], seen: readonly Seen[], today: ISODate) {
+  const year = today.slice(0, 4);
+  return { kept: people.length, seenThisYear: new Set(seen.filter((s) => s.date.startsWith(year)).map((s) => s.personId)).size };
+}

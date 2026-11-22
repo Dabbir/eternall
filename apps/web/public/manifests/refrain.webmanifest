@@ -1,0 +1,29 @@
+{
+  "id": "/refrain/",
+  "name": "REFRAIN",
+  "short_name": "REFRAIN",
+  "description": "The lines you come back to. An ETERNALL imprint.",
+  "start_url": "/refrain/",
+  "scope": "/refrain/",
+  "display": "standalone",
+  "background_color": "#f7f4ec",
+  "theme_color": "#3b3a8f",
+  "icons": [
+    {
+      "src": "/brand/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

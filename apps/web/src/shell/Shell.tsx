@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import type { ImprintDefinition, ImprintId, ReadContext } from '@eternall/core';
 import { HouseProvider, type CapabilityId, type Capabilities, type House, type PrimaryAction } from '@eternall/kit';
 import { useToast } from '@eternall/ui';
@@ -6,10 +6,11 @@ import { useVault, useVaultVersion } from '@eternall/vault';
 import { IMPRINTS, IMPRINT_IDS, imprintById } from '../registry';
 import { INSCRIPTION_PATH, type Inscription } from '../house/domain/house';
 import { HousePages } from '../house/HousePages';
-import { CommandPalette } from './CommandPalette';
 import { DoorsMenu } from './DoorsMenu';
 import { ImprintHost } from './ImprintHost';
 import { Spine } from './Spine';
+
+const CommandPalette = lazy(() => import('./CommandPalette').then((m) => ({ default: m.CommandPalette })));
 import { useProfile, useSettings, useToday } from './hooks';
 import { navigate, parseLocation, useHref } from './router';
 import { useApplyTheme } from './theme';
@@ -32,6 +33,11 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   const [primary, setPrimary] = useState<PrimaryAction | null>(null);
   const [doorsOpen, setDoorsOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  // The palette loads the first time it opens, then stays mounted.
+  const [paletteUsed, setPaletteUsed] = useState(false);
+  useEffect(() => {
+    if (paletteOpen) setPaletteUsed(true);
+  }, [paletteOpen]);
   useApplyTheme(settings.theme);
 
   const ctx: ReadContext = useMemo(() => ({ data: vault, today, profile }), [vault, today, profile, version]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -128,7 +134,11 @@ export function Shell({ today: fixedToday }: { today?: string }) {
           )}
         </main>
         <DoorsMenu open={doorsOpen} onClose={() => setDoorsOpen(false)} ctx={ctx} enabled={enabled} used={used} current={current} hasProfile={!!profile} />
-        <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} ctx={ctx} enabled={enabled} />
+        {paletteUsed && (
+          <Suspense fallback={null}>
+            <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} ctx={ctx} enabled={enabled} />
+          </Suspense>
+        )}
       </div>
     </HouseProvider>
   );

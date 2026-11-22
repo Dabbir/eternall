@@ -5,7 +5,10 @@ ETERNALL is **a private publishing house for your life**. It is one local-first,
 ## Current state (read this before changing anything)
 
 - The owner approved the docs and asked to build through every phase. Work happens on branch `platform`, one commit per verified phase, never pushed (`docs/ROADMAP.md` tracks progress).
-- **Phase 1 is done:** the monorepo (`apps/web`, `packages/{core,vault,kit,ui}`, `modules/{envoi,folio,almanack}`) replaces the original single app. - **Phase 4 is done:** 3D lives in lazily-loaded scene modules (`*Scene.ts`) mounted through `@eternall/stage`'s `Stage3D`; every one has its 2D view and a `DimensionToggle`. three.js is the only 3D dependency.
+- **Phase 1 is done:** the monorepo (`apps/web`, `packages/{core,vault,kit,ui,stage}`, `modules/*`, `services/sync-worker`) replaces the original single app.
+- **Phase 5 is done:** REFRAIN, PROLOGUE, KINDRED and MARGINALIA live in `modules/`, with their capabilities wired and tested with and without their providers.
+- **Release 1 is built:** sync, anonymous licences, Patron and the PWA (`services/sync-worker`, `packages/vault/src/{protocol,sync}.ts`). Owner TODOs (payment provider, prices, trademark checks, independent privacy review, D1 database) are listed in `docs/ROADMAP.md`.
+- **Phase 4 is done:** 3D lives in lazily-loaded scene modules (`*Scene.ts`) mounted through `@eternall/stage`'s `Stage3D`; every one has its 2D view and a `DimensionToggle`. three.js is the only 3D dependency.
 - **Phase 3 is done:** AMAZEEN lives in `modules/amazeen` (imported with its history). Its code keeps its own conventions; ETERNALL-specific glue is in `modules/amazeen/src/imprint/`. Patches for the original repo go in `docs/patches/`, never applied by us.
 - **Phase 2 is done:** everything is encrypted at rest in IndexedDB through `packages/vault` (keyring, encrypted store, recovery kit). Never write personal data anywhere else.
 - **AMAZEEN lives in `~/orca/amazeen-app`. Never modify it in place.** It is imported via `git subtree` in Phase 3 (`docs/adr/0006`). Changes to it need the owner's explicit approval.
@@ -13,7 +16,7 @@ ETERNALL is **a private publishing house for your life**. It is one local-first,
 ## Commands
 
 ```bash
-npm run dev        # Vite dev server for apps/web on :5181 (every door: /, /envoi/, /folio/, /almanack/)
+npm run dev        # Vite dev server for apps/web on :5181 (every door: /, /amazeen/, /envoi/, /folio/, /almanack/, /refrain/, /prologue/, /kindred/, /marginalia/)
 npm test           # Vitest across all workspaces
 npm run typecheck  # one root tsc over every workspace
 npm run lint       # oxlint, zero warnings

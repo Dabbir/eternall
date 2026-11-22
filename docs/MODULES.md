@@ -109,7 +109,7 @@ Conventions:
 
 | Entity | Fields |
 |---|---|
-| `kindred/person` | `name` (≤ 60), `drawer` (label), `closeness` (`inner`/`close`/`around`), `howWeMet?` (≤ 200), `photo?` (local image, encrypted, ≤ 500 KB after resize), `dates[]` (`{ label, date, yearly }`) |
+| `kindred/person` | `name` (≤ 60), `drawer` (label), `closeness` (`inner`/`close`/`around`), `howWeMet?` (≤ 200), `photo?` (local image, encrypted, ≤ 500 KB after resize; *not built yet*), `dates[]` (`{ label, date, yearly }`) |
 | `kindred/seen` | `personId`, `date`, `note?` (≤ 280) |
 
 - **Rules:** people never receive anything and are never contacted. Birthdays come from `dates` with `yearly: true`.
@@ -123,7 +123,8 @@ Conventions:
 | Entity | Fields |
 |---|---|
 | `marginalia/work` | `title` (≤ 160), `by?`, `kind` (`book`/`film`/`album`/`essay`/`podcast`/`other`), `started?`, `finished?`, `landing?` (`{ stars: 1–5 }` or `{ word }`) |
-| `marginalia/underline` | `workId`, `text` (≤ 2k; a passage, never whole works), `locator?` (page, timestamp, track), `note?` (≤ 1k), `offeredToOverheard` (bool) |
+| `marginalia/underline` | `workId`, `text` (≤ 2k; a passage, never whole works), `locator?` (page, timestamp, track), `note?` (≤ 1k), `offered` (bool, opt-in to Overheard) |
+| `marginalia/pref` | one record: `hand` (handwritten margins for short notes, off by default) |
 
 - **Rules:** no network lookups in v1 (privacy). Everything is typed by the person.
 - **Lifeline contribution:** marker `work` on the week a work is finished; line *"MARGINALIA · Finished The Waves"*.

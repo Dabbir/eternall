@@ -38,6 +38,10 @@ export interface Capabilities {
   'rituals.list': {
     list(): { id: string; name: string; href: string }[];
   };
+  'rituals.week': {
+    /** How a 7-day window went, e.g. for "Visit Dad · kept 3 of the last 4 weeks". */
+    week(ritualId: string, start: ISODate): { kept: boolean; notes: number } | null;
+  };
 }
 export type CapabilityId = keyof Capabilities;
 

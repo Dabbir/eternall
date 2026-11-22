@@ -1,0 +1,173 @@
+/* ─────────────────────────────────────────────────────────────
+   REFRAIN · a score and a repeated verse (docs/design/refrain.md)
+   Spatial system: the five-line staff is the grid. s = one staff space;
+   a bar is a week of seven beats; the instrument name sits in an 18s margin.
+   ───────────────────────────────────────────────────────────── */
+[data-imprint='refrain'] {
+  --paper: #f7f4ec;
+  --paper-sunk: #eeeadf;
+  --paper-raised: #fcfaf5;
+  --ink: #16161a;
+  --ink-2: #4a4a52;
+  --ink-3: #66666f;
+  --rule: rgb(22 22 26 / 0.14);
+  --rule-strong: rgb(22 22 26 / 0.3);
+  --accent: #3b3a8f;
+  --accent-deep: #2a2970;
+  --accent-soft: rgb(59 58 143 / 0.1);
+  --on-accent: #f7f4ec;
+  --veil: rgb(16 16 22 / 0.45);
+  --font-display: 'Bodoni Moda', 'Didot', Georgia, serif;
+  --font-ui: 'Libre Franklin', system-ui, sans-serif;
+  --font-mono: 'Libre Franklin', system-ui, sans-serif;
+  --s: clamp(8px, 0.45vw + 5px, 14px);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) [data-imprint='refrain'] {
+    --paper: #101016; --paper-sunk: #0a0a0f; --paper-raised: #17171f;
+    --ink: #ecebf2; --ink-2: #b2b1c0; --ink-3: #8f8e9e;
+    --rule: rgb(236 235 242 / 0.13); --rule-strong: rgb(236 235 242 / 0.28);
+    --accent: #a6a4ff; --accent-deep: #8b89f0; --accent-soft: rgb(166 164 255 / 0.13); --on-accent: #101016;
+    --veil: rgb(0 0 0 / 0.62);
+  }
+}
+:root[data-theme='dark'] [data-imprint='refrain'] {
+  --paper: #101016; --paper-sunk: #0a0a0f; --paper-raised: #17171f;
+  --ink: #ecebf2; --ink-2: #b2b1c0; --ink-3: #8f8e9e;
+  --rule: rgb(236 235 242 / 0.13); --rule-strong: rgb(236 235 242 / 0.28);
+  --accent: #a6a4ff; --accent-deep: #8b89f0; --accent-soft: rgb(166 164 255 / 0.13); --on-accent: #101016;
+  --veil: rgb(0 0 0 / 0.62);
+}
+
+.rf { max-width: 1240px; margin: 0 auto; padding: calc(var(--s) * 5) var(--gutter) 120px; }
+
+.rf-head { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: calc(var(--s) * 2) calc(var(--s) * 4); padding-bottom: calc(var(--s) * 2); margin-bottom: calc(var(--s) * 2); border-bottom: 1px solid var(--rule-strong); }
+.rf-eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+.rf-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.4rem, 1.6rem + 3vw, 4.4rem); line-height: 1; letter-spacing: -0.015em; margin-top: calc(var(--s) * 1); }
+.rf-title em { font-style: italic; }
+.rf-head__aside { display: grid; justify-items: end; gap: calc(var(--s) * 1); }
+.rf-week { font-family: var(--font-display); font-style: italic; color: var(--ink-2); }
+.rf-transport { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.rf-note { font-style: italic; color: var(--ink-2); margin-bottom: var(--s); }
+.rf-legend { display: flex; align-items: baseline; gap: 6px 10px; flex-wrap: wrap; font-size: 0.8125rem; color: var(--ink-2); margin-bottom: calc(var(--s) * 2); }
+
+/* Bravura: SMuFL glyphs. One em = four staff spaces, so font-size 40 in a 10-unit staff space. */
+.rf-glyph { font-family: 'Bravura'; font-size: 40px; fill: var(--ink); }
+.rf-glyph--soft, .rf-rest--soft { fill: var(--ink-3); opacity: 0.55; }
+.rf-glyph-inline { font-family: 'Bravura'; font-size: 1.6rem; line-height: 0; position: relative; top: 0.18em; }
+.rf-soft { opacity: 0.45; }
+.rf-clef { fill: var(--ink-2); }
+
+.rf-score { display: grid; gap: 0; }
+.rf-nav { display: flex; gap: 6px; justify-content: flex-end; margin-bottom: var(--s); }
+.rf-nav__btn { display: inline-flex; align-items: center; gap: 4px; font-size: 0.8125rem; color: var(--ink-2); padding: 6px 10px; border-radius: 999px; }
+.rf-nav__btn:hover:not(:disabled) { color: var(--ink); background: var(--accent-soft); }
+.rf-nav__btn:disabled { opacity: 0.4; }
+
+.rf-system { display: grid; grid-template-columns: calc(var(--s) * 18) minmax(0, 1fr); align-items: center; gap: 0 calc(var(--s) * 1.5); padding: calc(var(--s) * 0.5) 0; }
+.rf-system:not(.rf-system--head) + .rf-system { border-top: 3px double var(--rule); }
+.rf-system.is-paused .rf-staff { opacity: 0.5; }
+.rf-bars { display: grid; grid-template-columns: repeat(4, 1fr); }
+.rf-bars--staff { display: block; position: relative; }
+.rf-barhead { display: grid; gap: 4px; padding: 0 2px; }
+.rf-barhead__date { font-family: var(--font-display); font-style: italic; font-size: 0.875rem; color: var(--ink-2); }
+.rf-barhead__days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.08em; color: var(--ink-3); }
+.rf-barhead__days .is-today { color: var(--accent); }
+
+.rf-instrument { text-align: right; display: grid; gap: 2px; justify-items: end; padding: 6px 0; }
+.rf-instrument__name { font-family: var(--font-display); font-style: italic; font-size: 1.15rem; line-height: 1.15; }
+.rf-instrument:hover .rf-instrument__name { color: var(--accent); }
+.rf-instrument__cadence { font-size: 0.75rem; color: var(--ink-3); }
+
+.rf-staff { display: block; width: 100%; height: auto; overflow: visible; pointer-events: none; }
+.rf-empty__staff, .rf-yearline { pointer-events: none; }
+.rf-lines line, line.rf-lines { stroke: var(--ink); stroke-width: 0.8; opacity: 0.55; }
+.rf-ledger { stroke: var(--ink); stroke-width: 1; }
+.rf-bar { stroke: var(--ink); stroke-width: 1.2; }
+.rf-bar--double { stroke-width: 3.6; stroke-dasharray: none; }
+.rf-bar--heavy { stroke-width: 4; }
+.rf-today { fill: var(--accent-soft); }
+.rf-playhead { fill: var(--accent); opacity: 0.16; }
+.rf-dot { fill: var(--ink-3); }
+.rf-note { fill: var(--ink); transform-box: fill-box; transform-origin: 30% 80%; animation: rf-settle 220ms var(--ease-out) both; }
+.rf-noteg.is-sounding .rf-note { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent)); }
+@keyframes rf-settle { from { transform: scale(0.6); opacity: 0; } 60% { opacity: 1; } }
+
+.rf-beats { position: absolute; top: 0; bottom: 0; right: 0; left: calc(var(--lead) * 100%); display: grid; }
+.rf-bars--head { padding-left: calc(var(--lead) * 100%); }
+.rf-beat { min-height: 44px; border-radius: 6px; }
+.rf-beat:hover:not(:disabled) { background: var(--accent-soft); }
+.rf-beat:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.rf-beat:disabled { cursor: default; }
+
+.rf-add { justify-self: start; margin: calc(var(--s) * 2) 0 0 calc(var(--s) * 19.5); display: inline-flex; gap: 6px; align-items: center; font-size: 0.875rem; color: var(--accent); }
+
+.rf-empty { display: grid; justify-items: center; gap: calc(var(--s) * 2); text-align: center; padding: calc(var(--s) * 6) 0; }
+.rf-empty__staff { width: min(560px, 100%); }
+.rf-empty__text { font-family: var(--font-display); font-size: 1.35rem; max-width: 34ch; line-height: 1.35; }
+
+.rf-year { display: grid; gap: calc(var(--s) * 1.5); }
+.rf-year__count { font-family: var(--font-display); font-style: italic; color: var(--accent); font-size: 1.25rem; }
+.rf-year__row { display: grid; grid-template-columns: calc(var(--s) * 18) minmax(0, 1fr); gap: calc(var(--s) * 1.5); align-items: end; }
+.rf-year__row .rf-instrument__name { text-align: right; }
+.rf-yearline { width: 100%; height: auto; display: block; }
+.rf-yearline__bar { fill: var(--ink-3); opacity: 0.5; }
+.rf-yearline__on { fill: var(--accent); }
+.rf-yearline__head { stroke: var(--accent); stroke-width: 1.5; }
+
+.rf-programme { max-width: 760px; margin: 0 auto; display: grid; gap: calc(var(--s) * 2); }
+.rf-back { justify-self: start; display: inline-flex; align-items: center; gap: 6px; font-size: 0.875rem; color: var(--ink-2); margin-bottom: var(--s); }
+.rf-programme__title { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.4rem, 1.8rem + 2.4vw, 3.8rem); line-height: 1.02; }
+.rf-programme__why { font-family: var(--font-display); font-style: italic; font-size: 1.3rem; color: var(--ink-2); max-width: 46ch; }
+.rf-programme__facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); }
+.rf-programme__facts > div { padding: calc(var(--s) * 1.5) 0; }
+.rf-programme__facts dt { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3); }
+.rf-programme__facts dd { font-family: var(--font-display); font-size: 1.3rem; margin-top: 4px; }
+.rf-h2 { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-2); margin-top: var(--s); }
+.rf-programme__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.rf-cap { text-transform: capitalize; }
+
+.rf-editor .dialog__title { font-family: var(--font-display); font-weight: 400; font-size: 1.9rem; }
+.rf-editor__staff { width: 100%; height: 22px; }
+.rf-editor__staff line { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 400; stroke-dashoffset: calc(400 - 400 * var(--p)); transition: stroke-dashoffset 600ms var(--ease-out); }
+.rf-editor__name input { font-family: var(--font-display); font-size: 1.5rem; }
+.rf-cadence, .rf-sounds { display: grid; gap: 8px; border: 0; padding: 0; }
+.rf-cadence legend, .rf-sounds legend { font-size: 0.8125rem; font-weight: 600; margin-bottom: 6px; }
+.rf-choice { display: flex; gap: 10px; align-items: center; padding: 10px 14px; border: 1px solid var(--rule-strong); border-radius: 10px; cursor: pointer; }
+.rf-choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.rf-choice input { accent-color: var(--accent); }
+.rf-sounds { grid-template-columns: repeat(2, 1fr); }
+.rf-sounds legend, .rf-sounds .field__hint { grid-column: 1 / -1; }
+.rf-inline { display: flex; align-items: center; gap: 8px; padding-left: 34px; }
+.rf-inline select { padding: 6px 10px; border: 1px solid var(--rule-strong); border-radius: 8px; background: var(--paper-raised); color: var(--ink); font: inherit; }
+
+.rf-today-list { display: grid; gap: 8px; }
+.rf-today-item { width: 100%; display: grid; grid-template-columns: 2.2rem 1fr auto; align-items: center; gap: 12px; padding: 14px 16px; min-height: 56px; border: 1px solid var(--rule-strong); border-radius: 12px; text-align: left; transition: background 200ms, border-color 200ms; }
+.rf-today-item.is-on { border-color: var(--accent); background: var(--accent-soft); }
+.rf-today-item__name { font-family: var(--font-display); font-size: 1.2rem; }
+.rf-today-item__state { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+
+/* Mobile: one bar (a week) per screen; the nav steps week by week. */
+@media (max-width: 760px) {
+  .rf-system { grid-template-columns: 1fr; }
+  .rf-instrument { justify-items: start; text-align: left; }
+  .rf-system--head > span { display: none; }
+  .rf-bars:not(.rf-bars--staff) { grid-template-columns: 1fr; }
+  .rf-bars:not(.rf-bars--staff) > .rf-barhead:not(:last-child) { display: none; }
+  .rf-bars--staff { overflow: hidden; }
+  /* Show exactly the last bar: the staff is 4 bars plus the clef's lead, so it is 4 / (1 − lead) wide. */
+  .rf-bars--staff .rf-staff { max-width: none; width: calc(400% / (1 - var(--lead))); margin-left: calc(100% - 400% / (1 - var(--lead))); }
+  .rf-bars--staff .rf-beats { left: -300%; right: 0; }
+  .rf-bars--head { padding-left: 0; }
+  .rf-add { margin-left: 0; }
+  .rf-year__row { grid-template-columns: 1fr; }
+  .rf-year__row .rf-instrument__name { text-align: left; }
+  .rf-head__aside { justify-items: start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rf-note { animation: none; }
+  .rf-editor__staff line { transition: none; }
+}

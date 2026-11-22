@@ -134,8 +134,10 @@ Imprints can enrich each other without depending on each other:
 | `people.mention` | KINDRED | AMAZEEN, ENVOI, PROLOGUE | "@Ana" picker in a journal piece links to Ana's card |
 | `quotes.offer` | MARGINALIA | AMAZEEN | Underlines offered as candidates for the "Overheard" page |
 | `chapters.at` | FOLIO | house, AMAZEEN, ALMANACK | "This issue is part of *Lisbon*" |
-| `rituals.week` | REFRAIN | house, PROLOGUE | A hope linked to a ritual line |
+| `rituals.list` · `rituals.week` | REFRAIN | PROLOGUE | A hope linked to a ritual line: “REFRAIN: Read 20 pages, kept this week” |
 | `letters.compose` | ENVOI | AMAZEEN, PROLOGUE | "Seal this as a letter to next year" |
+
+**As built (Release 2):** KINDRED's `people.mention` is consumed by ENVOI (a “Mention someone” picker in the composer) and PROLOGUE (a hope's cast); MARGINALIA's `quotes.offer` by AMAZEEN (an “offered for Overheard” strip on the desk that adds a quote entry on a press, once per offer); ENVOI's `letters.compose` by PROLOGUE (“Write to yourself for next season” at the epilogue); REFRAIN's rituals by PROLOGUE. `apps/web/src/test/release2.test.tsx` runs each consumer with and without its provider. AMAZEEN's own `people.mention` picker is not wired yet.
 
 The shell keeps a **capability registry**. A consumer asks `ctx.capabilities.get('people.mention')` and receives `null` if KINDRED isn't enabled, and must render its feature without it. Links are stored as **stable references** (`{ imprint: 'kindred', id }`), so a link survives if the provider is disabled and is shown as plain text.
 

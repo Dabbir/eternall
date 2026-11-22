@@ -165,6 +165,17 @@ function LifelineCanvasImpl({ model, profile, lens, selected, onSelect, reveal =
       // Letter marks (future and past opening weeks).
       const marker = model.markers.get(i);
       const cap = marker === 'letter-sealed' ? 'sealed' : marker === 'letter-ready' ? 'ready' : marker === 'letter-opened' ? 'opened' : null;
+      // Release-2 signals: a corner dot for a ritual kept, a person seen or a work finished; a notch for a season's edge.
+      if (!cap && reveal >= 1 && (marker === 'ritual' || marker === 'person' || marker === 'work' || marker === 'season') && lens !== 'plain') {
+        ctx.globalAlpha = 0.9;
+        ctx.fillStyle = pal.ink3;
+        if (marker === 'season') ctx.fillRect(x, y, Math.max(1, geo.cell * 0.18), geo.cell);
+        else {
+          ctx.beginPath();
+          ctx.arc(x + geo.cell * 0.78, y + geo.cell * 0.78, Math.max(0.8, geo.cell * 0.14), 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
       if (cap && reveal >= 1) {
         const cx = x + geo.cell / 2;
         const cy = y + geo.cell / 2;

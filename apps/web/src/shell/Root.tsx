@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { EMPTY_SYNC, Keyring, SYNC_META_KEY, SyncApi, Vault, VaultProvider, createMemoryStore, useVault, useVaultVersion, type EncryptedStore, type LockInput, type RecordStore, type UnlockInput, type VaultRecord } from '@eternall/vault';
 import { Button, ToastProvider, useToast } from '@eternall/ui';
 import { LEGACY_DONE_KEY, markLegacyMigrated, readLegacy } from '../boot/legacy';
@@ -6,14 +6,16 @@ import { PLAIN_KEY } from '../boot/localStore';
 import { IMPRINT_IDS, imprintById } from '../registry';
 import { DEFAULT_SETTINGS, SETTINGS_PATH, type HouseSettings } from '../house/domain/house';
 import { LockContext, type LockApi } from '../vault/lockContext';
-import { LockSetup } from '../vault/LockSetup';
-import { RecoveryKit } from '../vault/RecoveryKit';
 import { UnlockScreen } from '../vault/UnlockScreen';
 import { useAutoLock } from '../vault/useAutoLock';
 import { SyncProvider } from '../vault/SyncProvider';
 import { UpdatePrompt } from './UpdatePrompt';
 import { ErrorBoundary } from './ErrorBoundary';
 import { Shell } from './Shell';
+
+// Seen once, when the vault is made: kept out of the first load (DESIGN.md §7).
+const LockSetup = lazy(() => import('../vault/LockSetup').then((m) => ({ default: m.LockSetup })));
+const RecoveryKit = lazy(() => import('../vault/RecoveryKit').then((m) => ({ default: m.RecoveryKit })));
 import type { ImprintId } from '@eternall/core';
 
 type Boot =
@@ -269,6 +271,7 @@ function VaultSetup({ keyring, onCreated }: { keyring: Keyring | null; onCreated
 
   if (recovery && created.current) {
     return (
+      <Suspense fallback={null}>
       <RecoveryKit
         recoveryKey={recovery}
         onDone={(confirmed) => {
@@ -279,6 +282,7 @@ function VaultSetup({ keyring, onCreated }: { keyring: Keyring | null; onCreated
           onCreated(s);
         }}
       />
+      </Suspense>
     );
   }
 
@@ -294,6 +298,7 @@ function VaultSetup({ keyring, onCreated }: { keyring: Keyring | null; onCreated
     );
   }
   return (
+    <Suspense fallback={null}>
     <LockSetup
       busy={busy}
       error={error}
@@ -304,6 +309,7 @@ function VaultSetup({ keyring, onCreated }: { keyring: Keyring | null; onCreated
         setForced(null);
       }}
     />
+    </Suspense>
   );
 }
 

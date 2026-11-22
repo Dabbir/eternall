@@ -115,6 +115,14 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 - Same quality gates as Phase 4.
 - Every capability degrades cleanly when its provider is disabled (e2e matrix).
 
+**Done (2026-11-23):** all four imprints, each with its own theme, layout and signature moment, built from `docs/design/*.md`:
+- **REFRAIN:** the score as SVG with Bravura glyphs (notes placed by pitch, neutral rests, double bars at month turns), one-question-per-step ritual editor, “Mark today” sheet, synthesized Web Audio playback with a silent playhead fallback, programme notes with the year in one line; the year as a piece (richer instruments for Patrons).
+- **PROLOGUE:** proscenium with Cast and Notes wings, curtain-up once per season with the typed title, script-format acts with humane states, epilogue that lowers the curtain, the lobby of playbills; the stage-lights shader (immersive).
+- **KINDRED:** letterpress cards in overlapping drawers that fan out, the pressed card on “I saw them today”, card flip with dates and the shared timeline (resolved at read time), the 2D star chart with a sortable list; the constellation in the round (immersive).
+- **MARGINALIA:** catalogue drawers of edge-on index cards (author ranges with surname particles, title, year, kind), the annotated page with an anchored margin and the highlighter sweep, every underline by year; the oak cabinet in CSS 3D (immersive).
+- Capabilities wired with a with/without matrix in tests; the lifeline draws ritual, person, work and season signals.
+- Deferred: KINDRED photos, local birthday reminders, and AMAZEEN's own `@` mention picker.
+
 ## Release 2
 All nine imprints live.
 

@@ -288,3 +288,10 @@
 /* ---------- immersive envelope ---------- */
 .envoi-envelope3d { width: min(640px, 100%); }
 .envoi-envelope3d__stage { height: clamp(260px, 42vw, 380px); }
+
+/* People from KINDRED, mentioned by name (people.mention). */
+.envoi-mention { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-top: 10px; font-size: 0.875rem; color: var(--ink-2); }
+.envoi-mention input { flex: 0 1 200px; padding: 6px 10px; border: 0; border-bottom: 1px solid var(--rule-strong); background: transparent; color: var(--ink); font: inherit; }
+.envoi-mention input:focus { outline: none; border-color: var(--accent); }
+.envoi-mention ul { display: flex; flex-wrap: wrap; gap: 6px; }
+.envoi-mention button { padding: 4px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }

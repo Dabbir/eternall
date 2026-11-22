@@ -51,6 +51,8 @@ export function Composer({ prefill }: { prefill: Partial<LetterInput> }) {
   const [sealing, setSealing] = useState<Letter | null>(null);
   const [busy, setBusy] = useState(false);
   const titleRef = useRef<HTMLInputElement>(null);
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+  const people = house.capability('people.mention');
 
   // Keep the draft in the vault (debounced by the vault itself).
   useEffect(() => {
@@ -210,6 +212,7 @@ export function Composer({ prefill }: { prefill: Partial<LetterInput> }) {
           Your letter
         </label>
         <textarea
+          ref={bodyRef}
           id="envoi-body"
           className="envoi-letter-input"
           placeholder={`Dear ${profile?.name ?? 'me'},\n\nBy the time you read this…`}
@@ -228,6 +231,21 @@ export function Composer({ prefill }: { prefill: Partial<LetterInput> }) {
           <p className="envoi-error" role="alert">
             {errors.body}
           </p>
+        )}
+        {people && (
+          <MentionPicker
+            search={people.search}
+            onPick={(name) => {
+              const el = bodyRef.current;
+              const at = el?.selectionStart ?? form.body.length;
+              const next = `${form.body.slice(0, at)}${name}${form.body.slice(at)}`.slice(0, LIMITS.body);
+              set('body', next);
+              window.requestAnimationFrame(() => {
+                el?.focus();
+                el?.setSelectionRange(at + name.length, at + name.length);
+              });
+            }}
+          />
         )}
 
         <footer className="envoi-sheet__foot">
@@ -259,3 +277,26 @@ export function Composer({ prefill }: { prefill: Partial<LetterInput> }) {
   );
 }
 
+
+/** With KINDRED: put someone's name into the letter (people.mention). Nothing is sent to anyone. */
+function MentionPicker({ search, onPick }: { search(q: string): { id: string; name: string }[]; onPick(name: string): void }) {
+  const [q, setQ] = useState('');
+  const matches = q.trim() ? search(q).slice(0, 5) : [];
+  return (
+    <div className="envoi-mention">
+      <label htmlFor="envoi-mention">Mention someone from KINDRED</label>
+      <input id="envoi-mention" value={q} autoComplete="off" placeholder="Type a name" onChange={(e) => setQ(e.target.value)} />
+      {matches.length > 0 && (
+        <ul aria-label="Matching people">
+          {matches.map((p) => (
+            <li key={p.id}>
+              <button type="button" onClick={() => { onPick(p.name); setQ(''); }}>
+                {p.name}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}

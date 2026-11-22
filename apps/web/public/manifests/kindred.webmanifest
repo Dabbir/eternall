@@ -1,0 +1,29 @@
+{
+  "id": "/kindred/",
+  "name": "KINDRED",
+  "short_name": "KINDRED",
+  "description": "Keep the people close. An ETERNALL imprint.",
+  "start_url": "/kindred/",
+  "scope": "/kindred/",
+  "display": "standalone",
+  "background_color": "#f6f2ea",
+  "theme_color": "#1f5f5b",
+  "icons": [
+    {
+      "src": "/brand/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

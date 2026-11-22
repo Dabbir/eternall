@@ -5,6 +5,7 @@ import { useHotkeys } from '../state/hooks';
 import { useNow } from '../state/now';
 import { useStore } from '../state/store';
 import { StorageBanner } from '../components/AppShell';
+import { OfferedQuotes } from './OfferedQuotes';
 import styles from './MastheadStrip.module.css';
 
 const NAV = [
@@ -58,6 +59,7 @@ export function MastheadStrip({ children }: { children: ReactNode }) {
         </p>
       </nav>
       <StorageBanner />
+      {route.name === 'desk' && <OfferedQuotes />}
       <div className={styles.main}>{children}</div>
     </div>
   );

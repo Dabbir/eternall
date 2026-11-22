@@ -1,0 +1,177 @@
+/* ─────────────────────────────────────────────────────────────
+   KINDRED · a letterpress card file and a sky of people (docs/design/kindred.md)
+   Spatial system: fixed 85:55 cards (340×220) in drawers that overlap 70% and
+   fan out; 56px brass rails between drawers; a radial constellation.
+   ───────────────────────────────────────────────────────────── */
+[data-imprint='kindred'] {
+  --paper: #f6f2ea;
+  --paper-sunk: #ece6da;
+  --paper-raised: #fdfbf7;
+  --ink: #1f2422;
+  --ink-2: #4b5350;
+  --ink-3: #646c69;
+  --rule: rgb(31 36 34 / 0.13);
+  --rule-strong: rgb(31 36 34 / 0.3);
+  --accent: #1f5f5b;
+  --accent-deep: #154643;
+  --accent-soft: rgb(31 95 91 / 0.1);
+  --accent-2: #a8452f;
+  --on-accent: #f6f2ea;
+  --card: #fbf8f2;
+  --card-edge: #e3dccd;
+  --brass: #a07a3a;
+  --veil: rgb(17 22 21 / 0.45);
+  --font-display: 'Young Serif', Georgia, serif;
+  --font-ui: 'Work Sans', system-ui, sans-serif;
+  --font-mono: 'Work Sans', system-ui, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) [data-imprint='kindred'] {
+    --paper: #111615; --paper-sunk: #0b0f0e; --paper-raised: #18201e;
+    --ink: #e7ece8; --ink-2: #a9b3ae; --ink-3: #89938e;
+    --rule: rgb(231 236 232 / 0.12); --rule-strong: rgb(231 236 232 / 0.26);
+    --accent: #6fc2b8; --accent-deep: #58aaa0; --accent-soft: rgb(111 194 184 / 0.13); --accent-2: #f08a6e; --on-accent: #0c1413;
+    --card: #1b2321; --card-edge: #0e1312; --brass: #c9a35c;
+    --veil: rgb(0 0 0 / 0.62);
+  }
+}
+:root[data-theme='dark'] [data-imprint='kindred'] {
+  --paper: #111615; --paper-sunk: #0b0f0e; --paper-raised: #18201e;
+  --ink: #e7ece8; --ink-2: #a9b3ae; --ink-3: #89938e;
+  --rule: rgb(231 236 232 / 0.12); --rule-strong: rgb(231 236 232 / 0.26);
+  --accent: #6fc2b8; --accent-deep: #58aaa0; --accent-soft: rgb(111 194 184 / 0.13); --accent-2: #f08a6e; --on-accent: #0c1413;
+  --card: #1b2321; --card-edge: #0e1312; --brass: #c9a35c;
+  --veil: rgb(0 0 0 / 0.62);
+}
+
+.kd { max-width: 1200px; margin: 0 auto; padding: clamp(28px, 5vw, 56px) var(--gutter) 120px; }
+.kd-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 18px; margin-bottom: 26px; }
+.kd-eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); }
+.kd-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.4rem, 1.6rem + 3vw, 4.2rem); line-height: 1.02; margin-top: 8px; }
+.kd-link { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.kd-missing { padding: 40px 0; }
+
+.kd-dates { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 30px; }
+.kd-dates button { display: inline-flex; gap: 8px; align-items: baseline; padding: 8px 14px; border: 1px solid color-mix(in srgb, var(--accent-2) 45%, transparent); border-radius: 999px; font-size: 0.875rem; color: var(--ink); }
+.kd-dates button:hover { background: color-mix(in srgb, var(--accent-2) 10%, transparent); }
+.kd-dates__mark { color: var(--accent-2); }
+
+/* The letterpress card: inner shadow on type, an offset highlight; the press comes down when you see them. */
+.kd-card { --w: 340px; position: relative; width: var(--w); aspect-ratio: 85 / 55; display: grid; align-content: start; gap: 6px; padding: 26px 28px; text-align: left; background: var(--card); border-radius: 3px; box-shadow: 0 1px 0 var(--card-edge), 0 10px 24px -14px rgb(0 0 0 / 0.35), inset 0 0 0 1px var(--rule); transition: transform 300ms var(--ease-out), box-shadow 300ms, opacity 300ms; }
+.kd-card__drawer { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.kd-card__name { font-family: var(--font-display); font-weight: 400; font-size: 1.75rem; line-height: 1.1; color: var(--ink); text-shadow: 0 1px 0 rgb(255 255 255 / 0.55), 0 -1px 0 rgb(0 0 0 / 0.12); }
+:root[data-theme='dark'] .kd-card__name, :root:not([data-theme='light']) .kd-card__name { text-shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 -1px 0 rgb(0 0 0 / 0.5); }
+.kd-card__since { font-style: italic; font-size: 0.875rem; color: var(--ink-2); }
+.kd-card__date { font-size: 0.8125rem; color: var(--accent-2); margin-top: auto; }
+.kd-card__met { font-size: 0.875rem; color: var(--ink-2); margin-top: auto; }
+.kd-card.is-faded .kd-card__name { opacity: 0.62; }
+.kd-row:not(:hover):not(:focus-within) > li:not(:last-child) .kd-card > * { max-width: calc(var(--w) * 0.3 - 36px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+@media (max-width: 600px) { .kd-row > li .kd-card > * { max-width: none !important; white-space: normal !important; } }
+.kd-card--blank { opacity: 0.6; border: 1px dashed var(--rule-strong); box-shadow: none; }
+
+.kd-file { display: grid; gap: 4px; }
+.kd-rail { display: flex; align-items: center; gap: 14px; height: 56px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-2); }
+.kd-rail::after { content: ''; flex: 1; height: 6px; border-radius: 3px; background: linear-gradient(var(--brass), color-mix(in srgb, var(--brass) 55%, #000)); opacity: 0.55; }
+.kd-rail span { padding: 3px 10px; border: 1px solid color-mix(in srgb, var(--brass) 60%, transparent); border-radius: 2px; background: color-mix(in srgb, var(--brass) 12%, transparent); }
+
+/* A drawer: cards stand overlapping by 70%, fanning out to an 8% gap on hover or focus. */
+.kd-row { display: flex; padding: 6px 0 18px 4px; overflow-x: auto; scrollbar-width: thin; }
+.kd-row > li { flex: none; margin-right: calc(var(--w, 340px) * -0.7); transition: margin 300ms var(--ease-out); position: relative; z-index: var(--i); }
+.kd-row > li:last-child { margin-right: 0; }
+.kd-row:hover > li, .kd-row:focus-within > li { margin-right: 28px; }
+.kd-row > li > .kd-card:hover, .kd-row > li > .kd-card:focus-visible { transform: translateY(-6px); box-shadow: 0 1px 0 var(--card-edge), 0 18px 30px -14px rgb(0 0 0 / 0.4), inset 0 0 0 1px var(--accent); }
+.kd-row > li > .kd-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+.kd-empty { display: grid; justify-items: center; gap: 16px; text-align: center; padding: 40px 0; }
+.kd-empty__text { font-family: var(--font-display); font-size: 1.5rem; max-width: 26ch; }
+.kd-empty__note { font-size: 0.875rem; color: var(--ink-3); max-width: 40ch; }
+
+/* The constellation. */
+.kd-sky { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr); gap: 28px; align-items: start; position: relative; }
+.kd-sky__tools { grid-column: 1 / -1; display: flex; justify-content: flex-end; }
+.kd-sky__svg { width: 100%; max-width: 640px; justify-self: center; aspect-ratio: 1; background: radial-gradient(circle, var(--accent-soft), transparent 70%); border-radius: 50%; }
+.kd-sky__orbit { fill: none; stroke: var(--rule-strong); stroke-width: 0.003; stroke-dasharray: 0.01 0.012; }
+.kd-sky__you { fill: var(--accent-2); }
+.kd-sky__halo { fill: var(--accent); opacity: 0.18; }
+.kd-sky__dot { fill: var(--accent); }
+.kd-sky__star { animation: kd-appear 800ms var(--ease-out) var(--d) both; }
+.kd-sky__star:hover .kd-sky__halo, .kd-sky__star:focus-visible .kd-sky__halo { opacity: 0.45; }
+.kd-sky__star:focus-visible { outline: none; }
+.kd-sky__star:focus-visible .kd-sky__label { fill: var(--accent); opacity: 1; }
+.kd-sky__label { font-family: var(--font-ui); font-size: 0.045px; text-anchor: middle; fill: var(--ink); }
+.kd-sky__label.is-far { opacity: 0; transition: opacity 200ms; }
+.kd-sky__star:hover .kd-sky__label.is-far { opacity: 1; }
+.kd-sky__label--you { fill: var(--accent-2); font-style: italic; }
+@keyframes kd-appear { from { opacity: 0; transform: scale(0.9); } }
+.kd-sky__listhead { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; }
+.kd-sky__list ol { display: grid; }
+.kd-sky__list button { display: grid; width: 100%; text-align: left; padding: 10px 2px; border-bottom: 1px solid var(--rule); }
+.kd-sky__list button:hover .kd-sky__name { color: var(--accent); }
+.kd-sky__name { font-family: var(--font-display); font-size: 1.15rem; }
+.kd-sky__meta { font-size: 0.8125rem; color: var(--ink-3); }
+.kd-sky3d { position: relative; }
+.kd-sky3d__stage { width: 100%; height: min(70vh, 640px); border-radius: 10px; overflow: hidden; background: radial-gradient(circle at 50% 45%, color-mix(in srgb, var(--accent) 12%, var(--paper)), var(--paper) 70%); }
+.kd-sky3d__hint { position: absolute; left: 12px; bottom: 10px; font-size: 0.75rem; color: var(--ink-3); }
+
+/* A person: the card front and back, flipping in CSS 3D. */
+.kd-person { max-width: 820px; margin: 0 auto; display: grid; gap: 22px; }
+.kd-back { justify-self: start; display: inline-flex; gap: 6px; align-items: center; font-size: 0.875rem; color: var(--ink-2); }
+.kd-flip { position: relative; justify-self: center; perspective: 1400px; width: min(520px, 100%); aspect-ratio: 85 / 55; }
+.kd-flip > .kd-card { position: absolute; inset: 0; width: 100%; backface-visibility: hidden; transition: transform 500ms var(--ease-out), box-shadow 420ms; }
+.kd-flip__back { transform: rotateY(180deg); }
+.kd-flip.is-flipped .kd-flip__front { transform: rotateY(-180deg) translateZ(8px); }
+.kd-flip.is-flipped .kd-flip__back { transform: rotateY(0deg) translateZ(8px); }
+.kd-card--big { padding: clamp(22px, 5vw, 40px); gap: 10px; }
+.kd-card--big .kd-card__name { font-size: clamp(2rem, 1.4rem + 2.6vw, 3rem); }
+.kd-card.is-pressed { box-shadow: 0 0 0 var(--card-edge), 0 2px 6px -4px rgb(0 0 0 / 0.4), inset 0 2px 10px rgb(0 0 0 / 0.18), inset 0 0 0 1px var(--accent); transform: scale(0.985); }
+.kd-card.is-pressed .kd-card__name { text-shadow: 0 2px 0 rgb(255 255 255 / 0.6), 0 -2px 1px rgb(0 0 0 / 0.22); }
+.kd-card--back { background: repeating-linear-gradient(transparent 0 27px, color-mix(in srgb, var(--accent-2) 22%, transparent) 27px 28px), var(--card); }
+.kd-back__title { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-2); }
+.kd-back__dates { display: grid; gap: 4px; }
+.kd-back__dates li { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.kd-back__dates em { font-style: italic; color: var(--ink-2); font-size: 0.9375rem; }
+.kd-back__none { font-style: italic; color: var(--ink-2); }
+.kd-person__actions { display: grid; gap: 14px; }
+.kd-saw { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+.kd-saw .field { flex: 1; min-width: 220px; }
+.kd-person__more { display: flex; flex-wrap: wrap; gap: 8px; }
+.kd-tl { display: grid; }
+.kd-tl li { display: grid; grid-template-columns: 7.5em 1fr auto; gap: 12px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--rule); }
+.kd-tl__date { font-style: italic; font-size: 0.875rem; color: var(--accent-2); }
+.kd-tl__x { width: 28px; height: 28px; border-radius: 50%; color: var(--ink-3); }
+.kd-tl__x:hover { background: var(--accent-soft); color: var(--ink); }
+
+.kd-editor .dialog__title { font-family: var(--font-display); font-weight: 400; font-size: 1.8rem; }
+.kd-editor__name input { font-family: var(--font-display); font-size: 1.4rem; }
+.kd-closeness { display: flex; flex-wrap: wrap; gap: 8px; border: 0; padding: 0; }
+.kd-closeness legend, .kd-datesedit legend { font-size: 0.8125rem; font-weight: 600; margin-bottom: 8px; }
+.kd-closeness .field__hint { width: 100%; }
+.kd-pill { position: relative; padding: 8px 16px; border: 1px solid var(--rule-strong); border-radius: 999px; cursor: pointer; font-size: 0.875rem; }
+.kd-pill input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.kd-pill:has(input:checked) { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.kd-pill:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.kd-datesedit { display: grid; gap: 10px; border: 0; padding: 0; }
+.kd-datesedit__row { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 10px; align-items: end; }
+.kd-datesedit__x { width: 36px; height: 44px; border-radius: 8px; color: var(--ink-3); }
+.kd-datesedit .check { padding-bottom: 12px; white-space: nowrap; }
+
+@media (max-width: 860px) {
+  .kd-sky { grid-template-columns: 1fr; }
+}
+/* Mobile: drawers become vertical lists of full-width cards (no overlap). */
+@media (max-width: 600px) {
+  .kd-row { flex-direction: column; gap: 12px; overflow: visible; }
+  .kd-row > li, .kd-row:hover > li, .kd-row:focus-within > li { margin-right: 0; }
+  .kd-card { --w: 100%; width: 100%; }
+  .kd-datesedit__row { grid-template-columns: 1fr 1fr; }
+  .kd-sky__label { font-size: 0.075px; }
+  .kd-tl li { grid-template-columns: 1fr auto; }
+  .kd-tl__date { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kd-row > li, .kd-flip > .kd-card, .kd-card { transition: none; }
+  .kd-sky__star { animation: none; }
+}

@@ -1,0 +1,29 @@
+{
+  "id": "/marginalia/",
+  "name": "MARGINALIA",
+  "short_name": "MARGINALIA",
+  "description": "Everything you underlined, kept. An ETERNALL imprint.",
+  "start_url": "/marginalia/",
+  "scope": "/marginalia/",
+  "display": "standalone",
+  "background_color": "#f8f5ee",
+  "theme_color": "#1d4ea8",
+  "icons": [
+    {
+      "src": "/brand/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

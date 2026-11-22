@@ -8,7 +8,6 @@ import { buildLifeline, contributionContext } from '../domain/lifeline';
 import { prefersReducedMotion } from '../../shell/theme';
 import { navigate } from '../../shell/router';
 import { LifelineCanvas } from '../lifeline/LifelineCanvas';
-import { createSampleRecords } from '../../boot/sample';
 
 type Profile = HouseProfile;
 
@@ -48,7 +47,7 @@ export function Onboarding({ startAt = 'welcome', enabled = [] }: { startAt?: 'w
   const exploreSample = async () => {
     setLoadingSample(true);
     try {
-      vault.merge(await createSampleRecords(today));
+      vault.merge(await (await import('../../boot/sample')).createSampleRecords(today));
       await vault.flush();
       navigate('/', { replace: true });
       toast({ message: 'Welcome to Mira’s lifeline. Erase it from Settings whenever you’re ready to begin your own.' });
