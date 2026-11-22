@@ -1,0 +1,132 @@
+:root {
+  color-scheme: light;
+
+  /* Paper & ink */
+  --paper: #f2ede3;
+  --paper-sunk: #e9e2d4;
+  --paper-raised: #faf7f1;
+  --ink: #1b1915;
+  --ink-2: #4c463d;
+  --ink-3: #8a8174;
+  --rule: rgb(27 25 21 / 0.11);
+  --rule-strong: rgb(27 25 21 / 0.22);
+  --veil: rgb(27 25 21 / 0.42);
+
+  /* The one accent: sealing wax */
+  --seal: #b8321f;
+  --seal-deep: #8e2414;
+  --seal-soft: rgb(184 50 31 / 0.12);
+  --on-seal: #fff6ef;
+
+  /* Lifeline cells */
+  --cell-future: rgb(27 25 21 / 0.085);
+  --cell-lived: rgb(27 25 21 / 0.58);
+  --cell-plain-lived: rgb(27 25 21 / 0.82);
+
+  /* Tones (memories) */
+  --tone-joy: #d99a1e;
+  --tone-calm: #1f7fb8;
+  --tone-tender: #d0508a;
+  --tone-bold: #e2731c;
+  --tone-grief: #3f8c5e;
+  --tone-wonder: #8b5fd0;
+
+  /* Inks (chapters) */
+  --ink-ochre: #c39a52;
+  --ink-moss: #7a9062;
+  --ink-tide: #6993a6;
+  --ink-plum: #976d90;
+  --ink-clay: #bf7b5e;
+  --ink-slate: #80878f;
+
+  --ok: #4f7a4a;
+  --warn: #a8641c;
+
+  /* Type */
+  --font-display: 'Instrument Serif', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --font-ui: 'Instrument Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+  --fs-hero: clamp(2.6rem, 1.4rem + 4.6vw, 5.6rem);
+  --fs-d1: clamp(2.2rem, 1.5rem + 2.6vw, 3.6rem);
+  --fs-d2: clamp(1.7rem, 1.3rem + 1.4vw, 2.4rem);
+  --fs-d3: 1.5rem;
+  --fs-body: 1rem;
+  --fs-small: 0.875rem;
+  --fs-micro: 0.6875rem;
+
+  /* Space & shape */
+  --gutter: clamp(16px, 4vw, 48px);
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 18px;
+  --shadow-lift: 0 1px 0 rgb(255 255 255 / 0.6) inset, 0 1px 2px rgb(27 25 21 / 0.06), 0 12px 32px -12px rgb(27 25 21 / 0.22);
+  --shadow-sheet: 0 -1px 0 var(--rule), 0 -24px 48px -24px rgb(27 25 21 / 0.28);
+
+  /* Motion */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --dur-1: 120ms;
+  --dur-2: 220ms;
+  --dur-3: 420ms;
+  --dur-4: 800ms;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --paper: #131210;
+    --paper-sunk: #0c0b0a;
+    --paper-raised: #1c1a17;
+    --ink: #ede6d8;
+    --ink-2: #b9b09f;
+    --ink-3: #7d7568;
+    --rule: rgb(237 230 216 / 0.1);
+    --rule-strong: rgb(237 230 216 / 0.2);
+    --veil: rgb(0 0 0 / 0.6);
+    --seal: #e0553a;
+    --seal-deep: #b63b24;
+    --seal-soft: rgb(224 85 58 / 0.16);
+    --on-seal: #1a0b07;
+    --cell-future: rgb(237 230 216 / 0.07);
+    --cell-lived: rgb(237 230 216 / 0.42);
+    --cell-plain-lived: rgb(237 230 216 / 0.72);
+    --tone-joy: #bf8410;
+    --tone-calm: #3a8cc4;
+    --tone-tender: #d8609e;
+    --tone-bold: #cf6418;
+    --tone-grief: #4a9a6c;
+    --tone-wonder: #9a70dc;
+    --shadow-lift: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -12px rgb(0 0 0 / 0.7);
+    --shadow-sheet: 0 -1px 0 var(--rule), 0 -24px 48px -24px rgb(0 0 0 / 0.8);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --paper: #131210;
+  --paper-sunk: #0c0b0a;
+  --paper-raised: #1c1a17;
+  --ink: #ede6d8;
+  --ink-2: #b9b09f;
+  --ink-3: #7d7568;
+  --rule: rgb(237 230 216 / 0.1);
+  --rule-strong: rgb(237 230 216 / 0.2);
+  --veil: rgb(0 0 0 / 0.6);
+  --seal: #e0553a;
+  --seal-deep: #b63b24;
+  --seal-soft: rgb(224 85 58 / 0.16);
+  --on-seal: #1a0b07;
+  --cell-future: rgb(237 230 216 / 0.07);
+  --cell-lived: rgb(237 230 216 / 0.42);
+  --cell-plain-lived: rgb(237 230 216 / 0.72);
+  --tone-joy: #bf8410;
+  --tone-calm: #3a8cc4;
+  --tone-tender: #d8609e;
+  --tone-bold: #cf6418;
+  --tone-grief: #4a9a6c;
+  --tone-wonder: #9a70dc;
+  --shadow-lift: 0 1px 0 rgb(255 255 255 / 0.04) inset, 0 12px 32px -12px rgb(0 0 0 / 0.7);
+  --shadow-sheet: 0 -1px 0 var(--rule), 0 -24px 48px -24px rgb(0 0 0 / 0.8);
+}

@@ -1,0 +1,112 @@
+# ETERNALL — Roadmap
+
+Status: draft for review · Phase 0 · Each phase ends with its exit criteria met, then a review, before the next begins.
+
+---
+
+## Phase 0: Foundation documents (now)
+**Deliverables:**
+- `VISION`, `BRAND` and `DESIGN`, plus `design/*` (9 imprints).
+- `ARCHITECTURE`, `PRIVACY`, `BUSINESS`, `FLOWS`, `MODULES` and `ROADMAP`.
+- ADRs 0001–0010 and `CLAUDE.md`.
+
+**Exit criteria:**
+- The owner approves all documents.
+- The current ETERNALL app is untouched (46/46 tests) and the AMAZEEN repo is untouched.
+
+## Phase 1: Monorepo skeleton
+**Deliverables:**
+- npm workspaces and TS project references, aligned to the AMAZEEN toolchain (React 19, Vite 8, TS 7, oxlint, Vitest, Playwright + axe).
+- `packages/core` from ETERNALL `src/domain`, with tests moved.
+- `packages/ui` primitives, stripped of visual styles.
+- `apps/web` shell: spine, doors menu, router, View Transitions, multi-page doors, per-door manifests, one service worker.
+- The current ETERNALL features running inside the shell (still on localStorage for now).
+- Imprint contract types and the capability registry.
+- CI: lint, types, unit, e2e and axe, plus the bundle budget script.
+- The `--ink-3` contrast correction (`design/eternall.md`).
+
+**Exit criteria:**
+- All existing behaviour is reproduced, and the existing tests pass in the new locations.
+- Each door URL serves its own manifest, and the house is installable.
+- Budgets are green.
+
+**Risks:**
+- *React 18→19 changes.* Mitigation: run the existing test suite first.
+- *Multi-page plus SPA routing complexity.* Mitigation: spike in week 1.
+
+## Phase 2: The vault
+**Deliverables:**
+- `packages/vault` built from AMAZEEN's `crypto.ts`, `keyphrase.ts`, `idb.ts` and storage mirror. It provides:
+  - the key hierarchy, encryption at rest and opaque rids;
+  - lock methods (passkey PRF, passphrase PBKDF2, device) and auto-lock;
+  - the recovery kit;
+  - the encrypted archive export;
+  - multi-tab sync of state.
+- Migration of `eternall:archive` from localStorage into the vault.
+- Flows F2–F4, F11, F13, F14, F17 and F18.
+
+**Exit criteria:**
+- Known-answer crypto tests pass in Chromium, WebKit and Firefox.
+- No plaintext content in IndexedDB or localStorage (verified by an e2e storage inspection test).
+- Lock and unlock work in all doors.
+
+**Risk:** WebAuthn PRF support varies. Mitigation: a capability-driven UI with passphrase fallback.
+
+## Phase 3: AMAZEEN joins
+**Deliverables:**
+- `git subtree add` of AMAZEEN into `modules/amazeen`, adapted to the imprint contract and the vault.
+- Shared spine and masthead strip (`design/amazeen.md` §6), the `/amazeen/` door and manifest, and the lifeline contribution.
+- AMAZEEN e2e and axe suites green in isolation.
+- The **F15 migration** importer: postMessage handoff, via-sync and via-file paths.
+- AMAZEEN v1.5, released in its own repo, with the "Move my journal" button (the only change made to the original repo, made by the owner or with explicit approval).
+
+**Exit criteria:**
+- A real AMAZEEN v1.4 archive migrates losslessly via all three paths.
+- The AMAZEEN experience is visually and functionally intact apart from the documented spine change.
+
+## Phase 4: Release-1 imprints re-made + immersive modes
+**Deliverables:**
+- **ENVOI, FOLIO and ALMANACK** rebuilt as imprints with their own designs (`design/envoi.md`, `folio.md`, `almanack.md`). This replaces today's Capsules, Chapters and Almanac screens, and includes the bookcloth palette correction.
+- House lifeline refinements, `packages/stage`, and the 3D life coil.
+- 3D envelope, 3D bookshelf, mechanical orrery and AMAZEEN turnable covers.
+
+**Exit criteria:**
+- Each imprint passes its 5-second and 3-task tests with at least 5 people.
+- Every 3D mode has an equivalent 2D mode that passes the same e2e tasks.
+- Frame budgets are met on the reference device, and the axe suite is green.
+
+## Release 1: ETERNALL + AMAZEEN + ENVOI + FOLIO + ALMANACK
+**Deliverables:**
+- `services/sync-worker`, generalised from AMAZEEN: records, licences, quotas, rate limits.
+- Payment provider integration and Patron flows (F8–F10).
+- Sync and add-device (F9), key rotation (F12).
+- Production CSP and headers, independent privacy review (`PRIVACY.md` §14).
+- Trademark and domain checks (`BRAND.md` §8).
+- AMAZEEN domain redirect plan.
+
+**Exit criteria:**
+- The privacy review is done with findings resolved.
+- Pricing is decided (`BUSINESS.md` §3).
+- A full regression on Chromium, WebKit, Firefox, Android and iOS passes.
+
+## Phase 5: Release-2 imprints
+**Deliverables:**
+- **REFRAIN, PROLOGUE, KINDRED and MARGINALIA**, built design-first from their docs, with capabilities wired: `people.mention`, `quotes.offer`, `rituals.week`, `letters.compose`.
+- Immersive modes: REFRAIN instruments and year playback, PROLOGUE stage shader, KINDRED 3D constellation, MARGINALIA cabinet.
+
+**Exit criteria:**
+- Same quality gates as Phase 4.
+- Every capability degrades cleanly when its provider is disabled (e2e matrix).
+
+## Release 2
+All nine imprints live.
+
+## Later (designed, not scheduled)
+- **Native apps** via Capacitor (ADR 0009): App Store and Play Store, in-app purchase licences, native notifications.
+- **ENVOI to other people** (`PRIVACY.md` §9), with an optional drand time-lock.
+- **Unlinkable licence tokens** (blind signatures).
+- **Argon2id** KDF via WASM.
+- **On-device AI** experiments under ADR 0010 (e.g. a yearly reflection drafted locally).
+- **Indonesian** localisation.
+- **Printed products** (GAZETTE yearly review, bound AMAZEEN volumes).
+- **Future imprints** from the reserved names (`BRAND.md` §2).
