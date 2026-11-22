@@ -137,7 +137,7 @@ ETERNALL uses three-dimensional and sonic moments where they **carry meaning**: 
 | LCP (mid-range laptop, cold) | < 2.5s |
 | INP | < 200ms |
 | CLS | < 0.05 |
-| 3D frame time (reference: 2021 mid-range laptop, integrated GPU) | ≤ 16.7ms sustained; auto-downgrade to 2D after 2s above 33ms |
+| 3D frame time (reference: 2021 mid-range laptop, integrated GPU) | ≤ 16.7ms sustained; auto-downgrade to 2D after 2s above 33ms while animating (`?nobudget` disables this in development only) |
 
 Fonts are **self-hosted** (via `@fontsource`, as AMAZEEN does today) to keep the strict CSP. No third-party font CDNs.
 

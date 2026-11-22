@@ -284,3 +284,7 @@
   .envoi-focal { transform: none; }
   .envoi-envelope__label { left: 30%; }
 }
+
+/* ---------- immersive envelope ---------- */
+.envoi-envelope3d { width: min(640px, 100%); }
+.envoi-envelope3d__stage { height: clamp(260px, 42vw, 380px); }

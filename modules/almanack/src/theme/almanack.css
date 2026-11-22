@@ -132,3 +132,12 @@
 @keyframes alm-grow { from { transform: scaleY(0); } }
 .alm-years__tip { position: absolute; top: -10px; transform: translate(-50%, -100%); background: var(--ink); color: var(--paper); padding: 5px 9px; font-size: 0.8125rem; white-space: nowrap; pointer-events: none; }
 .alm-years__axis { display: flex; justify-content: space-between; width: 100%; font-style: italic; font-size: 0.8125rem; color: var(--ink-3); }
+
+/* ---------- Plate I: engraved or mechanical ---------- */
+.alm-plate--stage { position: relative; padding-bottom: 12px; margin-bottom: 0; border-bottom: 0; }
+.alm-plate--caption { padding-top: 0; }
+.alm-plate__tools { position: absolute; right: 0; top: 18px; z-index: 2; }
+.alm-orrery3d { width: 100%; height: min(60vh, 520px); }
+.alm-slider { display: grid; grid-template-columns: auto minmax(0, 1fr) 5.5em; align-items: center; gap: 12px; width: min(520px, 100%); font-family: var(--font-sc); letter-spacing: 0.06em; }
+.alm-slider input { accent-color: var(--accent-2); }
+.alm-slider output { text-align: right; font-family: var(--font-ui); font-variant-numeric: tabular-nums; }

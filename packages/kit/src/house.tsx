@@ -64,7 +64,7 @@ export interface House {
   dismiss(key: string): void;
   isDismissed(key: string): boolean;
   /** Whether 3D/immersive modes may run (capability + preference + licence). */
-  immersive: { allowed: boolean; reason: 'ok' | 'flat-pages' | 'reduced-motion' | 'no-webgl' | 'patron' };
+  immersive: { allowed: boolean; reason: 'ok' | 'flat-pages' | 'reduced-motion' | 'no-webgl' | 'low-power' | 'patron' };
 }
 
 const HouseContext = createContext<House | null>(null);

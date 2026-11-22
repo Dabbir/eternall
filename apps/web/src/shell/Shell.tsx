@@ -14,6 +14,7 @@ import { useProfile, useSettings, useToday } from './hooks';
 import { navigate, parseLocation, useHref } from './router';
 import { useApplyTheme } from './theme';
 import { useLock } from '../vault/lockContext';
+import { detectImmersive } from '@eternall/stage';
 
 export function Shell({ today: fixedToday }: { today?: string }) {
   const vault = useVault();
@@ -67,7 +68,7 @@ export function Shell({ today: fixedToday }: { today?: string }) {
         if (!settings.dismissed.includes(key)) updateSettings({ dismissed: [...settings.dismissed, key] });
       },
       isDismissed: (key) => settings.dismissed.includes(key),
-      immersive: immersiveState(settings.flatPages),
+      immersive: detectImmersive({ flatPages: settings.flatPages }),
     }),
     [today, profile, toast, providers, enabled, others, ctx, settings, updateSettings],
   );
@@ -137,10 +138,4 @@ function houseMemories(ctx: ReadContext) {
     .collection<Inscription>(INSCRIPTION_PATH)
     .all()
     .map((i) => ({ imprint: 'house' as const, id: i.id, date: i.date, title: i.title, excerpt: i.body, tone: i.tone, href: `/inscriptions?open=${i.id}` }));
-}
-
-function immersiveState(flatPages: boolean): House['immersive'] {
-  if (flatPages) return { allowed: false, reason: 'flat-pages' };
-  if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return { allowed: false, reason: 'reduced-motion' };
-  return { allowed: true, reason: 'ok' };
 }

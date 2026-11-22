@@ -76,6 +76,8 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 - House lifeline refinements, `packages/stage`, and the 3D life coil.
 - 3D envelope, 3D bookshelf, mechanical orrery and AMAZEEN turnable covers.
 
+**Done (2026-11-22):** `packages/stage` (capability gate, render on demand, frame-time downgrade, theme colours, Flat/3D toggle) and four three.js scenes — the life coil, ENVOI's breaking seal, FOLIO's bookshelf, ALMANACK's mechanical orrery — plus AMAZEEN's tilting covers in CSS 3D. three.js loads only when a 3D view opens (167 KB gzip). **Still open:** the 5-person comprehension tests (owner-run), visual regression snapshots, and frame-budget checks on the reference GPU laptop (the development browser renders WebGL in software, so it correctly falls back to 2D; `?nobudget` in dev keeps 3D on for visual checks).
+
 **Exit criteria:**
 - Each imprint passes its 5-second and 3-task tests with at least 5 people.
 - Every 3D mode has an equivalent 2D mode that passes the same e2e tasks.

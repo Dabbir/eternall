@@ -5,7 +5,7 @@ import '@fontsource/spectral/latin-400.css';
 import '@fontsource/spectral/latin-400-italic.css';
 import '@fontsource/spectral/latin-600.css';
 import '../theme/almanack.css';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   TONES,
   TONE_LABEL,
@@ -22,6 +22,8 @@ import {
 } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button } from '@eternall/ui';
+import { DimensionToggle, Stage3D, themeColors } from '@eternall/stage';
+import type { OrreryProps } from './orreryScene';
 import { echoes, measure, perYear, streaks, toneClimate, weekNumbers } from '../stats';
 import { Orrery } from './Orrery';
 
@@ -71,8 +73,8 @@ export default function AlmanackApp() {
         </aside>
       )}
 
-      <figure className="alm-plate">
-        <Orrery fraction={m.fractionLived} decades={profile ? Math.ceil(profile.horizonYears / 10) : 6} moonPhase={moonPhase} label={pct ? `Engraved orrery: ${pct}% of a ${profile!.horizonYears}-year horizon lived; the moon is ${Math.round(moonPhase * 100)}% through its cycle.` : 'Engraved orrery of your years.'} />
+      <Plate fraction={m.fractionLived} age={m.age} horizon={profile?.horizonYears ?? null} moonPhase={moonPhase} pct={pct} />
+      <figure className="alm-plate alm-plate--caption">
         <figcaption>
           <span className="alm-plate__no">Plate I.</span> The orrery of your years{pct ? ` — ${pct} parts in a hundred of the horizon lived.` : '.'}
         </figcaption>
@@ -259,5 +261,45 @@ function Years({ data }: { data: { key: number; label: string; count: number }[]
         </table>
       )}
     </figure>
+  );
+}
+
+const loadOrrery = () => import('./orreryScene');
+
+/** Plate I: the engraved orrery, or the mechanical one in immersive mode, driven by one slider. */
+function Plate({ fraction, age, horizon, moonPhase, pct }: { fraction: number | null; age: number | null; horizon: number | null; moonPhase: number; pct: string | null }) {
+  const house = useHouse();
+  const [dimension, setDimension] = useState<'2d' | '3d'>('2d');
+  const view = house.immersive.allowed ? dimension : '2d';
+  const [year, setYear] = useState(age ?? 0);
+  const ref = useRef<HTMLDivElement>(null);
+  const [colors, setColors] = useState<{ brass: string; enamel: string; accent: string; ink: string } | null>(null);
+  useEffect(() => {
+    if (ref.current) {
+      const c = themeColors(ref.current, ['accent', 'accent-2', 'ink', 'paper-sunk']);
+      setColors({ brass: '#b08d57', enamel: c['paper-sunk'], accent: c['accent-2'], ink: c.ink });
+    }
+  }, []);
+  const f = horizon ? year / horizon : (fraction ?? 0.5);
+  const decades = horizon ? Math.ceil(horizon / 10) : 6;
+  const props = useMemo<OrreryProps | null>(() => (colors ? { decades, fraction: f, moonPhase, ...colors } : null), [colors, decades, f, moonPhase]);
+  return (
+    <div ref={ref} className="alm-plate alm-plate--stage">
+      <div className="alm-plate__tools">
+        <DimensionToggle value={view} onChange={setDimension} allowed={house.immersive.allowed} reason={house.immersive.reason} label3d="Mechanical" />
+      </div>
+      {view === '3d' && props ? (
+        <Stage3D load={loadOrrery} props={props} label={`Mechanical orrery at year ${year} of your life.`} onDowngrade={() => setDimension('2d')} className="alm-orrery3d" />
+      ) : (
+        <Orrery fraction={horizon ? f : fraction} decades={decades} moonPhase={moonPhase} label={pct ? `Engraved orrery: ${pct}% of a ${horizon}-year horizon lived; the moon is ${Math.round(moonPhase * 100)}% through its cycle.` : 'Engraved orrery of your years.'} />
+      )}
+      {horizon && (
+        <label className="alm-slider">
+          <span>Year of life</span>
+          <input type="range" min={0} max={horizon} value={year} aria-valuetext={`Year ${year}${year === age ? ', this year' : ''}`} onChange={(e) => setYear(Number(e.target.value))} />
+          <output>{year === age ? `${year} · now` : year}</output>
+        </label>
+      )}
+    </div>
   );
 }

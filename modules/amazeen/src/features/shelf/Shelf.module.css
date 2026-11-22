@@ -492,3 +492,19 @@
     display: none;
   }
 }
+
+/* Immersive (ETERNALL): the pulled-out cover turns toward the pointer, with a moving sheen. */
+.spine[data-tilt] .cover {
+  transform: perspective(1000px) rotateY(calc(var(--ry, 0) * 1deg)) rotateX(calc(var(--rx, 0) * 1deg));
+  transform-origin: 50% 50%;
+  transition: opacity 360ms 120ms, transform 160ms var(--ease-out);
+  will-change: transform;
+}
+.spine[data-tilt] .cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 30%), rgb(255 255 255 / 0.32), transparent 55%);
+  mix-blend-mode: soft-light;
+}

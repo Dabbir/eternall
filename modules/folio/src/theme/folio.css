@@ -195,3 +195,9 @@
 .folio-cloth:has(input:checked) .folio-cloth__swatch { transform: translateY(-5px); box-shadow: 0 0 0 2px var(--paper-raised), 0 0 0 4px var(--ink); }
 .folio-cloth:has(input:focus-visible) .folio-cloth__swatch { outline: 2px solid var(--accent-2); outline-offset: 4px; }
 .folio-cloth__name { font-size: 0.8125rem; color: var(--ink-2); }
+
+/* ---------- immersive shelf ---------- */
+.folio-view { display: flex; justify-content: flex-end; max-width: 980px; }
+.folio-shelf3d { position: relative; }
+.folio-shelf3d__stage { height: min(76vh, 760px); background: radial-gradient(70% 60% at 50% 35%, color-mix(in srgb, #ffe2b0 10%, transparent), transparent); }
+.folio-shelf3d__hint { position: absolute; left: 12px; bottom: 10px; font-size: 0.875rem; font-style: italic; color: var(--ink-3); pointer-events: none; }

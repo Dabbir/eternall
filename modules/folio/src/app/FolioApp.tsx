@@ -4,7 +4,7 @@ import '@fontsource/crimson-pro/latin-400.css';
 import '@fontsource/crimson-pro/latin-400-italic.css';
 import '@fontsource/crimson-pro/latin-600.css';
 import '../theme/folio.css';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   addDays,
   birthdayAt,
@@ -21,6 +21,8 @@ import {
 } from '@eternall/core';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
 import { Button, Icon } from '@eternall/ui';
+import { DimensionToggle, Stage3D, themeColors } from '@eternall/stage';
+import type { ShelfProps } from './shelfScene';
 import { useCollection } from '@eternall/vault';
 import { CHAPTER_PATH, clothColor, effectiveEnd, sortChapters, type Chapter } from '../chapters';
 import { ChapterEditor } from './ChapterEditor';
@@ -74,7 +76,10 @@ function useShelves(chapters: readonly Chapter[], profile: HouseProfile | null, 
 }
 
 function Shelf({ onNew, onOpen }: { onNew(start?: ISODate): void; onOpen(c: Chapter): void }) {
-  const { profile, today } = useHouse();
+  const house = useHouse();
+  const { profile, today } = house;
+  const [dimension, setDimension] = useState<'2d' | '3d'>('2d');
+  const view = house.immersive.allowed ? dimension : '2d';
   const { items } = useCollection<Chapter>(CHAPTER_PATH);
   const shelves = useShelves(items, profile, today);
   const birthYear = profile ? Number(profile.birthDate.slice(0, 4)) : 0;
@@ -87,6 +92,11 @@ function Shelf({ onNew, onOpen }: { onNew(start?: ISODate): void; onOpen(c: Chap
           Every life is a book. <em>Name its chapters.</em>
         </h1>
         {profile && items.length > 0 && <LifeBar chapters={items} profile={profile} today={today} />}
+        {items.length > 0 && (
+          <div className="folio-view">
+            <DimensionToggle value={view} onChange={setDimension} allowed={house.immersive.allowed} reason={house.immersive.reason} label3d="3D shelf" />
+          </div>
+        )}
       </header>
 
       {items.length === 0 ? (
@@ -101,6 +111,17 @@ function Shelf({ onNew, onOpen }: { onNew(start?: ISODate): void; onOpen(c: Chap
             New chapter
           </Button>
         </div>
+      ) : view === '3d' ? (
+        <Shelf3D
+          shelves={shelves}
+          profile={!!profile}
+          onOpen={(id) => {
+            const ch = items.find((c) => c.id === id);
+            if (ch) onOpen(ch);
+            else onNew(id.slice(2));
+          }}
+          onDowngrade={() => setDimension('2d')}
+        />
       ) : (
         <div className="folio-shelves">
           {shelves.map(([decade, vols]) => {
@@ -247,5 +268,49 @@ function Spread({ chapter, onEdit }: { chapter: Chapter; onEdit(): void }) {
         </section>
       </div>
     </article>
+  );
+}
+
+const loadShelf = () => import('./shelfScene');
+
+/** The bookshelf in the round (immersive mode). Same volumes as the flat shelf, same palette. */
+function Shelf3D({ shelves, profile, onOpen, onDowngrade }: { shelves: [number, Volume[]][]; profile: boolean; onOpen(id: string): void; onDowngrade(): void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [colors, setColors] = useState<{ gilt: string; plank: string; ink: string } | null>(null);
+  useEffect(() => {
+    if (ref.current) {
+      const c = themeColors(ref.current, ['gilt', 'plank', 'ink']);
+      setColors({ gilt: c.gilt, plank: c.plank, ink: c.ink });
+    }
+  }, []);
+  const data = useMemo(
+    () =>
+      shelves.map(([decade, vols]) => ({
+        label: profile ? `${decade * 10}–${decade * 10 + 9}` : `${decade * 10}s`,
+        books: vols.map((v) => ({
+          // Unnamed years open the editor at their start date.
+          id: v.kind === 'chapter' ? v.chapter!.id : `u-${v.start}`,
+          title: v.kind === 'chapter' ? v.chapter!.title : 'Unnamed',
+          color: v.kind === 'chapter' ? clothColor(v.chapter!.cloth) : '',
+          width: Math.min(1.5, Math.max(0.3, Math.sqrt(v.days) / 45)),
+          ongoing: v.kind === 'chapter' && v.chapter!.end === null,
+          blank: v.kind !== 'chapter',
+        })),
+      })),
+    [shelves, profile],
+  );
+  const props = useMemo<ShelfProps | null>(() => (colors ? { shelves: data, ...colors, onOpen } : null), [colors, data, onOpen]);
+  return (
+    <div ref={ref} className="folio-shelf3d">
+      {props && <Stage3D load={loadShelf} props={props} label="Your chapters as bound books on a shelf, one shelf per decade." onDowngrade={onDowngrade} className="folio-shelf3d__stage" />}
+      <ul className="visually-hidden">
+        {data.flatMap((s) => s.books).filter((b) => !b.blank).map((b) => (
+          <li key={b.id}>
+            <button type="button" onClick={() => onOpen(b.id)}>{b.title}</button>
+          </li>
+        ))}
+      </ul>
+      <p className="folio-shelf3d__hint" aria-hidden="true">Drag to look along the shelves · click a book to open it</p>
+    </div>
   );
 }

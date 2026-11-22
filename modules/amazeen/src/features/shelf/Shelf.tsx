@@ -1,6 +1,7 @@
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
-import type { CSSProperties } from 'react';
+import type { CSSProperties, PointerEvent } from 'react';
 import { CoverArt } from '../../components/CoverArt';
+import { useImmersive } from '../../imprint/embedded';
 import { Icon } from '../../components/Icon';
 import ui from '../../components/ui.module.css';
 import { KIND_INFO, SECTION_INFO } from '../../domain/catalog';
@@ -32,11 +33,33 @@ function spineWidth(issue: Issue): number {
   return Math.round(Math.min(96, 46 + issue.stats.entries * 6));
 }
 
+/** Immersive mode: the pulled-out cover tilts toward the pointer like a sheet of coated paper. */
+function tilt(e: PointerEvent<HTMLAnchorElement>): void {
+  const r = e.currentTarget.getBoundingClientRect();
+  const x = (e.clientX - r.left) / r.width;
+  const y = (e.clientY - r.top) / r.height;
+  e.currentTarget.style.setProperty('--ry', String((x - 0.5) * 22));
+  e.currentTarget.style.setProperty('--rx', String((0.5 - y) * 14));
+  e.currentTarget.style.setProperty('--mx', `${x * 100}%`);
+  e.currentTarget.style.setProperty('--my', `${y * 100}%`);
+}
+function untilt(e: PointerEvent<HTMLAnchorElement>): void {
+  for (const k of ['--ry', '--rx', '--mx', '--my']) e.currentTarget.style.removeProperty(k);
+}
+
 function Spine({ issue, masthead, open }: { issue: Issue; masthead: string; open: boolean }) {
   const style = { '--spine-thickness': `${spineWidth(issue)}px` } as CSSProperties;
+  const immersive = useImmersive();
   return (
     <li className={styles.slot} style={style}>
-      <Link to={paths.issue(issue.key)} className={styles.spine} data-ink={issue.ink} data-open={open || undefined}>
+      <Link
+        to={paths.issue(issue.key)}
+        className={styles.spine}
+        data-ink={issue.ink}
+        data-open={open || undefined}
+        data-tilt={immersive || undefined}
+        {...(immersive ? { onPointerMove: tilt, onPointerLeave: untilt } : {})}
+      >
         <span className="visually-hidden">
           No. {issue.number}, {formatWeekRange(issue.weekStart, issue.weekEnd)}
           {issue.status === 'in-production' ? ' (proof)' : ''}: {issue.headline}

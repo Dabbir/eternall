@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { diffDays, formatCountdown, formatLong, formatMedium, plural } from '@eternall/core';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
 import { Button, Icon, Seal } from '@eternall/ui';
+import { Stage3D, themeColors } from '@eternall/stage';
+import type { EnvelopeProps } from './envelopeScene';
 import { useCollection } from '@eternall/vault';
 import { LETTER_PATH, letterStatus, sealProgress, verifySeal, type Letter } from '../letters';
 import { Envelope } from './Envelope';
@@ -20,9 +22,11 @@ export function Reader({ letter }: { letter: Letter }) {
   const back = () => house.navigate(house.href('/'));
   const initial = profile?.name ?? 'E';
 
+  const [flat, setFlat] = useState(false);
+  const immersive = house.immersive.allowed && !flat;
   const breakSeal = async () => {
     setStage('breaking');
-    const [ok] = await Promise.all([verifySeal(letter).catch(() => false), new Promise((r) => window.setTimeout(r, reduced() ? 50 : 1000))]);
+    const [ok] = await Promise.all([verifySeal(letter).catch(() => false), new Promise((r) => window.setTimeout(r, reduced() ? 50 : immersive ? 1500 : 1000))]);
     setIntact(ok);
     col.put({ ...letter, openedAt: new Date().toISOString() });
     setStage('open');
@@ -81,7 +85,11 @@ export function Reader({ letter }: { letter: Letter }) {
 
       {status !== 'sealed' && stage !== 'open' && (
         <section className="envoi-reader__ready" aria-labelledby="envoi-r-title">
-          <Seal fingerprint={letter.fingerprint} initial={initial} size={170} broken={stage === 'breaking'} className="envoi-reader__seal" label={stage === 'breaking' ? 'The seal breaks' : 'Wax seal, ready to break'} />
+          {immersive ? (
+            <Envelope3D fingerprint={letter.fingerprint} initial={initial} breaking={stage === 'breaking'} onDowngrade={() => setFlat(true)} />
+          ) : (
+            <Seal fingerprint={letter.fingerprint} initial={initial} size={170} broken={stage === 'breaking'} className="envoi-reader__seal" label={stage === 'breaking' ? 'The seal breaks' : 'Wax seal, ready to break'} />
+          )}
           <p className="envoi-reader__eyebrow">A letter is ready</p>
           <h1 id="envoi-r-title" className="envoi-reader__title">
             {letter.title}
@@ -129,6 +137,27 @@ export function Reader({ letter }: { letter: Letter }) {
           )}
         </article>
       )}
+    </div>
+  );
+}
+
+const loadEnvelope = () => import('./envelopeScene');
+
+/** The physical envelope (immersive mode). Colours come from ENVOI's own palette. */
+function Envelope3D({ fingerprint, initial, breaking, onDowngrade }: { fingerprint: string; initial: string; breaking: boolean; onDowngrade(): void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [props, setProps] = useState<EnvelopeProps | null>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    const c = themeColors(ref.current, ['accent', 'accent-deep', 'accent-2', 'ink', 'sheet']);
+    setProps({ breaking, wax: c.accent, waxDeep: c['accent-deep'], paper: c.sheet, ink: c.ink, airmailRed: c.accent, airmailBlue: c['accent-2'], fingerprint, initial });
+    // Colours are read once; `breaking` flows through the update below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const live = props ? { ...props, breaking } : null;
+  return (
+    <div ref={ref} className="envoi-envelope3d">
+      {live && <Stage3D load={loadEnvelope} props={live} label={breaking ? 'The wax seal breaks and the envelope opens.' : 'A sealed envelope with a wax seal.'} onDowngrade={onDowngrade} className="envoi-envelope3d__stage" />}
     </div>
   );
 }

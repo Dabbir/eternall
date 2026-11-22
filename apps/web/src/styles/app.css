@@ -379,3 +379,10 @@
   body { background: #fff; color: #000; }
   .page { padding: 0; }
 }
+
+/* ---------- the life coil (3D) ---------- */
+.coil { position: relative; outline: none; border-radius: var(--radius-m); }
+.coil:focus-visible { box-shadow: 0 0 0 2px var(--paper), 0 0 0 4px var(--seal); }
+.coil__stage { height: min(78vh, 820px); background: radial-gradient(80% 60% at 50% 40%, color-mix(in srgb, var(--paper-raised) 80%, transparent), transparent); }
+.coil__hint { position: absolute; left: 16px; bottom: 14px; font-family: var(--font-mono); font-size: var(--fs-micro); letter-spacing: 0.08em; color: var(--ink-3); pointer-events: none; }
+.lifeline-toolbar { gap: 14px 18px; }

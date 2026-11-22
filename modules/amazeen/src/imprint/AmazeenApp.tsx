@@ -14,7 +14,7 @@ import { NowProvider } from '../state/now';
 import { StoreProvider } from '../state/store';
 import { SyncProvider } from '../sync/SyncProvider';
 import { Screens } from '../Screens';
-import { EmbeddedContext, ShellSlot } from './embedded';
+import { EmbeddedContext, ImmersiveContext, ShellSlot } from './embedded';
 import { MastheadStrip } from './MastheadStrip';
 import { createVaultAdapter, type VaultLike } from './vaultAdapter';
 import { MoveIn } from './MoveIn';
@@ -29,6 +29,7 @@ export default function AmazeenApp() {
   usePrimaryAction({ label: 'Write a piece', run: () => house.navigate('/amazeen/write/story') });
   return (
     <EmbeddedContext.Provider value={true}>
+      <ImmersiveContext.Provider value={house.immersive.allowed}>
       <ShellSlot.Provider value={MastheadStrip}>
         <ErrorBoundary>
           <NowProvider>
@@ -46,6 +47,7 @@ export default function AmazeenApp() {
           </NowProvider>
         </ErrorBoundary>
       </ShellSlot.Provider>
+      </ImmersiveContext.Provider>
     </EmbeddedContext.Provider>
   );
 }
