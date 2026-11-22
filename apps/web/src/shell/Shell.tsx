@@ -17,6 +17,7 @@ import { useApplyTheme } from './theme';
 import { useLock } from '../vault/lockContext';
 import { detectImmersive } from '@eternall/stage';
 import { usePatron } from '../vault/patron';
+import { useReminders } from './reminders';
 
 export function Shell({ today: fixedToday }: { today?: string }) {
   const vault = useVault();
@@ -43,6 +44,7 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   const ctx: ReadContext = useMemo(() => ({ data: vault, today, profile }), [vault, today, profile, version]); // eslint-disable-line react-hooks/exhaustive-deps
   const enabled = useMemo(() => IMPRINTS.filter((d) => !settings.hidden.includes(d.id)), [settings.hidden]);
   const used = useMemo(() => enabled.filter((d) => d.hasData(ctx)), [enabled, ctx]);
+  useReminders(enabled, ctx, settings.systemNotifications);
   const current = loc.kind === 'imprint' ? imprintById(loc.id) ?? null : null;
 
   // Focus mode: an imprint used on its own, with no lifeline yet, keeps the platform out of the way.

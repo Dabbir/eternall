@@ -41,6 +41,8 @@ export interface HouseSettings {
   /** Imprints the person turned off in the doors menu. */
   hidden: string[];
   autoLockMinutes: number;
+  /** Deliver local reminders as system notifications when the app is open in the background. */
+  systemNotifications: boolean;
 }
 
 export const DEFAULT_SETTINGS: HouseSettings = {
@@ -51,6 +53,7 @@ export const DEFAULT_SETTINGS: HouseSettings = {
   dismissed: [],
   hidden: [],
   autoLockMinutes: 15,
+  systemNotifications: false,
 };
 
 export interface Inscription {

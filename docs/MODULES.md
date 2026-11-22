@@ -109,14 +109,17 @@ Conventions:
 
 | Entity | Fields |
 |---|---|
-| `kindred/person` | `name` (≤ 60), `drawer` (label), `closeness` (`inner`/`close`/`around`), `howWeMet?` (≤ 200), `photo?` (local image, encrypted, ≤ 500 KB after resize; *not built yet*), `dates[]` (`{ label, date, yearly }`) |
+| `kindred/person` | `name` (≤ 60), `drawer` (label), `closeness` (`inner`/`close`/`around`), `howWeMet?` (≤ 200), `dates[]` (`{ label, date, yearly }`) |
 | `kindred/seen` | `personId`, `date`, `note?` (≤ 280) |
+| `kindred/photo` | keyed by the person's id; `src`: a JPEG data URL shrunk on the device to ≤ 360 px and ≤ 200,000 characters (optional, added by you) |
+| `kindred/pref` | `remind`: `off` / `day` / `eve` / `week` (local reminders for dates; off by default) |
 
 - **Rules:** people never receive anything and are never contacted. Birthdays come from `dates` with `yearly: true`.
+- **Reminders:** `reminders(ctx)` returns the dates due today under the chosen lead (on the day, and once at 1 or 7 days before); the house delivers them (`FLOWS.md` F20).
 - **Lifeline contribution:** marker `person` on weeks with a `seen` entry; line *"KINDRED · Saw Ana and Dad"*.
 - **Almanack facts:** people kept, people seen this year, upcoming dates (red-letter days).
 - **Capabilities:** provides `people.mention` (picker + resolver). A mention in another imprint adds to the person's shared timeline (resolved at read time, no back-writes into other imprints).
-- **v1 (Release 2):** card file, card front/back, seen-today, constellation 2D, constellation 3D (immersive), local birthday reminders (opt-in).
+- **v1 (Release 2):** card file, card front/back, seen-today, constellation 2D, constellation 3D (immersive), local birthday reminders (opt-in), optional photos.
 
 ## 9. MARGINALIA: Reading & underlines (`modules/marginalia`), Release 2
 

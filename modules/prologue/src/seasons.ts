@@ -63,10 +63,17 @@ export const sortSeasons = (list: readonly Season[]) => [...list].sort((a, b) =>
 export const contains = (s: Pick<Season, 'start' | 'end'>, date: ISODate) => date >= s.start && date <= s.end;
 
 /** The season to show on stage: the open one containing today, else the newest one left open. */
+/**
+ * The season on stage: the open one containing today, else one left open after its end, else the
+ * next one already planned (shown "in rehearsal" until its first day).
+ */
 export function currentSeason(seasons: readonly Season[], today: ISODate): Season | null {
-  const open = sortSeasons(seasons).filter((s) => !s.closedAt && s.start <= today);
-  return open.find((s) => contains(s, today)) ?? open.at(-1) ?? null;
+  const sorted = sortSeasons(seasons).filter((s) => !s.closedAt);
+  const begun = sorted.filter((s) => s.start <= today);
+  return begun.find((s) => contains(s, today)) ?? begun.at(-1) ?? sorted.find((s) => s.start > today) ?? null;
 }
+
+export const inRehearsal = (s: Season, today: ISODate) => s.start > today;
 
 export const isOverdue = (s: Season, today: ISODate) => !s.closedAt && today > s.end;
 export const canClose = (s: Season, today: ISODate) => !s.closedAt && today >= addDays(s.end, -14);

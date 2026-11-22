@@ -10,7 +10,17 @@ declare const self: {
   __WB_MANIFEST: Array<{ url: string; revision: string | null }>;
   skipWaiting(): Promise<void>;
   addEventListener(type: 'message', listener: (e: { data?: { type?: string } }) => void): void;
+  addEventListener(type: 'notificationclick', listener: (e: NotificationClick) => void): void;
+  clients: {
+    matchAll(o: { type: 'window'; includeUncontrolled: boolean }): Promise<Array<{ url: string; focus(): Promise<unknown>; navigate(url: string): Promise<unknown> }>>;
+    openWindow(url: string): Promise<unknown>;
+  };
+  location: { origin: string };
 };
+interface NotificationClick {
+  notification: { data?: { href?: string }; close(): void };
+  waitUntil(p: Promise<unknown>): void;
+}
 
 const DOORS = new Set(['amazeen', 'envoi', 'folio', 'almanack', 'refrain', 'prologue', 'kindred', 'marginalia']);
 
@@ -31,4 +41,21 @@ registerRoute(
 // Ask before activating a new version, so nobody loses a half-written page mid-update.
 self.addEventListener('message', (e) => {
   if (e.data?.type === 'SKIP_WAITING') void self.skipWaiting();
+});
+
+// A local reminder was tapped: focus an open window on its page, or open one. Same-origin paths only.
+self.addEventListener('notificationclick', (e) => {
+  e.notification.close();
+  const raw = e.notification.data?.href ?? '/';
+  const href = raw.startsWith('/') && !raw.startsWith('//') ? raw : '/';
+  e.waitUntil(
+    (async () => {
+      const wins = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      const win = wins.find((w) => w.url.startsWith(self.location.origin));
+      if (win) {
+        await win.navigate(href).catch(() => undefined);
+        await win.focus();
+      } else await self.clients.openWindow(href);
+    })(),
+  );
 });

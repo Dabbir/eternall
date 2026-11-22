@@ -152,3 +152,10 @@ All tabs share one vault. Changes broadcast via BroadcastChannel, and lock and u
 
 ## F19 · Offline
 Everything except sync, licence refresh and checkout works offline. Sync and licence work queues and resumes. The spine shows a small, quiet offline indicator only when something is waiting to sync.
+
+## F20 · Local reminders
+1. An imprint offers reminders inside itself, off by default (KINDRED: *Reminders for dates* → Off / On the day / The day before / A week before).
+2. Each day, while the app is open, the house asks enabled imprints what is due (`reminders(ctx)`) and delivers each occasion once: a toast with *Open* if the page is visible; a system notification if it is in the background and the person turned on *Also show as notifications* in Settings → Reminders (which asks the browser's permission).
+3. If neither is possible (hidden page, no notification permission), the reminder waits until the page is looked at again, for up to 7 days; after that it is dropped rather than delivered late.
+4. Delivered keys are kept in the vault (`house/reminders`), so a second device stays quiet once sync brings the log over.
+5. Honesty: a closed app cannot remind anyone. Settings and the KINDRED dialog say so; nothing is scheduled on a server.

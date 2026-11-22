@@ -1,5 +1,5 @@
 import { addDays, type ImprintDefinition, type LifelineMarker } from '@eternall/core';
-import { PERSON_PATH, SEEN_PATH, kindredStats, nextOccurrence, searchPeople, upcomingDates, type Person, type Seen } from './people';
+import { DEFAULT_PREF, PERSON_PATH, PHOTO_PATH, PREF_PATH, SEEN_PATH, dueReminders, kindredStats, nextOccurrence, searchPeople, upcomingDates, type KindredPref, type Person, type Seen } from './people';
 
 type Readable = { data: { collection<T extends { id: string }>(p: string): { all(): readonly T[] } } };
 const people = (ctx: Readable) => ctx.data.collection<Person>(PERSON_PATH).all();
@@ -16,7 +16,7 @@ export const kindred: ImprintDefinition = {
   accent: { light: '#1f5f5b', dark: '#6fc2b8' },
   intro: 'KINDRED is for you. People you add never receive anything and are never contacted.',
   load: () => import('./app/KindredApp'),
-  collections: [PERSON_PATH, SEEN_PATH],
+  collections: [PERSON_PATH, SEEN_PATH, PHOTO_PATH, PREF_PATH],
   hasData: (ctx) => people(ctx).length > 0,
 
   lifeline(ctx) {
@@ -63,6 +63,11 @@ export const kindred: ImprintDefinition = {
   badge(ctx) {
     const next = upcomingDates(people(ctx), ctx.today, 14)[0];
     return next ? (next.days === 0 ? `${next.person.name} · today` : `${next.label.toLowerCase()} in ${next.days} d`) : null;
+  },
+
+  reminders(ctx) {
+    const pref = ctx.data.collection<KindredPref>(PREF_PATH).get('pref') ?? DEFAULT_PREF;
+    return dueReminders(people(ctx), ctx.today, pref.remind);
   },
 
   provides(ctx) {

@@ -18,6 +18,7 @@ import { EmbeddedContext, ImmersiveContext, ShellSlot } from './embedded';
 import { MastheadStrip } from './MastheadStrip';
 import { createVaultAdapter, type VaultLike } from './vaultAdapter';
 import { MoveIn } from './MoveIn';
+import { MentionContext } from './MentionField';
 
 setRouterBase('/amazeen');
 
@@ -30,6 +31,7 @@ export default function AmazeenApp() {
   return (
     <EmbeddedContext.Provider value={true}>
       <ImmersiveContext.Provider value={house.immersive.allowed}>
+      <MentionContext.Provider value={house.capability('people.mention')}>
       <ShellSlot.Provider value={MastheadStrip}>
         <ErrorBoundary>
           <NowProvider>
@@ -47,6 +49,7 @@ export default function AmazeenApp() {
           </NowProvider>
         </ErrorBoundary>
       </ShellSlot.Provider>
+      </MentionContext.Provider>
       </ImmersiveContext.Provider>
     </EmbeddedContext.Provider>
   );

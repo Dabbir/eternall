@@ -6,10 +6,10 @@ import '../theme/kindred.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { diffDays, formatLong, formatMedium, type ImprintAppProps } from '@eternall/core';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
-import { Button, Icon, Segmented, TextField } from '@eternall/ui';
+import { Button, Dialog, Icon, Segmented, TextField } from '@eternall/ui';
 import { DimensionToggle, Stage3D, themeColors } from '@eternall/stage';
 import { useCollection } from '@eternall/vault';
-import { CLOSENESS_LABEL, PERSON_PATH, SEEN_PATH, constellation, drawers, lastSeen, nextOccurrence, seenId, sinceLabel, upcomingDates, type Person, type Seen, type Star } from '../people';
+import { CLOSENESS_LABEL, DEFAULT_PREF, PERSON_PATH, PHOTO_PATH, PREF_PATH, REMIND, REMIND_LABEL, SEEN_PATH, constellation, drawers, lastSeen, nextOccurrence, seenId, sinceLabel, upcomingDates, type KindredPref, type Person, type Photo, type Remind, type Seen, type Star } from '../people';
 import { PersonEditor } from './PersonEditor';
 import type { SkyProps } from './constellationScene';
 
@@ -53,6 +53,7 @@ function Home({ onNew }: { onNew(): void }) {
   const [view, setView] = useState<View>(() => (matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light' ? 'sky' : 'file'));
   const upcoming = upcomingDates(people, house.today, 30);
   const open = (id: string) => house.navigate(house.href(`/person/${id}`));
+  const hasDates = people.some((p) => p.dates.length > 0);
 
   return (
     <>
@@ -78,6 +79,7 @@ function Home({ onNew }: { onNew(): void }) {
           ))}
         </ul>
       )}
+      {hasDates && <RemindControl />}
       {people.length === 0 ? (
         <div className="kd-empty">
           <div className="kd-card kd-card--blank" aria-hidden="true">
@@ -101,6 +103,7 @@ function Home({ onNew }: { onNew(): void }) {
 function CardFile({ people, seen, onOpen }: { people: readonly Person[]; seen: readonly Seen[]; onOpen(id: string): void }) {
   const { today } = useHouse();
   const groups = drawers(people, seen, today);
+  const { col: photos } = useCollection<Photo>(PHOTO_PATH);
   return (
     <div className="kd-file">
       {groups.map((g) => (
@@ -116,6 +119,7 @@ function CardFile({ people, seen, onOpen }: { people: readonly Person[]; seen: r
               return (
                 <li key={p.id} style={{ ['--i' as string]: i }}>
                   <button type="button" className={`kd-card ${days !== null && days > 180 ? 'is-faded' : ''}`} onClick={() => onOpen(p.id)}>
+                    {photos.get(p.id) && <img className="kd-photo kd-photo--thumb" src={photos.get(p.id)!.src} alt="" />}
                     <span className="kd-card__drawer">{CLOSENESS_LABEL[p.closeness]}</span>
                     <span className="kd-card__name">{p.name}</span>
                     <span className="kd-card__since">{days !== null && days > 60 ? `last seen ${formatMedium(last!).replace(/^\d+ /u, '')}` : sinceLabel(days)}</span>
@@ -215,6 +219,8 @@ function PersonPage({ person, onEdit }: { person: Person; onEdit(): void }) {
   const { seen, col, sawToday } = useSeen();
   const [flipped, setFlipped] = useState(false);
   const [pressed, setPressed] = useState(false);
+  const { col: photos } = useCollection<Photo>(PHOTO_PATH);
+  const photo = photos.get(person.id)?.src;
   const [note, setNote] = useState('');
   const mine = seen.filter((s) => s.personId === person.id).sort((a, b) => b.date.localeCompare(a.date));
   const last = mine[0]?.date ?? null;
@@ -242,7 +248,8 @@ function PersonPage({ person, onEdit }: { person: Person; onEdit(): void }) {
         <Icon name="left" size={16} /> Back to the card file
       </button>
       <div className={`kd-flip ${flipped ? 'is-flipped' : ''}`}>
-        <div className={`kd-card kd-card--big kd-flip__front ${pressed ? 'is-pressed' : ''}`} aria-hidden={flipped}>
+        <div className={`kd-card kd-card--big kd-flip__front ${pressed ? 'is-pressed' : ''} ${photo ? 'has-photo' : ''}`} aria-hidden={flipped}>
+          {photo && <img className="kd-photo kd-photo--print" src={photo} alt={`Photo of ${person.name}`} />}
           <span className="kd-card__drawer">
             {person.drawer || 'Unfiled'} · {CLOSENESS_LABEL[person.closeness]}
           </span>
@@ -333,5 +340,67 @@ function PersonPage({ person, onEdit }: { person: Person; onEdit(): void }) {
         )}
       </section>
     </article>
+  );
+}
+
+/** Opt-in birthday reminders, worked out on this device; the house delivers them. */
+function RemindControl() {
+  const house = useHouse();
+  const { col } = useCollection<KindredPref>(PREF_PATH);
+  const pref = col.get('pref') ?? DEFAULT_PREF;
+  const [open, setOpen] = useState(false);
+  const [choice, setChoice] = useState<Remind>(pref.remind);
+  const save = () => {
+    col.put({ ...pref, remind: choice });
+    house.toast({ message: choice === 'off' ? 'Reminders are off.' : `Reminders: ${REMIND_LABEL[choice].toLowerCase()}.`, tone: 'accent' });
+    setOpen(false);
+  };
+  return (
+    <>
+      <p className="kd-remind">
+        <button type="button" className="kd-link" onClick={() => { setChoice(pref.remind); setOpen(true); }}>
+          Reminders for dates · {pref.remind === 'off' ? 'off' : REMIND_LABEL[pref.remind].toLowerCase()}
+        </button>
+      </p>
+      {open && (
+        <Dialog
+          open
+          onClose={() => setOpen(false)}
+          className="kd-editor"
+          eyebrow="KINDRED · Reminders"
+          title="Remind me of birthdays and dates"
+          footer={
+            <>
+              <span className="spacer" />
+              <Button variant="quiet" onClick={() => setOpen(false)}>
+                Cancel
+              </Button>
+              <Button variant="primary" onClick={save}>
+                Save
+              </Button>
+            </>
+          }
+        >
+          <div className="editor-form">
+            <fieldset className="kd-closeness">
+              <legend>When</legend>
+              {REMIND.map((r) => (
+                <label key={r} className="kd-pill">
+                  <input type="radio" name="remind" checked={choice === r} onChange={() => setChoice(r)} />
+                  <span>{REMIND_LABEL[r]}</span>
+                </label>
+              ))}
+              <p className="field__hint">{choice === 'off' ? 'Nothing will remind you; dates still show here.' : choice === 'day' ? 'Once, on the day.' : 'Once ahead of time, and again on the day.'}</p>
+            </fieldset>
+            <p className="muted">
+              Reminders are worked out on this device and appear when ETERNALL is open. Nothing is sent to anyone, and no server knows your people.{' '}
+              <button type="button" className="kd-link" onClick={() => house.navigate('/settings')}>
+                Notifications in Settings
+              </button>
+            </p>
+          </div>
+        </Dialog>
+      )}
+    </>
   );
 }

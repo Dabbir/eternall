@@ -9,6 +9,7 @@ import { useLock } from '../../vault/lockContext';
 import { LIMITS, PROFILE_PATH, validateProfile, type ProfileInput, type ThemePreference } from '../domain/house';
 import { useSettings } from '../../shell/hooks';
 import { linkProps } from '../../shell/router';
+import { systemNotificationsAvailable } from '../../shell/reminders';
 
 const THEMES: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: 'System' },
@@ -168,6 +169,18 @@ export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[
             </li>
           )}
         </ul>
+      </section>
+
+      <section className="settings-block rise" style={{ ['--i' as string]: 4 }} aria-labelledby="set-reminders">
+        <div className="settings-block__intro">
+          <h2 id="set-reminders" className="display">
+            Reminders
+          </h2>
+          <p className="faint">Gentle and local. Each imprint asks first; KINDRED can remind you of birthdays.</p>
+        </div>
+        <div className="settings-block__body settings-stack">
+          <Reminders on={settings.systemNotifications} onChange={(systemNotifications) => updateSettings({ systemNotifications })} />
+        </div>
       </section>
 
       <section className="settings-block rise" style={{ ['--i' as string]: 4 }} aria-labelledby="set-security">
@@ -404,5 +417,44 @@ function SealedImport({ archive, onClose, onRecords }: { archive: SealedArchive;
         </div>
       </form>
     </Dialog>
+  );
+}
+
+/** System notifications for local reminders: opt-in, honest that a closed app can't remind anyone. */
+function Reminders({ on, onChange }: { on: boolean; onChange(on: boolean): void }) {
+  const toast = useToast();
+  const available = systemNotificationsAvailable();
+  const [permission, setPermission] = useState(() => (available ? Notification.permission : 'denied'));
+  const turnOn = async () => {
+    const p = permission === 'granted' ? 'granted' : await Notification.requestPermission();
+    setPermission(p);
+    if (p === 'granted') {
+      onChange(true);
+      toast({ message: 'Reminders can now arrive as notifications.', tone: 'accent' });
+    } else toast({ message: 'Notifications are blocked in this browser. Reminders will still appear inside ETERNALL.' });
+  };
+  return (
+    <>
+      <p className="muted">
+        Reminders are worked out on this device and shown inside ETERNALL when they’re due. Nothing is sent from a server, so a closed app can’t remind you; open it on the day, or keep it installed and open in the background.
+      </p>
+      {!available ? (
+        <p className="faint">This browser can’t show notifications, so reminders appear inside ETERNALL.</p>
+      ) : on && permission === 'granted' ? (
+        <div className="settings-actions">
+          <p className="faint">Also shown as notifications while ETERNALL is open in the background. They can appear on your lock screen.</p>
+          <Button variant="quiet" onClick={() => onChange(false)}>
+            Stop notifications
+          </Button>
+        </div>
+      ) : (
+        <div className="settings-actions">
+          <Button variant="ghost" disabled={permission === 'denied'} onClick={() => void turnOn()}>
+            Also show as notifications
+          </Button>
+          {permission === 'denied' && <p className="faint">Notifications are blocked for this site in your browser settings.</p>}
+        </div>
+      )}
+    </>
   );
 }

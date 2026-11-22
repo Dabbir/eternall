@@ -81,6 +81,21 @@ export interface RedLetterDay {
   href: string;
 }
 
+/**
+ * A gentle local reminder, opted into inside its imprint (docs/FLOWS.md, local reminders).
+ * Delivered by the house once per `key`, only while the app is open; nothing comes from a server.
+ */
+export interface Reminder {
+  imprint: ImprintId;
+  /** Stable and unique per occasion, e.g. "kindred_<person>_birthday_2026-12-01_0". */
+  key: string;
+  /** The day it is for; reminders older than a week are never delivered late. */
+  date: ISODate;
+  title: string;
+  body: string;
+  href: string;
+}
+
 export interface ImprintAppProps {
   /** Path inside the imprint, always starting with "/" (e.g. "/letter/abc"). */
   path: string;
@@ -111,6 +126,8 @@ export interface ImprintDefinition {
   redLetterDays?(ctx: ReadContext): RedLetterDay[];
   /** A short status for the doors menu, e.g. "1 ready". */
   badge?(ctx: ReadContext): string | null;
+  /** Local reminders due today (empty unless the person opted in). */
+  reminders?(ctx: ReadContext): Reminder[];
   /** Cross-imprint capabilities this imprint offers (typed in @eternall/kit). */
   provides?(ctx: ProvideContext): Record<string, unknown>;
 }

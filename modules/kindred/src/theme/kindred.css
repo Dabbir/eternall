@@ -158,6 +158,21 @@
 .kd-datesedit__x { width: 36px; height: 44px; border-radius: 8px; color: var(--ink-3); }
 .kd-datesedit .check { padding-bottom: 12px; white-space: nowrap; }
 
+/* Reminders: one quiet line under the dates, never a badge. */
+.kd-remind { margin: -18px 0 28px; font-size: 0.8125rem; }
+
+/* Photos you add yourself: a small print tipped into the card's corner, held by paper corners. */
+.kd-photo { display: block; object-fit: cover; background: var(--card); }
+.kd-photo--print { position: absolute; top: clamp(14px, 3vw, 24px); right: clamp(14px, 3vw, 24px); width: clamp(84px, 22%, 132px); aspect-ratio: 4 / 5; padding: 6px 6px 14px; background: #fbf8f1; box-shadow: 0 1px 2px rgb(0 0 0 / 0.18), 0 8px 18px -10px rgb(0 0 0 / 0.4); transform: rotate(2.5deg); }
+.kd-card.has-photo .kd-card__name, .kd-card.has-photo .kd-card__met { max-width: calc(100% - clamp(96px, 26%, 150px)); }
+.kd-photo--thumb { position: absolute; bottom: 18px; left: 26px; width: 40px; height: 48px; padding: 3px 3px 7px; background: #fbf8f1; box-shadow: 0 1px 2px rgb(0 0 0 / 0.2); transform: rotate(3deg); }
+.kd-photo--edit { width: 88px; aspect-ratio: 4 / 5; padding: 5px 5px 12px; background: #fbf8f1; box-shadow: 0 1px 2px rgb(0 0 0 / 0.2); }
+.kd-photo--empty { width: 88px; aspect-ratio: 4 / 5; border: 1px dashed var(--rule-strong); background: none; }
+.kd-photoedit { display: grid; gap: 8px; }
+.kd-photoedit__label { font-size: 0.8125rem; font-weight: 600; }
+.kd-photoedit__row { display: flex; gap: 16px; align-items: center; }
+.kd-photoedit__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
 @media (max-width: 860px) {
   .kd-sky { grid-template-columns: 1fr; }
 }
@@ -166,6 +181,7 @@
   .kd-row { flex-direction: column; gap: 12px; overflow: visible; }
   .kd-row > li, .kd-row:hover > li, .kd-row:focus-within > li { margin-right: 0; }
   .kd-card { --w: 100%; width: 100%; }
+  .kd-card--big.has-photo { aspect-ratio: auto; min-height: 220px; }
   .kd-datesedit__row { grid-template-columns: 1fr 1fr; }
   .kd-sky__label { font-size: 0.075px; }
   .kd-tl li { grid-template-columns: 1fr auto; }

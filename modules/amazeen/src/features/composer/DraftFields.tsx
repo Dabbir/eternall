@@ -7,6 +7,7 @@ import type { DraftErrors } from '../../domain/entries';
 import { countWords, readingMinutes } from '../../domain/text';
 import type { EntryDraft } from '../../domain/types';
 import { useAutosize } from '../../state/hooks';
+import { useMentions } from '../../imprint/MentionField';
 import styles from './Composer.module.css';
 
 interface FieldsProps {
@@ -19,6 +20,18 @@ interface FieldsProps {
 function AutoTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { value: string }) {
   const ref = useAutosize(props.value);
   return <textarea ref={ref} rows={1} {...props} />;
+}
+
+/** A body field that also offers "@" mentions from KINDRED when the host provides them. */
+function MentionTextarea({ onValue, ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { value: string; onValue: (v: string) => void }) {
+  const ref = useAutosize(props.value);
+  const { fieldProps, popup } = useMentions(ref, props.value, onValue, props.maxLength);
+  return (
+    <>
+      <textarea ref={ref} rows={1} {...props} {...fieldProps} onChange={(e) => onValue(e.target.value)} />
+      {popup}
+    </>
+  );
 }
 
 function FieldError({ id, message }: { id: string; message: string | undefined }) {
@@ -65,12 +78,12 @@ export function DraftFields({ draft, errors, onChange, autoFocus }: FieldsProps)
           <label className="visually-hidden" htmlFor={ids.body}>
             Story
           </label>
-          <AutoTextarea
+          <MentionTextarea
             id={ids.body}
             className={styles.bodyField}
             value={draft.body}
             placeholder="Start with the moment it began. Leave a blank line between paragraphs."
-            onChange={(e) => onChange({ ...draft, body: e.target.value })}
+            onValue={(body) => onChange({ ...draft, body })}
             {...aria('body')}
           />
           <FieldError id={errId('body')} message={errors.body} />
@@ -88,13 +101,13 @@ export function DraftFields({ draft, errors, onChange, autoFocus }: FieldsProps)
           <label className="visually-hidden" htmlFor={ids.body}>
             Note
           </label>
-          <AutoTextarea
+          <MentionTextarea
             id={ids.body}
             className={styles.noteField}
             value={draft.body}
             placeholder="What happened today?"
             autoFocus={autoFocus}
-            onChange={(e) => onChange({ ...draft, body: e.target.value })}
+            onValue={(body) => onChange({ ...draft, body })}
             {...aria('body')}
           />
           <FieldError id={errId('body')} message={errors.body} />

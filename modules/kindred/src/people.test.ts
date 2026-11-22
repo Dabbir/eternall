@@ -1,4 +1,4 @@
-import { constellation, drawers, kindredStats, lastSeen, nextOccurrence, searchPeople, seenId, sinceLabel, upcomingDates, validatePerson, type Person, type Seen } from './people';
+import { constellation, drawers, dueReminders, fitWithin, isPhotoSrc, PHOTO_MAX_CHARS, kindredStats, lastSeen, nextOccurrence, searchPeople, seenId, sinceLabel, upcomingDates, validatePerson, type Person, type Seen } from './people';
 
 const today = '2026-11-23';
 const p = (id: string, name: string, drawer: string, extra: Partial<Person> = {}): Person => ({ id, name, drawer, closeness: 'close', howWeMet: '', dates: [], createdAt: '', ...extra });
@@ -60,5 +60,39 @@ describe('kindred', () => {
 
   it('counts people kept and seen this year', () => {
     expect(kindredStats([ana, dad, leo], log, today)).toEqual({ kept: 3, seenThisYear: 1 });
+  });
+
+  it('reminds only when asked: on the day, and once at the chosen lead', () => {
+    // Dad's birthday is 2 Dec; today is 23 Nov (9 days before).
+    expect(dueReminders([dad], today, 'off')).toEqual([]);
+    expect(dueReminders([dad], today, 'week')).toEqual([]);
+    const week = dueReminders([dad], '2026-11-25', 'week');
+    expect(week).toHaveLength(1);
+    expect(week[0]!.title).toBe('Dad’s birthday is in 7 days');
+    expect(week[0]!.body).toBe('Turning 68 on 2 Dec 2026.');
+    expect(dueReminders([dad], '2026-12-02', 'day')[0]!.body).toBe('Turning 68.');
+    expect(week[0]!.href).toBe('/kindred/person/dad');
+    expect(dueReminders([dad], '2026-12-01', 'eve')[0]!.title).toBe('Dad’s birthday is tomorrow');
+    const day = dueReminders([dad], '2026-12-02', 'eve');
+    expect(day[0]!.title).toBe('Dad’s birthday is today');
+    // Each occasion has its own key, so the eve and the day are separate deliveries.
+    expect(day[0]!.key).not.toBe(dueReminders([dad], '2026-12-01', 'eve')[0]!.key);
+    expect(day[0]!.key).toMatch(/^kindred_dad_birthday_2026-12-02_0$/u);
+    expect(dueReminders([p('jo', 'Jo Banks', 'X', { dates: [{ label: 'Birthday', date: '1990-12-02', yearly: true }] })], '2026-12-02', 'day')[0]!.title).toBe('Jo Banks’ birthday is today');
+  });
+
+  it('fits photos inside the card edge without enlarging', () => {
+    expect(fitWithin(1200, 800)).toEqual({ w: 360, h: 240 });
+    expect(fitWithin(300, 900)).toEqual({ w: 120, h: 360 });
+    expect(fitWithin(200, 100)).toEqual({ w: 200, h: 100 });
+    expect(fitWithin(0, 100)).toEqual({ w: 0, h: 0 });
+  });
+
+  it('accepts only small inline images as photos', () => {
+    expect(isPhotoSrc('data:image/jpeg;base64,AAAA')).toBe(true);
+    expect(isPhotoSrc('https://example.com/a.jpg')).toBe(false);
+    expect(isPhotoSrc('data:image/svg+xml;base64,AAAA')).toBe(false);
+    expect(isPhotoSrc(`data:image/jpeg;base64,${'A'.repeat(PHOTO_MAX_CHARS)}`)).toBe(false);
+    expect(isPhotoSrc(42)).toBe(false);
   });
 });

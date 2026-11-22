@@ -121,7 +121,7 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 - **KINDRED:** letterpress cards in overlapping drawers that fan out, the pressed card on “I saw them today”, card flip with dates and the shared timeline (resolved at read time), the 2D star chart with a sortable list; the constellation in the round (immersive).
 - **MARGINALIA:** catalogue drawers of edge-on index cards (author ranges with surname particles, title, year, kind), the annotated page with an anchored margin and the highlighter sweep, every underline by year; the oak cabinet in CSS 3D (immersive).
 - Capabilities wired with a with/without matrix in tests; the lifeline draws ritual, person, work and season signals.
-- Deferred: KINDRED photos, local birthday reminders, and AMAZEEN's own `@` mention picker.
+- Finished after the first pass (2026-11-23): KINDRED photos (shrunk on the device, encrypted), opt-in local reminders for dates (the house delivers them; `FLOWS.md` F20), and AMAZEEN's own `@` mention picker in stories and notes. PROLOGUE now shows a planned season "in rehearsal" when none is running.
 
 ## Release 2
 All nine imprints live.

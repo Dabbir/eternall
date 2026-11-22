@@ -1,4 +1,4 @@
-import { cleanText, diffDays, finish, isLeapYear, isValidISO, requireText, type FieldErrors, type ISODate, type Validation } from '@eternall/core';
+import { cleanText, diffDays, finish, formatMedium, isLeapYear, isValidISO, requireText, type FieldErrors, type ISODate, type Reminder, type Validation } from '@eternall/core';
 
 /**
  * KINDRED's domain (docs/MODULES.md §8, docs/design/kindred.md): a card per person, notes of when
@@ -7,6 +7,9 @@ import { cleanText, diffDays, finish, isLeapYear, isValidISO, requireText, type 
  */
 export const PERSON_PATH = 'kindred/person';
 export const SEEN_PATH = 'kindred/seen';
+/** One photo per person, keyed by the person's id, kept apart so the card file stays light. */
+export const PHOTO_PATH = 'kindred/photo';
+export const PREF_PATH = 'kindred/pref';
 export const LIMITS = { name: 60, drawer: 30, howWeMet: 200, note: 280, dateLabel: 40, dates: 8 } as const;
 export const CLOSENESS = ['inner', 'close', 'around'] as const;
 export type Closeness = (typeof CLOSENESS)[number];
@@ -183,4 +186,74 @@ export function validatePerson(input: PersonInput): Validation<Omit<Person, 'id'
 export function kindredStats(people: readonly Person[], seen: readonly Seen[], today: ISODate) {
   const year = today.slice(0, 4);
   return { kept: people.length, seenThisYear: new Set(seen.filter((s) => s.date.startsWith(year)).map((s) => s.personId)).size };
+}
+
+/* ---------- photos (optional, added by you, encrypted like everything else) ---------- */
+
+export interface Photo {
+  /** The person's id. */
+  id: string;
+  /** A small JPEG or WebP, as a data URL. */
+  src: string;
+}
+/** Longest side, in pixels, after resizing on this device. */
+export const PHOTO_EDGE = 360;
+/** ≈150 KB of image: far under one sync record, enough for a card portrait. */
+export const PHOTO_MAX_CHARS = 200_000;
+
+/** Scale (w, h) to fit inside a square of `edge`, never enlarging. */
+export function fitWithin(w: number, h: number, edge = PHOTO_EDGE): { w: number; h: number } {
+  if (w <= 0 || h <= 0) return { w: 0, h: 0 };
+  const k = Math.min(1, edge / Math.max(w, h));
+  return { w: Math.max(1, Math.round(w * k)), h: Math.max(1, Math.round(h * k)) };
+}
+
+export function isPhotoSrc(src: unknown): src is string {
+  return typeof src === 'string' && src.length <= PHOTO_MAX_CHARS && /^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/]+=*$/u.test(src);
+}
+
+/* ---------- local reminders (opt-in) ---------- */
+
+export const REMIND = ['off', 'day', 'eve', 'week'] as const;
+export type Remind = (typeof REMIND)[number];
+export const REMIND_LABEL: Record<Remind, string> = { off: 'Off', day: 'On the day', eve: 'The day before', week: 'A week before' };
+const LEAD: Record<Remind, number | null> = { off: null, day: 0, eve: 1, week: 7 };
+
+export interface KindredPref {
+  id: 'pref';
+  remind: Remind;
+}
+export const DEFAULT_PREF: KindredPref = { id: 'pref', remind: 'off' };
+
+const slug = (s: string) => s.toLocaleLowerCase().replace(/[^a-z0-9]+/gu, '-').replace(/^-|-$/gu, '').slice(0, 24) || 'date';
+const possessive = (name: string) => (name.endsWith('s') ? `${name}’` : `${name}’s`);
+
+/** "Turning 68 on 2 Dec 2026." · "On 2 Dec 2026." · "Turning 68." · "" */
+function reminderBody(turning: string, on: string | null): string {
+  if (turning && on) return `${turning} on ${on}.`;
+  if (turning) return `${turning}.`;
+  return on ? `On ${on}.` : '';
+}
+
+/**
+ * Reminders due today: on the day itself, and once more `lead` days before when chosen.
+ * Each occasion has its own key, so the house delivers it once (across devices, through sync).
+ */
+export function dueReminders(people: readonly Person[], today: ISODate, remind: Remind): Reminder[] {
+  const lead = LEAD[remind];
+  if (lead === null) return [];
+  return upcomingDates(people, today, lead)
+    .filter((u) => u.days === 0 || u.days === lead)
+    .map((u) => {
+      const what = u.label.toLocaleLowerCase();
+      const when = u.days === 0 ? 'is today' : u.days === 1 ? 'is tomorrow' : `is in ${u.days} days`;
+      return {
+        imprint: 'kindred' as const,
+        key: `kindred_${u.person.id}_${slug(u.label)}_${u.date}_${u.days}`,
+        date: today,
+        title: `${possessive(u.person.name)} ${what} ${when}`,
+        body: reminderBody(what === 'birthday' && u.turns ? `Turning ${u.turns}` : u.turns ? `${u.turns} years` : '', u.days === 0 ? null : formatMedium(u.date)),
+        href: `/kindred/person/${u.person.id}`,
+      };
+    });
 }

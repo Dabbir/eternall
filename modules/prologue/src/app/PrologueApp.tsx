@@ -5,12 +5,12 @@ import '@fontsource/libre-baskerville/latin-400-italic.css';
 import '@fontsource/libre-baskerville/latin-700.css';
 import '../theme/prologue.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { addDays, formatMedium, plural, type ImprintAppProps } from '@eternall/core';
+import { addDays, formatLong, formatMedium, plural, type ImprintAppProps } from '@eternall/core';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
 import { Button, Icon } from '@eternall/ui';
 import { DimensionToggle, Stage3D, themeColors } from '@eternall/stage';
 import { useCollection } from '@eternall/vault';
-import { HOPE_PATH, SEASON_PATH, STATE_HINT, STATE_LABEL, canClose, currentSeason, daysRemaining, hopesOf, isOverdue, roman, sortSeasons, type Hope, type Season } from '../seasons';
+import { HOPE_PATH, SEASON_PATH, STATE_HINT, STATE_LABEL, canClose, currentSeason, daysRemaining, inRehearsal, hopesOf, isOverdue, roman, sortSeasons, type Hope, type Season } from '../seasons';
 import { EpilogueView, HopeEditor, SeasonEditor } from './Editors';
 import type { CurtainProps } from './curtainScene';
 
@@ -86,10 +86,12 @@ function StageView({ season, hopes, onHope, onSeason }: { season: Season; hopes:
   const house = useHouse();
   const { today } = house;
   const curtainKey = `prologue.curtain.${season.id}`;
-  const [opening] = useState(() => !house.isDismissed(curtainKey) && !reduced());
+  // The curtain goes up once, on the season's first visit from its first day (not in rehearsal).
+  const rehearsal = inRehearsal(season, today);
+  const [opening] = useState(() => !rehearsal && !house.isDismissed(curtainKey) && !reduced());
   useEffect(() => {
-    if (!house.isDismissed(curtainKey)) house.dismiss(curtainKey);
-  }, [curtainKey, house]);
+    if (!rehearsal && !house.isDismissed(curtainKey)) house.dismiss(curtainKey);
+  }, [curtainKey, house, rehearsal]);
   const [focus, setFocus] = useState(0);
   const [dimension, setDimension] = useState<'2d' | '3d'>('2d');
   const lit = house.immersive.allowed && dimension === '3d';
@@ -133,6 +135,7 @@ function StageView({ season, hopes, onHope, onSeason }: { season: Season; hopes:
         <header className="pl-bill">
           <TypedTitle text={word!.toUpperCase().split('').join(' ')} play={opening} />
           {rest.length > 0 && <p className="pl-year">{rest.join(' ')}</p>}
+          {rehearsal && <p className="pl-direction">(In rehearsal. The curtain rises on {formatLong(season.start)}.)</p>}
           {season.theme && (
             <>
               <p className="pl-of">— the season of —</p>

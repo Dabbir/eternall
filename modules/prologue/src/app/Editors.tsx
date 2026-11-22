@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createId, type FieldErrors } from '@eternall/core';
+import { createId, formatLong, type FieldErrors } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button, Dialog, TextArea, TextField } from '@eternall/ui';
 import { useCollection } from '@eternall/vault';
@@ -167,7 +167,7 @@ export function SeasonEditor({ existing, others, onClose }: { existing?: Season 
     const r = validateSeason(form, others);
     if (!r.ok) return setErrors(r.errors);
     col.put({ id: existing?.id ?? createId(), closedAt: existing?.closedAt ?? null, epilogue: existing?.epilogue ?? '', ...r.value });
-    house.toast({ message: existing ? 'Season updated.' : `${r.value.name} begins. Curtain up.`, tone: 'accent' });
+    house.toast({ message: existing ? 'Season updated.' : r.value.start > house.today ? `${r.value.name} is in rehearsal. Write its hopes now; the curtain rises on ${formatLong(r.value.start)}.` : `${r.value.name} begins. Curtain up.`, tone: 'accent' });
     onClose();
   };
   return (

@@ -147,7 +147,13 @@ Sync and immersive modes require an active licence (`BUSINESS.md`). The licence 
 | Malicious payment provider | Knows who paid; learns nothing about content. |
 | Lost recovery kit + forgotten passphrase | Data unrecoverable (by design). |
 | Coercion / legal request to us | We can hand over only ciphertext and the metadata in §6. |
+| Someone glances at a locked phone while reminders are on | A system notification shows its title (e.g. "Dad’s birthday is today") on the lock screen. System notifications are off by default, opted into in Settings → Reminders with this warning, and only fire while ETERNALL is open. |
 | Tab closed within milliseconds of a write | The last write can be lost: encryption is asynchronous, so there is no synchronous mirror (a plaintext one is forbidden). Writes flush on hide and close. |
+
+### Local reminders and photos
+
+- **Reminders** are computed on the device from vault data (`ImprintDefinition.reminders`), never scheduled on a server and never sent anywhere. The house delivers each one once: as an in-app toast, or, when the person turned on system notifications and the app is open in the background, through the service worker's `showNotification`. Which reminders were delivered is a vault record (`house/reminders`), so it is encrypted and syncs like everything else.
+- **KINDRED photos** are chosen by the person, shrunk on the device (≤ 360 px, JPEG, ≤ 200,000 characters as a data URL), and stored as encrypted vault records (`kindred/photo`). The original file is never stored or uploaded; nothing is fetched from the internet.
 
 ## 11. AI policy
 

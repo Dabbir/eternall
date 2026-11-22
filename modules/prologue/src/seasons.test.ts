@@ -1,4 +1,4 @@
-import { canClose, currentSeason, daysRemaining, hopesOf, isOverdue, meteorologicalSeason, prologueStats, roman, validateHope, validateSeason, type Hope, type Season } from './seasons';
+import { canClose, currentSeason, inRehearsal, daysRemaining, hopesOf, isOverdue, meteorologicalSeason, prologueStats, roman, validateHope, validateSeason, type Hope, type Season } from './seasons';
 
 const winter: Season = { id: 'w', name: 'Winter 2026', theme: 'staying close', start: '2026-12-01', end: '2027-02-28', closedAt: null, epilogue: '' };
 const autumn: Season = { id: 'a', name: 'Autumn 2026', theme: '', start: '2026-09-01', end: '2026-11-30', closedAt: null, epilogue: '' };
@@ -19,6 +19,13 @@ describe('seasons', () => {
     expect(currentSeason([autumn], '2026-12-10')?.id).toBe('a');
     expect(currentSeason([{ ...autumn, closedAt: '2026-11-30T00:00:00Z' }], '2026-12-10')).toBeNull();
     expect(isOverdue(autumn, '2026-12-10')).toBe(true);
+  });
+
+  it('puts a planned season on stage in rehearsal when nothing is running', () => {
+    const closedAutumn = { ...autumn, closedAt: '2026-11-20T00:00:00Z' };
+    expect(currentSeason([closedAutumn, winter], '2026-11-23')?.id).toBe('w');
+    expect(inRehearsal(winter, '2026-11-23')).toBe(true);
+    expect(inRehearsal(winter, '2026-12-01')).toBe(false);
   });
 
   it('offers closing in the last 14 days', () => {

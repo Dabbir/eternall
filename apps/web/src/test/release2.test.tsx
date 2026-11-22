@@ -91,6 +91,54 @@ describe('KINDRED on its own', () => {
   });
 });
 
+describe('AMAZEEN @ mentions', () => {
+  it('offers KINDRED people after "@" and writes the name as plain text', async () => {
+    const user = userEvent.setup();
+    at('/amazeen/write/note');
+    render(<Root store={createMemoryStore([settings(), dad, magazine])} />);
+    const note = await screen.findByLabelText('Note');
+    await user.type(note, 'Lunch with @Da');
+    const option = await screen.findByRole('option', { name: /Dad/ });
+    expect(option).toHaveAttribute('aria-selected', 'true');
+    await user.keyboard('{Enter}');
+    expect(note).toHaveValue('Lunch with Dad ');
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+  });
+
+  it('treats "@" as a character when KINDRED is off', async () => {
+    const user = userEvent.setup();
+    at('/amazeen/write/note');
+    render(<Root store={createMemoryStore([settings(['kindred']), dad, magazine])} />);
+    const note = await screen.findByLabelText('Note');
+    await user.type(note, 'Lunch with @Da');
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+    expect(note).toHaveValue('Lunch with @Da');
+  });
+});
+
+describe('KINDRED reminders', () => {
+  const bday = rec('kindred/person/dad', { id: 'dad', name: 'Dad', drawer: 'Family', closeness: 'inner', howWeMet: '', dates: [{ label: 'Birthday', date: `1958-${today.slice(5)}`, yearly: true }], createdAt: stamp });
+  it('reminds once, on the day, only when opted in', async () => {
+    const store = createMemoryStore([settings(), bday, rec('kindred/pref/pref', { id: 'pref', remind: 'day' })]);
+    at('/kindred/');
+    const { unmount } = render(<Root store={store} />);
+    expect(await screen.findByText(/Dad’s birthday is today/)).toBeInTheDocument();
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'house/reminders/log')?.value).toMatchObject({ sent: [{ key: `kindred_dad_birthday_${today}_0` }] }));
+    unmount();
+    at('/kindred/');
+    render(<Root store={store} />);
+    expect(await screen.findByRole('heading', { name: 'Keep the people close.' })).toBeInTheDocument();
+    expect(screen.queryByText(/Dad’s birthday is today/)).not.toBeInTheDocument();
+  });
+
+  it('stays quiet when reminders are off', async () => {
+    at('/kindred/');
+    render(<Root store={createMemoryStore([settings(), bday])} />);
+    expect(await screen.findByRole('button', { name: /Reminders for dates · off/ })).toBeInTheDocument();
+    expect(screen.queryByText(/Dad’s birthday is today/)).not.toBeInTheDocument();
+  });
+});
+
 describe('MARGINALIA and the Overheard page', () => {
   it('keeps underlines with the margin, and offers opted-in ones to AMAZEEN', async () => {
     const user = userEvent.setup();
