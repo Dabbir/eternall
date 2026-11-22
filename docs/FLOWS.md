@@ -125,7 +125,7 @@ Settings → Security → "Rotate vault key" → explanation (other devices will
 ## F15 · Migration for existing AMAZEEN users
 AMAZEEN lives on another origin today, so its IndexedDB can't be read from `eternall.app` directly. There are three paths, in order of preference:
 1. **One-click move (AMAZEEN v1.5 release):** AMAZEEN shows "AMAZEEN is moving to its new home". **Move my journal** opens `eternall.app/amazeen/import` in a popup. The two windows exchange data with `postMessage` (strict origin checks both ways, a one-time nonce). ETERNALL creates a vault (F2/F3), imports and encrypts. On success AMAZEEN shows "Moved", offers to keep or clear the old local copy, and from then on redirects to the new door.
-2. **Via AMAZEEN sync:** if the user had sync, entering their AMAZEEN sync key in ETERNALL's importer pulls the old account, decrypts it with the old derivation (`amazeen/sync/v1` salt) and re-encrypts it into the vault.
+2. **Via AMAZEEN sync** *(ships with the sync-worker in Release 1)*: if the user had sync, entering their AMAZEEN sync key in ETERNALL's importer pulls the old account, decrypts it with the old derivation (`amazeen/sync/v1` salt) and re-encrypts it into the vault.
 3. **Via export file:** AMAZEEN's existing JSON export (format v2) is imported through `migrate()` and `parseAppData()` logic carried into `modules/amazeen`.
 
 After migration the AMAZEEN experience is the same (focus mode, AMAZEEN-first). A one-time note explains the new spine and the lock. Grandfathered Patron period per `BUSINESS.md` §3.

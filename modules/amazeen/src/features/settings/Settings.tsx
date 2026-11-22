@@ -21,6 +21,7 @@ import { Link, paths } from '../../router/router';
 import { useStore } from '../../state/store';
 import { useSync } from '../../sync/SyncProvider';
 import { SyncSection } from '../sync/SyncSection';
+import { useEmbedded } from '../../imprint/embedded';
 import { useExportArchive } from '../../state/useExportArchive';
 import styles from './Settings.module.css';
 
@@ -165,6 +166,8 @@ function InstallSection() {
 }
 
 export default function Settings() {
+  // Inside ETERNALL the house owns the theme, sync and install; their sections are hidden here.
+  const embedded = useEmbedded();
   useDocumentTitle('Settings');
   const { data, replaceData, eraseAll, readRawArchive, loadStatus, storageKind } = useStore();
   const toast = useToast();
@@ -271,9 +274,9 @@ export default function Settings() {
         <MastheadForm />
       </section>
 
-      <AppearanceSection />
+      {!embedded && <AppearanceSection />}
 
-      <SyncSection />
+      {!embedded && <SyncSection />}
 
       <section className={styles.section} aria-labelledby="s-archive">
         <div className={styles.sectionIntro}>
@@ -365,7 +368,7 @@ export default function Settings() {
         </div>
       </section>
 
-      <InstallSection />
+      {!embedded && <InstallSection />}
 
       <section className={`${styles.section} ${styles.danger}`} aria-labelledby="s-danger">
         <div className={styles.sectionIntro}>

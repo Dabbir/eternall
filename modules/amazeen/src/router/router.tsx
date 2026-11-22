@@ -69,8 +69,19 @@ interface RouterValue {
 
 const RouterContext = createContext<RouterValue | null>(null);
 
+/**
+ * Inside ETERNALL, AMAZEEN lives under a base path (e.g. `/amazeen`). Routes and `paths` stay
+ * base-free; the base is added when writing URLs and removed when reading them.
+ */
+let BASE = '';
+export function setRouterBase(base: string): void {
+  BASE = base.replace(/\/+$/u, '');
+}
+export const withBase = (to: string): string => (BASE && to.startsWith('/') && !to.startsWith(`${BASE}/`) && to !== BASE ? `${BASE}${to}` : to);
+const stripBase = (path: string): string => (BASE && (path === BASE || path.startsWith(`${BASE}/`)) ? path.slice(BASE.length) || '/' : path);
+
 function currentLocation(): { path: string; search: string } {
-  return { path: window.location.pathname, search: window.location.search };
+  return { path: stripBase(window.location.pathname), search: window.location.search };
 }
 
 type ViewTransitionDocument = Document & { startViewTransition?: (cb: () => void) => unknown };
@@ -94,7 +105,7 @@ export function RouterProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const navigate = useCallback((to: string, options: NavigateOptions = {}) => {
-    const url = new URL(to, window.location.origin);
+    const url = new URL(withBase(to), window.location.origin);
     if (url.origin !== window.location.origin) return; // never navigate off-site via the router
     const target = `${url.pathname}${url.search}`;
     if (target === `${window.location.pathname}${window.location.search}`) return;
@@ -141,5 +152,5 @@ export function Link({ to, replace, onClick, ...rest }: LinkProps) {
     e.preventDefault();
     navigate(to, replace ? { replace } : {});
   };
-  return <a href={to} onClick={handle} {...rest} />;
+  return <a href={withBase(to)} onClick={handle} {...rest} />;
 }

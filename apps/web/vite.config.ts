@@ -2,6 +2,7 @@ import { readdirSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import amazeenPkg from '../../modules/amazeen/package.json' with { type: 'json' };
 
 /** One HTML entry per door (docs/ARCHITECTURE.md §2): `/` plus `/<imprint>/` for every folder with an index.html. */
 const doors = Object.fromEntries([
@@ -13,6 +14,7 @@ const doors = Object.fromEntries([
 
 export default defineConfig({
   plugins: [react()],
+  define: { __APP_VERSION__: JSON.stringify(amazeenPkg.version) },
   build: {
     rollupOptions: { input: doors },
     // Never inline fonts as data: URIs: the CSP (font-src 'self') would block them.

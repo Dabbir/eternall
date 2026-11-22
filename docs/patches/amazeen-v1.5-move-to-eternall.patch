@@ -1,0 +1,133 @@
+From 7dbbc95628f016dbf14c0cece843ca6fe85923e0 Mon Sep 17 00:00:00 2001
+From: ETERNALL <noreply@example.com>
+Date: Sun, 22 Nov 2026 21:10:21 +0700
+Subject: [PATCH] 1.5.0: Move to ETERNALL
+
+Adds a Move to ETERNALL section to the Office. It opens ETERNALL's
+/amazeen/import door and hands the archive over with postMessage,
+trusting only ETERNALL's origin and echoing its one-time nonce.
+---
+ CHANGELOG.md                          |  4 ++
+ package.json                          |  2 +-
+ src/features/settings/MoveSection.tsx | 62 +++++++++++++++++++++++++++
+ src/features/settings/Settings.tsx    |  2 +
+ 4 files changed, 69 insertions(+), 1 deletion(-)
+ create mode 100644 src/features/settings/MoveSection.tsx
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 293162b..ddbf0e2 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,9 @@
+ # Changelog
+ 
++## 1.5.0
++
++- **Move to ETERNALL** (Office): hands the whole archive to ETERNALL in one step, browser to browser, with origin checks and a one-time nonce. Nothing passes through a server. Your copy here stays until you erase it.
++
+ All notable changes to AMAZEEN. Versions follow [semver](https://semver.org).
+ 
+ ## 1.4.0 (2026-11-18)
+diff --git a/package.json b/package.json
+index 8d0077a..cbf30d4 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "amazeen",
+-  "version": "1.4.0",
++  "version": "1.5.0",
+   "description": "AMAZEEN — the weekly magazine of your own life.",
+   "scripts": {
+     "dev": "vite",
+diff --git a/src/features/settings/MoveSection.tsx b/src/features/settings/MoveSection.tsx
+new file mode 100644
+index 0000000..0784930
+--- /dev/null
++++ b/src/features/settings/MoveSection.tsx
+@@ -0,0 +1,62 @@
++import { useEffect, useRef, useState } from 'react';
++import ui from '../../components/ui.module.css';
++import { serializeForExport } from '../../domain/storage';
++import { useStore } from '../../state/store';
++import styles from './Settings.module.css';
++
++/**
++ * AMAZEEN is moving into ETERNALL. This hands the whole archive to ETERNALL's door
++ * (`/amazeen/import`) in one step, browser to browser: no server sees it.
++ * Only ETERNALL's origin is trusted, and every exchange carries ETERNALL's one-time nonce.
++ */
++export const ETERNALL_ORIGIN: string = import.meta.env.VITE_ETERNALL_ORIGIN ?? 'https://eternall.app';
++
++type MoveState = { step: 'idle' } | { step: 'moving' } | { step: 'done'; added: number } | { step: 'error'; message: string };
++
++export function MoveSection() {
++  const { data } = useStore();
++  const [state, setState] = useState<MoveState>({ step: 'idle' });
++  const cleanup = useRef<() => void>(() => {});
++  useEffect(() => () => cleanup.current(), []);
++
++  const move = () => {
++    const popup = window.open(`${ETERNALL_ORIGIN}/amazeen/import`, 'eternall-move', 'popup,width=760,height=860');
++    if (!popup) {
++      setState({ step: 'error', message: 'Your browser blocked the window. Allow pop-ups for this site, or export a backup and import it in ETERNALL.' });
++      return;
++    }
++    setState({ step: 'moving' });
++    const onMessage = (e: MessageEvent) => {
++      if (e.origin !== ETERNALL_ORIGIN || e.source !== popup) return;
++      const msg = e.data as { type?: string; nonce?: string; added?: number; message?: string };
++      if (msg?.type === 'eternall:ready' && typeof msg.nonce === 'string') {
++        popup.postMessage({ type: 'amazeen:archive', nonce: msg.nonce, archive: serializeForExport(data) }, ETERNALL_ORIGIN);
++      } else if (msg?.type === 'eternall:done') {
++        setState({ step: 'done', added: msg.added ?? 0 });
++        cleanup.current();
++      } else if (msg?.type === 'eternall:error') {
++        setState({ step: 'error', message: msg.message ?? 'ETERNALL couldn’t read the archive.' });
++      }
++    };
++    window.addEventListener('message', onMessage);
++    cleanup.current = () => window.removeEventListener('message', onMessage);
++  };
++
++  return (
++    <section className={styles.section} aria-labelledby="s-move">
++      <div className={styles.sectionIntro}>
++        <h2 id="s-move">AMAZEEN is moving</h2>
++        <p>AMAZEEN now lives in ETERNALL, the same magazine with an encrypted vault and a lifeline around it. Moving takes one step and keeps every issue.</p>
++      </div>
++      <div className={styles.actions}>
++        <button type="button" className={`${ui.btn} ${ui.primary}`} onClick={move} disabled={state.step === 'moving'}>
++          {state.step === 'moving' ? 'Moving…' : 'Move to ETERNALL'}
++        </button>
++        <p className={styles.status} role="status" aria-live="polite">
++          {state.step === 'done' && `Moved: ${state.added} pieces arrived in ETERNALL. Your copy here is untouched until you erase it.`}
++          {state.step === 'error' && state.message}
++        </p>
++      </div>
++    </section>
++  );
++}
+diff --git a/src/features/settings/Settings.tsx b/src/features/settings/Settings.tsx
+index db3840a..a0ba2ea 100644
+--- a/src/features/settings/Settings.tsx
++++ b/src/features/settings/Settings.tsx
+@@ -21,6 +21,7 @@ import { Link, paths } from '../../router/router';
+ import { useStore } from '../../state/store';
+ import { useSync } from '../../sync/SyncProvider';
+ import { SyncSection } from '../sync/SyncSection';
++import { MoveSection } from './MoveSection';
+ import { useExportArchive } from '../../state/useExportArchive';
+ import styles from './Settings.module.css';
+ 
+@@ -273,6 +274,7 @@ export default function Settings() {
+ 
+       <AppearanceSection />
+ 
++      <MoveSection />
+       <SyncSection />
+ 
+       <section className={styles.section} aria-labelledby="s-archive">
+-- 
+2.54.0 (Apple Git-157)
+

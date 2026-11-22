@@ -53,7 +53,8 @@ export function navigate(href: string, options: { replace?: boolean } = {}) {
   const go = () => {
     if (options.replace) window.history.replaceState(null, '', href);
     else window.history.pushState(null, '', href);
-    notify();
+    // A popstate tells every router on the page, including an imprint's own (AMAZEEN has one).
+    window.dispatchEvent(new PopStateEvent('popstate'));
   };
   const doc = document as ViewTransitionDoc;
   // A view transition marks a change of publication; moves within one imprint stay instant.

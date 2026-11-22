@@ -64,6 +64,8 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 - The **F15 migration** importer: postMessage handoff, via-sync and via-file paths.
 - AMAZEEN v1.5, released in its own repo, with the "Move my journal" button (the only change made to the original repo, made by the owner or with explicit approval).
 
+**Done (2026-11-22):** AMAZEEN imported with its history (`git subtree`), running inside ETERNALL with its own screens and look, the shared spine plus its masthead strip, and the vault (one encrypted record per entry). Paths 1 (one-click handoff, `/amazeen/import`) and 3 (export file, via AMAZEEN's own Office import) work. The v1.5 handoff patch is in `docs/patches/` for the owner to apply. Path 2 (via AMAZEEN sync key) ships with the sync-worker in Release 1.
+
 **Exit criteria:**
 - A real AMAZEEN v1.4 archive migrates losslessly via all three paths.
 - The AMAZEEN experience is visually and functionally intact apart from the documented spine change.

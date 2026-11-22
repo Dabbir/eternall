@@ -27,7 +27,7 @@ const NAV: NavItem[] = [
   { name: 'settings', label: 'Office', to: paths.settings(), icon: 'cog' },
 ];
 
-function StorageBanner() {
+export function StorageBanner() {
   const { saveStatus, loadStatus } = useStore();
   if (loadStatus === 'corrupt') {
     return (

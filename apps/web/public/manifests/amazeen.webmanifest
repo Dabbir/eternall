@@ -1,0 +1,39 @@
+{
+  "id": "/amazeen/",
+  "name": "AMAZEEN",
+  "short_name": "AMAZEEN",
+  "description": "The weekly magazine of your own life. An ETERNALL imprint.",
+  "start_url": "/amazeen/",
+  "scope": "/amazeen/",
+  "display": "standalone",
+  "background_color": "#efe9dd",
+  "theme_color": "#d43a24",
+  "icons": [
+    {
+      "src": "/brand/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/brand/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Jot a note",
+      "url": "/amazeen/write/note"
+    },
+    {
+      "name": "Write a story",
+      "url": "/amazeen/write/story"
+    }
+  ]
+}

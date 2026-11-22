@@ -5,7 +5,7 @@
    the editor's annotations. Fraunces sets display type, Newsreader
    sets copy, JetBrains Mono speaks for production notes.
    ───────────────────────────────────────────────────────────── */
-:root {
+[data-imprint='amazeen'] {
   color-scheme: light;
   --paper: #efe9dd;
   --paper-2: #e5dccb;
@@ -72,7 +72,7 @@
 /* Night edition. Applied when chosen explicitly (data-theme="dark", set by the theme switch)
    or when following a dark system setting and the person hasn't chosen Day. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) {
+  :root:not([data-theme='light']) [data-imprint='amazeen'] {
     color-scheme: dark;
     --paper: #12100d;
     --paper-2: #1c1915;
@@ -95,7 +95,7 @@
   }
 }
 
-:root[data-theme='dark'] {
+:root[data-theme='dark'] [data-imprint='amazeen'] {
   color-scheme: dark;
   --paper: #12100d;
   --paper-2: #1c1915;
@@ -118,27 +118,20 @@
 }
 
 @media (max-width: 899px) {
-  :root {
+  [data-imprint='amazeen'] {
     --spine-w: 0px;
     --topbar-h: 56px;
   }
 }
 
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-  scroll-padding-top: calc(var(--topbar-h) + 16px);
-}
-
-body {
-  margin: 0;
-  min-height: 100dvh;
+:where([data-imprint='amazeen']) {
+  position: relative;
+  isolation: isolate;
+  min-height: 100%;
   background: var(--paper);
   color: var(--ink);
   font-family: var(--font-text);
@@ -150,9 +143,9 @@ body {
 }
 
 /* Paper stock: a static turbulence grain, a few hundred bytes. */
-body::before {
+:where([data-imprint='amazeen'])::before {
   content: '';
-  position: fixed;
+  position: absolute;
   inset: 0;
   pointer-events: none;
   z-index: 0;
@@ -161,23 +154,23 @@ body::before {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .22 0 0 0 .14 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) body::before {
+  :root:not([data-theme='light']) [data-imprint='amazeen']::before {
     mix-blend-mode: screen;
     opacity: 0.1;
   }
 }
-:root[data-theme='dark'] body::before {
+:root[data-theme='dark'] [data-imprint='amazeen']::before {
   mix-blend-mode: screen;
   opacity: 0.1;
 }
 
-#root {
+:where([data-imprint='amazeen']) > * {
   position: relative;
   z-index: 1;
   isolation: isolate;
 }
 
-h1, h2, h3, h4 {
+:where([data-imprint='amazeen']) h1, :where([data-imprint='amazeen']) h2, :where([data-imprint='amazeen']) h3, :where([data-imprint='amazeen']) h4 {
   font-family: var(--font-display);
   font-weight: 600;
   line-height: 1.02;
@@ -186,45 +179,41 @@ h1, h2, h3, h4 {
   text-wrap: balance;
 }
 
-p {
+:where([data-imprint='amazeen']) p {
   margin: 0;
   text-wrap: pretty;
 }
 
-a {
+:where([data-imprint='amazeen']) a {
   color: inherit;
 }
 
-button,
-input,
-textarea,
-select {
+:where([data-imprint='amazeen']) button, :where([data-imprint='amazeen']) input, :where([data-imprint='amazeen']) textarea, :where([data-imprint='amazeen']) select {
   font: inherit;
   color: inherit;
 }
 
-button {
+:where([data-imprint='amazeen']) button {
   cursor: pointer;
 }
 
-::selection {
+:where([data-imprint='amazeen']) ::selection {
   background: var(--press);
   color: var(--press-ink);
 }
 
-:focus-visible {
+:where([data-imprint='amazeen']) :focus-visible {
   outline: 2px solid var(--proof);
   outline-offset: 3px;
   border-radius: 2px;
 }
 
-img,
-svg {
+:where([data-imprint='amazeen']) img, :where([data-imprint='amazeen']) svg {
   display: block;
   max-width: 100%;
 }
 
-.visually-hidden {
+:where([data-imprint='amazeen']) .visually-hidden {
   position: absolute !important;
   width: 1px;
   height: 1px;
@@ -239,7 +228,7 @@ svg {
 /* ── Typographic atoms ─────────────────────────────────── */
 
 /* Production label: mono, tracked. */
-.kicker {
+:where([data-imprint='amazeen']) .kicker {
   font-family: var(--font-mono);
   font-size: var(--step--1);
   font-weight: 600;
@@ -248,19 +237,19 @@ svg {
 }
 
 /* Editor's annotation in proof blue. */
-.annot {
+:where([data-imprint='amazeen']) .annot {
   font-family: var(--font-mono);
   font-size: var(--step--1);
   color: var(--proof);
   letter-spacing: 0.01em;
 }
 
-.numeral {
+:where([data-imprint='amazeen']) .numeral {
   font-family: var(--font-display);
   font-variant-numeric: lining-nums tabular-nums;
 }
 
-kbd {
+:where([data-imprint='amazeen']) kbd {
   font-family: var(--font-mono);
   font-size: 0.78em;
   font-weight: 600;
@@ -274,12 +263,12 @@ kbd {
 /* ── Scroll-driven reveals (progressive enhancement) ────── */
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .reveal {
+    :where([data-imprint='amazeen']) .reveal {
       animation: reveal-up linear both;
       animation-timeline: view();
       animation-range: entry 0% cover 28%;
     }
-    .reveal-x {
+    :where([data-imprint='amazeen']) .reveal-x {
       animation: reveal-x linear both;
       animation-timeline: view();
       animation-range: entry 0% cover 30%;
@@ -300,13 +289,13 @@ kbd {
 }
 
 /* ── Page transitions (View Transitions API) ────────────── */
-::view-transition-old(root) {
+:root:has([data-imprint='amazeen'])::view-transition-old(root) {
   animation: 260ms var(--ease-in-out) both vt-out;
 }
-::view-transition-new(root) {
+:root:has([data-imprint='amazeen'])::view-transition-new(root) {
   animation: 420ms var(--ease-out) both vt-in;
 }
-::view-transition-group(*) {
+:root:has([data-imprint='amazeen'])::view-transition-group(*) {
   animation-duration: 520ms;
   animation-timing-function: var(--ease-out);
 }
@@ -345,9 +334,7 @@ kbd {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     animation-duration: 1ms !important;
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
@@ -362,13 +349,13 @@ kbd {
 }
 
 @media print {
-  body {
+  :where([data-imprint='amazeen']) {
     background: #fff;
     color: #15130f;
     print-color-adjust: exact;
     -webkit-print-color-adjust: exact;
   }
-  body::before {
+  :where([data-imprint='amazeen'])::before {
     display: none;
   }
 }

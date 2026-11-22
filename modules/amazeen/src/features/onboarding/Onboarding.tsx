@@ -3,6 +3,7 @@ import type { FormEvent } from 'react';
 import { CoverArt } from '../../components/CoverArt';
 import { Monogram } from '../../components/Logo';
 import { JoinDialog } from '../sync/JoinDialog';
+import { useEmbedded } from '../../imprint/embedded';
 import ui from '../../components/ui.module.css';
 import { LIMITS } from '../../domain/entries';
 import { compileIssues } from '../../domain/issues';
@@ -15,6 +16,7 @@ import styles from './Onboarding.module.css';
 const SUGGESTIONS = ['The Weekly Me', 'Small Hours', 'Field Notes', 'Sunday Edition', 'Good Days'];
 
 export function Onboarding() {
+  const embedded = useEmbedded();
   useDocumentTitle('Start your magazine');
   const { replaceData } = useStore();
   const [title, setTitle] = useState('');
@@ -146,9 +148,15 @@ export function Onboarding() {
                 Explore a sample archive
               </button>
             </div>
-            <button type="button" className={styles.restore} onClick={() => setRestoring(true)}>
-              Already have a journal? Restore it with your sync key
-            </button>
+            {embedded ? (
+              <Link to="/import" className={styles.restore}>
+                Already writing in AMAZEEN? Move your journal here
+              </Link>
+            ) : (
+              <button type="button" className={styles.restore} onClick={() => setRestoring(true)}>
+                Already have a journal? Restore it with your sync key
+              </button>
+            )}
             <p className={styles.privacy}>
               Everything stays in this browser. No account, no tracking, no cloud. <Link to={paths.privacy()}>Privacy</Link>
             </p>
