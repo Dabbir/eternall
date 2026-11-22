@@ -5,10 +5,10 @@ import react from '@vitejs/plugin-react';
 
 /** One HTML entry per door (docs/ARCHITECTURE.md §2): `/` plus `/<imprint>/` for every folder with an index.html. */
 const doors = Object.fromEntries([
-  ['house', resolve(__dirname, 'index.html')],
-  ...readdirSync(__dirname, { withFileTypes: true })
-    .filter((d) => d.isDirectory() && existsSync(resolve(__dirname, d.name, 'index.html')))
-    .map((d) => [d.name, resolve(__dirname, d.name, 'index.html')]),
+  ['house', resolve(import.meta.dirname, 'index.html')],
+  ...readdirSync(import.meta.dirname, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && !['dist', 'public', 'node_modules', 'src'].includes(d.name) && existsSync(resolve(import.meta.dirname, d.name, 'index.html')))
+    .map((d) => [d.name, resolve(import.meta.dirname, d.name, 'index.html')]),
 ]);
 
 export default defineConfig({

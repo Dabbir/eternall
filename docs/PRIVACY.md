@@ -58,7 +58,7 @@ Status: draft for review · Phase 0 · Builds on `amazeen-app/docs/sync-security
   - UI preferences that carry no personal content (theme, "Flat pages", last-opened imprint).
 - **Search** decrypts in a worker into memory and builds an in-memory index for the session. **No plaintext index is ever written to disk.**
 - **Drafts** (unsent text in editors) are encrypted with DK before being written. If the vault is locked mid-draft, the draft is encrypted and saved, never discarded.
-- **The `localStorage` durability mirror** (`ARCHITECTURE.md` §7) holds ciphertext only.
+- **Nothing personal is ever written to `localStorage`.** Plaintext from the original app and from Phase 1 development is moved into the vault and deleted once the vault exists.
 
 ## 4. The app lock
 
@@ -144,6 +144,7 @@ Sync and immersive modes require an active licence (`BUSINESS.md`). The licence 
 | Malicious payment provider | Knows who paid; learns nothing about content. |
 | Lost recovery kit + forgotten passphrase | Data unrecoverable (by design). |
 | Coercion / legal request to us | We can hand over only ciphertext and the metadata in §6. |
+| Tab closed within milliseconds of a write | The last write can be lost: encryption is asynchronous, so there is no synchronous mirror (a plaintext one is forbidden). Writes flush on hide and close. |
 
 ## 11. AI policy
 

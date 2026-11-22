@@ -163,7 +163,7 @@ The shell keeps a **capability registry**. A consumer asks `ctx.capabilities.get
 
 - **Record envelope** (generalising AMAZEEN's wire format): `{ rid, updatedAt, deleted, blob }`, where `rid` is an **opaque HMAC of the logical id** (`PRIVACY.md` §5) and `blob` is the AES-GCM ciphertext of `{ imprint, collection, id, schemaVersion, value }`.
 - **Merging:** newest-wins per record with tombstones. This is AMAZEEN's `mergeData` semantics, lifted into `packages/vault` for all imprints.
-- **Durability:** IndexedDB plus a synchronous `localStorage` mirror of *pending ciphertext* for writes cut off by page close (AMAZEEN audit finding #2), a `pagehide` flush, and `navigator.storage.persist()` requested after the first meaningful write.
+- **Durability:** encrypted IndexedDB writes batched within ~120 ms, flushed on `visibilitychange` (hidden) and `pagehide`. AMAZEEN's synchronous `localStorage` mirror can't carry over: encryption is asynchronous and a plaintext mirror is forbidden, so a write made in the final milliseconds before a hard close can still be lost (residual risk, `PRIVACY.md` §10). `navigator.storage.persist()` is requested after the vault is created.
 - **Multiple tabs:** BroadcastChannel change events with per-change dirty flags (AMAZEEN audit finding #4).
 - **Backups:** vault-level export as an **encrypted** archive by default (`.eternall`, decryptable with the recovery key), plus an optional plaintext JSON export per imprint for portability, with an explicit warning.
 

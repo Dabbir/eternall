@@ -2,6 +2,7 @@ import type { ImprintDefinition } from '@eternall/core';
 import type { PrimaryAction } from '@eternall/kit';
 import { Icon, LogoMark } from '@eternall/ui';
 import { linkProps } from './router';
+import { useLock } from '../vault/lockContext';
 
 const isMac = () => /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
 
@@ -19,6 +20,7 @@ interface Props {
  * Ink-black in both themes, so each imprint's colour owns the page.
  */
 export function Spine({ current, primary, focus, badge, onDoors, onSearch }: Props) {
+  const { canLock, lock } = useLock();
   const name = current?.name ?? 'ETERNALL';
   const fn = current?.functionLine ?? 'Your life in weeks';
   return (
@@ -44,6 +46,11 @@ export function Spine({ current, primary, focus, badge, onDoors, onSearch }: Pro
           <button type="button" className="spine__primary" onClick={primary.run}>
             <Icon name="pen" size={16} />
             <span>{primary.label}</span>
+          </button>
+        )}
+        {canLock && (
+          <button type="button" className="spine__icon" onClick={lock} aria-label="Lock now" title="Lock now (⌘⇧L)" aria-keyshortcuts="Meta+Shift+L Control+Shift+L">
+            <Icon name="lock" size={18} />
           </button>
         )}
         {!focus && (

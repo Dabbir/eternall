@@ -5,7 +5,7 @@ ETERNALL is **a private publishing house for your life**. It is one local-first,
 ## Current state (read this before changing anything)
 
 - The owner approved the docs and asked to build through every phase. Work happens on branch `platform`, one commit per verified phase, never pushed (`docs/ROADMAP.md` tracks progress).
-- **Phase 1 is done:** the monorepo (`apps/web`, `packages/{core,vault,kit,ui}`, `modules/{envoi,folio,almanack}`) replaces the original single app. The vault is still a plaintext localStorage store until Phase 2.
+- **Phase 1 is done:** the monorepo (`apps/web`, `packages/{core,vault,kit,ui}`, `modules/{envoi,folio,almanack}`) replaces the original single app. - **Phase 2 is done:** everything is encrypted at rest in IndexedDB through `packages/vault` (keyring, encrypted store, recovery kit). Never write personal data anywhere else.
 - **AMAZEEN lives in `~/orca/amazeen-app`. Never modify it in place.** It is imported via `git subtree` in Phase 3 (`docs/adr/0006`). Changes to it need the owner's explicit approval.
 
 ## Commands

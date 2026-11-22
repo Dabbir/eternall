@@ -47,6 +47,8 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 - Migration of `eternall:archive` from localStorage into the vault.
 - Flows F2–F4, F11, F13, F14, F17 and F18.
 
+**Done (2026-11-22):** `packages/vault` holds the key hierarchy, opaque rids, encrypted store, keyring (passkey PRF, passphrase PBKDF2-600k, device key), recovery kit, sealed `.eternall` archive, auto-lock and tab sync. Verified end to end in jsdom (fake IndexedDB) and Chromium; WebKit and Firefox runs move to the Release 1 regression.
+
 **Exit criteria:**
 - Known-answer crypto tests pass in Chromium, WebKit and Firefox.
 - No plaintext content in IndexedDB or localStorage (verified by an e2e storage inspection test).

@@ -87,3 +87,22 @@ describe('merge', () => {
     expect(mergeRecords(map, [rec('3')])).toHaveLength(1);
   });
 });
+
+describe('moving stores', () => {
+  it('writes everything into the new store and keeps working', async () => {
+    const a = createMemoryStore();
+    const b = createMemoryStore();
+    const vault = await Vault.open(a);
+    vault.collection<Note>('house/note').put({ id: 'x', text: '1' });
+    expect(vault.hasRecordsOutside(['house/settings'])).toBe(true);
+    await vault.setStore(b);
+    expect(b.dump()).toHaveLength(1);
+    vault.collection<Note>('house/note').put({ id: 'y', text: '2' });
+    const seen: number[] = [];
+    vault.onFlushed((r) => seen.push(r.length));
+    await vault.flush();
+    expect(b.dump()).toHaveLength(2);
+    expect(a.dump()).toHaveLength(0);
+    expect(seen).toEqual([1]);
+  });
+});

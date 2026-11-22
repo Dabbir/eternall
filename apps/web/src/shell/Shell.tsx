@@ -13,6 +13,7 @@ import { Spine } from './Spine';
 import { useProfile, useSettings, useToday } from './hooks';
 import { navigate, parseLocation, useHref } from './router';
 import { useApplyTheme } from './theme';
+import { useLock } from '../vault/lockContext';
 
 export function Shell({ today: fixedToday }: { today?: string }) {
   const vault = useVault();
@@ -24,6 +25,7 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   const profile = useProfile();
   const [settings, updateSettings] = useSettings();
   const toast = useToast();
+  const lockApi = useLock();
   const [primary, setPrimary] = useState<PrimaryAction | null>(null);
   const [doorsOpen, setDoorsOpen] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
@@ -78,6 +80,11 @@ export function Shell({ today: fixedToday }: { today?: string }) {
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'l') {
+        e.preventDefault();
+        lockApi.lock();
+        return;
+      }
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         setPaletteOpen((o) => !o);
@@ -85,7 +92,7 @@ export function Shell({ today: fixedToday }: { today?: string }) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [lockApi]);
 
   const publication = current?.id ?? 'house';
 

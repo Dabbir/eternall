@@ -28,6 +28,7 @@ export class Vault implements DataReader {
   private timer: ReturnType<typeof setTimeout> | null = null;
   private version = 0;
   private saveState: SaveState = { ok: true };
+  private flushedListeners = new Set<(records: VaultRecord[]) => void>();
   private readonly now: () => string;
   private readonly debounceMs: number;
 
@@ -130,6 +131,7 @@ export class Vault implements DataReader {
     try {
       await this.store.write(batch);
       this.setSaveState({ ok: true });
+      for (const l of this.flushedListeners) l(batch);
     } catch (e) {
       // Keep the batch so the next flush retries; nothing is lost from memory.
       for (const r of batch) if (!this.pending.has(r.key)) this.pending.set(r.key, r);
@@ -144,6 +146,28 @@ export class Vault implements DataReader {
     if (s.ok === this.saveState.ok && (s.ok || (!this.saveState.ok && s.reason === this.saveState.reason))) return;
     this.saveState = s;
     this.emit();
+  }
+
+  /** Called after each successful write to the store (used to tell other tabs). */
+  onFlushed(listener: (records: VaultRecord[]) => void): () => void {
+    this.flushedListeners.add(listener);
+    return () => this.flushedListeners.delete(listener);
+  }
+
+  /** Whether any live record exists outside the given paths. */
+  hasRecordsOutside(paths: readonly string[]): boolean {
+    for (const r of this.records.values()) if (!r.deleted && !paths.some((p) => r.key.startsWith(`${p}/`))) return true;
+    return false;
+  }
+
+  /** Move to another store (e.g. from memory to the encrypted store), writing everything into it first. */
+  async setStore(next: RecordStore): Promise<void> {
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null;
+    this.pending.clear();
+    await next.write(this.snapshot());
+    this.store = next;
+    this.setSaveState({ ok: true });
   }
 
   hasPendingWrites(): boolean {

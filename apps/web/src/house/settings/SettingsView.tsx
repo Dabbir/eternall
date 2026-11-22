@@ -2,10 +2,12 @@ import { useRef, useState } from 'react';
 import { plural, type FieldErrors, type HouseProfile, type ImprintDefinition } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button, Dialog, Segmented, TextField, useToast } from '@eternall/ui';
-import { useVault, type VaultRecord } from '@eternall/vault';
+import { isSealedArchive, openSealedArchive, useVault, type SealedArchive, type VaultRecord } from '@eternall/vault';
+import { SecuritySettings, exportSealed } from '../../vault/SecuritySettings';
+import { useLock } from '../../vault/lockContext';
 import { LIMITS, PROFILE_PATH, validateProfile, type ProfileInput, type ThemePreference } from '../domain/house';
 import { useSettings } from '../../shell/hooks';
-import { linkProps, navigate } from '../../shell/router';
+import { linkProps } from '../../shell/router';
 
 const THEMES: { value: ThemePreference; label: string }[] = [
   { value: 'system', label: 'System' },
@@ -41,6 +43,13 @@ export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[
   const [importError, setImportError] = useState<string | null>(null);
   const [erase, setErase] = useState<null | 'all' | ImprintDefinition>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const lockApi = useLock();
+  const [sealed, setSealed] = useState<SealedArchive | null>(null);
+
+  const exportEncrypted = async () => {
+    if (await exportSealed(lockApi)) toast({ message: 'Encrypted backup saved. Only your recovery key opens it.' });
+    else toast({ message: 'Lock your vault first, then export an encrypted backup.', tone: 'error' });
+  };
 
   const exportArchive = () => {
     const blob = new Blob([JSON.stringify({ app: 'ETERNALL', format: 'records/1', exportedAt: new Date().toISOString(), records: vault.snapshot() }, null, 2)], {
@@ -52,14 +61,25 @@ export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[
     a.download = `eternall-${today}.json`;
     a.click();
     window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-    toast({ message: 'Archive exported. Keep it somewhere safe.' });
+    toast({ message: 'Plain backup exported. This file isn’t encrypted — keep it somewhere private.' });
   };
 
   const onFile = async (file: File | undefined) => {
     if (!file) return;
     setImportError(null);
     try {
-      setPending(parseArchiveFile(await file.text()));
+      const text = await file.text();
+      let json: unknown = null;
+      try {
+        json = JSON.parse(text);
+      } catch {
+        /* handled below */
+      }
+      if (isSealedArchive(json)) {
+        setSealed(json);
+        return;
+      }
+      setPending(parseArchiveFile(text));
     } catch (e) {
       setImportError(e instanceof Error ? e.message : 'Couldn’t read that file.');
     } finally {
@@ -149,6 +169,18 @@ export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[
         </ul>
       </section>
 
+      <section className="settings-block rise" style={{ ['--i' as string]: 4 }} aria-labelledby="set-security">
+        <div className="settings-block__intro">
+          <h2 id="set-security" className="display">
+            Security
+          </h2>
+          <p className="faint">Everything is encrypted on this device. Choose how it opens.</p>
+        </div>
+        <div className="settings-block__body">
+          <SecuritySettings />
+        </div>
+      </section>
+
       <section className="settings-block rise" style={{ ['--i' as string]: 5 }} aria-labelledby="set-data">
         <div className="settings-block__intro">
           <h2 id="set-data" className="display">
@@ -157,13 +189,16 @@ export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[
           <p className="faint">{plural(vault.snapshot().filter((r) => !r.deleted).length, 'item')} kept.</p>
         </div>
         <div className="settings-block__body settings-actions">
-          <Button variant="ghost" icon="download" onClick={exportArchive}>
-            Export backup
+          <Button variant="ghost" icon="download" onClick={() => void exportEncrypted()}>
+            Export encrypted backup
+          </Button>
+          <Button variant="quiet" onClick={exportArchive}>
+            Export plain JSON
           </Button>
           <Button variant="ghost" icon="upload" onClick={() => fileRef.current?.click()}>
             Restore from backup
           </Button>
-          <input ref={fileRef} type="file" accept="application/json,.json" hidden onChange={(e) => void onFile(e.target.files?.[0])} />
+          <input ref={fileRef} type="file" accept="application/json,.json,.eternall" hidden onChange={(e) => void onFile(e.target.files?.[0])} />
           {importError && (
             <p className="field__error" role="alert">
               {importError}
@@ -217,6 +252,18 @@ export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[
         </Dialog>
       )}
 
+      {sealed && (
+        <SealedImport
+          archive={sealed}
+          onClose={() => setSealed(null)}
+          onRecords={(records, skipped) => {
+            setSealed(null);
+            setPending(records);
+            if (skipped) toast({ message: `${plural(skipped, 'item')} in that backup couldn’t be read and will be skipped.`, tone: 'error' });
+          }}
+        />
+      )}
+
       {erase && (
         <EraseDialog
           label={erase === 'all' ? 'everything' : erase.name}
@@ -224,8 +271,7 @@ export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[
           onClose={() => setErase(null)}
           onErase={async () => {
             if (erase === 'all') {
-              await vault.destroy();
-              navigate('/', { replace: true });
+              await lockApi.destroyAll();
             } else {
               vault.eraseCollections(erase.collections);
               toast({ message: `${erase.name} has been erased.` });
@@ -313,6 +359,36 @@ function EraseDialog({ label, confirmWord, onClose, onErase }: { label: string; 
       >
         <p className="muted">Sealed letters will be destroyed unread. If you might want any of this later, export a backup first.</p>
         <TextField label={`Type “${confirmWord}” to confirm`} value={typed} autoFocus autoComplete="off" onChange={(e) => setTyped(e.target.value)} />
+      </form>
+    </Dialog>
+  );
+}
+
+function SealedImport({ archive, onClose, onRecords }: { archive: SealedArchive; onClose(): void; onRecords(r: VaultRecord[], skipped: number): void }) {
+  const [key, setKey] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  return (
+    <Dialog open onClose={onClose} title="Open an encrypted backup" eyebrow="Restore">
+      <form
+        className="editor-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          setBusy(true);
+          setError(null);
+          void openSealedArchive(archive, key)
+            .then(({ records, skipped }) => onRecords(records, skipped))
+            .catch((err: unknown) => setError(err instanceof Error ? err.message : 'Couldn’t open that backup.'))
+            .finally(() => setBusy(false));
+        }}
+      >
+        <p className="muted">This backup is encrypted. Enter the recovery key of the vault it came from.</p>
+        <TextField label="Recovery key" autoComplete="off" spellCheck={false} autoFocus value={key} error={error ?? undefined} onChange={(e) => setKey(e.target.value)} />
+        <div>
+          <Button variant="primary" type="submit" busy={busy} disabled={!key}>
+            Open backup
+          </Button>
+        </div>
       </form>
     </Dialog>
   );
