@@ -62,7 +62,7 @@
 
 /* The letterpress card: inner shadow on type, an offset highlight; the press comes down when you see them. */
 .kd-card { --w: 340px; position: relative; width: var(--w); aspect-ratio: 85 / 55; display: grid; align-content: start; gap: 6px; padding: 26px 28px; text-align: left; background: var(--card); border-radius: 3px; box-shadow: 0 1px 0 var(--card-edge), 0 10px 24px -14px rgb(0 0 0 / 0.35), inset 0 0 0 1px var(--rule); transition: transform 300ms var(--ease-out), box-shadow 300ms, opacity 300ms; }
-.kd-card__drawer { font-size: 0.6875rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); }
+.kd-card__drawer { font-size: 0.875rem; font-weight: 600; letter-spacing: 0.14em; font-variant-caps: all-small-caps; color: var(--accent); }
 .kd-card__name { font-family: var(--font-display); font-weight: 400; font-size: 1.75rem; line-height: 1.1; color: var(--ink); text-shadow: 0 1px 0 rgb(255 255 255 / 0.55), 0 -1px 0 rgb(0 0 0 / 0.12); }
 :root[data-theme='dark'] .kd-card__name, :root:not([data-theme='light']) .kd-card__name { text-shadow: 0 1px 0 rgb(255 255 255 / 0.04), 0 -1px 0 rgb(0 0 0 / 0.5); }
 .kd-card__since { font-style: italic; font-size: 0.875rem; color: var(--ink-2); }
@@ -74,7 +74,7 @@
 .kd-card--blank { opacity: 0.6; border: 1px dashed var(--rule-strong); box-shadow: none; }
 
 .kd-file { display: grid; gap: 4px; }
-.kd-rail { display: flex; align-items: center; gap: 14px; height: 56px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-2); }
+.kd-rail { display: flex; align-items: center; gap: 14px; height: 56px; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.18em; font-variant-caps: all-small-caps; color: var(--ink-2); }
 .kd-rail::after { content: ''; flex: 1; height: 6px; border-radius: 3px; background: linear-gradient(var(--brass), color-mix(in srgb, var(--brass) 55%, #000)); opacity: 0.55; }
 .kd-rail span { padding: 3px 10px; border: 1px solid color-mix(in srgb, var(--brass) 60%, transparent); border-radius: 2px; background: color-mix(in srgb, var(--brass) 12%, transparent); }
 
@@ -130,7 +130,7 @@
 .kd-card.is-pressed { box-shadow: 0 0 0 var(--card-edge), 0 2px 6px -4px rgb(0 0 0 / 0.4), inset 0 2px 10px rgb(0 0 0 / 0.18), inset 0 0 0 1px var(--accent); transform: scale(0.985); }
 .kd-card.is-pressed .kd-card__name { text-shadow: 0 2px 0 rgb(255 255 255 / 0.6), 0 -2px 1px rgb(0 0 0 / 0.22); }
 .kd-card--back { background: repeating-linear-gradient(transparent 0 27px, color-mix(in srgb, var(--accent-2) 22%, transparent) 27px 28px), var(--card); }
-.kd-back__title { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-2); }
+.kd-back__title { font-size: 0.875rem; font-weight: 600; letter-spacing: 0.16em; font-variant-caps: all-small-caps; color: var(--accent-2); }
 .kd-back__dates { display: grid; gap: 4px; }
 .kd-back__dates li { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
 .kd-back__dates em { font-style: italic; color: var(--ink-2); font-size: 0.9375rem; }

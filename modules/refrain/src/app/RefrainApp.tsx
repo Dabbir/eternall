@@ -5,6 +5,7 @@ import '@fontsource/libre-franklin/latin-400.css';
 import '@fontsource/libre-franklin/latin-600.css';
 import '@fontsource/bravura/latin-400.css';
 import '../theme/refrain.css';
+import '../theme/refrain.kit.css';
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { addDays, formatMedium, formatMonthYear, type ISODate, type ImprintAppProps } from '@eternall/core';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
@@ -30,6 +31,7 @@ import {
 } from '../rituals';
 import { audioAvailable, play } from './audio';
 import { RitualEditor } from './RitualEditor';
+import { Chrome } from './Chrome';
 
 const G = { clef: '', note: '', rest: '', fermata: '' };
 /** Staff step of each pentatonic pitch (0 = bottom line E4; each step is half a staff space). */
@@ -51,11 +53,13 @@ export default function RefrainApp({ path }: ImprintAppProps) {
   usePrimaryAction(rituals.length ? { label: 'Mark today', run: () => setSheet(true) } : { label: 'New ritual', run: () => setEditing({}) });
 
   return (
-    <div className="rf">
-      {open ? <ProgrammeNotes ritual={open} onEdit={() => setEditing({ existing: open })} /> : <Score onNew={() => setEditing({})} />}
-      {editing && <RitualEditor key={editing.existing?.id ?? 'new'} {...editing} onClose={() => setEditing(null)} />}
-      {sheet && <TodaySheet onClose={() => setSheet(false)} onNew={() => { setSheet(false); setEditing({}); }} />}
-    </div>
+    <Chrome movement={open ? { no: 'II.', name: `Programme notes · ${open.name}` } : null}>
+      <div className="rf">
+        {open ? <ProgrammeNotes ritual={open} onEdit={() => setEditing({ existing: open })} /> : <Score onNew={() => setEditing({})} />}
+        {editing && <RitualEditor key={editing.existing?.id ?? 'new'} {...editing} onClose={() => setEditing(null)} />}
+        {sheet && <TodaySheet onClose={() => setSheet(false)} onNew={() => { setSheet(false); setEditing({}); }} />}
+      </div>
+    </Chrome>
   );
 }
 
@@ -217,7 +221,6 @@ function Head({ aside }: { aside?: ReactNode }) {
   return (
     <header className="rf-head">
       <div>
-        <p className="rf-eyebrow">REFRAIN · Rituals &amp; habits</p>
         <h1 className="rf-title">
           The lines you <em>come back to.</em>
         </h1>
