@@ -78,6 +78,8 @@ export interface House {
   openSearch(): void;
   /** How many things wait elsewhere (other apps' badges), for a quiet dot on the exit. */
   notices: number;
+  /** The app's one-time first-contact note, until dismissed (docs/DESIGN.md §1.3); its chrome shows it. */
+  introNote: { name: string; text: string; dismiss(): void } | null;
   /** Whether 3D/immersive modes may run (capability + preference + licence). */
   immersive: { allowed: boolean; reason: 'ok' | 'flat-pages' | 'reduced-motion' | 'no-webgl' | 'low-power' | 'patron' };
 }
@@ -92,6 +94,24 @@ export function useHouse(): House {
   const h = useContext(HouseContext);
   if (!h) throw new Error('useHouse must be used inside <HouseProvider>');
   return h;
+}
+
+/** The app's first-contact note as a slip under its chrome; styled by each app's kit stylesheet. */
+export function IntroNote() {
+  const note = useHouse().introNote;
+  if (!note) return null;
+  return (
+    <aside className="imprint-intro" role="note">
+      <p>
+        <strong>{note.name}</strong> · {note.text}
+      </p>
+      <button type="button" className="imprint-intro__close" onClick={note.dismiss} aria-label="Got it">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+          <path d="M6 6l12 12M18 6L6 18" />
+        </svg>
+      </button>
+    </aside>
+  );
 }
 
 /** The primary action registered by the current screen, for an app's own chrome to render. */

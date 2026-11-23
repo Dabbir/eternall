@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useHouse, usePrimaryActionValue } from '@eternall/kit';
+import { IntroNote, useHouse, usePrimaryActionValue } from '@eternall/kit';
 import { Icon } from '@eternall/ui';
 import { kindred } from '../index';
 
@@ -68,6 +68,7 @@ export function Chrome({ here, children }: { here: KindredPlace; children: React
         ))}
       </nav>
 
+      <IntroNote />
       <div className="kc-body">{children}</div>
     </div>
   );

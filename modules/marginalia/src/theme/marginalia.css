@@ -50,11 +50,11 @@
   --veil: rgb(0 0 0 / 0.62);
 }
 
-.mg { max-width: 1160px; margin: 0 auto; padding: clamp(28px, 5vw, 56px) var(--gutter) 120px; }
+.mg { max-width: 1160px; margin: 0 auto; padding: 24px var(--gutter) 120px; }
 .mg-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 18px; margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid var(--rule-strong); }
 .mg-head__tools { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .mg-eyebrow { font-family: var(--font-mono); font-size: 0.875rem; letter-spacing: 0.12em; font-variant-caps: all-small-caps; color: var(--accent); }
-.mg-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.2rem, 1.5rem + 2.6vw, 3.8rem); line-height: 1.05; margin-top: 8px; }
+.mg-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.6rem); line-height: 1.1; }
 .mg-title em { font-style: italic; }
 .mg-link { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-align: left; }
 .mg-reading { font-family: var(--font-mono); font-size: 0.875rem; margin-bottom: 26px; display: flex; flex-wrap: wrap; gap: 4px 6px; align-items: baseline; }

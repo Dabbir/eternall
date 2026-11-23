@@ -5,9 +5,11 @@ import '@fontsource/ibm-plex-mono/latin-400.css';
 import '@fontsource/ibm-plex-mono/latin-500.css';
 import '@fontsource/caveat/latin-400.css';
 import '../theme/marginalia.css';
+import '../theme/marginalia.kit.css';
 import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { formatMedium, formatMonthYear, plural, type ImprintAppProps } from '@eternall/core';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
+import { Chrome } from './Chrome';
 import { Button, Icon, Segmented } from '@eternall/ui';
 import { DimensionToggle } from '@eternall/stage';
 import { useCollection } from '@eternall/vault';
@@ -29,6 +31,7 @@ export default function MarginaliaApp({ path, search }: ImprintAppProps) {
   const open = m ? works.find((w) => w.id === m[1]) : undefined;
   usePrimaryAction(open ? { label: 'Add an underline', run: () => setEditing({ kind: 'underline', work: open }) } : { label: 'Add a work', run: () => setEditing({ kind: 'work' }) });
   return (
+    <Chrome here={m ? 'work' : path === '/underlines' ? 'underlines' : 'catalogue'}>
     <div className="mg">
       {open ? (
         <WorkPage work={open} justAdded={justAdded} onEdit={() => setEditing({ kind: 'work', existing: open })} onUnderline={(u) => setEditing({ kind: 'underline', work: open, ...(u ? { existing: u } : {}) })} />
@@ -40,6 +43,7 @@ export default function MarginaliaApp({ path, search }: ImprintAppProps) {
       {editing?.kind === 'work' && <WorkEditor key={editing.existing?.id ?? 'new'} existing={editing.existing} onClose={() => setEditing(null)} />}
       {editing?.kind === 'underline' && <UnderlineEditor key={editing.existing?.id ?? 'new'} work={editing.work} existing={editing.existing} onSaved={setJustAdded} onClose={() => setEditing(null)} />}
     </div>
+    </Chrome>
   );
 }
 
@@ -47,7 +51,6 @@ function Head({ children }: { children?: ReactNode }) {
   return (
     <header className="mg-head">
       <div>
-        <p className="mg-eyebrow">MARGINALIA · Reading &amp; underlines</p>
         <h1 className="mg-title">
           Everything you underlined, <em>kept.</em>
         </h1>

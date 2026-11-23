@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { useHouse, usePrimaryActionValue } from '@eternall/kit';
+import { IntroNote, useHouse, usePrimaryActionValue } from '@eternall/kit';
 import { Icon } from '@eternall/ui';
 import { refrain } from '../index';
 
@@ -61,6 +61,7 @@ export function Chrome({ movement, children }: { movement: { no: string; name: s
         )}
       </nav>
 
+      <IntroNote />
       <div className="rc-body">{children}</div>
     </div>
   );

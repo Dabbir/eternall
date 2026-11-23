@@ -92,6 +92,10 @@ export function Shell({ today: fixedToday }: { today?: string }) {
       canLock: lockApi.canLock,
       openSearch: () => setPaletteOpen(true),
       notices: used.filter((d) => d.id !== def?.id && d.badge?.(ctx)).length,
+      introNote:
+        def && !settings.dismissed.includes(`intro:${def.id}`)
+          ? { name: def.name, text: def.intro, dismiss: () => updateSettings({ dismissed: [...settings.dismissed, `intro:${def.id}`] }) }
+          : null,
     }),
     [today, profile, toast, providers, enabled, others, ctx, settings, updateSettings, patron.active, primary, lockApi, used],
   );
