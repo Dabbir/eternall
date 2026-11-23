@@ -170,6 +170,62 @@
   margin-bottom: 22px;
 }
 
+/* Inside ETERNALL: the lock where the theme switch sits, and a small way out at the foot of the spine. */
+/* With the exit and a fifth section, the spine tightens so the deadline stays in view. */
+.spine[data-host] .spineNav {
+  margin-top: 16px;
+}
+.spine[data-host] .spineLink {
+  padding: 9px 0;
+  gap: 7px;
+}
+@media (max-height: 760px) {
+  .spine[data-host] .spineTitle {
+    display: none;
+  }
+}
+.hostLock {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 14px;
+  border-radius: 6px;
+  color: var(--spine-dim);
+}
+.hostLock:hover {
+  color: var(--spine-ink);
+  background: rgb(255 255 255 / 0.06);
+}
+.hostExit {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding: 2px 6px 10px;
+  border-bottom: 1px solid rgb(255 255 255 / 0.12);
+  color: var(--spine-dim);
+  font-family: var(--font-mono);
+}
+.hostExit:hover {
+  color: var(--spine-ink);
+}
+.hostExitLabel {
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  font-variant-caps: all-small-caps;
+}
+.hostDot {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--press);
+}
+
 .deadline {
   display: grid;
   justify-items: center;
@@ -299,6 +355,20 @@
     margin-left: auto;
   }
 
+  .topHost {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    flex: none;
+    color: var(--spine-dim);
+  }
+  .topSync + .topHost,
+  .topBrand + .topHost {
+    margin-left: auto;
+  }
+
   .topMeta {
     flex: none;
     font-family: var(--font-mono);
@@ -323,6 +393,10 @@
     align-items: end;
     padding: 0 8px env(safe-area-inset-bottom);
     background: var(--spine);
+  }
+  .tabs[data-host] {
+    grid-template-columns: repeat(5, 1fr);
+    padding: 0 4px env(safe-area-inset-bottom);
   }
 
   .tab,

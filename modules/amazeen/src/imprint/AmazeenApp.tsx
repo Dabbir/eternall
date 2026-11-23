@@ -4,6 +4,7 @@ import '@fontsource-variable/newsreader/opsz.css';
 import '@fontsource-variable/newsreader/opsz-italic.css';
 import '@fontsource-variable/jetbrains-mono/wght.css';
 import '../styles/global.css';
+import './amazeen.kit.css';
 import { Suspense, lazy, useMemo } from 'react';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
 import { useVault } from '@eternall/vault';
@@ -14,8 +15,9 @@ import { NowProvider } from '../state/now';
 import { StoreProvider } from '../state/store';
 import { SyncProvider } from '../sync/SyncProvider';
 import { Frame, Screens } from '../Screens';
-import { EmbeddedContext, ImmersiveContext, ShellSlot } from './embedded';
-import { MastheadStrip } from './MastheadStrip';
+import { DeskExtrasContext, EmbeddedContext, HostControlsContext, ImmersiveContext, type HostControls } from './embedded';
+import { OfferedQuotes } from './OfferedQuotes';
+import { amazeen } from '../index';
 import { createVaultAdapter, type VaultLike } from './vaultAdapter';
 import { MoveIn } from './MoveIn';
 import { MentionContext } from './MentionField';
@@ -30,11 +32,17 @@ export default function AmazeenApp() {
   const house = useHouse();
   const adapter = useMemo(() => createVaultAdapter(vault), [vault]);
   usePrimaryAction({ label: 'Write a piece', run: () => house.navigate('/amazeen/write/story') });
+  // AMAZEEN's own frame (its magazine spine) returns inside ETERNALL, with a small exit and the lock (adr/0011).
+  const host = useMemo<HostControls>(
+    () => ({ leave: house.leave, leaveLabel: amazeen.brand.leaveLabel, lock: house.lock, canLock: house.canLock, search: house.openSearch, notices: house.notices }),
+    [house.leave, house.lock, house.canLock, house.openSearch, house.notices],
+  );
   return (
     <EmbeddedContext.Provider value={true}>
       <ImmersiveContext.Provider value={house.immersive.allowed}>
       <MentionContext.Provider value={house.capability('people.mention')}>
-      <ShellSlot.Provider value={MastheadStrip}>
+      <HostControlsContext.Provider value={host}>
+      <DeskExtrasContext.Provider value={OfferedQuotes}>
         <ErrorBoundary>
           <NowProvider>
             <StoreProvider fallback={<PressLoader label="Opening the archive…" />} adapter={adapter}>
@@ -50,7 +58,8 @@ export default function AmazeenApp() {
             </StoreProvider>
           </NowProvider>
         </ErrorBoundary>
-      </ShellSlot.Provider>
+      </DeskExtrasContext.Provider>
+      </HostControlsContext.Provider>
       </MentionContext.Provider>
       </ImmersiveContext.Provider>
     </EmbeddedContext.Provider>

@@ -1,0 +1,59 @@
+/* ─────────────────────────────────────────────────────────────
+   AMAZEEN · kit for ETERNALL's shared primitives (docs/adr/0011). AMAZEEN's own screens
+   use its own components; this dresses the few shared ones it meets inside the house
+   (the Letters room, ⌘K, house toasts) in the newsroom's voice: press red, proof blue,
+   mono labels, 2px corners and the offset shadow of a block of type.
+   ───────────────────────────────────────────────────────────── */
+[data-imprint='amazeen'] {
+  --btn-radius: 2px;
+  --btn-h: 44px;
+  --btn-h-s: 34px;
+  --btn-pad: 0 18px;
+  --btn-font: var(--font-mono);
+  --btn-weight: 600;
+  --btn-size: 0.8125rem;
+  --btn-size-s: 0.75rem;
+  --btn-tracking: 0.06em;
+  --btn-caps: all-small-caps;
+  --btn-border-w: 1.5px;
+  --btn-press: translate(1px, 1px);
+  --btn-primary-bg: var(--press);
+  --btn-primary-fg: var(--press-ink);
+  --btn-primary-border: var(--ink);
+  --btn-primary-hover: var(--press);
+  --btn-accent-shadow: none;
+  --icon-btn-radius: 2px;
+  --field-radius: 2px;
+  --field-bg: var(--sheet);
+  --field-focus: 3px 3px 0 var(--proof);
+  --label-font: var(--font-mono);
+  --label-size: 0.8125rem;
+  --label-caps: all-small-caps;
+  --label-tracking: 0.06em;
+  --dialog-radius: 3px;
+  --dialog-bg: var(--sheet);
+  --dialog-shadow: 0 0 0 1.5px var(--ink), 8px 8px 0 var(--ink);
+  --dialog-title-font: var(--font-display);
+  --dialog-foot-rule: 1.5px solid var(--ink);
+  --dialog-foot-bg: transparent;
+  --veil-blur: 0px;
+  --toast-radius: 2px;
+  --toast-bg: var(--ink);
+  --toast-fg: var(--paper);
+  --toast-font: var(--font-mono);
+  --toast-size: 0.8125rem;
+  --toast-shadow: 5px 5px 0 var(--press);
+  --seg-radius: 2px;
+  --seg-font: var(--font-mono);
+  --toggle-radius: 2px;
+  --toggle-font: var(--font-mono);
+  --focus: var(--proof);
+}
+[data-imprint='amazeen'] .btn--primary,
+[data-imprint='amazeen'] .btn--accent,
+[data-imprint='amazeen'] .btn--ghost { border-color: var(--ink); }
+[data-imprint='amazeen'] .btn--primary:hover:not(:disabled),
+[data-imprint='amazeen'] .btn--accent:hover:not(:disabled),
+[data-imprint='amazeen'] .btn--ghost:hover:not(:disabled) { box-shadow: 4px 4px 0 var(--ink); transform: translate(-2px, -2px); background: inherit; }
+[data-imprint='amazeen'] .btn--quiet:hover:not(:disabled) { background: transparent; color: var(--press-text); }
+[data-imprint='amazeen'] .dialog .eyebrow { font-family: var(--font-mono); color: var(--proof); }

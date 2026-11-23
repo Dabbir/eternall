@@ -14,6 +14,8 @@ import { EntryRow } from './EntryRow';
 import { Flatplan } from './Flatplan';
 import { QuickJot } from './QuickJot';
 import styles from './Desk.module.css';
+import { createElement, useContext } from 'react';
+import { DeskExtrasContext } from '../../imprint/embedded';
 
 function greeting(now: Date): string {
   const h = now.getHours();
@@ -35,6 +37,7 @@ function groupByDay(entries: readonly Entry[]): { day: Date; entries: Entry[] }[
 }
 
 export function Desk() {
+  const Extras = useContext(DeskExtrasContext);
   const store = useStore();
   const { data, current, issues, streak } = store;
   const now = useNow();
@@ -65,6 +68,7 @@ export function Desk() {
   return (
     <div className={styles.desk}>
       <BackupReminder />
+      {Extras ? createElement(Extras) : null}
 
       {/* ── Front matter: the week's issue, set as an opening spread ── */}
       <section className={styles.front} aria-labelledby="desk-heading">

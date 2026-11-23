@@ -12,9 +12,10 @@ import { SyncDot } from './SyncDot';
 import { ThemeToggle, toggleTheme, visibleThemeSwitch } from './ThemeToggle';
 import { useTheme } from '../lib/theme';
 import styles from './AppShell.module.css';
+import { useHostControls } from '../imprint/embedded';
 
 interface NavItem {
-  name: Route['name'] | 'write';
+  name: Route['name'] | 'write' | 'letters';
   label: string;
   to: string;
   icon: IconName;
@@ -26,6 +27,8 @@ const NAV: NavItem[] = [
   { name: 'shelf', label: 'Shelf', to: paths.shelf(), icon: 'book' },
   { name: 'settings', label: 'Office', to: paths.settings(), icon: 'cog' },
 ];
+/** Inside ETERNALL, the Letters room (once ENVOI) joins the sections, before the Office. */
+const LETTERS: NavItem = { name: 'letters', label: 'Letters', to: '/letters', icon: 'mail' };
 
 export function StorageBanner() {
   const { saveStatus, loadStatus } = useStore();
@@ -63,7 +66,10 @@ function shortCountdown(target: Date, now: Date): string {
  * On phones, a slim masthead bar on top and index tabs along the bottom.
  */
 export function AppShell({ children }: { children: ReactNode }) {
-  const { route, navigate } = useRouter();
+  const { route, navigate, path } = useRouter();
+  const host = useHostControls();
+  const nav = host ? [...NAV.slice(0, 3), LETTERS, ...NAV.slice(3)] : NAV;
+  const inLetters = path === '/letters' || path.startsWith('/letters/');
   const { data, current } = useStore();
   const now = useNow();
   const { theme } = useTheme();
@@ -86,7 +92,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     },
   });
 
-  const isCurrent = (item: NavItem) => (route.name === item.name ? 'page' : undefined);
+  const isCurrent = (item: NavItem) => ((item.name === 'letters' ? inLetters : route.name === item.name && !inLetters) ? 'page' : undefined);
 
   return (
     <div className={styles.shell}>
@@ -94,7 +100,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
 
-      <header className={styles.spine}>
+      <header className={styles.spine} data-host={host ? '' : undefined}>
+        {host && (
+          <button type="button" className={styles.hostExit} onClick={host.leave} aria-label={`${host.leaveLabel}, back to your lifeline`} title={host.leaveLabel}>
+            <Icon name="exit" size={18} />
+            <span className={styles.hostExitLabel}>Leave</span>
+            {host.notices > 0 && <span className={styles.hostDot} aria-hidden="true" />}
+          </button>
+        )}
         <Link to={paths.desk()} className={styles.brand}>
           <span className={styles.brandTile} aria-hidden="true">
             <Monogram className={styles.brandGlyph} />
@@ -104,7 +117,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
         <nav className={styles.spineNav} aria-label="Primary">
           <ol>
-            {NAV.map((item, i) => (
+            {nav.map((item, i) => (
               <li key={item.name}>
                 <Link to={item.to} className={styles.spineLink} aria-current={isCurrent(item)}>
                   <span className={styles.spineIndex} aria-hidden="true">
@@ -121,7 +134,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         <span className={styles.spineTitle} data-text={`${masthead} · Nº ${current.number}`} aria-hidden="true" />
 
         <SyncDot className={styles.spineSync} />
-        <ThemeToggle orientation="vertical" className={styles.spineToggle} />
+        {host ? (
+          host.canLock && (
+            <button type="button" className={styles.hostLock} onClick={host.lock} aria-label="Lock" title="Lock (⌘⇧L)">
+              <Icon name="lock" size={18} />
+            </button>
+          )
+        ) : (
+          <ThemeToggle orientation="vertical" className={styles.spineToggle} />
+        )}
 
         <p className={styles.deadline} title={`Issue No. ${current.number} goes to press in ${timeUntil(current.weekEnd, now)}`}>
           <span className={styles.pulse} aria-hidden="true" />
@@ -138,7 +159,21 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className={styles.topTitle}>{masthead}</span>
         </Link>
         <SyncDot className={styles.topSync} />
-        <ThemeToggle size="small" className={styles.topToggle} />
+        {host ? (
+          <>
+            {host.canLock && (
+              <button type="button" className={styles.topHost} onClick={host.lock} aria-label="Lock">
+                <Icon name="lock" size={18} />
+              </button>
+            )}
+            <button type="button" className={styles.topHost} onClick={host.leave} aria-label={`${host.leaveLabel}, back to your lifeline`}>
+              <Icon name="exit" size={18} />
+              {host.notices > 0 && <span className={styles.hostDot} aria-hidden="true" />}
+            </button>
+          </>
+        ) : (
+          <ThemeToggle size="small" className={styles.topToggle} />
+        )}
         <span className={styles.topMeta}>
           Nº {current.number} · {shortCountdown(current.weekEnd, now)} to press
         </span>
@@ -151,8 +186,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         </main>
       </div>
 
-      <nav className={styles.tabs} aria-label="Sections">
-        {NAV.map((item) =>
+      <nav className={styles.tabs} aria-label="Sections" data-host={host ? '' : undefined}>
+        {nav.map((item) =>
           item.name === 'write' ? (
             <Link key={item.name} to={item.to} className={styles.tabWrite}>
               <Icon name="plus" size={22} />
