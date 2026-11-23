@@ -20,7 +20,7 @@ Conventions:
 | Entity | Fields |
 |---|---|
 | `house/profile` | `name`, `birthDate`, `horizonYears` (50–120), `hemisphere` (`north`/`south`, for PROLOGUE seasons), `createdAt` |
-| `house/settings` | `theme` (`system`/`light`/`dark`, one preference for the whole house; every imprint has its own light and dark palette), `flatPages` (disable 3D), `lens` (`moments`/`chapters`/`plain`), `hidden` (imprints hidden from the doors), `dismissed` (one-time hints and suggestions), `autoLockMinutes` |
+| `house/settings` | `theme` (`system`/`light`/`dark`, one preference for the whole house; every imprint has its own light and dark palette), `flatPages` (disable 3D), `lens` (`moments`/`chapters`/`plain`), `apps` (the apps switched on in Settings → Apps, ADR 0013; absent until the person first chooses, when Journal and Money plus every app holding data count as on), `hidden` (legacy: apps hidden before ADR 0013, read until `apps` is written), `dismissed` (one-time hints and suggestions), `autoLockMinutes` |
 | `house/inscription` | `date`, `title` (≤ 80), `body` (≤ 10k), `tone` (shared tones). The **lightweight "mark this week"** from today's app, kept for people who don't use AMAZEEN; it colours the *Moments* lens. When AMAZEEN is enabled, "Inscribe this week" offers *a quick inscription* or *a piece in AMAZEEN*. |
 
 **Lifeline:** combines all imprints' `WeekContribution`s per week.
@@ -165,7 +165,7 @@ Conventions:
 | `ledger/terms` | your shorthand: `units` (word → × 1.000 / × 1.000.000), `fixed` (word → an amount, e.g. goceng → 5.000), `days` (word → today/yesterday/… or a weekday), `income` (words meaning money in); at most 40 of each; a word means one thing, and never collides with a built-in word of another kind |
 
 - **Rules:** Rupiah only. The quick line is the main way in (`docs/design/casheen.md` §6). Going over is said plainly, never scored.
-- **Amounts never leave CASHEEN.** No lifeline layer or week lines; Almanac facts are counts only ("Months kept in CASHEEN this year", "Entries written this year").
+- **Money stays in CASHEEN** (ADR 0013). No lifeline layer, week lines, memories, Almanac facts or capabilities: the house shows nothing of it.
 - **Reminders:** on the 1st, "Set the budget for <month>", when opted in and no budget exists yet.
 - **Capabilities:** none.
 - **Import:** CSV read on the device (`csv.ts`); categories are guessed from notes like the quick line.
@@ -179,7 +179,7 @@ Conventions:
   KINDRED ───────────────▶ AMAZEEN ◀─────────────── MARGINALIA
                         (pieces + Letters)
 
-  CASHEEN ── almanacFacts() (counts only) ──▶ house · Almanac
+  CASHEEN ── nothing: money stays in CASHEEN (ADR 0013)
 
   house · Chapters ── chapters.at ──▶ house inscriptions · AMAZEEN
   REFRAIN ── rituals.list / rituals.week ──▶ (no consumer today)

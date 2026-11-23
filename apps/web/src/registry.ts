@@ -8,7 +8,7 @@ import { chaptersSection } from './house/chapters/section';
 import { almanacSection } from './house/almanac/section';
 
 /** The apps, each its own door (docs/adr/0011, 0012). Definitions are light; UIs load lazily. */
-export const IMPRINTS: readonly ImprintDefinition[] = [amazeen, refrain, kindred, marginalia, casheen];
+export const IMPRINTS: readonly ImprintDefinition[] = [amazeen, casheen, refrain, kindred, marginalia];
 
 /** Parts of the house that keep records and contribute like apps do (once FOLIO and ALMANACK). */
 export const HOUSE_SECTIONS: readonly HouseSection[] = [chaptersSection, almanacSection];

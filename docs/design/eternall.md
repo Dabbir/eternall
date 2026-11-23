@@ -77,20 +77,22 @@ The lifeline is the page. Everything else is marginalia around it.
 ### 5.2 Doors menu (from the house mark)
 ```
 ┌──────────────────────────────────────────────┐
-│  Your lifeline                    ETERNALL ◖L• │
+│  Your lifeline        See it all on one page │
 │  ──────────────────────────────────────────── │
-│  AMAZEEN     Journal                 ● open  │
-│  ENVOI       Letters to your future  1 ready │
-│  FOLIO       Chapters of your life           │
-│  ALMANACK    Measures & reflections          │
+│  YOUR APPS                                   │
+│  Journal     AMAZEEN · Journal       1 ready │
+│  Money       CASHEEN · Money, kept plainly   │
 │  ──────────────────────────────────────────── │
-│  Discover    REFRAIN · Rituals & habits    → │
-│              KINDRED · The people who matter→ │
-│  ──────────────────────────────────────────── │
-│  Lock now  ·  Settings  ·  Recovery kit       │
+│  3 more apps in Settings                     │
+│  Inscriptions · Chapters · Almanac · Settings │
 └──────────────────────────────────────────────┘
 ```
-Each row is set in **that imprint's own wordmark style** (a tiny preview of its identity), with the function line in plain house type.
+Each app leads with its **plain word** (Journal, Money, Practices, People, Reading) in house serif; its name and function line follow (ADR 0013). Only apps that are on are listed; "N more apps in Settings" leads to Settings → Apps.
+
+### 5.2b Welcome (`/` with no lifeline yet; ADR 0013)
+- **New person:** "Write as usual. *See your week again.*" with **Start writing** (opens AMAZEEN) and **Track money** (opens CASHEEN). Below a rule, plain links: "Begin your lifeline", "Explore a sample life", "I already have an ETERNALL vault on another device". The lifeline art stays on the right as a quiet hint.
+- **Someone already writing:** "Your lifeline — here when you *want it*", with **Back to Journal** (and Money) and **Begin your lifeline**.
+- **An app that is off, opened by its address:** "KINDRED is off." with **Turn on KINDRED** and **Back**.
 
 ### 5.3 Unlock (vault locked)
 A centred paper card, the only centred layout in the house, on purpose: the threshold. It holds the wordmark, "Your archive is locked", a passphrase field or a passkey button, and a quiet link to "Use recovery kit". At an app's door the unlock card is **that app's own lock**, with nothing of the house: its name and function line instead of the wordmark, its own heading ("The card file is locked."), and its kit's look (ADR 0011).

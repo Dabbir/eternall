@@ -154,9 +154,16 @@ Sync and immersive modes require an active licence (`BUSINESS.md`). The licence 
 
 Consolidating to four apps changed no keys, no encryption and no sync. Records of the retired imprints keep their paths and stay encrypted in the vault and in exports. The only new writes are house inscriptions created from PROLOGUE seasons and a migration log (`house/migrations`), both ordinary encrypted vault records. Each app's theme is scoped on `<body data-imprint>`, which carries only the app's id, never content.
 
+### Data boundaries between apps (ADR 0013)
+
+Apps share foundations, not data. The vault, export, recovery, the lock and sync are shared; content is not.
+- **No app reads another app's content automatically.** Cross-app features go through named capabilities that the person sees and uses (`ARCHITECTURE.md` §5), never through reading collections. AMAZEEN never reads money data.
+- **CASHEEN contributes nothing to the house:** no Almanac facts (not even counts), no lifeline marks, memories, inscriptions or capabilities. Its only outward signal is its own opt-in reminder, which names a month ("Set the budget for December"), never an amount, category or habit. A test (`casheen.test.tsx`) asserts this.
+- **Apps that are off** (Settings → Apps) contribute nothing and do not open; their records stay encrypted in the vault and in exports until erased. Which apps are on is one field in `house/settings` (`apps`), never content.
+
 ### CASHEEN: money (ADR 0012)
 
-- **Amounts never leave CASHEEN.** The house shows counts only (Almanac). Nothing about money reaches the lifeline, week panel or house search.
+- **Money stays in CASHEEN** (ADR 0013, above). Nothing about money reaches the lifeline, week panel, Almanac or house search.
 - **No bank connections and no outside service.** The quick line is read by plain rules on the device. Learned words (`ledger/words`) are ordinary encrypted vault records.
 - **Your shorthand** (`ledger/terms`) and learned words (`ledger/words`) are ordinary encrypted vault records, read only on the device.
 - **CSV imports** are read in memory on the device. The file is never stored, only the entries you choose to write.

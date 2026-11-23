@@ -10,6 +10,7 @@ const joinNames = (names: string[]) => (names.length <= 2 ? names.join(' and ') 
 export const kindred: ImprintDefinition = {
   id: 'kindred',
   name: 'KINDRED',
+  label: 'People',
   functionLine: 'The people who matter',
   basePath: '/kindred/',
   release: 2,

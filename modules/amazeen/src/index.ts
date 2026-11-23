@@ -29,6 +29,7 @@ function byIssue(entries: readonly Entry[]): Map<string, Entry[]> {
 export const amazeen: ImprintDefinition = {
   id: 'amazeen',
   name: 'AMAZEEN',
+  label: 'Journal',
   functionLine: 'Journal',
   basePath: '/amazeen/',
   release: 1,

@@ -197,8 +197,3 @@ export function validateCategoryName(name: string, others: readonly Category[]):
   return null;
 }
 
-/** For the house Almanac: counts only, never amounts (amounts never leave CASHEEN). */
-export function ledgerStats(entries: readonly Entry[], year: string) {
-  const mine = entries.filter((e) => e.date.startsWith(year));
-  return { entries: mine.length, months: new Set(mine.map((e) => monthKey(e.date))).size };
-}

@@ -1,6 +1,6 @@
 # ETERNALL — Flows
 
-Status: amended by ADR 0011 · Phase 0 · Related: `ARCHITECTURE.md` §2, `PRIVACY.md`, `BUSINESS.md`
+Status: amended by ADR 0011 and ADR 0013 · Related: `ARCHITECTURE.md` §2, `PRIVACY.md`, `BUSINESS.md`
 
 Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any imprint. Copy in quotes is indicative; final copy follows `BRAND.md` §6.
 
@@ -16,7 +16,9 @@ Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any
 **States and edge cases**
 - *Storage blocked* (private mode, or IndexedDB denied): a banner in the imprint's style: "This browser won't let ETERNALL save. You can look around, but nothing will be kept." Writes are disabled, never silently lost.
 - *Old browser* (no Web Crypto, no IndexedDB): a "Your browser can't keep things private" page with supported-browser guidance.
-- *Visitor arrives at the house `/` first:* the house onboarding offers the doors ("Start with a journal, letters to your future, or your life in weeks") and never forces the lifeline.
+- *Visitor arrives at the house `/` first (ADR 0013):* the welcome leads with **Start writing** (AMAZEEN) and **Track money** (CASHEEN), which open the app at once with nothing asked. "Begin your lifeline", "Explore a sample life" and "I already have a vault" sit below as plain links. The lifeline is never forced.
+- *Someone who has been writing, with no lifeline, returns to `/`* (e.g. through an app's way back): "Your lifeline — here when you want it", with **Back to Journal** (and Money, if used) and **Begin your lifeline**.
+- *The door of an app that is off* (old bookmark, installed shortcut): "REFRAIN is off." with **Turn on REFRAIN** and **Back**. It never opens on its own.
 
 ## F2 · Creating the vault and choosing a lock
 1. Triggered by the first meaningful write in any imprint (or explicitly from the house).
@@ -49,6 +51,14 @@ Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any
 - 5 wrong passphrases → an increasing delay with countdown, and never a data wipe.
 - Locked in one tab → all tabs lock (BroadcastChannel).
 - Unlock while offline works fully (local only).
+
+## F4b · Apps on and off (ADR 0013)
+1. A new vault has **Journal (AMAZEEN)** and **Money (CASHEEN)** on. Practices, People and Reading are off.
+2. Settings → **Apps** lists all five by their plain word, then the name and function line, each with a switch. Journal's switch is fixed on ("always on").
+3. Turning an app on adds it to the doors and ⌘K at once. Turning it off removes it from both; "Erase data" is separate and asks first.
+4. The doors menu ends with "N more apps in Settings" while any are off.
+
+**Edge cases:** an existing vault, or one arriving by sync or restore, keeps every app that already holds data on, with nothing written until the person chooses. A legacy `hidden` list is honoured until then.
 
 ## F5 · Discovering a second imprint
 1. A contextual, dismissible suggestion appears **inside** an imprint when it helps. Examples:

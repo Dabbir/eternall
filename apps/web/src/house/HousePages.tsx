@@ -4,6 +4,7 @@ import type { HousePage } from '../shell/router';
 import { contributionContext } from './domain/lifeline';
 import { LifelineView } from './lifeline/LifelineView';
 import { contributorsOf } from '../registry';
+import { AppOff } from './AppOff';
 
 // Everything but the lifeline loads on demand, keeping the shell's first load small (DESIGN.md §7).
 const InscriptionsView = lazy(() => import('./inscriptions/InscriptionsView').then((m) => ({ default: m.InscriptionsView })));
@@ -14,8 +15,9 @@ const AlmanacView = lazy(() => import('./almanac/AlmanacView').then((m) => ({ de
 const PatronPage = lazy(() => import('./patron/PatronPage').then((m) => ({ default: m.PatronPage })));
 
 /** The house's own pages: the lifeline (or the welcome), inscriptions, chapters, almanac, settings, Patron. */
-export function HousePages({ page, search, ctx, enabled }: { page: HousePage; search: URLSearchParams; ctx: ReadContext; enabled: readonly ImprintDefinition[] }) {
+export function HousePages({ page, search, ctx, enabled, off = null }: { page: HousePage; search: URLSearchParams; ctx: ReadContext; enabled: readonly ImprintDefinition[]; off?: ImprintDefinition | null }) {
   const cctx = useMemo(() => contributionContext(ctx), [ctx]);
+  const used = useMemo(() => enabled.filter((d) => d.hasData(ctx)), [enabled, ctx]);
   return (
     <div className="house" data-imprint="house">
       <Suspense
@@ -25,7 +27,9 @@ export function HousePages({ page, search, ctx, enabled }: { page: HousePage; se
           </p>
         }
       >
-        {page === 'inscriptions' ? (
+        {off ? (
+          <AppOff def={off} enabled={enabled} />
+        ) : page === 'inscriptions' ? (
           <InscriptionsView search={search} />
         ) : page === 'chapters' ? (
           <ChaptersView search={search} />
@@ -36,11 +40,11 @@ export function HousePages({ page, search, ctx, enabled }: { page: HousePage; se
         ) : page === 'patron' ? (
           <PatronPage search={search} />
         ) : page === 'begin' ? (
-          <Onboarding startAt="name" enabled={enabled} />
+          <Onboarding startAt="name" enabled={enabled} used={used} />
         ) : ctx.profile && page !== 'welcome' ? (
           <LifelineView ctx={cctx} enabled={enabled} contributors={contributorsOf(enabled)} search={search} />
         ) : (
-          <Onboarding enabled={enabled} />
+          <Onboarding enabled={enabled} used={used} />
         )}
       </Suspense>
     </div>

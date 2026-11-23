@@ -5,6 +5,7 @@ import { useToast } from '@eternall/ui';
 import { useVault, useVaultVersion } from '@eternall/vault';
 import { IMPRINTS, IMPRINT_IDS, contributorsOf, imprintById } from '../registry';
 import { migratePrologue } from '../house/domain/migrations';
+import { appsOn } from '../house/domain/apps';
 import { INSCRIPTION_PATH, type Inscription } from '../house/domain/house';
 import { HousePages } from '../house/HousePages';
 import { DoorsMenu } from './DoorsMenu';
@@ -55,7 +56,11 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   useApplyTheme(settings.theme);
 
   const ctx: ReadContext = useMemo(() => ({ data: vault, today, profile }), [vault, today, profile, version]); // eslint-disable-line react-hooks/exhaustive-deps
-  const enabled = useMemo(() => IMPRINTS.filter((d) => !settings.hidden.includes(d.id)), [settings.hidden]);
+  // Journal and Money are on by default; the other apps are switched on in Settings (docs/adr/0013).
+  // An app that already holds data stays on, so an existing vault loses nothing.
+  const withData = useMemo(() => IMPRINTS.filter((d) => d.hasData(ctx)).map((d) => d.id), [ctx]);
+  const on = useMemo(() => appsOn(settings, withData), [settings, withData]);
+  const enabled = useMemo(() => IMPRINTS.filter((d) => on.includes(d.id)), [on]);
   const contributors = useMemo(() => contributorsOf(enabled), [enabled]);
   // Retired PROLOGUE seasons become inscriptions, once each, including ones that arrive by sync.
   useEffect(() => {
@@ -63,7 +68,10 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   }, [vault, version, today]);
   const used = useMemo(() => enabled.filter((d) => d.hasData(ctx)), [enabled, ctx]);
   useReminders(contributors, ctx, settings.systemNotifications);
-  const current = loc.kind === 'imprint' ? imprintById(loc.id) ?? null : null;
+  const asked = loc.kind === 'imprint' ? imprintById(loc.id) ?? null : null;
+  // An app that is off never opens from its address: the house offers to turn it on instead.
+  const current = asked && enabled.includes(asked) ? asked : null;
+  const off = asked && !current ? asked : null;
 
   // Focus mode: an imprint used on its own, with no lifeline yet, keeps the platform out of the way.
   const focus = current !== null && !profile && used.filter((d) => d.id !== current.id).length === 0;
@@ -167,7 +175,7 @@ export function Shell({ today: fixedToday }: { today?: string }) {
           {app ? (
             <ImprintHost key={app.id} def={app} path={loc.kind === 'imprint' ? loc.path : '/'} search={loc.search} />
           ) : (
-            <HousePages page={loc.kind === 'house' ? loc.page : ''} search={loc.search} ctx={ctx} enabled={enabled} />
+            <HousePages page={loc.kind === 'house' ? loc.page : ''} search={loc.search} ctx={ctx} enabled={enabled} off={off} />
           )}
         </main>
         {!app && <DoorsMenu open={doorsOpen} onClose={() => setDoorsOpen(false)} ctx={ctx} enabled={enabled} used={used} current={current} hasProfile={!!profile} />}

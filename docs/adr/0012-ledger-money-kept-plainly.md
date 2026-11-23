@@ -61,3 +61,4 @@ The app was renamed **CASHEEN** ("cash" plus the -EEN ending of AMAZEEN, so the 
 - The module is `modules/casheen`, the app id `casheen`, the door `/casheen/`. `/ledger/*` redirects there.
 - **Data never moved:** every collection path above keeps its `ledger/*` name. Settings saved under the old id (`hidden`, `intro:ledger`) are read as `casheen`.
 - The look (a bound ledger), the quick line, the budget, "Your words" and the "Entered" ceremony are unchanged. Where this ADR says LEDGER, read CASHEEN.
+- **Superseded on one point:** the house no longer sees even counts. CASHEEN contributes nothing to the house (no Almanac facts), per ADR 0013's data boundaries.

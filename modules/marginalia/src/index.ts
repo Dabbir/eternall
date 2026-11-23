@@ -8,6 +8,7 @@ const underlines = (ctx: Readable) => ctx.data.collection<Underline>(UNDERLINE_P
 export const marginalia: ImprintDefinition = {
   id: 'marginalia',
   name: 'MARGINALIA',
+  label: 'Reading',
   functionLine: 'Reading & underlines',
   basePath: '/marginalia/',
   release: 2,

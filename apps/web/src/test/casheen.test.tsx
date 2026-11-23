@@ -133,11 +133,15 @@ describe('CASHEEN', () => {
     await waitFor(() => expect(entries(store)[0]).toMatchObject({ amount: 5000, categoryId: 'transport', note: 'parkir' }));
   });
 
-  it('keeps amounts inside CASHEEN: the house Almanac only counts', async () => {
+  it('keeps money inside CASHEEN: the house shows nothing of it (ADR 0013)', async () => {
     at('/almanac');
-    render(<Root store={createMemoryStore([quiet, profile, rec('ledger/entry/a', { id: 'a', kind: 'out', amount: 777777, categoryId: 'food', date: today, note: 'x', createdAt: stamp })])} />);
-    expect(await screen.findByText('Entries written this year')).toBeInTheDocument();
-    expect(document.body.textContent).not.toMatch(/777[.,]?777/);
+    render(<Root store={createMemoryStore([quiet, profile, rec('ledger/entry/a', { id: 'a', kind: 'out', amount: 777777, categoryId: 'food', date: today, note: 'warung', createdAt: stamp })])} />);
+    await screen.findByRole('heading', { level: 1 });
+    expect(document.body.textContent).not.toMatch(/777[.,]?777|CASHEEN|warung|Entries written/);
+    // and it offers the house nothing but its own opt-in reminder
+    const { casheen } = await import('@eternall/casheen');
+    const offered = (['lifeline', 'weekLines', 'memories', 'almanacFacts', 'redLetterDays', 'badge', 'provides'] as const).filter((k) => k in casheen);
+    expect(offered).toEqual([]);
   });
 
   it('is its own site', async () => {

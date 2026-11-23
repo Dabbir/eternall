@@ -89,6 +89,10 @@
 .door.is-here { background: rgb(255 255 255 / 0.1); }
 .door__name { font-family: 'JetBrains Mono', monospace; font-size: 0.875rem; font-weight: 500; letter-spacing: 0.14em; color: var(--c-dark, var(--c)); }
 .door__name--house { font-family: 'Instrument Serif', serif; font-size: 1.4rem; letter-spacing: 0; color: var(--spine-ink); }
+/* An app leads with its plain word ("Journal"), its brand name follows in the function line (ADR 0013). */
+.door__name--plain { font-family: 'Instrument Serif', serif; font-size: 1.25rem; font-weight: 400; letter-spacing: 0; }
+.doors__more { display: block; width: 100%; text-align: left; padding: 8px 12px; font-size: 0.8125rem; color: var(--spine-dim); text-decoration: underline; text-underline-offset: 3px; }
+.doors__more:hover { color: var(--spine-ink); }
 .door__fn { font-size: 0.875rem; color: var(--spine-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .door__badge { font-size: 0.6875rem; font-weight: 600; padding: 2px 8px; border-radius: 999px; background: var(--seal); color: #fff6ef; white-space: nowrap; }
 .doors__foot { display: flex; gap: 6px; padding: 10px 12px 6px; margin-top: 8px; border-top: 1px solid rgb(255 255 255 / 0.08); }
@@ -121,19 +125,24 @@
 .imprint-row__pulse { position: absolute; right: 12px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: var(--seal); animation: pulse 1.8s infinite; }
 .memory-row { text-decoration: none; color: inherit; }
 
-.welcome__doors { display: grid; gap: 10px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--rule); }
-.welcome__doors ul { display: grid; gap: 2px; }
-.welcome__door { display: grid; grid-template-columns: 8.5em 1fr; gap: 12px; align-items: baseline; width: 100%; text-align: left; padding: 8px 0; }
-.welcome__door .door__name { color: var(--c); }
-.welcome__door:hover .door__fn { color: var(--ink); }
-.welcome__door .door__fn { color: var(--ink-2); white-space: normal; }
-:root[data-theme='dark'] .welcome__door .door__name { color: var(--c-dark); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .welcome__door .door__name { color: var(--c-dark); } }
+.welcome__more { display: grid; justify-items: start; gap: 2px; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--rule); }
+.welcome__more .welcome__adopt { margin: 0; }
+.app-off { max-width: 640px; margin: 0 auto; padding: clamp(40px, 10vh, 120px) var(--gutter, 20px); display: grid; gap: 14px; }
+.app-off__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
 
 .settings-stack { display: grid; gap: 16px; justify-items: start; }
 .imprint-list { display: grid; gap: 2px; }
-.imprint-list li { display: grid; grid-template-columns: 8.5em 1fr auto; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--rule); }
+#apps { scroll-margin-top: 72px; }
+.imprint-list li { display: grid; grid-template-columns: 7.5em 8.5em 1fr auto; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--rule); }
+@media (max-width: 640px) {
+  .imprint-list li { grid-template-columns: 1fr auto; gap: 2px 12px; }
+  .imprint-list li .door__name { grid-column: 1; }
+  .imprint-list li .door__fn { grid-column: 1 / -1; }
+}
 .imprint-list .door__name { color: var(--c); }
+.imprint-list li.is-off .door__name, .imprint-list li.is-off .door__fn { opacity: 0.6; }
+.app-switch { min-width: 7.5em; }
+.app-switch__label { font-weight: 500; }
 .imprint-list .door__fn { color: var(--ink-2); white-space: normal; }
 :root[data-theme='dark'] .imprint-list .door__name { color: var(--c-dark); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme='light']) .imprint-list .door__name { color: var(--c-dark); } }

@@ -67,7 +67,7 @@ export function CommandPalette({ open, onClose, ctx, enabled, current = null }: 
         run: () => updateSettings({ theme: isDark ? 'light' : 'dark' }),
       },
       { id: 'go-house', label: 'Your lifeline', hint: 'ETERNALL', icon: 'grid', group: 'Go to', run: () => navigate('/') },
-      ...enabled.map<Command>((d) => ({ id: `go-${d.id}`, label: `${d.name} · ${d.functionLine}`, icon: 'arrow', group: 'Go to', run: () => navigate(d.basePath) })),
+      ...enabled.map<Command>((d) => ({ id: `go-${d.id}`, label: `${d.label} · ${d.name}`, hint: d.functionLine, icon: 'arrow', group: 'Go to', run: () => navigate(d.basePath) })),
       { id: 'go-inscriptions', label: 'Inscriptions', icon: 'book', group: 'Go to', run: () => navigate('/inscriptions') },
       { id: 'go-chapters', label: 'Chapters', icon: 'grid', group: 'Go to', run: () => navigate('/chapters') },
       { id: 'go-almanac', label: 'Almanac', icon: 'today', group: 'Go to', run: () => navigate('/almanac') },

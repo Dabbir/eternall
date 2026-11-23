@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { plural, type FieldErrors, type HouseProfile, type ImprintDefinition } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button, Dialog, Segmented, TextField, useToast } from '@eternall/ui';
@@ -8,6 +8,8 @@ import { SyncSettings } from '../../vault/SyncSettings';
 import { useLock } from '../../vault/lockContext';
 import { LIMITS, PROFILE_PATH, validateProfile, type ProfileInput, type ThemePreference } from '../domain/house';
 import { useSettings } from '../../shell/hooks';
+import { ALWAYS_ON, withApp } from '../domain/apps';
+import { IMPRINTS } from '../../registry';
 import { linkProps } from '../../shell/router';
 import { systemNotificationsAvailable } from '../../shell/reminders';
 
@@ -39,6 +41,10 @@ export function parseArchiveFile(text: string): VaultRecord[] {
 export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[] }) {
   const { profile, today } = useHouse();
   const vault = useVault();
+  // "More apps in Settings" lands on the Apps section.
+  useEffect(() => {
+    if (window.location.hash === '#apps') document.getElementById('apps')?.scrollIntoView?.({ block: 'start' });
+  }, []);
   const toast = useToast();
   const [settings, updateSettings] = useSettings();
   const [pending, setPending] = useState<VaultRecord[] | null>(null);
@@ -88,8 +94,6 @@ export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[
       if (fileRef.current) fileRef.current.value = '';
     }
   };
-
-  const allImprints = enabled.length ? enabled : [];
 
   return (
     <div className="settings">
@@ -142,32 +146,41 @@ export function SettingsView({ enabled }: { enabled: readonly ImprintDefinition[
         </div>
       </section>
 
-      <section className="settings-block rise" style={{ ['--i' as string]: 4 }} aria-labelledby="set-imprints">
+      <section className="settings-block rise" style={{ ['--i' as string]: 4 }} aria-labelledby="set-apps" id="apps">
         <div className="settings-block__intro">
-          <h2 id="set-imprints" className="display">
-            Imprints
+          <h2 id="set-apps" className="display">
+            Apps
           </h2>
-          <p className="faint">Hide imprints you don’t use. Their data is kept until you erase it.</p>
+          <p className="faint">Journal is always on. Switch the others on when you want them; turning one off keeps everything it holds in your vault.</p>
         </div>
         <ul className="settings-block__body imprint-list">
-          {allImprints.concat([]).map((d) => (
-            <li key={d.id}>
-              <span className="door__name" style={{ ['--c' as string]: d.accent.light, ['--c-dark' as string]: d.accent.dark }}>
-                {d.name}
-              </span>
-              <span className="door__fn">{d.functionLine}</span>
-              <Button variant="quiet" size="s" onClick={() => setErase(d)}>
-                Erase data
-              </Button>
-            </li>
-          ))}
-          {settings.hidden.length > 0 && (
-            <li>
-              <Button variant="ghost" size="s" onClick={() => updateSettings({ hidden: [] })}>
-                Show hidden imprints ({settings.hidden.length})
-              </Button>
-            </li>
-          )}
+          {IMPRINTS.map((d) => {
+            const isOn = enabled.some((e) => e.id === d.id);
+            const always = d.id === ALWAYS_ON;
+            return (
+              <li key={d.id} className={isOn ? 'is-on' : 'is-off'}>
+                <label className="check app-switch">
+                  <input
+                    type="checkbox"
+                    checked={isOn}
+                    disabled={always}
+                    onChange={(e) => updateSettings(withApp(enabled.map((x) => x.id), d.id, e.target.checked))}
+                  />
+                  <span className="check__box" aria-hidden="true" />
+                  <span className="app-switch__label">{d.label}</span>
+                </label>
+                <span className="door__name" style={{ ['--c' as string]: d.accent.light, ['--c-dark' as string]: d.accent.dark }}>
+                  {d.name}
+                </span>
+                <span className="door__fn">{always ? `${d.functionLine} · always on` : d.functionLine}</span>
+                {isOn && d.hasData({ data: vault, today, profile }) && (
+                  <Button variant="quiet" size="s" onClick={() => setErase(d)}>
+                    Erase data
+                  </Button>
+                )}
+              </li>
+            );
+          })}
         </ul>
       </section>
 

@@ -123,6 +123,8 @@ export interface ImprintDefinition extends Contributions {
   id: ImprintId;
   /** Wordmark, e.g. "KINDRED". */
   name: string;
+  /** The plain word the app picker leads with, e.g. "People" (docs/adr/0013): the brand name follows it. */
+  label: string;
   /** Plain function line, always shown beside the name (docs/BRAND.md §4). */
   functionLine: string;
   basePath: `/${string}/`;

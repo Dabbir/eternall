@@ -1,4 +1,4 @@
-import { DEFAULT_CATEGORIES, addMonths, budgetFor, budgetRows, budgetTotal, byDay, categoriesOf, entriesIn, isMonthKey, ledgerStats, monthKey, monthLabel, totals, validateCategoryName, validateEntry, type Entry } from './ledger';
+import { DEFAULT_CATEGORIES, addMonths, budgetFor, budgetRows, budgetTotal, byDay, categoriesOf, entriesIn, isMonthKey, monthKey, monthLabel, totals, validateCategoryName, validateEntry, type Entry } from './ledger';
 
 const e = (id: string, kind: Entry['kind'], amount: number, categoryId: string, date: string, createdAt = `${date}T10:00:00Z`): Entry => ({ id, kind, amount, categoryId, date, note: '', createdAt });
 const log = [
@@ -61,9 +61,5 @@ describe('ledger', () => {
     const bad = validateEntry({ kind: 'in', amount: null, categoryId: 'food', date: 'x', note: '' }, []);
     expect(bad.ok).toBe(false);
     if (!bad.ok) expect(Object.keys(bad.errors).sort()).toEqual(['amount', 'categoryId', 'date']);
-  });
-
-  it('gives the Almanac counts, never amounts', () => {
-    expect(ledgerStats(log, '2026')).toEqual({ entries: 5, months: 2 });
   });
 });

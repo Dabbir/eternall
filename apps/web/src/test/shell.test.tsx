@@ -9,7 +9,7 @@ const today = todayISO();
 const stamp = new Date().toISOString();
 const rec = (key: string, value: unknown): VaultRecord => ({ key, updatedAt: stamp, deleted: false, value });
 const profile = rec('house/profile/me', { id: 'me', name: 'Ada', birthDate: addYears(today, -30), horizonYears: 90, hemisphere: 'north', createdAt: stamp });
-const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:amazeen', 'intro:refrain', 'intro:kindred', 'intro:marginalia'], hidden: [], autoLockMinutes: 15 });
+const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:amazeen', 'intro:refrain', 'intro:kindred', 'intro:marginalia'], hidden: [], autoLockMinutes: 15, apps: ['amazeen', 'refrain', 'kindred', 'marginalia', 'casheen'] });
 
 function at(path: string) {
   window.history.replaceState(null, '', path);
@@ -20,14 +20,25 @@ beforeEach(() => {
 });
 
 describe('the house', () => {
-  it('welcomes a new visitor with the doors to every imprint', async () => {
+  it('welcomes a new visitor straight to writing or money, never to the lifeline (ADR 0013)', async () => {
+    const user = userEvent.setup();
     at('/');
     render(<Root store={createMemoryStore()} />);
-    expect(await screen.findByRole('heading', { name: /Your life,\s*in weeks/ })).toBeInTheDocument();
-    const doors = screen.getByRole('navigation', { name: 'Or start with one imprint' });
-    expect(within(doors).getByText('KINDRED')).toBeInTheDocument();
-    expect(within(doors).getByText('The people who matter')).toBeInTheDocument();
-    expect(within(doors).queryByText('ENVOI')).not.toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /Write as usual\.\s*See your week again\./ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Track money' })).toBeInTheDocument();
+    expect(screen.queryByText('KINDRED')).not.toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'Start writing' }));
+    await waitFor(() => expect(window.location.pathname).toBe('/amazeen/'));
+    // Nothing was written by opening it, so the vault does not ask for a lock yet.
+    expect(screen.queryByRole('dialog', { name: /lock it to you/ })).not.toBeInTheDocument();
+  });
+
+  it('offers the lifeline, without pushing it, to someone already writing', async () => {
+    at('/');
+    render(<Root store={createMemoryStore([quiet, rec('amazeen/entry/e1', { id: 'e1', date: today, title: 'A day', body: 'x', mood: 'calm', createdAt: stamp, updatedAt: stamp })])} />);
+    expect(await screen.findByRole('heading', { name: /Here when you\s*want it/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Back to Journal' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Begin your lifeline/ })).toBeInTheDocument();
   });
 
   it('shows the lifeline and spine action once a profile exists', async () => {
@@ -170,7 +181,60 @@ describe('command palette', () => {
     act(() => {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }));
     });
-    expect(await screen.findByRole('option', { name: /KINDRED · The people who matter/ })).toBeInTheDocument();
+    expect(await screen.findByRole('option', { name: /People · KINDRED/ })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: /Chapters/ })).toBeInTheDocument();
+  });
+});
+
+describe('apps on and off (ADR 0013)', () => {
+  const fresh = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:amazeen', 'intro:casheen', 'intro:kindred', 'intro:refrain'], hidden: [], autoLockMinutes: 15 });
+  const open = async () => {
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }));
+    });
+    return screen.findByRole('option', { name: /Journal · AMAZEEN/ });
+  };
+
+  it('starts with Journal and Money only', async () => {
+    at('/');
+    render(<Root store={createMemoryStore([profile, fresh])} />);
+    await screen.findByRole('heading', { level: 1 });
+    await open();
+    expect(screen.getByRole('option', { name: /Money · CASHEEN/ })).toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: /People · KINDRED/ })).not.toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: /Practices · REFRAIN/ })).not.toBeInTheDocument();
+  });
+
+  it('keeps an app that already holds data on, with no setting written', async () => {
+    at('/');
+    render(<Root store={createMemoryStore([profile, fresh, rec('kindred/person/p1', { id: 'p1', name: 'Ana', drawer: 'Family', closeness: 'inner', howWeMet: '', dates: [], createdAt: stamp })])} />);
+    await screen.findByRole('heading', { level: 1 });
+    await open();
+    expect(screen.getByRole('option', { name: /People · KINDRED/ })).toBeInTheDocument();
+  });
+
+  it('never opens an app that is off from its address; it offers to turn it on', async () => {
+    const user = userEvent.setup();
+    at('/refrain/');
+    const store = createMemoryStore([profile, fresh]);
+    render(<Root store={store} />);
+    expect(await screen.findByRole('heading', { name: 'REFRAIN is off.' })).toBeInTheDocument();
+    expect(document.body.dataset.imprint).not.toBe('refrain');
+    await user.click(screen.getByRole('button', { name: 'Turn on REFRAIN' }));
+    await waitFor(() => expect(document.body.dataset.imprint).toBe('refrain'));
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'house/settings/prefs')?.value).toMatchObject({ apps: ['amazeen', 'casheen', 'refrain'], hidden: [] }));
+  });
+
+  it('switches apps on and off in Settings, keeping Journal always on', async () => {
+    const user = userEvent.setup();
+    at('/settings');
+    render(<Root store={createMemoryStore([profile, fresh])} />);
+    const people = await screen.findByRole('checkbox', { name: 'People' });
+    expect(screen.getByRole('checkbox', { name: 'Journal' })).toBeDisabled();
+    expect(people).not.toBeChecked();
+    await user.click(people);
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'People' })).toBeChecked());
+    await user.click(screen.getByRole('checkbox', { name: 'Money' }));
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Money' })).not.toBeChecked());
   });
 });

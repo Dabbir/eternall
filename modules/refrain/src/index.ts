@@ -8,6 +8,7 @@ const marks = (ctx: Readable) => ctx.data.collection<Mark>(MARK_PATH).all();
 export const refrain: ImprintDefinition = {
   id: 'refrain',
   name: 'REFRAIN',
+  label: 'Practices',
   functionLine: 'Rituals & habits',
   basePath: '/refrain/',
   release: 2,

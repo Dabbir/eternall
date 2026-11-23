@@ -1,3 +1,4 @@
+import type { ImprintId } from '@eternall/core';
 import {
   birthdayAt,
   cleanText,
@@ -38,8 +39,10 @@ export interface HouseSettings {
   flatPages: boolean;
   /** Suggestions and hints the person dismissed (never shown again). */
   dismissed: string[];
-  /** Imprints the person turned off in the doors menu. */
+  /** Legacy (before ADR 0013): apps the person had hidden. Read until they choose in Settings → Apps. */
   hidden: string[];
+  /** The apps the person switched on in Settings → Apps (ADR 0013). Absent until they first choose. */
+  apps?: ImprintId[];
   autoLockMinutes: number;
   /** Deliver local reminders as system notifications when the app is open in the background. */
   systemNotifications: boolean;
@@ -66,7 +69,9 @@ export const RENAMED_APPS: Readonly<Record<string, string>> = { ledger: 'casheen
 export function withCurrentIds(settings: HouseSettings): HouseSettings {
   const id = (x: string) => RENAMED_APPS[x] ?? x;
   const hint = (x: string) => (x.startsWith('intro:') ? `intro:${id(x.slice(6))}` : x);
-  return { ...settings, hidden: [...new Set(settings.hidden.map(id))], dismissed: [...new Set(settings.dismissed.map(hint))] };
+  const out: HouseSettings = { ...settings, hidden: [...new Set(settings.hidden.map(id))], dismissed: [...new Set(settings.dismissed.map(hint))] };
+  if (settings.apps) out.apps = [...new Set(settings.apps.map((x) => id(x) as ImprintId))];
+  return out;
 }
 
 export interface Inscription {
