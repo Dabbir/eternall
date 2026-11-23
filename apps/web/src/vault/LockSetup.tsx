@@ -59,7 +59,7 @@ export function LockSetup({
         </form>
       ) : mode === 'choose' ? (
         <div className="lock-setup__choices">
-          <p className="muted">{recovery ? 'Now choose how this device will open your vault.' : 'Everything you keep in ETERNALL is encrypted on this device. Choose how you’ll open it.'}</p>
+          <p className="muted">{recovery ? 'Now choose how this device will open your vault.' : 'Everything you keep here is encrypted on this device. Choose how you’ll open it.'}</p>
           {passkey && (
             <button type="button" className="lock-choice is-recommended" disabled={busy} onClick={() => make({ kind: 'passkey' })}>
               <Icon name="lock" size={20} />
@@ -85,7 +85,7 @@ export function LockSetup({
           </button>
           {!recovery && (
             <button type="button" className="lock-setup__link" onClick={() => setMode('adopt')}>
-              I already have an ETERNALL vault on another device
+              I already have a vault on another device
             </button>
           )}
           {error && (

@@ -13,11 +13,16 @@ import '@eternall/ui/ui.css';
 import './styles/app.css';
 import './styles/shell.css';
 import { Root } from './shell/Root';
+import type { ImprintId } from '@eternall/core';
 import { retiredDoorRedirect } from './shell/router';
+import { applyDoorHead } from './shell/doorHead';
+import { imprintById } from './registry';
 
 // Retired doors (ENVOI, FOLIO, ALMANACK, PROLOGUE) point to where their pages live now.
 const moved = retiredDoorRedirect(window.location.pathname, window.location.search);
 if (moved) window.history.replaceState(null, '', moved);
+// Arriving at an app's door: wear its identity from the first paint (doorHead.ts).
+applyDoorHead(imprintById(window.location.pathname.split('/')[1] as ImprintId) ?? null);
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Missing #root');

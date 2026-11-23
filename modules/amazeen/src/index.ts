@@ -34,6 +34,7 @@ export const amazeen: ImprintDefinition = {
   release: 1,
   accent: { light: '#b92e1a', dark: '#ff6b55' },
   intro: 'The weekly magazine of your own life. Write a little every day; on Sunday at midnight the week goes to press as an issue.',
+  brand: { icon: '/icons/amazeen.svg', themeColor: { light: '#efe9dd', dark: '#121110' }, lockTitle: 'The newsroom is locked.', leaveLabel: 'Leave the newsroom' },
   load: () => import('./imprint/AmazeenApp'),
   collections: [ENTRY_PATH, META_PATH, ...LETTER_COLLECTIONS],
   hasData: (ctx) => entriesOf(ctx).length > 0 || lettersOf(ctx).length > 0 || !!ctx.data.collection<AmazeenMeta>(META_PATH).get('main')?.magazine,

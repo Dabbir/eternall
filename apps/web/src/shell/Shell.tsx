@@ -19,6 +19,7 @@ import { useLock } from '../vault/lockContext';
 import { detectImmersive } from '@eternall/stage';
 import { usePatron } from '../vault/patron';
 import { useReminders } from './reminders';
+import { useDoorHead } from './doorHead';
 
 export function Shell({ today: fixedToday }: { today?: string }) {
   const vault = useVault();
@@ -85,8 +86,14 @@ export function Shell({ today: fixedToday }: { today?: string }) {
       },
       isDismissed: (key) => settings.dismissed.includes(key),
       immersive: detectImmersive({ flatPages: settings.flatPages, licensed: import.meta.env.DEV || patron.active }),
+      primaryAction: primary,
+      leave: () => navigate('/'),
+      lock: lockApi.lock,
+      canLock: lockApi.canLock,
+      openSearch: () => setPaletteOpen(true),
+      notices: used.filter((d) => d.id !== def?.id && d.badge?.(ctx)).length,
     }),
-    [today, profile, toast, providers, enabled, others, ctx, settings, updateSettings, patron.active],
+    [today, profile, toast, providers, enabled, others, ctx, settings, updateSettings, patron.active, primary, lockApi, used],
   );
 
   const house = useMemo(() => makeHouse(current), [makeHouse, current]);
@@ -94,6 +101,7 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   useEffect(() => {
     document.title = current ? `${current.name} · ${current.functionLine}` : 'ETERNALL · Your life in weeks';
   }, [current]);
+  useDoorHead(current);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -115,36 +123,41 @@ export function Shell({ today: fixedToday }: { today?: string }) {
 
   const saveState = vault.getSaveState();
 
+  // An app is its own site (docs/adr/0011): no house spine or doors, only the app and its own chrome.
+  const app = loc.kind === 'imprint' && current ? current : null;
+
   return (
     <HouseProvider value={house}>
-      <div className={`shell ${focus ? 'is-focus' : ''}`} data-publication={publication}>
+      <div className={`shell ${app ? 'shell--app' : ''} ${focus ? 'is-focus' : ''}`} data-publication={publication}>
         <a className="skip-link" href="#main">Skip to content</a>
-        <Spine
-          current={current}
-          primary={primary}
-          focus={focus}
-          onDoors={() => setDoorsOpen(true)}
-          onSearch={() => setPaletteOpen(true)}
-          badge={used.some((d) => d.badge?.(ctx))}
-        />
+        {!app && (
+          <Spine
+            current={null}
+            primary={primary}
+            focus={false}
+            onDoors={() => setDoorsOpen(true)}
+            onSearch={() => setPaletteOpen(true)}
+            badge={used.some((d) => d.badge?.(ctx))}
+          />
+        )}
         {!saveState.ok && (
           <div className="save-warning" role="alert">
             {saveState.reason === 'quota'
-              ? 'This device is out of space for ETERNALL — new changes aren’t being saved. Export a backup from Settings.'
-              : 'This browser is blocking storage (private mode?) — changes will be lost when you close the tab.'}
+              ? `This device is out of space${app ? '' : ' for ETERNALL'}, so new changes aren’t being saved. Export a backup from Settings.`
+              : 'This browser is blocking storage (private mode?), so changes will be lost when you close the tab.'}
           </div>
         )}
-        <main id="main" className="stage" tabIndex={-1}>
-          {loc.kind === 'imprint' && current ? (
-            <ImprintHost key={current.id} def={current} path={loc.path} search={loc.search} />
+        <main id="main" className={`stage ${app ? 'stage--app' : ''}`} tabIndex={-1}>
+          {app ? (
+            <ImprintHost key={app.id} def={app} path={loc.kind === 'imprint' ? loc.path : '/'} search={loc.search} />
           ) : (
             <HousePages page={loc.kind === 'house' ? loc.page : ''} search={loc.search} ctx={ctx} enabled={enabled} />
           )}
         </main>
-        <DoorsMenu open={doorsOpen} onClose={() => setDoorsOpen(false)} ctx={ctx} enabled={enabled} used={used} current={current} hasProfile={!!profile} />
+        {!app && <DoorsMenu open={doorsOpen} onClose={() => setDoorsOpen(false)} ctx={ctx} enabled={enabled} used={used} current={current} hasProfile={!!profile} />}
         {paletteUsed && (
           <Suspense fallback={null}>
-            <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} ctx={ctx} enabled={enabled} />
+            <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} ctx={ctx} enabled={enabled} current={app} />
           </Suspense>
         )}
       </div>

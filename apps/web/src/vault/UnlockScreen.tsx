@@ -1,6 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Keyring, UnlockInput } from '@eternall/vault';
+import type { ImprintId } from '@eternall/core';
 import { Button, TextField, Wordmark } from '@eternall/ui';
+import { imprintById } from '../registry';
+import { useDoorHead } from '../shell/doorHead';
 
 interface Props {
   keyring: Keyring;
@@ -9,8 +12,13 @@ interface Props {
   onUnlock(input: UnlockInput): Promise<void>;
 }
 
-/** The threshold (docs/design/eternall.md §5.3): the only centred layout in the house, on purpose. */
+/**
+ * The threshold (docs/design/eternall.md §5.3). In the house it is the house's centred card; at an
+ * app's door it is that app's own lock, in its name and voice, with nothing of the house (adr/0011).
+ */
 export function UnlockScreen({ keyring, imprint, onUnlock }: Props) {
+  const app = imprint ? (imprintById(imprint as ImprintId) ?? null) : null;
+  useDoorHead(app);
   const methods = keyring.methods;
   const [mode, setMode] = useState<'main' | 'recovery'>('main');
   const [pass, setPass] = useState('');
@@ -43,10 +51,17 @@ export function UnlockScreen({ keyring, imprint, onUnlock }: Props) {
   };
 
   return (
-    <div className="unlock" data-imprint={imprint ?? 'house'}>
+    <div className={`unlock ${app ? 'unlock--app' : ''}`}>
       <main className="unlock__card" id="main">
-        <Wordmark height={13} />
-        <h1 className="unlock__title">Your archive is locked.</h1>
+        {app ? (
+          <p className="unlock__app">
+            <span className="unlock__app-name">{app.name}</span>
+            <span className="unlock__app-fn">{app.functionLine}</span>
+          </p>
+        ) : (
+          <Wordmark height={13} />
+        )}
+        <h1 className="unlock__title">{app ? app.brand.lockTitle : 'Your archive is locked.'}</h1>
         {mode === 'main' ? (
           <>
             {methods.includes('passkey') && (
@@ -94,7 +109,7 @@ export function UnlockScreen({ keyring, imprint, onUnlock }: Props) {
             </button>
           </form>
         )}
-        <p className="unlock__note">Only you can open this archive. Not even ETERNALL can read it.</p>
+        <p className="unlock__note">{app ? 'Only you can open this. Not even we can read it.' : 'Only you can open this archive. Not even ETERNALL can read it.'}</p>
       </main>
     </div>
   );

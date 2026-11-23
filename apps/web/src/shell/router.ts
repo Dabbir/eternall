@@ -68,6 +68,9 @@ export function useHref(): string {
 type ViewTransitionDoc = Document & { startViewTransition?: (cb: () => void) => unknown };
 const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 const firstSegment = (href: string) => href.replace(/^\/+/, '').split(/[/?#]/)[0] ?? '';
+const APP_DOORS = new Set(['amazeen', 'refrain', 'kindred', 'marginalia']);
+/** Which "site" an href belongs to: an app's id, or the house. */
+const siteOf = (href: string) => (APP_DOORS.has(firstSegment(href)) ? firstSegment(href) : 'house');
 
 export function navigate(href: string, options: { replace?: boolean } = {}) {
   const current = `${window.location.pathname}${window.location.search}`;
@@ -78,12 +81,13 @@ export function navigate(href: string, options: { replace?: boolean } = {}) {
     // A popstate tells every router on the page, including an imprint's own (AMAZEEN has one).
     window.dispatchEvent(new PopStateEvent('popstate'));
   };
+  // Crossing between the house and an app (or between apps) is a clean cut, like opening another
+  // site (docs/adr/0011). Moves between house pages keep a gentle view transition.
+  const changesSite = siteOf(href) !== siteOf(current);
   const doc = document as ViewTransitionDoc;
-  // A view transition marks a change of publication; moves within one imprint stay instant.
-  const changesImprint = firstSegment(href) !== firstSegment(current);
-  if (changesImprint && doc.startViewTransition && !reducedMotion()) doc.startViewTransition(() => flushSync(go));
+  if (!changesSite && firstSegment(href) !== firstSegment(current) && doc.startViewTransition && !reducedMotion()) doc.startViewTransition(() => flushSync(go));
   else go();
-  if (!options.replace && changesImprint) window.scrollTo({ top: 0 });
+  if (!options.replace && (changesSite || firstSegment(href) !== firstSegment(current))) window.scrollTo({ top: 0 });
 }
 
 /** Props for an <a> that navigates in-app but still works with modifiers and middle-click. */

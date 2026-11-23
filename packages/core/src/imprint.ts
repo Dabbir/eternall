@@ -130,6 +130,16 @@ export interface ImprintDefinition extends Contributions {
   accent: { light: string; dark: string };
   /** One-time first-contact hint explaining the metaphor (docs/DESIGN.md §1.3). */
   intro: string;
+  /**
+   * The app's own identity outside its pages (docs/adr/0011): tab and install icon, browser
+   * chrome colour, the heading of its unlock card, and the label of its small exit to the house.
+   */
+  brand: {
+    icon: string;
+    themeColor: { light: string; dark: string };
+    lockTitle: string;
+    leaveLabel: string;
+  };
   /** Lazy UI chunk: loaded only when the door opens. */
   load(): Promise<{ default: ComponentType<ImprintAppProps> }>;
   /** Collections owned by this imprint (for erase and storage accounting). */

@@ -32,10 +32,10 @@ button { cursor: pointer; background: none; border: 0; padding: 0; }
 a { color: inherit; }
 textarea { resize: vertical; }
 
-::selection { background: var(--seal); color: var(--on-seal); }
+::selection { background: var(--selection, var(--seal)); color: var(--on-selection, var(--on-seal)); }
 
 :focus-visible {
-  outline: 2px solid var(--seal);
+  outline: 2px solid var(--focus, var(--seal));
   outline-offset: 3px;
   border-radius: 4px;
 }

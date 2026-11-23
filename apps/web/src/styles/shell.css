@@ -61,6 +61,9 @@
   .spine__search { padding: 0 10px; }
   .stage { padding-bottom: calc(60px + env(safe-area-inset-bottom)); }
   .toasts { bottom: calc(76px + env(safe-area-inset-bottom)); }
+  /* An app has no house spine: nothing to clear at the bottom (its own chrome manages its space). */
+  .stage--app { padding-bottom: 0; }
+  .shell--app ~ .toasts, body[data-imprint] .toasts { bottom: calc(20px + env(safe-area-inset-bottom)); }
 }
 
 .save-warning { display: flex; justify-content: center; padding: 10px var(--gutter); background: var(--seal-soft); color: var(--seal-deep); font-size: var(--fs-small); }
@@ -167,6 +170,10 @@
 .unlock__link { font-size: var(--fs-small); color: var(--ink-2); text-decoration: underline; text-underline-offset: 3px; justify-self: center; }
 .unlock__link:hover { color: var(--ink); }
 .unlock__note { font-size: 0.8125rem; color: var(--ink-3); }
+/* An app's own lock: its name in its own display type; each app's kit stylesheet dresses the card. */
+.unlock__app { display: grid; gap: 4px; justify-items: center; }
+.unlock__app-name { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.14em; color: var(--accent); }
+.unlock__app-fn { font-size: 0.8125rem; color: var(--ink-3); }
 
 .recovery-kit__body { display: grid; gap: 16px; }
 .recovery-kit__key {

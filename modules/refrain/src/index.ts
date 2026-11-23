@@ -13,6 +13,7 @@ export const refrain: ImprintDefinition = {
   release: 2,
   accent: { light: '#3b3a8f', dark: '#a6a4ff' },
   intro: 'Each line is a ritual. Each bar is a week. A note means you did it; a rest is part of the music.',
+  brand: { icon: '/icons/refrain.svg', themeColor: { light: '#f7f4ec', dark: '#101016' }, lockTitle: 'The score is put away.', leaveLabel: 'Fine' },
   load: () => import('./app/RefrainApp'),
   collections: [RITUAL_PATH, MARK_PATH],
   hasData: (ctx) => rituals(ctx).length > 0,

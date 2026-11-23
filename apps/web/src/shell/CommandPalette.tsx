@@ -23,7 +23,11 @@ function houseMemories(ctx: ReadContext): Memory[] {
     .map((i) => ({ imprint: 'house' as const, id: i.id, date: i.date, title: i.title, excerpt: i.body, tone: i.tone, href: `/inscriptions?open=${i.id}` }));
 }
 
-export function CommandPalette({ open, onClose, ctx, enabled }: { open: boolean; onClose(): void; ctx: ReadContext; enabled: readonly ImprintDefinition[] }) {
+/**
+ * ⌘K. In the house it reaches everything; inside an app it searches that app only, with one way
+ * out to the house under the app's own exit label (docs/adr/0011).
+ */
+export function CommandPalette({ open, onClose, ctx, enabled, current = null }: { open: boolean; onClose(): void; ctx: ReadContext; enabled: readonly ImprintDefinition[]; current?: ImprintDefinition | null }) {
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const listRef = useRef<HTMLUListElement>(null);
@@ -40,7 +44,20 @@ export function CommandPalette({ open, onClose, ctx, enabled }: { open: boolean;
     const isDark =
       document.documentElement.getAttribute('data-theme') === 'dark' ||
       (!document.documentElement.hasAttribute('data-theme') && window.matchMedia?.('(prefers-color-scheme: dark)').matches);
-    const base: Command[] = [
+    const appBase: Command[] = current
+      ? [
+          {
+            id: 'theme',
+            label: isDark ? 'Switch to light' : 'Switch to dark',
+            icon: isDark ? 'sun' : 'moon',
+            group: 'Actions',
+            run: () => updateSettings({ theme: isDark ? 'light' : 'dark' }),
+          },
+          { id: 'go-home', label: `${current.name} · home`, icon: 'arrow', group: 'Go to', run: () => navigate(current.basePath) },
+          { id: 'leave', label: current.brand.leaveLabel, hint: 'Back to your lifeline', icon: 'left', group: 'Go to', run: () => navigate('/') },
+        ]
+      : [];
+    const base: Command[] = current ? appBase : [
       { id: 'inscribe', label: 'Inscribe today', hint: 'A quick memory', icon: 'pen', group: 'Actions', run: () => navigate('/inscriptions?new=1') },
       {
         id: 'theme',
@@ -58,7 +75,7 @@ export function CommandPalette({ open, onClose, ctx, enabled }: { open: boolean;
     ];
     const q = query.trim();
     const out: Command[] = [];
-    if (DATE_RE.test(q) && ctx.profile) {
+    if (!current && DATE_RE.test(q) && ctx.profile) {
       const idx = locateIndex(ctx.profile.birthDate, q);
       if (idx !== null && idx < ctx.profile.horizonYears * 52) {
         out.push({ id: 'jump', label: `Jump to the week of ${formatMedium(q)}`, icon: 'today', group: 'Jump', run: () => navigate(`/?week=${idx}`) });
@@ -68,7 +85,7 @@ export function CommandPalette({ open, onClose, ctx, enabled }: { open: boolean;
     out.push(...base.filter((c) => !q || c.label.toLowerCase().includes(lower) || c.hint?.toLowerCase().includes(lower)));
     if (q.length >= 2) {
       const terms = lower.split(/\s+/).filter(Boolean);
-      const all = [...houseMemories(ctx), ...enabled.flatMap((d) => d.memories?.(ctx) ?? [])];
+      const all = current ? (current.memories?.(ctx) ?? []) : [...houseMemories(ctx), ...enabled.flatMap((d) => d.memories?.(ctx) ?? [])];
       const hits = all
         .filter((m) => terms.every((t) => `${m.title}\n${m.excerpt ?? ''}`.toLowerCase().includes(t)))
         .sort((a, b) => b.date.localeCompare(a.date))
@@ -78,7 +95,7 @@ export function CommandPalette({ open, onClose, ctx, enabled }: { open: boolean;
     return out;
     // settings is read for the theme label only
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [query, ctx, enabled, settings.theme]);
+  }, [query, ctx, enabled, settings.theme, current]);
 
   useEffect(() => setActive(0), [query]);
   useEffect(() => {
@@ -98,7 +115,7 @@ export function CommandPalette({ open, onClose, ctx, enabled }: { open: boolean;
         <Icon name="search" size={18} />
         <input
           className="palette__input"
-          placeholder="Type a command, a memory, or a date (YYYY-MM-DD)…"
+          placeholder={current ? `Search ${current.name}…` : 'Type a command, a memory, or a date (YYYY-MM-DD)…'}
           value={query}
           autoFocus
           role="combobox"

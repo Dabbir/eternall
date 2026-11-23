@@ -9,7 +9,7 @@ export function UpdatePrompt() {
   if (!needRefresh) return null;
   return (
     <div className="update-prompt" role="status">
-      <p>A new edition of ETERNALL is ready.</p>
+      <p>A new version is ready.</p>
       <button type="button" className="btn btn--primary btn--s" onClick={() => void updateServiceWorker(true)}>
         Reload
       </button>

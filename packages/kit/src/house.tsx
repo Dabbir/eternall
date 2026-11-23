@@ -67,6 +67,17 @@ export interface House {
   /** Mark a one-time hint or suggestion as seen. */
   dismiss(key: string): void;
   isDismissed(key: string): boolean;
+  /** The action the current screen registered (usePrimaryAction); an app's own chrome renders it. */
+  primaryAction: PrimaryAction | null;
+  /** Back to the ETERNALL house (an app's small exit). */
+  leave(): void;
+  /** Lock the vault now, when a lock is set (⌘⇧L does the same). */
+  lock(): void;
+  canLock: boolean;
+  /** Open search (⌘K), scoped to the current app. */
+  openSearch(): void;
+  /** How many things wait elsewhere (other apps' badges), for a quiet dot on the exit. */
+  notices: number;
   /** Whether 3D/immersive modes may run (capability + preference + licence). */
   immersive: { allowed: boolean; reason: 'ok' | 'flat-pages' | 'reduced-motion' | 'no-webgl' | 'low-power' | 'patron' };
 }
@@ -83,7 +94,12 @@ export function useHouse(): House {
   return h;
 }
 
-/** Register the spine's primary action while the calling screen is mounted. */
+/** The primary action registered by the current screen, for an app's own chrome to render. */
+export function usePrimaryActionValue(): PrimaryAction | null {
+  return useHouse().primaryAction;
+}
+
+/** Register the screen's primary action while the calling screen is mounted. */
 export function usePrimaryAction(action: PrimaryAction | null) {
   const house = useHouse();
   const ref = useRef(action);

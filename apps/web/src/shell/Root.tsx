@@ -136,7 +136,7 @@ export function Root({ store, today, idb }: RootProps) {
     return (
       <main className="recovery" role="alert">
         <h1 className="display page-title">Your archive couldn’t be opened.</h1>
-        <p className="muted">ETERNALL paused rather than risk overwriting anything. Reload to try again.</p>
+        <p className="muted">It paused rather than risk overwriting anything. Reload to try again.</p>
         <p className="mono faint recovery__reason">{state.message}</p>
       </main>
     );
@@ -314,8 +314,9 @@ function VaultSetup({ keyring, onCreated }: { keyring: Keyring | null; onCreated
 }
 
 function Splash() {
+  const app = doorImprint();
   return (
-    <div className="splash" role="status" aria-label="Opening ETERNALL">
+    <div className={`splash ${app ? 'splash--app' : ''}`} role="status" aria-label={app ? `Opening ${imprintById(app)?.name ?? ''}` : 'Opening ETERNALL'}>
       <div className="splash__cells" aria-hidden="true">
         {Array.from({ length: 7 }, (_, i) => (
           <span key={i} style={{ ['--i' as string]: i }} />

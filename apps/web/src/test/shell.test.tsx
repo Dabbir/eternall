@@ -102,6 +102,37 @@ describe('Chapters, in the house', () => {
   });
 });
 
+describe('apps as their own sites', () => {
+  it('shows an app without the house spine, doors or name, in its own identity', async () => {
+    at('/kindred/');
+    render(<Root store={createMemoryStore([profile, quiet])} />);
+    await screen.findByRole('heading', { level: 1 });
+    expect(document.querySelector('.spine')).toBeNull();
+    expect(document.body.dataset.imprint).toBe('kindred');
+    expect(document.body.textContent).not.toMatch(/ETERNALL/);
+    expect(document.querySelector('link[rel="manifest"]')?.getAttribute('href') ?? '/manifests/kindred.webmanifest').toBe('/manifests/kindred.webmanifest');
+  });
+
+  it('gives the house back its spine and identity', async () => {
+    at('/');
+    render(<Root store={createMemoryStore([profile, quiet])} />);
+    expect(await screen.findByRole('heading', { level: 1, name: /Ada, this is week/ })).toBeInTheDocument();
+    expect(document.querySelector('.spine')).not.toBeNull();
+    expect(document.body.dataset.imprint).toBeUndefined();
+  });
+
+  it('scopes search to the app, with one way back to the house', async () => {
+    at('/kindred/');
+    render(<Root store={createMemoryStore([profile, quiet])} />);
+    await screen.findByRole('heading', { level: 1 });
+    act(() => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }));
+    });
+    expect(await screen.findByRole('option', { name: /Close the drawer/ })).toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: /Inscriptions/ })).not.toBeInTheDocument();
+  });
+});
+
 describe('retired doors', () => {
   it('send old links to where their pages live now', async () => {
     const { retiredDoorRedirect } = await import('../shell/router');
