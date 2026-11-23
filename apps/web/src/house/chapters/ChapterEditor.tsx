@@ -3,7 +3,8 @@ import { createId, type FieldErrors, type ISODate } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button, Dialog, TextArea, TextField } from '@eternall/ui';
 import { useCollection } from '@eternall/vault';
-import { CHAPTER_PATH, CLOTHS, LIMITS, validateChapter, type Chapter, type ChapterInput } from './chapters';
+import { Shelved } from '../Ceremony';
+import { CHAPTER_PATH, CLOTHS, LIMITS, clothColor, validateChapter, type Chapter, type ChapterInput } from './chapters';
 
 /** Setting a title page: name, dates, bookcloth and a line about the chapter. */
 export function ChapterEditor({ existing, start, onClose }: { existing?: Chapter; start?: ISODate; onClose(): void }) {
@@ -33,6 +34,7 @@ export function ChapterEditor({ existing, start, onClose }: { existing?: Chapter
     }
     col.put({ id: existing?.id ?? createId(), ...r.value });
     house.toast({ message: existing ? 'Chapter updated.' : `“${r.value.title}” joins the shelf.`, tone: 'accent' });
+    if (!existing) house.ceremony(<Shelved title={r.value.title} color={clothColor(r.value.cloth)} />, 900);
     onClose();
   };
 

@@ -80,6 +80,12 @@ export interface House {
   notices: number;
   /** The app's one-time first-contact note, until dismissed (docs/DESIGN.md §1.3); its chrome shows it. */
   introNote: { name: string; text: string; dismiss(): void } | null;
+  /**
+   * A full-screen moment after something worth marking was saved (docs/DESIGN.md §5, "Ceremonies").
+   * Purely decorative: call it after the data is written. It never blocks input, is hidden from
+   * assistive tech, lasts at most `ms` (≤ 900), and is skipped entirely under reduced motion.
+   */
+  ceremony(node: ReactNode, ms?: number): void;
   /** Whether 3D/immersive modes may run (capability + preference + licence). */
   immersive: { allowed: boolean; reason: 'ok' | 'flat-pages' | 'reduced-motion' | 'no-webgl' | 'low-power' | 'patron' };
 }

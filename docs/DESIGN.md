@@ -107,6 +107,28 @@ Each imprint has its own **signature motion vocabulary** (`design/*`), but all o
 | Purpose | Every animation must explain a change (where something came from or went, what happened). Ambient looping animation is forbidden except for "now" indicators. |
 | Performance | Animate only `transform` and `opacity` in the DOM; canvas and WebGL animations render on demand, never in an idle loop. |
 
+### 5.1 Ceremonies: one full-screen moment per app
+
+AMAZEEN's "Filed" stamp set the pattern. Every app and the house mark their most meaningful save with one full-screen moment in their own idiom, through the kit's `House.ceremony(node, ms)`.
+
+**Rules (enforced by the shell, `apps/web/src/shell/Shell.tsx`):**
+- **The data is written first.** The moment is decoration and nothing waits on it.
+- **Never in the way.** It never blocks input (`pointer-events: none`), and it is hidden from assistive tech; the toast says what happened.
+- **Never under reduced motion.** It is not mounted at all.
+- **Short.** At most 900ms (600ms for LEDGER, which is used many times a day). One plays at a time; a new one replaces the last.
+- **Always on top.** It lives in the browser's top layer (a manual popover), so it shows above an open dialog, like a stamp landing on whatever is on the desk.
+- **Fading out.** Each veil keeps `opacity: 1` until its last frames, so the moment never washes out early.
+
+| Where | When | The moment |
+|---|---|---|
+| AMAZEEN | a piece is filed | "Filed": a red stamp slammed onto the page (its own, unchanged) |
+| AMAZEEN · Letters | a letter is sealed | "Sealed": hot wax spreads, the seal comes down with the letter's fingerprint ring, "Sealed until <date>" |
+| REFRAIN | a ritual is marked kept | "A held note": five hairlines draw across, the ritual's note drops onto its pitch under a fermata; when every ritual due today is kept, the final double bar and "Fine" |
+| KINDRED | "I saw them today", a new card | "Letterpress strike": the name presses into card stock with a ring of ink |
+| MARGINALIA | a new underline · a new work | "The sweep": the line set large, a highlighter drawn under it, a pencil tick · "Filed": a catalogue card drops into its lettered drawer |
+| LEDGER | an entry (or several, or an import) | "Entered": the sum written digit by digit, ruled off with a double line in red pen (green for money in); the cursor stays in the quick line |
+| House | a new inscription · a new chapter | "Carved": the title cut letter by letter and sealed with the house's dot · "Shelved": the chapter's book slides onto a plank in its cloth |
+
 ## 6. 3D, WebGL and audio
 
 ETERNALL uses three-dimensional and sonic moments where they **carry meaning**: a life as a coil of weeks, a letter physically sealed, a shelf of chapters, the turning of seasons in an orrery, a week of rituals as a melody.

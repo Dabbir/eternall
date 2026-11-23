@@ -6,6 +6,7 @@ import { useCollection } from '@eternall/vault';
 import { INSCRIPTION_PATH, LIMITS, validateInscription, type Inscription, type InscriptionInput } from '../domain/house';
 import type { FieldErrors } from '@eternall/core';
 import { TonePicker } from './TonePicker';
+import { Carved } from '../Ceremony';
 
 interface Props {
   existing?: Inscription;
@@ -14,7 +15,7 @@ interface Props {
 }
 
 export function InscriptionEditor({ existing, date, onClose }: Props) {
-  const { profile, today } = useHouse();
+  const { profile, today, ceremony } = useHouse();
   const { col } = useCollection<Inscription>(INSCRIPTION_PATH);
   const toast = useToast();
   const initial: InscriptionInput = existing
@@ -49,6 +50,7 @@ export function InscriptionEditor({ existing, date, onClose }: Props) {
       message: existing ? 'Inscription updated.' : c ? `Inscribed into week ${c.week + 1} of your ${ordinal(c.age + 1)} year.` : 'Inscribed.',
       tone: 'accent',
     });
+    if (!existing) ceremony(<Carved title={inscription.title} when={c ? `Week ${c.week + 1} of your ${ordinal(c.age + 1)} year` : formatLong(inscription.date)} />, 900);
     onClose();
   };
 

@@ -139,3 +139,9 @@ Lifeline canvas · week panel (multi-imprint) · doors menu · unlock card · re
   1. Find the week you started your current job and open it.
   2. Inscribe something about this week.
   3. Open the imprint that has a letter ready.
+
+## 12. Ceremonies (`DESIGN.md` §5.1)
+- **Carved:** a new inscription's title is cut into the page letter by letter and sealed with the vermilion dot, with "Week 19 of your 35th year" beneath.
+- **Shelved:** a new chapter's book, in its own cloth with gilt bands, slides onto a plank.
+
+Both last 900ms; see `apps/web/src/house/Ceremony.tsx`.

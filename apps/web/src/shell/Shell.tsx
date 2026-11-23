@@ -1,4 +1,4 @@
-import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import type { ImprintDefinition, ImprintId, ReadContext } from '@eternall/core';
 import { HouseProvider, type CapabilityId, type Capabilities, type House, type PrimaryAction } from '@eternall/kit';
 import { useToast } from '@eternall/ui';
@@ -38,6 +38,17 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   const [paletteOpen, setPaletteOpen] = useState(false);
   // The palette loads the first time it opens, then stays mounted.
   const [paletteUsed, setPaletteUsed] = useState(false);
+  // One full-screen moment at a time (kit House.ceremony); a new one replaces the last.
+  const [rite, setRite] = useState<{ id: number; node: ReactNode; ms: number } | null>(null);
+  const ceremony = useCallback((node: ReactNode, ms = 900) => {
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+    setRite({ id: Date.now() + Math.random(), node, ms: Math.min(900, Math.max(200, ms)) });
+  }, []);
+  useEffect(() => {
+    if (!rite) return;
+    const t = window.setTimeout(() => setRite((r) => (r?.id === rite.id ? null : r)), rite.ms);
+    return () => window.clearTimeout(t);
+  }, [rite]);
   useEffect(() => {
     if (paletteOpen) setPaletteUsed(true);
   }, [paletteOpen]);
@@ -96,8 +107,9 @@ export function Shell({ today: fixedToday }: { today?: string }) {
         def && !settings.dismissed.includes(`intro:${def.id}`)
           ? { name: def.name, text: def.intro, dismiss: () => updateSettings({ dismissed: [...settings.dismissed, `intro:${def.id}`] }) }
           : null,
+      ceremony,
     }),
-    [today, profile, toast, providers, enabled, others, ctx, settings, updateSettings, patron.active, primary, lockApi, used],
+    [today, profile, toast, providers, enabled, others, ctx, settings, updateSettings, patron.active, primary, lockApi, used, ceremony],
   );
 
   const house = useMemo(() => makeHouse(current), [makeHouse, current]);
@@ -159,6 +171,7 @@ export function Shell({ today: fixedToday }: { today?: string }) {
           )}
         </main>
         {!app && <DoorsMenu open={doorsOpen} onClose={() => setDoorsOpen(false)} ctx={ctx} enabled={enabled} used={used} current={current} hasProfile={!!profile} />}
+        {rite && <CeremonyLayer key={rite.id} ms={rite.ms}>{rite.node}</CeremonyLayer>}
         {paletteUsed && (
           <Suspense fallback={null}>
             <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} ctx={ctx} enabled={enabled} current={app} />
@@ -166,6 +179,28 @@ export function Shell({ today: fixedToday }: { today?: string }) {
         )}
       </div>
     </HouseProvider>
+  );
+}
+
+/**
+ * The ceremony layer goes into the browser's top layer (a manual popover), so it shows above an open
+ * modal dialog too, the way a stamp lands on whatever is on the desk. Older browsers fall back to
+ * a fixed layer.
+ */
+function CeremonyLayer({ ms, children }: { ms: number; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current as (HTMLDivElement & { showPopover?: () => void }) | null;
+    try {
+      el?.showPopover?.();
+    } catch {
+      /* not supported: the fixed layer still shows, under any open dialog */
+    }
+  }, []);
+  return (
+    <div ref={ref} className="ceremony" popover="manual" aria-hidden="true" style={{ ['--rite-ms' as string]: `${ms}ms` }}>
+      {children}
+    </div>
   );
 }
 
