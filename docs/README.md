@@ -2,6 +2,7 @@
 
 Phase 0 foundation documents, in reading order:
 
+0. [PRODUCT](PRODUCT.md): the first product (AMAZEEN), who it is for, and the launch scope (ADR 0013)
 1. [VISION](VISION.md): what ETERNALL is, for whom, and its three principles
 2. [BRAND](BRAND.md): house and imprints, naming rules, voice, logo
 3. [DESIGN](DESIGN.md): "bold on the surface, clear in the hand", the spine, 3D rules, budgets

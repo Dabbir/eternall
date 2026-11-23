@@ -1,28 +1,49 @@
 # AGENTS.md — ETERNALL
 
-ETERNALL is **a private publishing house for your life**. It is one local-first, end-to-end-encrypted platform made of **imprints**, each a complete product with its own name and visual world: **AMAZEEN** (journal), **ENVOI** (letters to your future), **FOLIO** (chapters), **ALMANACK** (measures), **REFRAIN** (rituals), **PROLOGUE** (seasons), **KINDRED** (people) and **MARGINALIA** (reading). They are bound together by the house **lifeline**, a life shown in weeks. Read `docs/VISION.md` first.
+> `CLAUDE.md` and `AGENTS.md` are kept identical. Change both together.
+
+ETERNALL is **a private personal toolkit**: one local-first, end-to-end-encrypted platform of apps that share a vault, not data. **AMAZEEN is the first product and the way in** (`docs/PRODUCT.md`, ADR 0013):
+- **Journal · AMAZEEN**: a journal pressed into a weekly issue, plus Letters to your future. Launch.
+- **Money · LEDGER** (becoming CASHEEN, ADR 0013): money in and out and a monthly budget, written in one line (ADR 0012). Launch, beside AMAZEEN.
+- **Practices · REFRAIN**, **People · KINDRED**, **Reading · MARGINALIA**: built, opt-in in Settings, not part of the launch.
+
+The **house** (ETERNALL) keeps the optional lifeline (a life shown in weeks), inscriptions, Chapters and the Almanac. Read `docs/PRODUCT.md`, then `docs/VISION.md`, ADR 0011 and ADR 0013.
 
 ## Current state (read this before changing anything)
 
-- **Phase 0 (documents) is in review.** No platform code exists yet. **Don't start Phase 1 work until the owner approves the docs** (`docs/ROADMAP.md`).
-- This repo currently contains the **original single-app ETERNALL** (Vite + React 18, `src/`). It becomes `apps/web` + `packages/*` + `modules/*` in Phase 1 (`docs/ARCHITECTURE.md` §10).
+- The owner approved the docs and asked to build through every phase. Work happens on branch `platform`, one commit per verified phase, never pushed (`docs/ROADMAP.md` tracks progress).
+- **Phase 8 is in progress (ADR 0013):** AMAZEEN first. The steps (`docs/ROADMAP.md`): rename LEDGER to CASHEEN (collection paths stay `ledger/*`); Journal and Money on by default, other apps opt-in, CASHEEN contributes nothing to the house; one app bar with the same positions in every app; personal looks for AMAZEEN.
+- **Phase 7 is done (ADR 0012):** LEDGER (`modules/ledger`). The quick-line parser is `quick.ts`; amounts never leave LEDGER (the house sees counts only).
+- **Phase 6 is done (ADR 0011):** consolidated from 8 imprints to 4 apps.
+  - ENVOI became AMAZEEN's Letters (`modules/amazeen/src/imprint/letters/`).
+  - FOLIO and ALMANACK became house sections (`apps/web/src/house/{chapters,almanac}/`).
+  - PROLOGUE was retired, with its seasons migrated to inscriptions.
+  - Collection paths never changed, and old doors redirect.
+  - Each app renders its own chrome (`modules/<id>/src/app/Chrome.tsx`, AMAZEEN's `AppShell`) and its own kit stylesheet (`theme/<id>.kit.css`). The house spine appears on house pages only.
+- **Phase 1 is done:** the monorepo (`apps/web`, `packages/{core,vault,kit,ui,stage}`, `modules/*`, `services/sync-worker`) replaces the original single app.
+- **Phase 5 is done:** REFRAIN, KINDRED and MARGINALIA live in `modules/` (PROLOGUE was later retired), with their capabilities wired and tested with and without their providers. Local reminders go through `ImprintDefinition.reminders` and the shell (`apps/web/src/shell/reminders.ts`).
+- **Release 1 is built:** sync, anonymous licences, Patron and the PWA (`services/sync-worker`, `packages/vault/src/{protocol,sync}.ts`). Owner TODOs (payment provider, prices, trademark checks, independent privacy review, D1 database) are listed in `docs/ROADMAP.md`.
+- **Phase 4 is done:** 3D lives in lazily-loaded scene modules (`*Scene.ts`) mounted through `@eternall/stage`'s `Stage3D`; every one has its 2D view and a `DimensionToggle`. three.js is the only 3D dependency.
+- **Phase 3 is done:** AMAZEEN lives in `modules/amazeen` (imported with its history). Its code keeps its own conventions; ETERNALL-specific glue is in `modules/amazeen/src/imprint/`. Patches for the original repo go in `docs/patches/`, never applied by us.
+- **Phase 2 is done:** everything is encrypted at rest in IndexedDB through `packages/vault` (keyring, encrypted store, recovery kit). Never write personal data anywhere else.
 - **AMAZEEN lives in `~/orca/amazeen-app`. Never modify it in place.** It is imported via `git subtree` in Phase 3 (`docs/adr/0006`). Changes to it need the owner's explicit approval.
 
 ## Commands
 
-Current app (until Phase 1):
 ```bash
-npm run dev        # Vite dev server
-npm test           # Vitest (46 tests)
-npm run typecheck  # tsc -b
-npm run build      # typecheck + production build
+npm run dev        # Vite dev server for apps/web on :5181 (doors: /, /amazeen/, /refrain/, /kindred/, /marginalia/, /ledger/; house pages /chapters, /almanac, /inscriptions)
+npm test           # Vitest across all workspaces
+npm run typecheck  # one root tsc over every workspace
+npm run lint       # oxlint, zero warnings
+npm run build      # typecheck + production build + bundle budgets (scripts/check-budgets.mjs)
+npm run dev:api    # sync + licence API on :8788 (services/sync-worker); writes dev keys first
 ```
-After Phase 1, commands run per workspace (`npm run <script> -w <workspace>`) and from the root (`npm test`, `npm run lint`, `npm run test:e2e`, `npm run build`). Update this section when that lands.
 
 ## Docs map
 
 | Need | Read |
 |---|---|
+| What ships first, for whom, and why | `docs/PRODUCT.md` |
 | Why / what / for whom | `docs/VISION.md` |
 | Names, voice, logo | `docs/BRAND.md` |
 | Shared design rules, spine, 3D, budgets | `docs/DESIGN.md` |
@@ -45,7 +66,8 @@ After Phase 1, commands run per workspace (`npm run <script> -w <workspace>`) an
 6. **Never weaken privacy:** no plaintext content at rest, no third-party scripts, analytics or CDNs, and no cloud AI on user content (`docs/adr/0010`). If a change touches keys, the lock or sync, update `docs/PRIVACY.md` in the same change.
 7. **No new runtime dependency without an ADR.** The current allow-list is React, `@fontsource/*`, `three` (lazy 3D chunks only) and `vite-plugin-pwa`.
 8. **Design: bold on the surface, clear in the hand.**
-   - Follow the imprint's `design/*.md` spatial system, palette and motion.
+   - Each app is its own site (ADR 0011): never put the house spine, mark, name or house-looking primitives inside an app. Controls sit in the **same positions in every app** (ADR 0013): back, name, places, search, lock and the primary action. Restyle shared primitives through tokens in the app's `theme/<id>.kit.css`, and use small caps (`font-variant-caps`), never `text-transform: uppercase`.
+   - Follow the app's `design/*.md` spatial system, palette and motion.
    - Never use a forbidden pattern (`DESIGN.md` §1.2).
    - Action labels are plain words, and imprint names always carry their function line.
 9. **Every 3D or audio moment has a complete 2D equivalent.** 3D chunks are lazy, render on demand, and pass through `packages/stage`.

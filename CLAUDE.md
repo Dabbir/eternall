@@ -1,17 +1,18 @@
 # CLAUDE.md — ETERNALL
 
-ETERNALL is **a private publishing house for your life**. It is one local-first, end-to-end-encrypted platform made of **five apps**, each a complete product that feels like its own site, with no resemblance to the house:
-- **AMAZEEN**: journal, plus Letters to your future
-- **REFRAIN**: rituals
-- **KINDRED**: people
-- **MARGINALIA**: reading
-- **LEDGER**: money in and out, and a monthly budget, written in one line (ADR 0012)
+> `CLAUDE.md` and `AGENTS.md` are kept identical. Change both together.
 
-The **house** (ETERNALL) keeps the lifeline (a life shown in weeks), inscriptions, Chapters and the Almanac. Read `docs/VISION.md` and `docs/adr/0011` first.
+ETERNALL is **a private personal toolkit**: one local-first, end-to-end-encrypted platform of apps that share a vault, not data. **AMAZEEN is the first product and the way in** (`docs/PRODUCT.md`, ADR 0013):
+- **Journal · AMAZEEN**: a journal pressed into a weekly issue, plus Letters to your future. Launch.
+- **Money · LEDGER** (becoming CASHEEN, ADR 0013): money in and out and a monthly budget, written in one line (ADR 0012). Launch, beside AMAZEEN.
+- **Practices · REFRAIN**, **People · KINDRED**, **Reading · MARGINALIA**: built, opt-in in Settings, not part of the launch.
+
+The **house** (ETERNALL) keeps the optional lifeline (a life shown in weeks), inscriptions, Chapters and the Almanac. Read `docs/PRODUCT.md`, then `docs/VISION.md`, ADR 0011 and ADR 0013.
 
 ## Current state (read this before changing anything)
 
 - The owner approved the docs and asked to build through every phase. Work happens on branch `platform`, one commit per verified phase, never pushed (`docs/ROADMAP.md` tracks progress).
+- **Phase 8 is in progress (ADR 0013):** AMAZEEN first. The steps (`docs/ROADMAP.md`): rename LEDGER to CASHEEN (collection paths stay `ledger/*`); Journal and Money on by default, other apps opt-in, CASHEEN contributes nothing to the house; one app bar with the same positions in every app; personal looks for AMAZEEN.
 - **Phase 7 is done (ADR 0012):** LEDGER (`modules/ledger`). The quick-line parser is `quick.ts`; amounts never leave LEDGER (the house sees counts only).
 - **Phase 6 is done (ADR 0011):** consolidated from 8 imprints to 4 apps.
   - ENVOI became AMAZEEN's Letters (`modules/amazeen/src/imprint/letters/`).
@@ -42,6 +43,7 @@ npm run dev:api    # sync + licence API on :8788 (services/sync-worker); writes 
 
 | Need | Read |
 |---|---|
+| What ships first, for whom, and why | `docs/PRODUCT.md` |
 | Why / what / for whom | `docs/VISION.md` |
 | Names, voice, logo | `docs/BRAND.md` |
 | Shared design rules, spine, 3D, budgets | `docs/DESIGN.md` |
@@ -64,7 +66,7 @@ npm run dev:api    # sync + licence API on :8788 (services/sync-worker); writes 
 6. **Never weaken privacy:** no plaintext content at rest, no third-party scripts, analytics or CDNs, and no cloud AI on user content (`docs/adr/0010`). If a change touches keys, the lock or sync, update `docs/PRIVACY.md` in the same change.
 7. **No new runtime dependency without an ADR.** The current allow-list is React, `@fontsource/*`, `three` (lazy 3D chunks only) and `vite-plugin-pwa`.
 8. **Design: bold on the surface, clear in the hand.**
-   - Each app is its own site (ADR 0011): never put the house spine, mark, name or house-looking primitives inside an app. Restyle shared primitives through tokens in the app's `theme/<id>.kit.css`, and use small caps (`font-variant-caps`), never `text-transform: uppercase`.
+   - Each app is its own site (ADR 0011): never put the house spine, mark, name or house-looking primitives inside an app. Controls sit in the **same positions in every app** (ADR 0013): back, name, places, search, lock and the primary action. Restyle shared primitives through tokens in the app's `theme/<id>.kit.css`, and use small caps (`font-variant-caps`), never `text-transform: uppercase`.
    - Follow the app's `design/*.md` spatial system, palette and motion.
    - Never use a forbidden pattern (`DESIGN.md` §1.2).
    - Action labels are plain words, and imprint names always carry their function line.

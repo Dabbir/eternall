@@ -3,7 +3,7 @@
 > **ETERNALL is a private publishing house for your life.**
 > Each of its imprints helps you keep one part of a life (your weeks, your words, your letters, your people, your chapters) and binds them all into a single, quiet picture of the time you've had and the time you have left.
 
-Status: draft for review · Phase 0 · Owner: product
+Status: accepted · Owner: product · **Launch scope and the first product: `PRODUCT.md` (ADR 0013).** This page is the long view; where they differ on what ships first, `PRODUCT.md` wins.
 
 ---
 
@@ -29,6 +29,8 @@ ETERNALL is **one place, with many doors**. Each app is a complete product with 
 | **MARGINALIA** | what you read, watch and underline | an annotated page, a card catalogue |
 | **LEDGER** | your money, in and out, and a monthly budget, written in one line | an accountant's bound ledger |
 
+**Launch (ADR 0013):** AMAZEEN is the first product and the way in, with LEDGER (renamed CASHEEN, labelled *Money*) beside it as a parallel product. REFRAIN, KINDRED and MARGINALIA are built but opt-in, and the lifeline is optional, never a new person's first page. Apps share the vault, not data: money never reaches the house.
+
 *Consolidated on 2026-11-23 (ADR 0011):* ENVOI became AMAZEEN's Letters, FOLIO and ALMANACK became house pages, and PROLOGUE was retired, with its seasons kept as inscriptions.
 
 You can use a single imprint on its own, for example AMAZEEN as a journal and nothing else. When you use two or more, ETERNALL offers to bind them together on the lifeline.
@@ -48,7 +50,9 @@ Short forms:
 
 Every product, design and engineering decision is tested against these three. If a feature violates one, it does not ship.
 
-### 4.1 Everything contributes to the lifeline
+### 4.1 Everything can contribute to the lifeline (when it fits)
+*Amended by ADR 0013:* not everything has to become part of one story. A journal needs an archive that is easy to read and money needs fast input; money contributes nothing to the house at all.
+
 The week is the shared unit of time. Every imprint leaves a trace on the week it belongs to: a journal issue, a sealed letter, a ritual kept, a person met, a book finished. ETERNALL's lifeline is where those traces meet.
 *Test:* "Which week does this belong to, and what does it add to that week?" A feature that has no answer is probably a feature for a different product.
 

@@ -1,6 +1,6 @@
 # ETERNALL — Roadmap
 
-Status: draft for review · Phase 0 · Each phase ends with its exit criteria met, then a review, before the next begins.
+Status: accepted · Phases 0–7 done, Phase 8 in progress (ADR 0013) · Each phase ends with its exit criteria met, then a review, before the next begins.
 
 ---
 
@@ -152,8 +152,22 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 
 **Each app navigates from its own edge (2026-11-23, `DESIGN.md` §2):** AMAZEEN left (its spine), REFRAIN top (the head of a score), LEDGER right (a thumb index of months), KINDRED bottom (a row of drawer fronts), MARGINALIA in the wide left margin (pencilled notes under a ribbon bookmark). Checked in the browser at 390, 768 and desktop.
 
+## Phase 8: AMAZEEN first (ADR 0013, `PRODUCT.md`)
+**Goal:** a launch that is easy to understand. AMAZEEN is the way in, LEDGER (renamed **CASHEEN**, labelled *Money*) sits beside it, and the other apps wait in Settings.
+
+**Steps, one commit each:**
+1. Docs: `PRODUCT.md`, ADR 0013, `AGENTS.md` in sync with `CLAUDE.md`.
+2. Rename LEDGER → CASHEEN. Door `/casheen/`, `/ledger/*` redirects, collection paths stay `ledger/*`.
+3. Journal and Money on by default; REFRAIN, KINDRED and MARGINALIA opt-in in Settings → Apps; a vault with data in an app keeps it on; new people land in AMAZEEN or CASHEEN, never the lifeline; CASHEEN contributes nothing to the house.
+4. One app bar: the same positions for back, name, places, search, lock and the primary action in every app. Replaces the per-edge navigation of 2026-11-23.
+5. AMAZEEN personal looks: presets plus accent, typeface, text size and density, stored in the vault.
+
+**Exit criteria:** a fresh vault starts writing in one tap with no lifeline; existing vaults lose no app; every app passes the same-positions test at 390/768/1440; looks never touch `localStorage`; all gates green.
+
+**Order after launch:** AMAZEEN's core flow is tested with prospective users first (`PRODUCT.md`, next steps). CASHEEN grows only within quick entry and the monthly budget. REFRAIN is the next companion, then the others, only when people ask for them.
+
 ## Release 2
-The four apps and the house, as of ADR 0011.
+All apps and the house. After the launch of AMAZEEN and CASHEEN.
 
 ## Later (designed, not scheduled)
 - **Native apps** via Capacitor (ADR 0009): App Store and Play Store, in-app purchase licences, native notifications.
