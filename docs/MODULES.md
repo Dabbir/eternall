@@ -151,7 +151,9 @@ Conventions:
 
 ---
 
-## 10. LEDGER: Money, kept plainly (`modules/ledger`), ADR 0012
+## 10. CASHEEN: Money, kept plainly (`modules/casheen`), ADR 0012, ADR 0013
+
+*Formerly LEDGER. The collection paths below kept their `ledger/*` names through the rename, as ENVOI's did in ADR 0011: data never moves for a name. The app id is `casheen`; settings saved under `ledger` are read as `casheen` (`withCurrentIds`, `apps/web/src/house/domain/house.ts`), and `/ledger/*` redirects to `/casheen/*`.*
 
 | Entity | Fields |
 |---|---|
@@ -162,8 +164,8 @@ Conventions:
 | `ledger/pref` | `remindBudget` (off by default) |
 | `ledger/terms` | your shorthand: `units` (word → × 1.000 / × 1.000.000), `fixed` (word → an amount, e.g. goceng → 5.000), `days` (word → today/yesterday/… or a weekday), `income` (words meaning money in); at most 40 of each; a word means one thing, and never collides with a built-in word of another kind |
 
-- **Rules:** Rupiah only. The quick line is the main way in (`docs/design/ledger.md` §6). Going over is said plainly, never scored.
-- **Amounts never leave LEDGER.** No lifeline layer or week lines; Almanac facts are counts only ("Months kept in LEDGER this year", "Entries written this year").
+- **Rules:** Rupiah only. The quick line is the main way in (`docs/design/casheen.md` §6). Going over is said plainly, never scored.
+- **Amounts never leave CASHEEN.** No lifeline layer or week lines; Almanac facts are counts only ("Months kept in CASHEEN this year", "Entries written this year").
 - **Reminders:** on the 1st, "Set the budget for <month>", when opted in and no budget exists yet.
 - **Capabilities:** none.
 - **Import:** CSV read on the device (`csv.ts`); categories are guessed from notes like the quick line.
@@ -177,7 +179,7 @@ Conventions:
   KINDRED ───────────────▶ AMAZEEN ◀─────────────── MARGINALIA
                         (pieces + Letters)
 
-  LEDGER ── almanacFacts() (counts only) ──▶ house · Almanac
+  CASHEEN ── almanacFacts() (counts only) ──▶ house · Almanac
 
   house · Chapters ── chapters.at ──▶ house inscriptions · AMAZEEN
   REFRAIN ── rituals.list / rituals.week ──▶ (no consumer today)

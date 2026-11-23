@@ -4,12 +4,12 @@ import { todayISO } from '@eternall/core';
 import { createMemoryStore, type VaultRecord } from '@eternall/vault';
 import { Root } from '../shell/Root';
 
-/** LEDGER's promise (docs/design/ledger.md): one line in, one entry out; amounts stay in LEDGER. */
+/** CASHEEN's promise (docs/design/casheen.md): one line in, one entry out; amounts stay in CASHEEN. */
 const today = todayISO();
 const month = today.slice(0, 7);
 const stamp = new Date().toISOString();
 const rec = (key: string, value: unknown): VaultRecord => ({ key, updatedAt: stamp, deleted: false, value });
-const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:ledger', 'intro:amazeen'], hidden: [], autoLockMinutes: 15 });
+const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:casheen', 'intro:amazeen'], hidden: [], autoLockMinutes: 15 });
 const profile = rec('house/profile/me', { id: 'me', name: 'Ada', birthDate: '1992-03-04', horizonYears: 90, hemisphere: 'north', createdAt: stamp });
 const entries = (store: ReturnType<typeof createMemoryStore>) => store.dump().filter((r) => r.key.startsWith('ledger/entry/') && !r.deleted).map((r) => r.value as { amount: number; kind: string; categoryId: string; note: string; date: string });
 
@@ -20,11 +20,11 @@ beforeEach(() => {
   window.matchMedia = ((q: string) => ({ matches: q.includes('reduce'), media: q, addEventListener() {}, removeEventListener() {} })) as unknown as typeof window.matchMedia;
 });
 
-describe('LEDGER', () => {
+describe('CASHEEN', () => {
   it('writes an entry from one line and Enter', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);
-    at('/ledger/');
+    at('/casheen/');
     render(<Root store={store} />);
     const line = await screen.findByLabelText('Write one line');
     await user.type(line, 'kopi 25rb');
@@ -39,7 +39,7 @@ describe('LEDGER', () => {
   it('learns a correction for next time', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);
-    at('/ledger/');
+    at('/casheen/');
     render(<Root store={store} />);
     const line = await screen.findByLabelText('Write one line');
     await user.type(line, 'netflix 186rb');
@@ -54,7 +54,7 @@ describe('LEDGER', () => {
   it('writes several pasted lines at once, leaving out ones without an amount', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);
-    at('/ledger/');
+    at('/casheen/');
     render(<Root store={store} />);
     const line = await screen.findByLabelText('Write one line');
     await user.click(line);
@@ -71,7 +71,7 @@ describe('LEDGER', () => {
       rec(`ledger/entry/a`, { id: 'a', kind: 'out', amount: 25000, categoryId: 'food', date: today, note: 'kopi', createdAt: stamp }),
       rec(`ledger/budget/${month}`, { id: month, limits: { food: 20000 } }),
     ]);
-    at(`/ledger/budget/${month}`);
+    at(`/casheen/budget/${month}`);
     render(<Root store={store} />);
     const row = (await screen.findByRole('rowheader', { name: 'Food' })).closest('tr')!;
     expect(within(row).getByText('over by 5.000')).toBeInTheDocument();
@@ -80,24 +80,24 @@ describe('LEDGER', () => {
   it('the thumb index opens every month of the year, and The month leads back from Budget', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);
-    at(`/ledger/budget/${month}`);
+    at(`/casheen/budget/${month}`);
     render(<Root store={store} />);
     const index = await screen.findByRole('list', { name: `Months of ${month.slice(0, 4)}` });
     // all twelve notches are links, months still to come included
     expect(within(index).getAllByRole('link')).toHaveLength(12);
     await user.click(screen.getByRole('link', { name: 'The month' }));
     expect(await screen.findByLabelText('Write one line')).toBeInTheDocument();
-    expect(window.location.pathname).toBe(`/ledger/${month}`);
+    expect(window.location.pathname).toBe(`/casheen/${month}`);
     const december = `${month.slice(0, 4)}-12`;
     await user.click(within(index).getAllByRole('link')[11]!);
-    expect(window.location.pathname).toBe(`/ledger/${december}`);
+    expect(window.location.pathname).toBe(`/casheen/${december}`);
     if (december > month) expect(screen.getByText(/hasn’t begun/)).toBeInTheDocument();
   });
 
   it('sets a limit by typing it the short way', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);
-    at(`/ledger/budget/${month}`);
+    at(`/casheen/budget/${month}`);
     render(<Root store={store} />);
     const input = await screen.findByLabelText('Limit for Food');
     await user.type(input, '60rb{Enter}');
@@ -108,7 +108,7 @@ describe('LEDGER', () => {
   it('learns your own shorthand on Your words, then reads it in the quick line', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);
-    at('/ledger/words');
+    at('/casheen/words');
     const { unmount } = render(<Root store={store} />);
     const amount = (await screen.findByRole('heading', { name: 'Amount words' })).closest('section')!;
     await user.type(within(amount).getByLabelText('Word'), 'goceng');
@@ -124,7 +124,7 @@ describe('LEDGER', () => {
     await waitFor(() => expect(store.dump().find((r) => r.key === 'ledger/terms/terms')?.value).toMatchObject({ fixed: [{ word: 'goceng', amount: 5000 }], days: [{ word: 'semalem', daysAgo: 1 }] }));
     unmount();
 
-    at('/ledger/');
+    at('/casheen/');
     render(<Root store={store} />);
     const line = await screen.findByLabelText('Write one line');
     await user.type(line, 'parkir goceng semalem');
@@ -133,7 +133,7 @@ describe('LEDGER', () => {
     await waitFor(() => expect(entries(store)[0]).toMatchObject({ amount: 5000, categoryId: 'transport', note: 'parkir' }));
   });
 
-  it('keeps amounts inside LEDGER: the house Almanac only counts', async () => {
+  it('keeps amounts inside CASHEEN: the house Almanac only counts', async () => {
     at('/almanac');
     render(<Root store={createMemoryStore([quiet, profile, rec('ledger/entry/a', { id: 'a', kind: 'out', amount: 777777, categoryId: 'food', date: today, note: 'x', createdAt: stamp })])} />);
     expect(await screen.findByText('Entries written this year')).toBeInTheDocument();
@@ -141,11 +141,11 @@ describe('LEDGER', () => {
   });
 
   it('is its own site', async () => {
-    at('/ledger/');
+    at('/casheen/');
     render(<Root store={createMemoryStore([quiet])} />);
     await screen.findByLabelText('Write one line');
     expect(document.querySelector('.spine')).toBeNull();
-    expect(document.body.dataset.imprint).toBe('ledger');
+    expect(document.body.dataset.imprint).toBe('casheen');
     expect(screen.getByRole('button', { name: /Close the book/ })).toBeInTheDocument();
     expect(document.body.textContent).not.toMatch(/ETERNALL/);
   });

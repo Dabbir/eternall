@@ -3,8 +3,8 @@ import '@fontsource/libre-caslon-text/latin-400-italic.css';
 import '@fontsource/libre-caslon-text/latin-700.css';
 import '@fontsource/dm-mono/latin-400.css';
 import '@fontsource/dm-mono/latin-500.css';
-import '../theme/ledger.css';
-import '../theme/ledger.kit.css';
+import '../theme/casheen.css';
+import '../theme/casheen.kit.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createId, formatMedium, type FieldErrors, type ImprintAppProps } from '@eternall/core';
 import { usePrimaryAction, useHouse } from '@eternall/kit';
@@ -18,7 +18,7 @@ import { QuickLine, useLedgerData } from './QuickLine';
 import { ImportPage } from './ImportPage';
 import { WordsPage } from './WordsPage';
 
-export default function LedgerApp({ path, search }: ImprintAppProps) {
+export default function CasheenApp({ path, search }: ImprintAppProps) {
   const house = useHouse();
   const current = monthKey(house.today);
   const quickRef = useRef<HTMLTextAreaElement>(null);
@@ -199,7 +199,7 @@ function EntryEditor({ entry, onClose }: { entry: Entry; onClose(): void }) {
     <Dialog
       open
       onClose={onClose}
-      eyebrow="LEDGER · One entry"
+      eyebrow="CASHEEN · One entry"
       title="Correct this entry"
       footer={
         <>

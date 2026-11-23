@@ -1,7 +1,7 @@
 import { formatRupiah } from '../money';
 
 /**
- * LEDGER's full-screen moment (docs/design/ledger.md §6): "Entered". The amount is written out in
+ * CASHEEN's full-screen moment (docs/design/casheen.md §6): "Entered". The amount is written out in
  * the book's figures, digit by digit, and ruled off with a double line in red pen (green ink for
  * money in). Short and see-through, so the next line can be typed while it plays.
  */

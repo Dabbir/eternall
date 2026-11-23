@@ -12,7 +12,7 @@ import { Entered } from './Ceremony';
 const MAX_BYTES = 5 * 1024 * 1024;
 
 /**
- * Bringing a bank statement in (docs/design/ledger.md §Import). The file is read on this device and
+ * Bringing a bank statement in (docs/design/casheen.md §Import). The file is read on this device and
  * never stored as a file; choose the columns, check the preview, then write them all (with undo).
  * Categories are guessed from each note the same way the quick line does.
  */

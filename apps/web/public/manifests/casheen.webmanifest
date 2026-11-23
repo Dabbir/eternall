@@ -1,32 +1,32 @@
 {
-  "id": "/ledger/",
-  "name": "LEDGER",
-  "short_name": "LEDGER",
+  "id": "/casheen/",
+  "name": "CASHEEN",
+  "short_name": "CASHEEN",
   "description": "Money, kept plainly. Write it in one line.",
-  "start_url": "/ledger/",
-  "scope": "/ledger/",
+  "start_url": "/casheen/",
+  "scope": "/casheen/",
   "display": "standalone",
   "background_color": "#eef1e4",
   "theme_color": "#2f5d3a",
   "icons": [
     {
-      "src": "/icons/ledger-192.png",
+      "src": "/icons/casheen-192.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/icons/ledger-512.png",
+      "src": "/icons/casheen-512.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "/icons/ledger-maskable-512.png",
+      "src": "/icons/casheen-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/ledger.svg",
+      "src": "/icons/casheen.svg",
       "sizes": "any",
       "type": "image/svg+xml"
     }
@@ -35,10 +35,10 @@
     {
       "name": "Add an entry",
       "short_name": "Add",
-      "url": "/ledger/?write=1",
+      "url": "/casheen/?write=1",
       "icons": [
         {
-          "src": "/icons/ledger-192.png",
+          "src": "/icons/casheen-192.png",
           "sizes": "192x192"
         }
       ]

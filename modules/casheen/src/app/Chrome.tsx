@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { IntroNote, useHouse, usePrimaryActionValue } from '@eternall/kit';
 import { Icon } from '@eternall/ui';
-import { ledger } from '../index';
+import { casheen } from '../index';
 import { monthKey, monthLabel } from '../ledger';
 
 export type LedgerPlace = 'month' | 'budget' | 'import' | 'words';
@@ -9,7 +9,7 @@ export type LedgerPlace = 'month' | 'budget' | 'import' | 'words';
 const LETTERS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
 /**
- * LEDGER's own frame (docs/design/ledger.md §Chrome; ADR 0011/0012): a ledger's **thumb index**
+ * CASHEEN's own frame (docs/design/casheen.md §Chrome; ADR 0011/0012): a ledger's **thumb index**
  * cut into the right edge of the page. The clasp closes the book (back to the house), the year
  * sits at the top of the index, the twelve months are notches you jump to in one tap (the months
  * still to come open too, to plan their budget), then the pages: The month, Budget and Your words; and at the foot search, the lock and "Add an entry". The page itself
@@ -35,18 +35,18 @@ export function Chrome({ here, month, children }: { here: LedgerPlace; month: st
       <div className="lc-page">
         <header className="lc-running">
           <a href={house.href('/')} onClick={go('/')} className="lc-running__name">
-            {ledger.name}
+            {casheen.name}
           </a>
-          <span className="lc-running__fn">{ledger.functionLine}</span>
+          <span className="lc-running__fn">{casheen.functionLine}</span>
         </header>
         <IntroNote />
         <div className="lc-body">{children}</div>
       </div>
 
-      <nav className="lr" aria-label="LEDGER">
-        <button type="button" className="lr-clasp" onClick={house.leave} aria-label={`${ledger.brand.leaveLabel}, back to your lifeline`} title={ledger.brand.leaveLabel}>
+      <nav className="lr" aria-label="CASHEEN">
+        <button type="button" className="lr-clasp" onClick={house.leave} aria-label={`${casheen.brand.leaveLabel}, back to your lifeline`} title={casheen.brand.leaveLabel}>
           <span className="lr-clasp__strap" aria-hidden="true" />
-          <span className="lr-vert">{ledger.brand.leaveLabel}</span>
+          <span className="lr-vert">{casheen.brand.leaveLabel}</span>
           {house.notices > 0 && <span className="lr-dot" aria-hidden="true" />}
         </button>
 
@@ -88,7 +88,7 @@ export function Chrome({ here, month, children }: { here: LedgerPlace; month: st
         </div>
 
         <div className="lr-tools">
-          <button type="button" className="lr-tool" onClick={house.openSearch} aria-label="Search LEDGER" title="Search (⌘K)" aria-keyshortcuts="Meta+K Control+K">
+          <button type="button" className="lr-tool" onClick={house.openSearch} aria-label="Search CASHEEN" title="Search (⌘K)" aria-keyshortcuts="Meta+K Control+K">
             <Icon name="search" size={18} />
           </button>
           {house.canLock && (

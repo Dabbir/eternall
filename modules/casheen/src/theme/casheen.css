@@ -1,10 +1,10 @@
 /* ─────────────────────────────────────────────────────────────
-   LEDGER · an accountant's bound ledger (docs/design/ledger.md)
+   CASHEEN · an accountant's bound ledger (docs/design/casheen.md)
    Spatial system: the ruled page. Rows are one rule apart (2.25rem); money sits in
    right-aligned columns behind a double red rule; dates live in a narrow left column.
    Caslon for words, DM Mono (tabular) for every figure.
    ───────────────────────────────────────────────────────────── */
-[data-imprint='ledger'] {
+[data-imprint='casheen'] {
   --paper: #eef1e4;
   --paper-sunk: #e3e8d5;
   --paper-raised: #f6f8ef;
@@ -30,7 +30,7 @@
   font-family: var(--font-ui);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme='light']) [data-imprint='ledger'] {
+  :root:not([data-theme='light']) [data-imprint='casheen'] {
     --paper: #111611; --paper-sunk: #0b0f0b; --paper-raised: #182018;
     --ink: #e6ecdf; --ink-2: #b4bfac; --ink-3: #939e8b;
     --rule: rgb(230 236 223 / 0.12); --rule-strong: rgb(230 236 223 / 0.28);
@@ -39,7 +39,7 @@
     --veil: rgb(0 0 0 / 0.62);
   }
 }
-:root[data-theme='dark'] [data-imprint='ledger'] {
+:root[data-theme='dark'] [data-imprint='casheen'] {
   --paper: #111611; --paper-sunk: #0b0f0b; --paper-raised: #182018;
   --ink: #e6ecdf; --ink-2: #b4bfac; --ink-3: #939e8b;
   --rule: rgb(230 236 223 / 0.12); --rule-strong: rgb(230 236 223 / 0.28);

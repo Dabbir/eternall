@@ -30,7 +30,7 @@ There is **no global spacing scale shared by imprints**. Each imprint derives it
 | REFRAIN | The five-line staff: vertical rhythm = staff spacing; horizontal rhythm = beats (7 per bar, one per day) | engraved sheet music |
 | KINDRED | Fixed modules in business-card ratio (85:55), arranged like drawers of a card file; generous card padding | address books, letterpress cards |
 | MARGINALIA | A text column plus a wide margin column (≈ 2:1), where notes and highlights live in the margin | an annotated book page |
-| LEDGER | The ruled page: one row per 2.25rem ruling; a narrow date column, particulars, then money columns behind a double red rule | an accountant's ledger |
+| CASHEEN | The ruled page: one row per 2.25rem ruling; a narrow date column, particulars, then money columns behind a double red rule | an accountant's ledger |
 
 ### 1.2 Forbidden patterns (checked in every review)
 
@@ -67,7 +67,7 @@ If a design contains any of these, it is sent back:
 | REFRAIN | top | the head of a score: five hairlines, a centred title, movements ("I. The score", "II. Programme notes") | Mark today, set like a marking | "Fine" with the end barline |
 | KINDRED | bottom | a row of **drawer fronts** on an oak carcass, each with a label card in a brass frame and a pull; the open drawer stands pulled out: Card file · Constellation. The brass label plate names the app at the top of the page | a pressed letterpress block, at the end of the row | "Close the drawer", at the start of the row |
 | MARGINALIA | the wide left margin (a pencilled line across the top below 760px) | pencilled notes under the catalogue card: Catalogue · Every underline, the current one ringed by hand; "find" and "lock" pencilled at the foot | typed in brackets | a **ribbon bookmark** hanging from the head of the book: "Back to the stacks" |
-| LEDGER | right | a **thumb index** cut into the fore-edge: the year, twelve month notches (one tap to any month), then Budget and Your words tabs, then search, lock | Add an entry, at the foot of the index (focuses the quick line) | "Close the book", the clasp at the top of the index |
+| CASHEEN | right | a **thumb index** cut into the fore-edge: the year, twelve month notches (one tap to any month), then Budget and Your words tabs, then search, lock | Add an entry, at the foot of the index (focuses the quick line) | "Close the book", the clasp at the top of the index |
 
 **Behavioural invariants for every app's chrome:**
 - one fixed place each for the exit, search (⌘K), the lock (⌘⇧L) and the primary action
@@ -116,7 +116,7 @@ AMAZEEN's "Filed" stamp set the pattern. Every app and the house mark their most
 - **The data is written first.** The moment is decoration and nothing waits on it.
 - **Never in the way.** It never blocks input (`pointer-events: none`), and it is hidden from assistive tech; the toast says what happened.
 - **Never under reduced motion.** It is not mounted at all.
-- **Short.** At most 900ms (600ms for LEDGER, which is used many times a day). One plays at a time; a new one replaces the last.
+- **Short.** At most 900ms (600ms for CASHEEN, which is used many times a day). One plays at a time; a new one replaces the last.
 - **Always on top.** It lives in the browser's top layer (a manual popover), so it shows above an open dialog, like a stamp landing on whatever is on the desk.
 - **Fading out.** Each veil keeps `opacity: 1` until its last frames, so the moment never washes out early.
 
@@ -127,7 +127,7 @@ AMAZEEN's "Filed" stamp set the pattern. Every app and the house mark their most
 | REFRAIN | a ritual is marked kept | "A held note": five hairlines draw across, the ritual's note drops onto its pitch under a fermata; when every ritual due today is kept, the final double bar and "Fine" |
 | KINDRED | "I saw them today", a new card | "Letterpress strike": the name presses into card stock with a ring of ink |
 | MARGINALIA | a new underline · a new work | "The sweep": the line set large, a highlighter drawn under it, a pencil tick · "Filed": a catalogue card drops into its lettered drawer |
-| LEDGER | an entry (or several, or an import) | "Entered": the sum written digit by digit, ruled off with a double line in red pen (green for money in); the cursor stays in the quick line |
+| CASHEEN | an entry (or several, or an import) | "Entered": the sum written digit by digit, ruled off with a double line in red pen (green for money in); the cursor stays in the quick line |
 | House | a new inscription · a new chapter | "Carved": the title cut letter by letter and sealed with the house's dot · "Shelved": the chapter's book slides onto a plank in its cloth |
 
 ## 6. 3D, WebGL and audio
@@ -232,5 +232,5 @@ Used on every screen, in every imprint, before it ships:
 | REFRAIN | `design/refrain.md` |
 | KINDRED | `design/kindred.md` |
 | MARGINALIA | `design/marginalia.md` |
-| LEDGER | `design/ledger.md` |
+| CASHEEN | `design/casheen.md` |
 | Retired: ENVOI, FOLIO, ALMANACK, PROLOGUE | `design/archive/*.md` (their systems live on in Letters, Chapters and the Almanac) |

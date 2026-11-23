@@ -1,4 +1,4 @@
-import { validateInscription, validateProfile } from './house';
+import { DEFAULT_SETTINGS, validateInscription, validateProfile, withCurrentIds } from './house';
 
 const today = '2026-11-20';
 const profile = { id: 'me' as const, name: 'Ada', birthDate: '1990-06-15', horizonYears: 90, hemisphere: 'north' as const, createdAt: '' };
@@ -36,5 +36,13 @@ describe('validateInscription', () => {
   it('strips control characters', () => {
     const r = validateInscription({ date: today, title: 'Hi\u0007', body: 'a\u0000b', tone: 'joy' }, profile, today);
     expect(r.ok && r.value).toMatchObject({ title: 'Hi', body: 'ab' });
+  });
+});
+
+describe('withCurrentIds', () => {
+  it('reads settings saved under LEDGER as CASHEEN, without duplicates', () => {
+    const s = withCurrentIds({ ...DEFAULT_SETTINGS, hidden: ['ledger', 'kindred'], dismissed: ['intro:ledger', 'intro:casheen', 'lens-hint'] });
+    expect(s.hidden).toEqual(['casheen', 'kindred']);
+    expect(s.dismissed).toEqual(['intro:casheen', 'lens-hint']);
   });
 });

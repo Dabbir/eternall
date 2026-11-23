@@ -27,9 +27,9 @@ ETERNALL is **one place, with many doors**. Each app is a complete product with 
 | **REFRAIN** | the rituals you return to | a musical score, a repeated verse |
 | **KINDRED** | the people who matter | an address book, letterpress cards |
 | **MARGINALIA** | what you read, watch and underline | an annotated page, a card catalogue |
-| **LEDGER** | your money, in and out, and a monthly budget, written in one line | an accountant's bound ledger |
+| **CASHEEN** (formerly LEDGER) | your money, in and out, and a monthly budget, written in one line | an accountant's bound ledger |
 
-**Launch (ADR 0013):** AMAZEEN is the first product and the way in, with LEDGER (renamed CASHEEN, labelled *Money*) beside it as a parallel product. REFRAIN, KINDRED and MARGINALIA are built but opt-in, and the lifeline is optional, never a new person's first page. Apps share the vault, not data: money never reaches the house.
+**Launch (ADR 0013):** AMAZEEN is the first product and the way in, with CASHEEN (formerly LEDGER, labelled *Money*) beside it as a parallel product. REFRAIN, KINDRED and MARGINALIA are built but opt-in, and the lifeline is optional, never a new person's first page. Apps share the vault, not data: money never reaches the house.
 
 *Consolidated on 2026-11-23 (ADR 0011):* ENVOI became AMAZEEN's Letters, FOLIO and ALMANACK became house pages, and PROLOGUE was retired, with its seasons kept as inscriptions.
 
@@ -118,7 +118,7 @@ Saying no is part of the design.
 - **AMAZEEN · Letters** (once ENVOI) holds letters to your future self. A letter is fingerprinted, sealed, and unreadable, even to you, until its day arrives.
 - **REFRAIN** holds the rituals you return to, each written as a line in a score. A week of rituals becomes a short melody you can play back.
 - **KINDRED** keeps the people who matter: when you last saw them, what you've shared, the dates you shouldn't forget. They can be mentioned in AMAZEEN's pieces and letters.
-- **LEDGER** (ADR 0012) keeps your money plainly: a daily record of money in and out, written in one line like a message to yourself ("kopi 25rb"), and a monthly budget. Amounts never leave it.
+- **CASHEEN** (ADR 0012, formerly LEDGER) keeps your money plainly: a daily record of money in and out, written in one line like a message to yourself ("kopi 25rb"), and a monthly budget. Amounts never leave it.
 - **MARGINALIA** keeps what you read, watch and listen to, and the lines you underlined, filed like a card catalogue.
 
 The data model, contributions to the lifeline and cross-links for each imprint are in `MODULES.md`.

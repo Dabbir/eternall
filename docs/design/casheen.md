@@ -1,6 +1,8 @@
-# LEDGER — Design
+# CASHEEN — Design
 
-Status: as built · ADR 0012 · Function line: *Money, kept plainly* · Door: `/ledger/`
+*Formerly LEDGER (renamed 2026-11-24, ADR 0013). The name is "cash" with the -EEN ending it shares with AMAZEEN: the money book beside the journal. Its look, the bound ledger, is unchanged, and its data still lives under `ledger/*`.*
+
+Status: as built · ADR 0012, ADR 0013 · Labelled *Money* in the app picker · Function line: *Money, kept plainly* · Door: `/casheen/`
 
 ## 1. Metaphor
 **An accountant's bound ledger.** Pale green paper ruled in blue, with a double red rule before the money columns. Figures stand right-aligned in black ink, and red ink appears only for going over. You open the book, write a line, and close the book.
@@ -32,7 +34,7 @@ Red is never the only signal. "Over by Rp 35.000" is always written out, so the 
 
 ## 5. Key screens
 
-### 5.1 The month (home: `/ledger/`, `/ledger/2026-11`)
+### 5.1 The month (home: `/casheen/`, `/casheen/2026-11`)
 ```
             L E D G E R   Money, kept plainly                       ┃ ⊐ Close the book
 ╞═══════════════════════════════════════════════════════════════════╡ ‹ 2026 ›
@@ -59,7 +61,7 @@ Red is never the only signal. "Over by Rp 35.000" is always written out, so the 
 - **Chips:** entries written twice or more in 90 days appear under the line ("kopi 25rb").
 - **Correcting:** tapping an entry opens it on a ledger leaf to correct it or **Cross it out** (with Undo).
 
-### 5.2 Budget (`/ledger/budget/<month>`)
+### 5.2 Budget (`/casheen/budget/<month>`)
 The table lists each category with its limit (typed the short way, saved on Enter or on leaving the field), what was spent, and what is left, or "over by …" in red ink. A "With a limit" total sits under a double rule.
 
 Further down the page:
@@ -67,7 +69,7 @@ Further down the page:
 - **Reminder:** "Remind me on the 1st to set the month's budget" (off by default).
 - **Import:** "Bring in a bank statement (CSV)".
 
-### 5.3 Import (`/ledger/import`)
+### 5.3 Import (`/casheen/import`)
 1. Choose a file.
 2. Columns are guessed from the title row ("Tanggal", "Keterangan", "Jumlah"…) and can be changed.
 3. Set two options: the first row is titles, and every row is money out.
@@ -75,7 +77,7 @@ Further down the page:
 5. **Write N entries**, with Undo.
 
 ## 6. Signature moment: the quick line
-Writing a line takes under three seconds: type, glance at the preview, press Enter. The cursor stays in the line, so the next entry follows immediately. A correction sends the cursor straight back to the line, and next time the guess is right, marked *learned*. The rules are in `modules/ledger/src/quick.ts` and its tests.
+Writing a line takes under three seconds: type, glance at the preview, press Enter. The cursor stays in the line, so the next entry follows immediately. A correction sends the cursor straight back to the line, and next time the guess is right, marked *learned*. The rules are in `modules/casheen/src/quick.ts` and its tests.
 
 ## 7. Motion
 Motion is almost none, on purpose:
@@ -85,7 +87,7 @@ Motion is almost none, on purpose:
 
 ## 8. Chrome and kit (its own site, ADR 0011)
 - **The thumb index** (the navigation, fixed to the right edge, 64px; 46px on a phone): the book's **clasp** with "Close the book" (exit) at the top; the year with ‹ ›; **twelve half-moon month notches**, so any month is one tap away (the open month stands out in green; months still to come are dashed but open, to plan their budget, and say "December hasn’t begun"); the pages **The month**, **Budget** and **Your words** as tabs, so Budget always leads back to writing; then search, the lock and **Add an entry**, which focuses the quick line from anywhere. On the budget page the notches open that month's budget. Nothing in the index is ever squeezed: in a short window it scrolls.
-- **The page** carries only a running head: the spaced LEDGER name and its function line over a double rule.
+- **The page** carries only a running head: the spaced CASHEEN name and its function line over a double rule.
 - **`theme/ledger.kit.css`:**
   - Buttons: square, Caslon bold.
   - Fields: ruled lines.
@@ -117,7 +119,7 @@ Motion is almost none, on purpose:
 ## 12. Ceremony (`DESIGN.md` §5.1)
 **Entered.** On writing an entry: the sum written digit by digit in DM Mono, then ruled off with a double line in red pen (green ink and rule for money in), with "Out · Food" beneath. It lasts 600ms and is see-through, and the cursor stays in the quick line, so the next entry can be typed while it plays. Several lines or an import show one sum ("3 entries · net out"). `app/Ceremony.tsx`.
 
-## 13. Your words (`/ledger/words`)
+## 13. Your words (`/casheen/words`)
 Your own shorthand for the quick line. Built-in words keep working; yours are added on top.
 
 - **Amount words:** units (`rebu` → × 1.000, `jeti` → × 1.000.000, typed glued or apart) and words that stand for a sum (`goceng` → Rp 5.000, `ceban` → Rp 10.000). A small count before a sum multiplies it ("2 ceban" → Rp 20.000).

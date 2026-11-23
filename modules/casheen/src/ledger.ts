@@ -2,7 +2,7 @@ import { cleanText, finish, isValidISO, type FieldErrors, type ISODate, type Val
 import { MAX_AMOUNT } from './money';
 
 /**
- * LEDGER's domain (docs/design/ledger.md, docs/MODULES.md §10): money in and out, written down
+ * CASHEEN's domain (docs/design/casheen.md, docs/MODULES.md §10): money in and out, written down
  * plainly, and a monthly budget per category. Rupiah only, whole numbers. No scores, no streaks:
  * what's left is shown as it is, and going over is said in plain words.
  */
@@ -197,7 +197,7 @@ export function validateCategoryName(name: string, others: readonly Category[]):
   return null;
 }
 
-/** For the house Almanac: counts only, never amounts (amounts never leave LEDGER). */
+/** For the house Almanac: counts only, never amounts (amounts never leave CASHEEN). */
 export function ledgerStats(entries: readonly Entry[], year: string) {
   const mine = entries.filter((e) => e.date.startsWith(year));
   return { entries: mine.length, months: new Set(mine.map((e) => monthKey(e.date))).size };

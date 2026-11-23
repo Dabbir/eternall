@@ -5,19 +5,19 @@ type Readable = { data: { collection<T extends { id: string }>(p: string): { all
 const entries = (ctx: Readable) => ctx.data.collection<Entry>(ENTRY_PATH).all();
 
 /**
- * LEDGER (docs/design/ledger.md, ADR 0012): money in and out, written in one line, and a monthly
- * budget. Amounts never leave LEDGER: the house only ever sees counts.
+ * CASHEEN (docs/design/casheen.md, ADR 0012): money in and out, written in one line, and a monthly
+ * budget. Amounts never leave CASHEEN: the house only ever sees counts.
  */
-export const ledger: ImprintDefinition = {
-  id: 'ledger',
-  name: 'LEDGER',
+export const casheen: ImprintDefinition = {
+  id: 'casheen',
+  name: 'CASHEEN',
   functionLine: 'Money, kept plainly',
-  basePath: '/ledger/',
+  basePath: '/casheen/',
   release: 2,
   accent: { light: '#2f5d3a', dark: '#8fc79b' },
   intro: 'Write money down in one line, like a message to yourself: “kopi 25rb”, “gaji 8jt”, “grab 32.500 kemarin”. It learns your words as you go. Months are on the right edge, like a ledger’s thumb index.',
-  brand: { icon: '/icons/ledger.svg', themeColor: { light: '#eef1e4', dark: '#111611' }, lockTitle: 'The book is closed.', leaveLabel: 'Close the book' },
-  load: () => import('./app/LedgerApp'),
+  brand: { icon: '/icons/casheen.svg', themeColor: { light: '#eef1e4', dark: '#111611' }, lockTitle: 'The book is closed.', leaveLabel: 'Close the book' },
+  load: () => import('./app/CasheenApp'),
   collections: [ENTRY_PATH, CATEGORY_PATH, BUDGET_PATH, WORDS_PATH, PREF_PATH],
   hasData: (ctx) => entries(ctx).length > 0,
 
@@ -25,8 +25,8 @@ export const ledger: ImprintDefinition = {
     const st = ledgerStats(entries(ctx), ctx.today.slice(0, 4));
     if (!st.entries) return [];
     return [
-      { imprint: 'ledger', label: 'Months kept in LEDGER this year', value: String(st.months) },
-      { imprint: 'ledger', label: 'Entries written this year', value: st.entries.toLocaleString('en-GB') },
+      { imprint: 'casheen', label: 'Months kept in CASHEEN this year', value: String(st.months) },
+      { imprint: 'casheen', label: 'Entries written this year', value: st.entries.toLocaleString('en-GB') },
     ];
   },
 
@@ -36,6 +36,6 @@ export const ledger: ImprintDefinition = {
     const key = monthKey(ctx.today);
     const has = ctx.data.collection<Budget>(BUDGET_PATH).get(key);
     if (has) return [];
-    return [{ imprint: 'ledger', key: `ledger_budget_${key}`, date: ctx.today, title: `Set the budget for ${monthLabel(key)}`, body: `Last month’s limits are ready to copy from ${monthLabel(addMonths(key, -1))}.`, href: '/ledger/budget' }];
+    return [{ imprint: 'casheen', key: `ledger_budget_${key}`, date: ctx.today, title: `Set the budget for ${monthLabel(key)}`, body: `Last month’s limits are ready to copy from ${monthLabel(addMonths(key, -1))}.`, href: '/casheen/budget' }];
   },
 };

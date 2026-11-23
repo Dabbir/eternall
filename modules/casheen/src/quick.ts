@@ -4,7 +4,7 @@ import { formatRupiah, parseAmount } from './money';
 import type { Terms } from './terms';
 
 /**
- * One line in, one entry out (docs/design/ledger.md §Quick line): LEDGER's whole promise is that
+ * One line in, one entry out (docs/design/casheen.md §Quick line): CASHEEN's whole promise is that
  * writing money down takes a single line, like a message to yourself.
  *
  *   "kopi 25rb"            → out · Food · 25.000 · today

@@ -9,8 +9,8 @@ Status: draft for review · Phase 0 · Related: `PRIVACY.md`, `MODULES.md`, `adr
 ```
 ┌──────────────────────────────── one origin: eternall.app ────────────────────────────────┐
 │                                                                                            │
-│  /         /amazeen/   /refrain/   /kindred/   /marginalia/   /ledger/   ← doors (HTML entries,│
-│  ETERNALL  AMAZEEN     REFRAIN     KINDRED     MARGINALIA     LEDGER       one manifest each)  │
+│  /         /amazeen/   /refrain/   /kindred/   /marginalia/   /casheen/  ← doors (HTML entries,│
+│  ETERNALL  AMAZEEN     REFRAIN     KINDRED     MARGINALIA     CASHEEN      one manifest each)  │
 │  (house)      (+ Letters)                                                                   │
 │     │             │              │           │             │                                │
 │     └─────────────┴──────┬───────┴───────────┴─────────────┘                                │
@@ -36,7 +36,7 @@ Status: draft for review · Phase 0 · Related: `PRIVACY.md`, `MODULES.md`, `adr
 | URLs | `eternall.app/` (house) and `eternall.app/<imprint>/…` per imprint. Deep links like `/amazeen/issue/2026-W46?p=3` keep working. |
 | Why not subdomains | `amazeen.eternall.app` is a different **origin**: different IndexedDB and different service worker, so the vault could not be shared without syncing through the server. One origin keeps local-first true. |
 | Marketing domains | `amazeen.app`, `kindred.app` etc. **301-redirect** to `eternall.app/<imprint>/`. The old AMAZEEN origin redirects after its migration window (`FLOWS.md` F15). |
-| HTML entries | Vite multi-page build emits `index.html` per door (`/`, `/amazeen/`, `/refrain/`, `/kindred/`, `/marginalia/`, `/ledger/`). Each entry links **its own manifest**, theme colour, icons and OG image. All entries share the same JS chunks. |
+| HTML entries | Vite multi-page build emits `index.html` per door (`/`, `/amazeen/`, `/refrain/`, `/kindred/`, `/marginalia/`, `/casheen/`). Each entry links **its own manifest**, theme colour, icons and OG image. All entries share the same JS chunks. |
 | PWA install | One manifest per door: `{ id: "/amazeen/", scope: "/amazeen/", start_url: "/amazeen/", name: "AMAZEEN" }`. Each installs as its own app icon. The house manifest has `scope: "/"`. |
 | Service worker | **One** SW at `/` (scope covers all doors), precaching the shell and lazily caching imprint chunks on first visit. Installed imprint apps share it. |
 | Apps as their own sites | Since ADR 0011 an app never shows the house spine. Its own chrome is always on, standalone or not. Switching doors swaps `<body data-imprint>`, the tab icon, theme colour and manifest (`apps/web/src/shell/doorHead.ts`). Retired doors (`/envoi`, `/folio`, `/almanack`, `/prologue`) redirect at boot (`retiredDoorRedirect`). |

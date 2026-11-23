@@ -1,5 +1,5 @@
 /**
- * Rupiah, whole numbers only (docs/design/ledger.md §Money). Parsing accepts the ways people
+ * Rupiah, whole numbers only (docs/design/casheen.md §Money). Parsing accepts the ways people
  * actually type amounts: "25000", "25.000", "25rb", "25 ribu", "25k", "1,5jt", "2 juta", "Rp 25.000".
  */
 export const MAX_AMOUNT = 1_000_000_000_000;

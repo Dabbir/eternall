@@ -13,7 +13,7 @@ ETERNALL is modelled on a **publishing house**. The house has one name, one prom
            (the lifeline · inscriptions · chapters · almanac, on the house's own pages)
                                        │
         ┌──────────────┬───────────┴──┬──────────────┬──────────────┐
-     AMAZEEN         REFRAIN        KINDRED       MARGINALIA       LEDGER
+     AMAZEEN         REFRAIN        KINDRED       MARGINALIA       CASHEEN
      journal+letters rituals        people        reading          money
 ```
 
@@ -37,7 +37,7 @@ New imprints are named under these rules, so the family stays coherent as it gro
 5. **No collisions** with existing imprint names, initials or first letters where avoidable (the doors menu uses the initial as a fallback glyph).
 6. **Checked before launch** (§8).
 
-Reserved names for possible future imprints: **COLOPHON** (about you, your profile and settings as a printed colophon), **ERRATA** (corrections and regrets, a reflection practice), **GAZETTE** (a yearly printed review), **LEDGER** (finances, only if it can honour the privacy and "not a dashboard" principles).
+Retired names: ENVOI, FOLIO, ALMANACK, PROLOGUE (ADR 0011) and **LEDGER** (renamed CASHEEN, ADR 0013); they still name old data paths and redirect old doors. Reserved names for possible future imprints: **COLOPHON** (about you, your profile and settings as a printed colophon), **ERRATA** (corrections and regrets, a reflection practice), **GAZETTE** (a yearly printed review), **LEDGER** (finances, only if it can honour the privacy and "not a dashboard" principles).
 
 ## 3. The imprints
 
@@ -53,7 +53,7 @@ Accent values come from the validated palettes in `design/<imprint>.md`.
 | **REFRAIN** | *Rituals & habits* | the line that returns in a song or poem | *The lines you come back to.* | A repeat sign (𝄆 𝄇) | indigo `#3b3a8f` / `#a6a4ff` |
 | ~~PROLOGUE~~ (retired; reserved) | *Hopes for the season* | the opening of a play, before the first act | *Every season opens with a prologue.* | A proscenium arch | curtain `#8e1b2a` / `#e05a6a` |
 | **KINDRED** | *The people who matter* | of the same kind; family by blood or by choice | *Keep the people close.* | Two overlapping letterpress circles | press green `#1f5f5b` / `#6fc2b8` |
-| **LEDGER** (ADR 0012) | *Money, kept plainly* | the accountant's book where every sum is entered | *Write it in one line.* | A ruled page with a double red rule | bookkeeper green `#2f5d3a` / `#8fc79b` |
+| **CASHEEN** (ADR 0012, renamed from LEDGER in ADR 0013; "cash" + the -EEN of AMAZEEN, its sibling) | *Money, kept plainly* | the accountant's book where every sum is entered | *Write it in one line.* | A ruled page with a double red rule | bookkeeper green `#2f5d3a` / `#8fc79b` |
 | **MARGINALIA** | *Reading & underlines* | notes written in the margins of a book | *Everything you underlined, kept.* | A pencil bracket in a margin | marginal blue `#1d4ea8` / `#8db0ff` |
 
 ## 4. Plain words beside every name (a hard rule)
@@ -83,7 +83,7 @@ Clear space equals the height of the seal dot × 3. The seal is always vermilion
 - **REFRAIN** is a beamed pair of notes on a staff, in indigo.
 - **KINDRED** is a tabbed index card with a coral star, in press green.
 - **MARGINALIA** is a page with a red margin rule, a highlighted line and a pencil note, in marginal blue.
-- **LEDGER** is a ruled ledger page with a double red rule and figures, in bookkeeper green.
+- **CASHEEN** is a ruled ledger page with a double red rule and figures, in bookkeeper green.
 
 Each app provides an SVG, PNGs at 180, 192 and 512 px, and a maskable 512.
 
@@ -130,6 +130,7 @@ These checks need legal and commercial judgement, so they are listed here as **T
 
 - [ ] Trademark search for ETERNALL and each imprint name in target markets (at minimum Indonesia (DJKI), US (USPTO), EU (EUIPO)) in classes 9 (software) and 42 (SaaS).
 - [ ] Domain: primary `eternall.app` (or alternative), and redirect-only marketing domains per imprint where available (e.g. `amazeen.app`, which already exists for AMAZEEN, and `envoi.app`). All of them redirect to `/<imprint>` on the primary origin (see `ARCHITECTURE.md` §2).
+- [ ] **CASHEEN** first (ADR 0013): it ships at launch beside AMAZEEN. Check "casheen" for marks in finance and software classes (9, 36, 42) and for close sound-alikes, plus `casheen.app`.
 - [ ] App store name availability (for the later Capacitor builds).
 - [ ] Social handles for ETERNALL (imprints do not get separate social accounts in v1).
 - [ ] Confirm all imprint fonts are under licences that allow self-hosting and app embedding (current picks are all SIL OFL or Apache 2.0; see `design/*`).

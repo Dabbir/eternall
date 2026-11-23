@@ -22,8 +22,8 @@ interface NotificationClick {
   waitUntil(p: Promise<unknown>): void;
 }
 
-// Retired doors (envoi, folio, almanack, prologue) fall through to the house page, which redirects them (docs/adr/0011).
-const DOORS = new Set(['amazeen', 'refrain', 'kindred', 'marginalia', 'ledger']);
+// Retired doors (envoi, folio, almanack, prologue, and ledger, renamed casheen) fall through to the house page, which redirects them (docs/adr/0011).
+const DOORS = new Set(['amazeen', 'refrain', 'kindred', 'marginalia', 'casheen']);
 
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST);

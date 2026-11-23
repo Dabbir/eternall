@@ -1,6 +1,6 @@
 # ADR 0012 — LEDGER: a fifth app for personal money, sold on writing it down in one line
 
-Status: Accepted · Date: 2026-11-23 · Builds on: ADR 0011 (apps as their own sites), ADR 0010 (no cloud AI), ADR 0002 (one vault)
+Status: Accepted · Date: 2026-11-23 · **Renamed CASHEEN on 2026-11-24 (ADR 0013); see the addendum at the end** · Builds on: ADR 0011 (apps as their own sites), ADR 0010 (no cloud AI), ADR 0002 (one vault)
 
 ## Context
 The owner wants personal money tracking: a monthly budget and a daily record of money in and out, for themselves only.
@@ -55,3 +55,9 @@ People's money shorthand differs (goceng, ceban, rebu, semalem, cair). The quick
 
 **Rejected: whole-line templates** ("kopi pagi" → 25rb Food). Frequent-entry chips already cover them.
 
+
+## Addendum (2026-11-24): LEDGER is now CASHEEN
+The app was renamed **CASHEEN** ("cash" plus the -EEN ending of AMAZEEN, so the journal and the money book read as siblings) when it became the parallel *Money* product beside AMAZEEN (ADR 0013).
+- The module is `modules/casheen`, the app id `casheen`, the door `/casheen/`. `/ledger/*` redirects there.
+- **Data never moved:** every collection path above keeps its `ledger/*` name. Settings saved under the old id (`hidden`, `intro:ledger`) are read as `casheen`.
+- The look (a bound ledger), the quick line, the budget, "Your words" and the "Entered" ceremony are unchanged. Where this ADR says LEDGER, read CASHEEN.

@@ -56,6 +56,19 @@ export const DEFAULT_SETTINGS: HouseSettings = {
   systemNotifications: false,
 };
 
+/** Apps that were renamed, old id → new id (docs/adr/0013: LEDGER became CASHEEN). Their data paths never moved. */
+export const RENAMED_APPS: Readonly<Record<string, string>> = { ledger: 'casheen' };
+
+/**
+ * Settings saved before a rename still name the old app id (`hidden: ['ledger']`, `intro:ledger`).
+ * Read them under the current id, so a choice made once is never asked again.
+ */
+export function withCurrentIds(settings: HouseSettings): HouseSettings {
+  const id = (x: string) => RENAMED_APPS[x] ?? x;
+  const hint = (x: string) => (x.startsWith('intro:') ? `intro:${id(x.slice(6))}` : x);
+  return { ...settings, hidden: [...new Set(settings.hidden.map(id))], dismissed: [...new Set(settings.dismissed.map(hint))] };
+}
+
 export interface Inscription {
   id: string;
   date: ISODate;

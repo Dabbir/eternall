@@ -2,7 +2,7 @@ import { DAY_WORDS, INCOME, UNITS, WEEKDAYS } from './quick';
 import { MAX_AMOUNT } from './money';
 
 /**
- * Your own shorthand for the quick line (docs/design/ledger.md §Shorthand; ADR 0012): the words you
+ * Your own shorthand for the quick line (docs/design/casheen.md §Shorthand; ADR 0012): the words you
  * really type. Built-in words keep working; yours are added on top, never replace them, and can't
  * collide with a built-in word that means something else. Kept in the vault as `ledger/terms`.
  *

@@ -154,9 +154,9 @@ Sync and immersive modes require an active licence (`BUSINESS.md`). The licence 
 
 Consolidating to four apps changed no keys, no encryption and no sync. Records of the retired imprints keep their paths and stay encrypted in the vault and in exports. The only new writes are house inscriptions created from PROLOGUE seasons and a migration log (`house/migrations`), both ordinary encrypted vault records. Each app's theme is scoped on `<body data-imprint>`, which carries only the app's id, never content.
 
-### LEDGER: money (ADR 0012)
+### CASHEEN: money (ADR 0012)
 
-- **Amounts never leave LEDGER.** The house shows counts only (Almanac). Nothing about money reaches the lifeline, week panel or house search.
+- **Amounts never leave CASHEEN.** The house shows counts only (Almanac). Nothing about money reaches the lifeline, week panel or house search.
 - **No bank connections and no outside service.** The quick line is read by plain rules on the device. Learned words (`ledger/words`) are ordinary encrypted vault records.
 - **Your shorthand** (`ledger/terms`) and learned words (`ledger/words`) are ordinary encrypted vault records, read only on the device.
 - **CSV imports** are read in memory on the device. The file is never stored, only the entries you choose to write.

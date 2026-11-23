@@ -4,7 +4,7 @@
 
 ETERNALL is **a private personal toolkit**: one local-first, end-to-end-encrypted platform of apps that share a vault, not data. **AMAZEEN is the first product and the way in** (`docs/PRODUCT.md`, ADR 0013):
 - **Journal · AMAZEEN**: a journal pressed into a weekly issue, plus Letters to your future. Launch.
-- **Money · LEDGER** (becoming CASHEEN, ADR 0013): money in and out and a monthly budget, written in one line (ADR 0012). Launch, beside AMAZEEN.
+- **Money · CASHEEN** (formerly LEDGER, renamed in ADR 0013): money in and out and a monthly budget, written in one line (ADR 0012). Launch, beside AMAZEEN.
 - **Practices · REFRAIN**, **People · KINDRED**, **Reading · MARGINALIA**: built, opt-in in Settings, not part of the launch.
 
 The **house** (ETERNALL) keeps the optional lifeline (a life shown in weeks), inscriptions, Chapters and the Almanac. Read `docs/PRODUCT.md`, then `docs/VISION.md`, ADR 0011 and ADR 0013.
@@ -12,8 +12,8 @@ The **house** (ETERNALL) keeps the optional lifeline (a life shown in weeks), in
 ## Current state (read this before changing anything)
 
 - The owner approved the docs and asked to build through every phase. Work happens on branch `platform`, one commit per verified phase, never pushed (`docs/ROADMAP.md` tracks progress).
-- **Phase 8 is in progress (ADR 0013):** AMAZEEN first. The steps (`docs/ROADMAP.md`): rename LEDGER to CASHEEN (collection paths stay `ledger/*`); Journal and Money on by default, other apps opt-in, CASHEEN contributes nothing to the house; one app bar with the same positions in every app; personal looks for AMAZEEN.
-- **Phase 7 is done (ADR 0012):** LEDGER (`modules/ledger`). The quick-line parser is `quick.ts`; amounts never leave LEDGER (the house sees counts only).
+- **Phase 8 is in progress (ADR 0013):** AMAZEEN first. The steps (`docs/ROADMAP.md`): LEDGER was renamed CASHEEN (done: `modules/casheen`, door `/casheen/`, `/ledger/*` redirects, collection paths stay `ledger/*`, old settings ids read through `withCurrentIds`); Journal and Money on by default, other apps opt-in, CASHEEN contributes nothing to the house; one app bar with the same positions in every app; personal looks for AMAZEEN.
+- **Phase 7 is done (ADR 0012):** LEDGER, now CASHEEN (`modules/casheen`). The quick-line parser is `quick.ts`; amounts never leave CASHEEN.
 - **Phase 6 is done (ADR 0011):** consolidated from 8 imprints to 4 apps.
   - ENVOI became AMAZEEN's Letters (`modules/amazeen/src/imprint/letters/`).
   - FOLIO and ALMANACK became house sections (`apps/web/src/house/{chapters,almanac}/`).
@@ -31,7 +31,7 @@ The **house** (ETERNALL) keeps the optional lifeline (a life shown in weeks), in
 ## Commands
 
 ```bash
-npm run dev        # Vite dev server for apps/web on :5181 (doors: /, /amazeen/, /refrain/, /kindred/, /marginalia/, /ledger/; house pages /chapters, /almanac, /inscriptions)
+npm run dev        # Vite dev server for apps/web on :5181 (doors: /, /amazeen/, /refrain/, /kindred/, /marginalia/, /casheen/; house pages /chapters, /almanac, /inscriptions)
 npm test           # Vitest across all workspaces
 npm run typecheck  # one root tsc over every workspace
 npm run lint       # oxlint, zero warnings

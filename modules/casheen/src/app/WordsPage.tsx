@@ -9,7 +9,7 @@ import { BUILT_IN, DAY_CHOICES, addTerm, dayLabel, removeTerm, validateFixedAmou
 import { useLedgerData } from './QuickLine';
 
 /**
- * "Your words" (docs/design/ledger.md §Shorthand): the shorthand you really type, taught to the
+ * "Your words" (docs/design/casheen.md §Shorthand): the shorthand you really type, taught to the
  * quick line. Built-in words keep working and are listed beside yours; a word you add can't
  * collide with one that already means something else. Try any line at the top to see how it reads.
  */

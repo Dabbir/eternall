@@ -8,7 +8,7 @@ import { Root } from '../shell/Root';
 const today = todayISO();
 const stamp = new Date().toISOString();
 const rec = (key: string, value: unknown): VaultRecord => ({ key, updatedAt: stamp, deleted: false, value });
-const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:kindred', 'intro:ledger'], hidden: [], autoLockMinutes: 15 });
+const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:kindred', 'intro:casheen'], hidden: [], autoLockMinutes: 15 });
 const profile = rec('house/profile/me', { id: 'me', name: 'Ada', birthDate: '1992-03-04', horizonYears: 90, hemisphere: 'north', createdAt: stamp });
 const dad = rec('kindred/person/dad', { id: 'dad', name: 'Dad', drawer: 'Family', closeness: 'inner', howWeMet: '', dates: [], createdAt: stamp });
 
@@ -39,18 +39,18 @@ describe('ceremonies', () => {
     motion(true);
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);
-    at('/ledger/');
+    at('/casheen/');
     render(<Root store={store} />);
     await user.type(await screen.findByLabelText('Write one line'), 'kopi 25rb{Enter}');
     await waitFor(() => expect(store.dump().some((r) => r.key.startsWith('ledger/entry/'))).toBe(true));
     expect(document.querySelector('.ceremony')).toBeNull();
   });
 
-  it('let the next line be typed while LEDGER’s moment plays', async () => {
+  it('let the next line be typed while CASHEEN’s moment plays', async () => {
     motion(false);
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);
-    at('/ledger/');
+    at('/casheen/');
     render(<Root store={store} />);
     const line = await screen.findByLabelText('Write one line');
     await user.type(line, 'kopi 25rb{Enter}');

@@ -1,9 +1,9 @@
 /* ─────────────────────────────────────────────────────────────
-   LEDGER · its own kit (docs/adr/0011, 0012): the head of a ledger page, and every
+   CASHEEN · its own kit (docs/adr/0011, 0012): the head of a ledger page, and every
    shared primitive written into the book: ruled lines, Caslon, square corners,
    figures in DM Mono, red ink only for "over".
    ───────────────────────────────────────────────────────────── */
-[data-imprint='ledger'] {
+[data-imprint='casheen'] {
   --btn-radius: 0;
   --btn-h: 42px;
   --btn-h-s: 32px;
@@ -60,18 +60,18 @@
   --selection: var(--accent-soft);
   --on-selection: var(--ink);
 }
-[data-imprint='ledger'] .btn--ghost { border-color: var(--ink); }
-[data-imprint='ledger'] .btn--ghost:hover:not(:disabled) { background: transparent; color: var(--accent); border-color: var(--accent); }
-[data-imprint='ledger'] .btn--quiet { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
-[data-imprint='ledger'] .btn--quiet:hover:not(:disabled) { background: transparent; color: var(--accent); }
-[data-imprint='ledger'] .input { border-width: 0 0 1px; border-color: var(--ruling); border-bottom-color: color-mix(in srgb, var(--ink) 40%, transparent); }
-[data-imprint='ledger'] .input:focus { border-color: var(--accent); }
-[data-imprint='ledger'] .dialog__panel { background-image: repeating-linear-gradient(to bottom, transparent 0 calc(var(--row) - 1px), var(--ruling) calc(var(--row) - 1px) var(--row)); background-position: 0 72px; border-left: 3px double var(--margin-red); }
-[data-imprint='ledger'] .dialog .eyebrow { font-family: var(--font-ui); font-variant-caps: all-small-caps; letter-spacing: 0.1em; font-size: 0.9375rem; color: var(--accent); }
-[data-imprint='ledger'] .toast__dot { display: none; }
-[data-imprint='ledger'] .toast__action { font-family: var(--font-display); font-weight: 700; border-radius: 0; }
+[data-imprint='casheen'] .btn--ghost { border-color: var(--ink); }
+[data-imprint='casheen'] .btn--ghost:hover:not(:disabled) { background: transparent; color: var(--accent); border-color: var(--accent); }
+[data-imprint='casheen'] .btn--quiet { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+[data-imprint='casheen'] .btn--quiet:hover:not(:disabled) { background: transparent; color: var(--accent); }
+[data-imprint='casheen'] .input { border-width: 0 0 1px; border-color: var(--ruling); border-bottom-color: color-mix(in srgb, var(--ink) 40%, transparent); }
+[data-imprint='casheen'] .input:focus { border-color: var(--accent); }
+[data-imprint='casheen'] .dialog__panel { background-image: repeating-linear-gradient(to bottom, transparent 0 calc(var(--row) - 1px), var(--ruling) calc(var(--row) - 1px) var(--row)); background-position: 0 72px; border-left: 3px double var(--margin-red); }
+[data-imprint='casheen'] .dialog .eyebrow { font-family: var(--font-ui); font-variant-caps: all-small-caps; letter-spacing: 0.1em; font-size: 0.9375rem; color: var(--accent); }
+[data-imprint='casheen'] .toast__dot { display: none; }
+[data-imprint='casheen'] .toast__action { font-family: var(--font-display); font-weight: 700; border-radius: 0; }
 
-/* ---------- the thumb index: LEDGER's navigation, cut into the right edge ---------- */
+/* ---------- the thumb index: CASHEEN's navigation, cut into the right edge ---------- */
 .lc { --rail: 64px; min-height: 100dvh; }
 .lc-page { min-height: 100dvh; display: flex; flex-direction: column; padding-right: var(--rail); }
 .lc-running { display: flex; align-items: baseline; justify-content: center; gap: 12px; padding: 14px var(--gutter) 10px; border-bottom: 3px double var(--ink); box-shadow: inset 0 -5px 0 -4px var(--margin-red); }
@@ -135,14 +135,14 @@ a.lr-thumb:hover { transform: translateX(-4px); color: var(--ink); }
 .lr-write:hover { background: var(--accent-deep); }
 .lr-write:active { transform: translate(-2px, 2px); box-shadow: -1px 1px 0 var(--ink); }
 
-[data-imprint='ledger'] .imprint-intro { border: 0; border-top: 1px solid var(--ruling); border-bottom: 1px solid var(--ruling); background: transparent; border-radius: 0; font-style: italic; }
-[data-imprint='ledger'] .imprint-intro strong { font-style: normal; letter-spacing: 0.2em; }
+[data-imprint='casheen'] .imprint-intro { border: 0; border-top: 1px solid var(--ruling); border-bottom: 1px solid var(--ruling); background: transparent; border-radius: 0; font-style: italic; }
+[data-imprint='casheen'] .imprint-intro strong { font-style: normal; letter-spacing: 0.2em; }
 
-/* LEDGER's own lock: a closed book with its clasp. */
-[data-imprint='ledger'] .unlock__card { border-radius: 0; background: var(--paper-raised); box-shadow: 0 0 0 1px var(--ink), 6px 6px 0 var(--rule-strong); border-left: 3px double var(--margin-red); }
-[data-imprint='ledger'] .unlock__app-name { color: var(--ink); font-weight: 700; letter-spacing: 0.24em; font-size: 1.3rem; }
-[data-imprint='ledger'] .unlock__app-fn { font-style: italic; }
-[data-imprint='ledger'] .unlock__title { font-family: var(--font-display); }
+/* CASHEEN's own lock: a closed book with its clasp. */
+[data-imprint='casheen'] .unlock__card { border-radius: 0; background: var(--paper-raised); box-shadow: 0 0 0 1px var(--ink), 6px 6px 0 var(--rule-strong); border-left: 3px double var(--margin-red); }
+[data-imprint='casheen'] .unlock__app-name { color: var(--ink); font-weight: 700; letter-spacing: 0.24em; font-size: 1.3rem; }
+[data-imprint='casheen'] .unlock__app-fn { font-style: italic; }
+[data-imprint='casheen'] .unlock__title { font-family: var(--font-display); }
 
 @media (max-width: 720px) {
   .lc { --rail: 46px; }

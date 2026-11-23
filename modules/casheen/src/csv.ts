@@ -3,7 +3,7 @@ import type { Kind } from './ledger';
 import { parseAmount } from './money';
 
 /**
- * Bringing a bank's statement in by file (docs/design/ledger.md §Import). The file never leaves
+ * Bringing a bank's statement in by file (docs/design/casheen.md §Import). The file never leaves
  * the device; you pick which columns hold the date, amount and note, and see the result first.
  */
 export function parseCsv(text: string): string[][] {

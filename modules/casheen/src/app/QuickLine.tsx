@@ -33,7 +33,7 @@ export function useLedgerData() {
 }
 
 /**
- * LEDGER's front door (docs/design/ledger.md §Quick line): write one line, read the preview, press
+ * CASHEEN's front door (docs/design/casheen.md §Quick line): write one line, read the preview, press
  * Enter. Each part of the preview is a control, so a wrong guess is one tap to fix, and the fix is
  * learned. Several pasted lines are saved together.
  */

@@ -28,7 +28,8 @@ export function parseLocation(pathname: string, search: string, imprints: readon
 
 /**
  * Doors retired in docs/adr/0011, and where their pages live now. Old links, bookmarks and installed
- * apps keep working: `/envoi/letter/x` → `/amazeen/letters/letter/x`, `/folio/chapter/x` → `/chapters?open=x`.
+ * apps keep working: `/envoi/letter/x` → `/amazeen/letters/letter/x`, `/folio/chapter/x` → `/chapters?open=x`,
+ * and LEDGER's old door (renamed CASHEEN, docs/adr/0013) `/ledger/2026-11` → `/casheen/2026-11`.
  */
 export function retiredDoorRedirect(pathname: string, search: string): string | null {
   const segs = pathname.replace(/^\/+/, '').split('/').filter(Boolean);
@@ -43,6 +44,9 @@ export function retiredDoorRedirect(pathname: string, search: string): string | 
       return '/almanac';
     case 'prologue':
       return '/inscriptions';
+    // LEDGER was renamed CASHEEN (docs/adr/0013); its data still lives under `ledger/*`.
+    case 'ledger':
+      return `/casheen${rest.length ? `/${rest.join('/')}` : '/'}${q}`;
     default:
       return null;
   }
@@ -68,7 +72,7 @@ export function useHref(): string {
 type ViewTransitionDoc = Document & { startViewTransition?: (cb: () => void) => unknown };
 const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 const firstSegment = (href: string) => href.replace(/^\/+/, '').split(/[/?#]/)[0] ?? '';
-const APP_DOORS = new Set(['amazeen', 'refrain', 'kindred', 'marginalia', 'ledger']);
+const APP_DOORS = new Set(['amazeen', 'refrain', 'kindred', 'marginalia', 'casheen']);
 /** Which "site" an href belongs to: an app's id, or the house. */
 const siteOf = (href: string) => (APP_DOORS.has(firstSegment(href)) ? firstSegment(href) : 'house');
 
