@@ -32,10 +32,9 @@ import {
 import { audioAvailable, play } from './audio';
 import { RitualEditor } from './RitualEditor';
 import { Chrome } from './Chrome';
+import { G, STEP } from './glyphs';
+import { HeldNote } from './Ceremony';
 
-const G = { clef: '', note: '', rest: '', fermata: '' };
-/** Staff step of each pentatonic pitch (0 = bottom line E4; each step is half a staff space). */
-const STEP = [-2, -1, 0, 2, 3, 5, 6, 7, 9, 10];
 const BEAT_W = 40;
 /** Room for the clef before the first beat, so a Monday note never sits on it. */
 const CLEF = 34;
@@ -66,6 +65,7 @@ export default function RefrainApp({ path }: ImprintAppProps) {
 function useMarks() {
   const house = useHouse();
   const { items, col } = useCollection<Mark>(MARK_PATH);
+  const { items: rituals } = useCollection<Ritual>(RITUAL_PATH);
   const kept = useMemo(() => keySet(items), [items]);
   const toggle = (r: Ritual, date: ISODate) => {
     const id = markId(r.id, date);
@@ -76,6 +76,10 @@ function useMarks() {
     } else {
       col.put({ id, ritualId: r.id, date });
       house.toast({ message: `${r.name} · ${day} kept.`, tone: 'accent', action: { label: 'Undo', run: () => col.remove(id) } });
+      // Every ritual due today now kept (and more than one): the day ends on the final bar.
+      const due = date === house.today ? dueToday(rituals, date) : [];
+      const fine = due.length > 1 && due.every((d) => d.id === r.id || kept.has(markId(d.id, date)));
+      house.ceremony(<HeldNote name={r.name} pitch={r.pitch} fine={fine} />, 900);
     }
   };
   return { marks: items, kept, toggle };

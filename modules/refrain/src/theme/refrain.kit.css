@@ -158,3 +158,18 @@ a.rc-movement:hover { color: var(--accent); }
 
 /* ⌘K: the chosen line underlined like a marking. */
 [data-imprint='refrain'] { --palette-radius: 0; --palette-on-bg: transparent; --palette-on-fg: var(--accent); --palette-on-shadow: inset 0 -1px 0 var(--accent); --palette-font: var(--font-display); }
+
+/* ---------- ceremony: a held note ---------- */
+.rr-held { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 8px; animation: rr-veil var(--rite-ms, 900ms) ease-out both; }
+.rr-held__staff { width: min(1100px, 96vw); height: auto; overflow: visible; }
+.rr-held__staff line { stroke: var(--ink); stroke-width: 0.9; stroke-dasharray: 400; stroke-dashoffset: 400; animation: rr-draw calc(var(--rite-ms, 900ms) * 0.45) ease-out forwards; }
+.rr-held__clef { font-size: 40px; fill: var(--ink); opacity: 0; animation: rr-in 200ms 120ms ease-out forwards; }
+.rr-held__note { font-size: 40px; fill: var(--accent); opacity: 0; animation: rr-drop calc(var(--rite-ms, 900ms) * 0.4) calc(var(--rite-ms, 900ms) * 0.3) cubic-bezier(0.3, 1.4, 0.5, 1) forwards; }
+.rr-held__fermata { font-size: 40px; fill: var(--ink); opacity: 0; animation: rr-in 220ms calc(var(--rite-ms, 900ms) * 0.55) ease-out forwards; }
+.rr-held__final line { stroke: var(--ink); stroke-width: 1; stroke-dasharray: none; stroke-dashoffset: 0; animation: none; }
+.rr-held__final { fill: var(--ink); opacity: 0; animation: rr-in 200ms calc(var(--rite-ms, 900ms) * 0.6) ease-out forwards; }
+.rr-held__name { font-family: var(--font-display); font-size: clamp(1.3rem, 1rem + 1.2vw, 2rem); color: var(--ink); opacity: 0; animation: rr-in 260ms calc(var(--rite-ms, 900ms) * 0.45) ease-out forwards; }
+@keyframes rr-veil { 0% { background: transparent; } 15%, 75% { background: color-mix(in srgb, var(--paper) 86%, transparent); opacity: 1; } 100% { background: transparent; opacity: 0; } }
+@keyframes rr-draw { to { stroke-dashoffset: 0; } }
+@keyframes rr-in { to { opacity: 1; } }
+@keyframes rr-drop { 0% { opacity: 0; transform: translateY(-40px); } 100% { opacity: 1; transform: translateY(0); } }

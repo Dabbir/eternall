@@ -111,3 +111,6 @@ REFRAIN's head is the head of a score:
 - **Toasts:** a fermata.
 - **Choices:** bracketed, with a rule under the chosen one.
 - **Unlock card:** a title page.
+
+## 13. Ceremony (`DESIGN.md` §5.1)
+**A held note.** On marking a ritual kept: five hairlines draw across the screen, the clef appears, the ritual's note drops onto its own pitch, and a fermata holds it (900ms, silent). When every ritual due today is kept (two or more), the staff ends on the final double bar and the line reads "kept · Fine". `app/Ceremony.tsx`.
