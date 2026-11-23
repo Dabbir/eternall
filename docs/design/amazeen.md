@@ -94,3 +94,15 @@ Letters to your future self live in AMAZEEN's **post room** (`/amazeen/letters`)
 - **Kit:** `imprint/amazeen.kit.css` dresses the shared primitives AMAZEEN meets inside the house (Letters, ⌘K, house toasts) in the newsroom's voice: 2px corners, mono small caps, and the offset shadow of a block of type.
 
 **Ceremony (`DESIGN.md` §5.1).** Sealing a letter now writes it first, then plays **Sealed** full screen, kin to the "Filed" stamp: hot wax spreads, the seal comes down with the letter's fingerprint ring, and "Sealed until <date>" is set beneath (`imprint/letters/Ceremony.tsx`).
+
+## 13. Your edition's look (ADR 0013, `docs/PRODUCT.md`)
+People asked to make the magazine theirs. Inside ETERNALL, the Office's **Edition** section becomes **"Your edition's look"** (`imprint/look/`), and the house keeps light and dark.
+- **Ready-made looks**, each shown as a small live cover: **Press** (newsprint and vermilion, the default), **Riso** (pink stock, blue ink), **Broadsheet** (cool grey newsprint, a green rule) and **Night desk** (lamplight on sepia).
+- **Four bounded choices**, as plain radio groups: **accent** (6 curated swatches, never a free colour picker), **typeface** (Classic: Fraunces + Newsreader; Book: Newsreader throughout; Typewriter: mono headlines over Newsreader — all already self-hosted), **text size** (S, M, L, XL) and **density** (Compact, Regular, Airy).
+- **Everything stays readable.** Every preset × accent × mode passes body ≥ 7:1, secondary ≥ 4.5:1, accent text ≥ 4.5:1 and button text ≥ 4.5:1 (`look.test.ts`).
+- **It changes tokens, never layout.** A preview card shows a headline and paragraph in the look; the whole page changes at once. **Reset to Press** offers Undo. Nothing animates.
+- **Never a step before writing.** The default is Press; no prompt asks for a look.
+- **Stored in the vault** as `amazeen/prefs` (id `look`), so it syncs end-to-end encrypted. Nothing goes to localStorage. Applied as one stylesheet for light and dark on `[data-imprint='amazeen'][data-look]`, removed when AMAZEEN closes.
+- **The house owns light and dark.** Inside ETERNALL there is no theme switch in AMAZEEN (the Reader's lamp and the `t` key stand down; `lib/theme.ts` does nothing under `<html data-host-theme>`). On its own, AMAZEEN keeps its Day/Night edition.
+- **3D stays optional:** the Shelf is flat; its only depth is a pointer tilt when immersive effects are allowed.
+

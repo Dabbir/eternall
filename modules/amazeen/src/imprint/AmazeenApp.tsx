@@ -7,7 +7,9 @@ import '../styles/global.css';
 import './amazeen.kit.css';
 import { Suspense, lazy, useMemo } from 'react';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
-import { useVault } from '@eternall/vault';
+import { useCollection, useVault } from '@eternall/vault';
+import { LOOK_PATH, readLook, type Look } from './look/look';
+import { LookContext, useApplyLook } from './look/LookContext';
 import { ErrorBoundary, PressLoader } from '../components/States';
 import { ToastProvider } from '../components/Toast';
 import { RouterProvider, setRouterBase, useRouter } from '../router/router';
@@ -32,6 +34,11 @@ export default function AmazeenApp() {
   const house = useHouse();
   const adapter = useMemo(() => createVaultAdapter(vault), [vault]);
   usePrimaryAction({ label: 'Write a piece', run: () => house.navigate('/amazeen/write/story') });
+  // The person's look for their edition, from the vault (imprint/look; docs/design/amazeen.md §13).
+  const { col: lookCol } = useCollection<Look>(LOOK_PATH);
+  const look = readLook(lookCol.get('look'));
+  useApplyLook(look);
+  const lookControls = useMemo(() => ({ look, setLook: (next: Look) => lookCol.put(next) }), [look, lookCol]);
   // AMAZEEN's own frame (its magazine spine) returns inside ETERNALL, with a small exit and the lock (adr/0011).
   const host = useMemo<HostControls>(
     () => ({ leave: house.leave, leaveLabel: amazeen.brand.leaveLabel, lock: house.lock, canLock: house.canLock, search: house.openSearch, notices: house.notices }),
@@ -42,6 +49,7 @@ export default function AmazeenApp() {
       <ImmersiveContext.Provider value={house.immersive.allowed}>
       <MentionContext.Provider value={house.capability('people.mention')}>
       <HostControlsContext.Provider value={host}>
+      <LookContext.Provider value={lookControls}>
       <DeskExtrasContext.Provider value={OfferedQuotes}>
         <ErrorBoundary>
           <NowProvider>
@@ -59,6 +67,7 @@ export default function AmazeenApp() {
           </NowProvider>
         </ErrorBoundary>
       </DeskExtrasContext.Provider>
+      </LookContext.Provider>
       </HostControlsContext.Provider>
       </MentionContext.Provider>
       </ImmersiveContext.Provider>

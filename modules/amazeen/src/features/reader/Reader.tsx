@@ -17,6 +17,7 @@ import { CoverEditor } from './CoverEditor';
 import { PageView } from './Pages';
 import type { PageContext } from './Pages';
 import styles from './Reader.module.css';
+import { useEmbedded } from '../../imprint/embedded';
 
 function pageLabel(page: Page): string {
   switch (page.kind) {
@@ -90,6 +91,7 @@ function ReaderView({ issue, page, masthead, editor, previous, next, now }: View
   const [editing, setEditing] = useState(false);
   const [jumping, setJumping] = useState(false);
   const { theme } = useTheme();
+  const embedded = useEmbedded();
   const swipe = useRef<{ x: number; y: number } | null>(null);
 
   useDocumentTitle(`No. ${issue.number} · ${issue.headline}`);
@@ -113,7 +115,10 @@ function ReaderView({ issue, page, masthead, editor, previous, next, now }: View
     End: () => go(pages.length),
     Escape: close,
     g: () => setJumping(true),
-    t: () => toggleTheme(theme, visibleThemeSwitch()),
+    // Inside ETERNALL the house owns the theme (docs/adr/0013), so there is no switch here.
+    t: () => {
+      if (!embedded) toggleTheme(theme, visibleThemeSwitch());
+    },
   });
 
   const onPointerDown = (e: PointerEvent): void => {
@@ -145,7 +150,7 @@ function ReaderView({ issue, page, masthead, editor, previous, next, now }: View
           </span>
         </div>
         <div className={styles.chromeActions}>
-          <ThemeToggle size="small" />
+          {!embedded && <ThemeToggle size="small" />}
           <button type="button" className={`${ui.btn} ${ui.quiet} ${ui.small}`} onClick={() => setJumping(true)} aria-label="All pages" aria-keyshortcuts="G">
             <Icon name="book" size={16} />
             <span className={styles.hideSm}>Pages</span>

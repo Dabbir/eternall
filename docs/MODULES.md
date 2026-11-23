@@ -37,6 +37,7 @@ Conventions:
 | Entity | Fields (from `amazeen-app/src/domain/types.ts`) |
 |---|---|
 | `amazeen/entry` | `kind` (`story`/`note`/`quote`/`list`), `title?`, `body?`, `attribution?`, `items?`, `section` (life·work·ideas·culture·body·people·elsewhere), `mood` (1–5), `starred` |
+| `amazeen/prefs` | id `look`: `preset` (`press`/`riso`/`broadsheet`/`night`), `accent?` (one of six curated swatches; absent = the preset's own), `type` (`classic`/`book`/`typewriter`), `size` (`s`/`m`/`l`/`xl`), `density` (`compact`/`regular`/`airy`). Read safely (`readLook`): anything unknown falls back to the default (ADR 0013). |
 | `amazeen/magazine` | `title` (masthead), `editor` |
 | `amazeen/override` | `weekKey` (`YYYY-Www`), `ink?` (riso ink), `headline?` |
 

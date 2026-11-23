@@ -22,6 +22,7 @@ import { useStore } from '../../state/store';
 import { useSync } from '../../sync/SyncProvider';
 import { SyncSection } from '../sync/SyncSection';
 import { useEmbedded } from '../../imprint/embedded';
+import { LookSection } from '../../imprint/look/LookSection';
 import { useExportArchive } from '../../state/useExportArchive';
 import styles from './Settings.module.css';
 
@@ -274,7 +275,7 @@ export default function Settings() {
         <MastheadForm />
       </section>
 
-      {!embedded && <AppearanceSection />}
+      {embedded ? <LookSection /> : <AppearanceSection />}
 
       {!embedded && <SyncSection />}
 

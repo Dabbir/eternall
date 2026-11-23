@@ -1,0 +1,199 @@
+.section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.2fr);
+  gap: 24px clamp(28px, 5vw, 72px);
+  padding: clamp(32px, 4vw, 48px) 0;
+  border-bottom: 1px solid var(--hairline);
+}
+/* Set like the Office's other sections: a mono label and an italic line, ranged right. */
+.intro {
+  text-align: right;
+}
+.intro h2 {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-variant-caps: all-small-caps;
+}
+.intro p {
+  margin: 8px 0 0 auto;
+  max-width: 30ch;
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--ink-2);
+}
+.body {
+  display: grid;
+  gap: 26px;
+  justify-items: start;
+}
+.presets,
+.choice {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+}
+.presets legend,
+.choice legend {
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  font-variant-caps: all-small-caps;
+  color: var(--ink-2);
+}
+.presets {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+.presets legend {
+  grid-column: 1 / -1;
+}
+.preset {
+  position: relative;
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  cursor: pointer;
+  border: 1.5px solid var(--hairline);
+  background: var(--paper);
+  color: var(--ink);
+}
+.preset input,
+.option input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.preset:has(input:checked) {
+  border-color: var(--press);
+  box-shadow: 0 0 0 2px var(--press);
+}
+.preset:has(input:focus-visible),
+.option:has(input:focus-visible) {
+  outline: 2px solid var(--proof);
+  outline-offset: 2px;
+}
+.cover {
+  display: grid;
+  align-content: space-between;
+  aspect-ratio: 3 / 4;
+  padding: 10px;
+  background: var(--sheet);
+  box-shadow: inset 0 0 0 1px var(--hairline);
+}
+.coverMast {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.95rem;
+  line-height: 1;
+  color: var(--ink);
+}
+.coverLine {
+  height: 3px;
+  background: var(--press);
+}
+.coverStory {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--press-text);
+}
+.presetLabel {
+  font-family: var(--font-display);
+  font-weight: 700;
+}
+.presetNote {
+  font-family: var(--font-text);
+  font-size: var(--step--1);
+  color: var(--ink-2);
+}
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 14px;
+  cursor: pointer;
+  border: 1.5px solid var(--hairline);
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+}
+.option:has(input:checked) {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--hairline);
+}
+.proof {
+  width: 100%;
+  padding: 18px 20px;
+  background: var(--sheet);
+  border-left: 4px solid var(--press);
+  box-shadow: var(--shadow-paper);
+}
+.proofKicker {
+  font-family: var(--font-mono);
+  font-size: var(--step--2);
+  letter-spacing: 0.1em;
+  font-variant-caps: all-small-caps;
+  color: var(--press-text);
+}
+.proofHead {
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: var(--step-2);
+  font-weight: 800;
+  line-height: 1.05;
+}
+.proofBody {
+  margin-top: 8px;
+  font-family: var(--font-text);
+  font-size: var(--step-0);
+  color: var(--ink-2);
+}
+.reset {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  color: var(--ink-2);
+  min-height: 44px;
+}
+.reset:hover:not(:disabled) {
+  color: var(--press-text);
+}
+.reset:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+@media (max-width: 760px) {
+  .section {
+    grid-template-columns: 1fr;
+  }
+  .intro {
+    text-align: left;
+  }
+  .intro p {
+    margin-left: 0;
+  }
+  .presets {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

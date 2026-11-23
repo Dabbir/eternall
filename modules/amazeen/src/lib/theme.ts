@@ -37,7 +37,14 @@ export function resolveTheme(preference: ThemePreference): Theme {
   return preference === 'system' ? systemTheme() : preference;
 }
 
+/**
+ * Inside ETERNALL the house owns light and dark (docs/adr/0013); it marks <html data-host-theme>
+ * before AMAZEEN loads, and this module then neither applies a theme nor stores a preference.
+ */
+const hosted = (): boolean => typeof document !== 'undefined' && document.documentElement.hasAttribute('data-host-theme');
+
 function apply(theme: Theme): void {
+  if (hosted()) return;
   const root = document.documentElement;
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
@@ -74,6 +81,7 @@ type ViewTransitionDocument = Document & { startViewTransition?: (cb: () => void
  * from it as a growing circle of ink, where the View Transitions API exists and motion is allowed.
  */
 export function setPreference(next: ThemePreference, origin?: { x: number; y: number }): void {
+  if (hosted()) return;
   const before = resolveTheme(preference);
   preference = next;
   try {

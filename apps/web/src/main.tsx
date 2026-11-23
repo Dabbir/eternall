@@ -18,6 +18,8 @@ import { retiredDoorRedirect } from './shell/router';
 import { applyDoorHead } from './shell/doorHead';
 import { imprintById } from './registry';
 
+// The house owns light and dark for every app (docs/adr/0013): AMAZEEN's own theme switch stands down.
+document.documentElement.setAttribute('data-host-theme', '');
 // Retired doors (ENVOI, FOLIO, ALMANACK, PROLOGUE) point to where their pages live now.
 const moved = retiredDoorRedirect(window.location.pathname, window.location.search);
 if (moved) window.history.replaceState(null, '', moved);

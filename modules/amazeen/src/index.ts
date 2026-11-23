@@ -1,5 +1,6 @@
 import { TONE_LABEL, parseISO, plural, type ImprintDefinition, type LifelineMarker, type Memory, type Tone } from '@eternall/core';
 import { headlineFor, pickCoverStory } from './domain/issues';
+import { LOOK_PATH } from './imprint/look/look';
 import { weekKey } from './domain/dates';
 import type { Entry } from './domain/types';
 import { ENTRY_PATH, META_PATH, type AmazeenMeta } from './imprint/vaultAdapter';
@@ -37,7 +38,7 @@ export const amazeen: ImprintDefinition = {
   intro: 'The weekly magazine of your own life. Write a little every day; on Sunday at midnight the week goes to press as an issue.',
   brand: { icon: '/icons/amazeen.svg', themeColor: { light: '#efe9dd', dark: '#121110' }, lockTitle: 'The newsroom is locked.', leaveLabel: 'Leave the newsroom' },
   load: () => import('./imprint/AmazeenApp'),
-  collections: [ENTRY_PATH, META_PATH, ...LETTER_COLLECTIONS],
+  collections: [ENTRY_PATH, META_PATH, LOOK_PATH, ...LETTER_COLLECTIONS],
   hasData: (ctx) => entriesOf(ctx).length > 0 || lettersOf(ctx).length > 0 || !!ctx.data.collection<AmazeenMeta>(META_PATH).get('main')?.magazine,
 
   lifeline(ctx) {

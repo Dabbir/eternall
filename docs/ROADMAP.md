@@ -1,6 +1,6 @@
 # ETERNALL — Roadmap
 
-Status: accepted · Phases 0–7 done, Phase 8 in progress (ADR 0013) · Each phase ends with its exit criteria met, then a review, before the next begins.
+Status: accepted · Phases 0–8 done (ADR 0013) · Each phase ends with its exit criteria met, then a review, before the next begins.
 
 ---
 
@@ -162,7 +162,9 @@ Status: accepted · Phases 0–7 done, Phase 8 in progress (ADR 0013) · Each ph
 4. One app bar: the same positions for back, name, places, search, lock and the primary action in every app. Replaces the per-edge navigation of 2026-11-23.
 5. AMAZEEN personal looks: presets plus accent, typeface, text size and density, stored in the vault.
 
-**Exit criteria:** a fresh vault starts writing in one tap with no lifeline; existing vaults lose no app; every app passes the same-positions test at 390/768/1440; looks never touch `localStorage`; all gates green.
+**Done (2026-11-24),** steps 1–5 as five commits.
+
+**Exit criteria (met):** a fresh vault starts writing in one tap with no lifeline; existing vaults lose no app; every app passes the same-positions test at 390/768/1440; looks never touch `localStorage`; all gates green.
 
 **Order after launch:** AMAZEEN's core flow is tested with prospective users first (`PRODUCT.md`, next steps). CASHEEN grows only within quick entry and the monthly budget. REFRAIN is the next companion, then the others, only when people ask for them.
 

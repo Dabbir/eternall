@@ -50,17 +50,18 @@
   --font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --font-ui: var(--font-mono);
 
-  --step--2: clamp(0.72rem, 0.7rem + 0.08vw, 0.78rem);
-  --step--1: clamp(0.76rem, 0.74rem + 0.1vw, 0.82rem);
-  --step-0: clamp(1rem, 0.96rem + 0.2vw, 1.12rem);
-  --step-1: clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem);
-  --step-2: clamp(1.5rem, 1.3rem + 1vw, 2.1rem);
+  --step--2: calc(clamp(0.72rem, 0.7rem + 0.08vw, 0.78rem) * var(--look-scale, 1));
+  --step--1: calc(clamp(0.76rem, 0.74rem + 0.1vw, 0.82rem) * var(--look-scale, 1));
+  --step-0: calc(clamp(1rem, 0.96rem + 0.2vw, 1.12rem) * var(--look-scale, 1));
+  --step-1: calc(clamp(1.2rem, 1.1rem + 0.5vw, 1.45rem) * var(--look-scale, 1));
+  --step-2: calc(clamp(1.5rem, 1.3rem + 1vw, 2.1rem) * var(--look-scale, 1));
   --step-3: clamp(2rem, 1.6rem + 2vw, 3.2rem);
   --step-4: clamp(2.6rem, 1.9rem + 3.6vw, 5rem);
   --step-5: clamp(3.4rem, 2rem + 7vw, 9rem);
   --step-6: clamp(5rem, 2rem + 16vw, 17rem);
 
-  --gutter: clamp(16px, 4vw, 56px);
+  /* --look-* come from the person's chosen look (imprint/look.ts); 1 when none is chosen. */
+  --gutter: calc(clamp(16px, 4vw, 56px) * var(--look-space, 1));
   --max: 1360px;
   --radius: 3px;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
@@ -136,7 +137,7 @@
   color: var(--ink);
   font-family: var(--font-text);
   font-size: var(--step-0);
-  line-height: 1.55;
+  line-height: calc(1.55 * var(--look-leading, 1));
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;

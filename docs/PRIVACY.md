@@ -161,6 +161,10 @@ Apps share foundations, not data. The vault, export, recovery, the lock and sync
 - **CASHEEN contributes nothing to the house:** no Almanac facts (not even counts), no lifeline marks, memories, inscriptions or capabilities. Its only outward signal is its own opt-in reminder, which names a month ("Set the budget for December"), never an amount, category or habit. A test (`casheen.test.tsx`) asserts this.
 - **Apps that are off** (Settings → Apps) contribute nothing and do not open; their records stay encrypted in the vault and in exports until erased. Which apps are on is one field in `house/settings` (`apps`), never content.
 
+### AMAZEEN's look (ADR 0013)
+
+The person's chosen look is an ordinary encrypted vault record (`amazeen/prefs`), exported and synced like the rest. Nothing about it is written to localStorage. Applying it writes only design tokens (colours, font names, multipliers) into a stylesheet in the page while AMAZEEN is open; no content is involved.
+
 ### CASHEEN: money (ADR 0012)
 
 - **Money stays in CASHEEN** (ADR 0013, above). Nothing about money reaches the lifeline, week panel, Almanac or house search.
