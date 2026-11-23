@@ -181,7 +181,12 @@ function Cabinet({ drawers, counts, onOpen }: { drawers: ReturnType<typeof catal
   };
   return (
     <div className="mg-cabinet" ref={tree} role="tree" aria-label="Catalogue cabinet: arrow keys move between drawers and cards, Enter opens" onKeyDown={onKey}
-      onWheel={(e) => { if (!current) return; setCard((c) => Math.max(0, Math.min(current.works.length - 1, c + Math.sign(e.deltaY)))); }}>
+      onWheel={(e) => {
+        // Riffle with a sideways swipe (or Shift + wheel); a plain wheel scrolls the page (DESIGN §1.3).
+        const dx = e.shiftKey && !e.deltaX ? e.deltaY : e.deltaX;
+        if (!current || Math.abs(dx) <= Math.abs(e.shiftKey ? 0 : e.deltaY)) return;
+        setCard((c) => Math.max(0, Math.min(current.works.length - 1, c + Math.sign(dx))));
+      }}>
       <div className="mg-cabinet__body">
         {drawers.map((d, di) => {
           const isOpen = di === openDrawer;
@@ -219,7 +224,7 @@ function Cabinet({ drawers, counts, onOpen }: { drawers: ReturnType<typeof catal
           );
         })}
       </div>
-      <p className="mg-cabinet__hint" aria-hidden="true">← → drawers · ↑ ↓ or scroll through cards · Enter or click the raised card to open</p>
+      <p className="mg-cabinet__hint" aria-hidden="true">← → drawers · ↑ ↓ or swipe sideways through cards · Enter or click the raised card to open</p>
     </div>
   );
 }

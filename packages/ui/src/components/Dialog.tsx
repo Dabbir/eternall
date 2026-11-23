@@ -18,6 +18,12 @@ interface Props {
  * Native <dialog> gives us focus trapping, inertness of the page and Esc handling for free.
  * We only add animation and route all dismissals through `onClose`.
  */
+/** Remove the page's scroll lock when no dialog other than `self` is open. */
+function releaseScrollLock(self: HTMLDialogElement) {
+  const others = [...document.querySelectorAll('dialog[open]')].some((d) => d !== self);
+  if (!others) document.documentElement.classList.remove('has-modal');
+}
+
 export function Dialog({ open, onClose, title, eyebrow, hideTitle, size = 'm', children, footer, className = '' }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   const titleId = useRef(`dlg-${Math.random().toString(36).slice(2)}`).current;
@@ -38,10 +44,25 @@ export function Dialog({ open, onClose, title, eyebrow, hideTitle, size = 'm', c
     } else if (!open && el.open) {
       el.close();
     }
+    // Closing must hand the page its scroll back, unless another dialog is still open. (Before, a
+    // dialog kept mounted and closed through `open={false}` left `has-modal` on: the page froze.)
+    if (!open) releaseScrollLock(el);
     return () => {
-      if (!document.querySelector('dialog[open]')) document.documentElement.classList.remove('has-modal');
+      if (!el.isConnected || !el.open) releaseScrollLock(el);
     };
   }, [open]);
+
+  // However it closes (Esc, a form, the browser), the page gets its scroll back.
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onClosed = () => releaseScrollLock(el);
+    el.addEventListener('close', onClosed);
+    return () => {
+      el.removeEventListener('close', onClosed);
+      releaseScrollLock(el);
+    };
+  }, []);
 
   useEffect(() => {
     const el = ref.current;

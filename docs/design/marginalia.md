@@ -71,7 +71,7 @@ A blank catalogue card in a typewriter carriage: *Title*, *By*, *Kind* (book · 
 
 ## 6. Signature moment
 - **2D (free):** *the highlighter sweep and the pulled card.* Adding an underline sweeps a highlighter across the passage left to right (an animated SVG mask with slightly irregular edges and a soft ink-bleed at the ends). In the catalogue, choosing a card **slides it up out of the drawer** and it flips to the work page.
-- **3D (immersive):** *the catalogue cabinet.* A procedural oak cabinet in CSS 3D (lighter than WebGL and sharper for text). Drawers pull out with depth and shadow, cards tilt forward as you browse with the wheel or arrows, and the selected card lifts toward you and opens.
+- **3D (immersive):** *the catalogue cabinet.* A procedural oak cabinet in CSS 3D (lighter than WebGL and sharper for text). Drawers pull out with depth and shadow, cards tilt forward as you browse with the arrow keys or a sideways swipe (Shift + wheel; a plain wheel scrolls the page), and the selected card lifts toward you and opens.
   - *Accessibility:* the cabinet is a DOM tree of drawers (`tree` role) and cards (`treeitem`).
 
 ## 7. Motion vocabulary

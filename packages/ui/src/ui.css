@@ -300,7 +300,8 @@ html.has-modal { overflow: hidden; }
 .dimension-toggle button.is-on { background: var(--toggle-on-bg, var(--ink)); color: var(--toggle-on-fg, var(--paper)); }
 .dimension-toggle button:disabled { opacity: 0.45; cursor: not-allowed; }
 .stage3d { position: relative; width: 100%; overflow: hidden; border-radius: var(--radius-m); }
-.stage3d__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 600ms var(--ease-out); touch-action: none; }
+/* pan-y: a vertical swipe over a 3D scene scrolls the page (scenes with OrbitControls keep this via letPageScroll). */
+.stage3d__canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; opacity: 0; transition: opacity 600ms var(--ease-out); touch-action: pan-y; }
 .stage3d.is-ready .stage3d__canvas { opacity: 1; }
 .stage3d__loading { position: absolute; inset: 0; background: linear-gradient(90deg, transparent, var(--rule), transparent) 0 50% / 40% 2px no-repeat; animation: stage-load 1.2s linear infinite; }
 @keyframes stage-load { from { background-position: -40% 50%; } to { background-position: 140% 50%; } }
