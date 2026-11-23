@@ -151,12 +151,32 @@ Conventions:
 
 ---
 
+## 10. LEDGER: Money, kept plainly (`modules/ledger`), ADR 0012
+
+| Entity | Fields |
+|---|---|
+| `ledger/entry` | `kind` (`out`/`in`), `amount` (whole rupiah > 0, ≤ 1e12), `categoryId`, `date`, `note` (≤ 140), `createdAt` |
+| `ledger/category` | `name` (≤ 30, unique), `kind`, `order`, `archived`. The starting set (Food, Transport, Shopping, Bills, Fun, Health, Other; Salary, Other income) is written to the vault on the first change. |
+| `ledger/budget` | id `YYYY-MM`; `limits` (category id → rupiah). A month without one starts from the last month that had one. |
+| `ledger/words` | one record, `map` (word → category id), at most 500 words, learned from what you write and correct |
+| `ledger/pref` | `remindBudget` (off by default) |
+
+- **Rules:** Rupiah only. The quick line is the main way in (`docs/design/ledger.md` §6). Going over is said plainly, never scored.
+- **Amounts never leave LEDGER.** No lifeline layer or week lines; Almanac facts are counts only ("Months kept in LEDGER this year", "Entries written this year").
+- **Reminders:** on the 1st, "Set the budget for <month>", when opted in and no budget exists yet.
+- **Capabilities:** none.
+- **Import:** CSV read on the device (`csv.ts`); categories are guessed from notes like the quick line.
+
+---
+
 ## Cross-app map (since ADR 0011)
 
 ```
             people.mention                     quotes.offer
   KINDRED ───────────────▶ AMAZEEN ◀─────────────── MARGINALIA
                         (pieces + Letters)
+
+  LEDGER ── almanacFacts() (counts only) ──▶ house · Almanac
 
   house · Chapters ── chapters.at ──▶ house inscriptions · AMAZEEN
   REFRAIN ── rituals.list / rituals.week ──▶ (no consumer today)

@@ -1,16 +1,18 @@
 # CLAUDE.md — ETERNALL
 
-ETERNALL is **a private publishing house for your life**. It is one local-first, end-to-end-encrypted platform made of **four apps**, each a complete product that feels like its own site, with no resemblance to the house:
+ETERNALL is **a private publishing house for your life**. It is one local-first, end-to-end-encrypted platform made of **five apps**, each a complete product that feels like its own site, with no resemblance to the house:
 - **AMAZEEN**: journal, plus Letters to your future
 - **REFRAIN**: rituals
 - **KINDRED**: people
 - **MARGINALIA**: reading
+- **LEDGER**: money in and out, and a monthly budget, written in one line (ADR 0012)
 
 The **house** (ETERNALL) keeps the lifeline (a life shown in weeks), inscriptions, Chapters and the Almanac. Read `docs/VISION.md` and `docs/adr/0011` first.
 
 ## Current state (read this before changing anything)
 
 - The owner approved the docs and asked to build through every phase. Work happens on branch `platform`, one commit per verified phase, never pushed (`docs/ROADMAP.md` tracks progress).
+- **Phase 7 is done (ADR 0012):** LEDGER (`modules/ledger`). The quick-line parser is `quick.ts`; amounts never leave LEDGER (the house sees counts only).
 - **Phase 6 is done (ADR 0011):** consolidated from 8 imprints to 4 apps.
   - ENVOI became AMAZEEN's Letters (`modules/amazeen/src/imprint/letters/`).
   - FOLIO and ALMANACK became house sections (`apps/web/src/house/{chapters,almanac}/`).
@@ -28,7 +30,7 @@ The **house** (ETERNALL) keeps the lifeline (a life shown in weeks), inscription
 ## Commands
 
 ```bash
-npm run dev        # Vite dev server for apps/web on :5181 (doors: /, /amazeen/, /refrain/, /kindred/, /marginalia/; house pages /chapters, /almanac, /inscriptions)
+npm run dev        # Vite dev server for apps/web on :5181 (doors: /, /amazeen/, /refrain/, /kindred/, /marginalia/, /ledger/; house pages /chapters, /almanac, /inscriptions)
 npm test           # Vitest across all workspaces
 npm run typecheck  # one root tsc over every workspace
 npm run lint       # oxlint, zero warnings

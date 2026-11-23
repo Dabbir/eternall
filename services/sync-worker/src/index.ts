@@ -5,7 +5,7 @@ interface AssetsEnv extends Env {
 }
 
 // Retired doors (envoi, folio, almanack, prologue) fall through to the house page, which redirects them (docs/adr/0011).
-const DOORS = new Set(['amazeen', 'refrain', 'kindred', 'marginalia']);
+const DOORS = new Set(['amazeen', 'refrain', 'kindred', 'marginalia', 'ledger']);
 
 /**
  * One Worker for the whole house: `/api/*` is the sync and licence API; everything else is the

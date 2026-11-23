@@ -30,6 +30,7 @@ There is **no global spacing scale shared by imprints**. Each imprint derives it
 | REFRAIN | The five-line staff: vertical rhythm = staff spacing; horizontal rhythm = beats (7 per bar, one per day) | engraved sheet music |
 | KINDRED | Fixed modules in business-card ratio (85:55), arranged like drawers of a card file; generous card padding | address books, letterpress cards |
 | MARGINALIA | A text column plus a wide margin column (≈ 2:1), where notes and highlights live in the margin | an annotated book page |
+| LEDGER | The ruled page: one row per 2.25rem ruling; a narrow date column, particulars, then money columns behind a double red rule | an accountant's ledger |
 
 ### 1.2 Forbidden patterns (checked in every review)
 
@@ -66,6 +67,7 @@ If a design contains any of these, it is sent back:
 | REFRAIN | the head of a score: five hairlines, a centred title | movements: "I. The score", "II. Programme notes" | Mark today, set like a marking | "Fine" with the end barline |
 | KINDRED | a card cabinet's brass label plate | index tabs: Card file · Constellation | a pressed letterpress block | "Close the drawer" |
 | MARGINALIA | a typed library catalogue card | guide cards: Catalogue · Every underline | typed in brackets | "Back to the stacks", pencilled |
+| LEDGER | the head of a ledger page, a brass clasp | folio headings: The month · Budget | Add an entry (focuses the quick line) | "Close the book", by the clasp |
 
 **Behavioural invariants for every app's chrome:**
 - one fixed place each for the exit, search (⌘K), the lock (⌘⇧L) and the primary action
@@ -207,4 +209,5 @@ Used on every screen, in every imprint, before it ships:
 | REFRAIN | `design/refrain.md` |
 | KINDRED | `design/kindred.md` |
 | MARGINALIA | `design/marginalia.md` |
+| LEDGER | `design/ledger.md` |
 | Retired: ENVOI, FOLIO, ALMANACK, PROLOGUE | `design/archive/*.md` (their systems live on in Letters, Chapters and the Almanac) |

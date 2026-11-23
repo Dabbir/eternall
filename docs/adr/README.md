@@ -13,5 +13,6 @@
 | [0009](0009-pwa-first-capacitor-ready.md) | PWA first, ready for Capacitor | Proposed |
 | [0010](0010-ai-on-device-policy.md) | AI policy: none in v1, on-device only if ever | Proposed |
 | [0011](0011-four-apps-and-separate-looks.md) | Four apps, each its own site; the house keeps chapters, almanac and inscriptions | Accepted |
+| [0012](0012-ledger-money-kept-plainly.md) | LEDGER: personal money, sold on writing it down in one line | Accepted |
 
 New ADRs: copy the shape (Context · Decision · Consequences · Alternatives), number sequentially, and set Status to Accepted once the owner approves.

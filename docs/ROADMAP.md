@@ -139,6 +139,17 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 - **Verified** with typecheck, lint, unit and integration tests, and budgets. In the browser: each app at 390 and 768px and desktop, light and dark, with reduced motion; its own unlock card; ⌘K scoped to the app; exit and Back; the house unchanged.
 - **Still open:** a real-device pass (iOS install icons per door, Android maskable icons), and the owner's 5-second test on the four chromes.
 
+## Phase 7: LEDGER (ADR 0012)
+**Done (2026-11-23):**
+- **A fifth app for personal money.** Its selling point: writing an entry is one line ("kopi 25rb", "gaji 8jt", "grab 32.500 kemarin"), read on the device, with a live preview where every part is one tap to correct. Corrections are learned, frequent entries become chips, and several lines can be pasted at once.
+- **Monthly budget**, with plainly written overs.
+- **Categories** you can rename, put away and add.
+- **CSV import** with column mapping and a preview.
+- **Opt-in reminder** on the 1st.
+- **Its own site:** chrome, kit, lock card, icon, and a manifest with an "Add an entry" shortcut.
+- **Amounts stay inside LEDGER**; the Almanac shows counts only.
+- **Verified:** 21 domain tests and 7 integration tests; in the browser at 390px and desktop, light and dark.
+
 ## Release 2
 The four apps and the house, as of ADR 0011.
 

@@ -23,7 +23,7 @@ interface NotificationClick {
 }
 
 // Retired doors (envoi, folio, almanack, prologue) fall through to the house page, which redirects them (docs/adr/0011).
-const DOORS = new Set(['amazeen', 'refrain', 'kindred', 'marginalia']);
+const DOORS = new Set(['amazeen', 'refrain', 'kindred', 'marginalia', 'ledger']);
 
 cleanupOutdatedCaches();
 precacheAndRoute(self.__WB_MANIFEST);

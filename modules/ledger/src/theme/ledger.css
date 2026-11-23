@@ -1,0 +1,186 @@
+/* ─────────────────────────────────────────────────────────────
+   LEDGER · an accountant's bound ledger (docs/design/ledger.md)
+   Spatial system: the ruled page. Rows are one rule apart (2.25rem); money sits in
+   right-aligned columns behind a double red rule; dates live in a narrow left column.
+   Caslon for words, DM Mono (tabular) for every figure.
+   ───────────────────────────────────────────────────────────── */
+[data-imprint='ledger'] {
+  --paper: #eef1e4;
+  --paper-sunk: #e3e8d5;
+  --paper-raised: #f6f8ef;
+  --ink: #1d241c;
+  --ink-2: #485243;
+  --ink-3: #5c6756;
+  --rule: rgb(29 36 28 / 0.12);
+  --rule-strong: rgb(29 36 28 / 0.3);
+  --accent: #2f5d3a;
+  --accent-deep: #22452b;
+  --accent-soft: rgb(47 93 58 / 0.1);
+  --on-accent: #f6f8ef;
+  --red: #a3302a;
+  --ruling: rgb(64 105 170 / 0.28);
+  --margin-red: rgb(176 52 44 / 0.55);
+  --veil: rgb(16 20 15 / 0.45);
+  --row: 2.25rem;
+  --font-display: 'Libre Caslon Text', 'Baskerville', Georgia, serif;
+  --font-ui: 'Libre Caslon Text', Georgia, serif;
+  --font-mono: 'DM Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) [data-imprint='ledger'] {
+    --paper: #111611; --paper-sunk: #0b0f0b; --paper-raised: #182018;
+    --ink: #e6ecdf; --ink-2: #b4bfac; --ink-3: #939e8b;
+    --rule: rgb(230 236 223 / 0.12); --rule-strong: rgb(230 236 223 / 0.28);
+    --accent: #8fc79b; --accent-deep: #74b083; --accent-soft: rgb(143 199 155 / 0.12); --on-accent: #0e140f;
+    --red: #f0857a; --ruling: rgb(140 170 215 / 0.2); --margin-red: rgb(240 133 122 / 0.45);
+    --veil: rgb(0 0 0 / 0.62);
+  }
+}
+:root[data-theme='dark'] [data-imprint='ledger'] {
+  --paper: #111611; --paper-sunk: #0b0f0b; --paper-raised: #182018;
+  --ink: #e6ecdf; --ink-2: #b4bfac; --ink-3: #939e8b;
+  --rule: rgb(230 236 223 / 0.12); --rule-strong: rgb(230 236 223 / 0.28);
+  --accent: #8fc79b; --accent-deep: #74b083; --accent-soft: rgb(143 199 155 / 0.12); --on-accent: #0e140f;
+  --red: #f0857a; --ruling: rgb(140 170 215 / 0.2); --margin-red: rgb(240 133 122 / 0.45);
+  --veil: rgb(0 0 0 / 0.62);
+}
+
+.lg { max-width: 980px; margin: 0 auto; padding: 22px var(--gutter) 120px; }
+.lg-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+.is-red { color: var(--red); }
+.lg-link { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; font: inherit; }
+.lg-link:hover { color: var(--ink); }
+.lg-note { color: var(--ink-2); font-style: italic; margin: 6px 0 18px; }
+.lg-h2 { font-family: var(--font-display); font-weight: 400; font-size: 1.5rem; margin: 40px 0 12px; }
+
+/* ---------- month head ---------- */
+.lg-monthnav { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 14px; margin-bottom: 18px; }
+.lg-month { font-family: var(--font-display); font-weight: 400; font-size: clamp(1.8rem, 1.4rem + 1.6vw, 2.6rem); line-height: 1.1; }
+.lg-monthnav__btn { align-self: center; font-family: var(--font-mono); font-size: 1.6rem; line-height: 1; width: 40px; height: 40px; border: 1px solid var(--rule-strong); color: var(--ink-2); }
+.lg-monthnav__btn:hover:not(:disabled) { color: var(--accent); }
+.lg-monthnav__btn:disabled { opacity: 0.3; cursor: default; }
+
+/* ---------- the quick line: the front door ---------- */
+.lq { margin: 4px 0 26px; }
+.lq-label { display: block; font-size: 0.9375rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-3); margin-bottom: 6px; }
+.lq-line {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px;
+  padding: 6px 6px 6px 14px; background: var(--paper-raised);
+  border: 1.5px solid var(--ink); box-shadow: 4px 4px 0 var(--accent-soft), 0 0 0 0 transparent;
+  transition: box-shadow 160ms;
+}
+.lq-line:focus-within { box-shadow: 4px 4px 0 var(--accent); }
+.lq-pen { font-size: 1.25rem; color: var(--accent); }
+.lq-input {
+  width: 100%; min-height: 2.6rem; resize: none; border: 0; outline: none; background: transparent;
+  font-family: var(--font-mono); font-size: 1.125rem; line-height: 1.6; color: var(--ink); padding: 6px 0;
+}
+.lq-input::placeholder { color: var(--ink-3); opacity: 0.8; }
+.lq-save {
+  align-self: stretch; padding: 0 18px; white-space: nowrap;
+  font-family: var(--font-display); font-weight: 700; font-size: 1rem;
+  background: var(--accent); color: var(--on-accent); transition: background-color 160ms;
+}
+.lq-save:hover:not(:disabled) { background: var(--accent-deep); }
+.lq-save:disabled { opacity: 0.35; cursor: default; }
+.lq-preview { min-height: 2.6rem; padding: 8px 0 0; }
+.lq-parts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.lq-part { position: relative; display: inline-flex; align-items: center; gap: 6px; min-height: 34px; padding: 4px 10px; border: 1px solid var(--rule-strong); background: var(--paper-raised); font-size: 0.9375rem; }
+.lq-part--kind { font-variant-caps: all-small-caps; letter-spacing: 0.06em; font-weight: 700; font-size: 1rem; cursor: pointer; }
+.lq-part--kind.is-out { color: var(--ink); }
+.lq-part--kind.is-in { color: var(--accent); border-color: var(--accent); }
+.lq-part--amount { font-family: var(--font-mono); font-weight: 500; border-color: var(--ink); }
+.lq-part--select select { appearance: none; border: 0; background: transparent; font: inherit; color: var(--ink); padding-right: 14px; cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 7px) 55%, calc(100% - 2px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
+.lq-learned { font-size: 0.75rem; color: var(--accent); }
+.lq-part--date { cursor: pointer; }
+.lq-part--date input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+.lq-part--date:focus-within { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
+.lq-part--note { border-style: dashed; font-style: italic; color: var(--ink-2); }
+.lq-part:focus-within, .lq-part:focus-visible { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
+.lq-wait, .lq-many { color: var(--ink-2); font-style: italic; }
+.lq-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.lq-chip { display: inline-flex; gap: 8px; align-items: baseline; padding: 5px 12px; border: 1px solid var(--rule-strong); background: var(--paper-raised); font-size: 0.9375rem; }
+.lq-chip span { font-family: var(--font-mono); font-size: 0.875rem; color: var(--ink-2); }
+.lq-chip:hover { border-color: var(--accent); }
+.lq-help { font-size: 0.8125rem; color: var(--ink-3); margin-top: 4px; }
+
+/* ---------- month totals: the foot of the page, brought up ---------- */
+.lg-totals { display: grid; grid-template-columns: repeat(3, auto); justify-content: start; gap: 4px 40px; padding: 12px 0; border-top: 1px solid var(--ink); border-bottom: 3px double var(--ink); margin-bottom: 8px; }
+.lg-totals dt { font-size: 0.9375rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-3); }
+.lg-totals dd { font-size: 1.25rem; }
+.lg-budgetline { color: var(--ink-2); margin-bottom: 22px; }
+
+/* ---------- the ruled page ---------- */
+.lg-page {
+  width: 100%; border-collapse: collapse;
+  background-image: repeating-linear-gradient(to bottom, transparent 0 calc(var(--row) - 1px), var(--ruling) calc(var(--row) - 1px) var(--row));
+}
+.lg-page th, .lg-page td { height: var(--row); padding: 0 10px; text-align: left; vertical-align: middle; font-weight: 400; }
+.lg-page thead th { font-size: 0.9375rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-3); border-bottom: 1.5px solid var(--ink); }
+.lg-col-date { width: 5.5rem; white-space: nowrap; color: var(--ink-2); font-style: italic; border-right: 1px solid var(--margin-red); }
+.lg-col-num { width: 8.5rem; text-align: right !important; white-space: nowrap; border-left: 1px solid var(--margin-red); }
+.lg-page tr > :not(.lg-col-num) + .lg-col-num { border-left: 3px double var(--margin-red); }
+.lg-page tbody tr.is-first th, .lg-page tbody tr.is-first td { border-top: 1px solid var(--rule-strong); }
+.lg-page tfoot th, .lg-page tfoot td { border-top: 1px solid var(--ink); border-bottom: 3px double var(--ink); font-variant-caps: all-small-caps; letter-spacing: 0.04em; }
+.lg-entry { display: flex; align-items: baseline; gap: 10px; width: 100%; text-align: left; min-height: var(--row); }
+.lg-entry__note { color: var(--ink); }
+.lg-entry__cat { font-size: 0.8125rem; color: var(--ink-3); font-style: italic; }
+.lg-entry:hover .lg-entry__note { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+.lg-empty { padding: 40px 0; border-top: 1px solid var(--rule-strong); background-image: repeating-linear-gradient(to bottom, transparent 0 calc(var(--row) - 1px), var(--ruling) calc(var(--row) - 1px) var(--row)); }
+.lg-empty__line { font-family: var(--font-display); font-size: 1.35rem; }
+.lg-empty__try { color: var(--ink-2); margin-top: 6px; }
+.lg-empty kbd { font-family: var(--font-mono); padding: 1px 6px; border: 1px solid var(--rule-strong); background: var(--paper-raised); }
+
+/* ---------- budget ---------- */
+.lg-limit { width: 100%; max-width: 8rem; text-align: right; border: 0; border-bottom: 1px dashed var(--rule-strong); background: transparent; color: var(--ink); padding: 4px 0; font-size: 1rem; }
+.lg-limit:focus { outline: none; border-bottom: 1.5px solid var(--accent); }
+.lg-limit::placeholder { color: var(--ink-3); font-family: var(--font-ui); font-style: italic; font-size: 0.875rem; }
+.lg-budget tbody th { font-weight: 400; }
+.lg-catlist { display: grid; gap: 0; border-top: 1px solid var(--rule-strong); }
+.lg-catlist li { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 16px; min-height: var(--row); border-bottom: 1px solid var(--ruling); }
+.lg-catlist li.is-archived .lg-catname { color: var(--ink-3); text-decoration: line-through; }
+.lg-catname { border: 0; background: transparent; font: inherit; color: var(--ink); padding: 6px 0; }
+.lg-catname:focus { outline: none; border-bottom: 1.5px solid var(--accent); }
+.lg-catkind { font-size: 0.8125rem; color: var(--ink-3); font-style: italic; }
+.lg-addcat { display: grid; grid-template-columns: 1fr 10rem auto auto; gap: 10px; align-items: end; margin-top: 14px; }
+.lg-cats > .btn { margin-top: 14px; }
+.lg-more { display: grid; gap: 14px; justify-items: start; margin-top: 40px; padding-top: 18px; border-top: 3px double var(--rule-strong); }
+.lg-select { appearance: auto; }
+
+/* ---------- entry editor ---------- */
+.lg-kind { display: flex; gap: 8px; border: 0; padding: 0; margin: 0; }
+.lg-kind legend { font-size: 0.9375rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-2); margin-bottom: 6px; }
+.lg-kind__opt { position: relative; padding: 8px 16px; border: 1px solid var(--rule-strong); cursor: pointer; }
+.lg-kind__opt input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.lg-kind__opt:has(input:checked) { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.lg-kind__opt:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- import ---------- */
+.lg-file { display: inline-flex; position: relative; padding: 10px 18px; border: 1.5px dashed var(--ink); cursor: pointer; margin-bottom: 18px; }
+.lg-file input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.lg-file:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+.lg-map { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px 16px; align-items: end; margin-bottom: 14px; }
+.lg-map .check { grid-column: span 3; }
+.lg-actions { display: flex; gap: 10px; margin-top: 18px; }
+
+@media (max-width: 640px) {
+  .lg-totals { grid-template-columns: 1fr 1fr; gap: 6px 20px; }
+  .lg-totals__net { grid-column: 1 / -1; }
+  .lg-col-date { width: 3.6rem; padding-left: 0 !important; }
+  .lg-col-num { width: auto; }
+  .lg-page th, .lg-page td { padding: 0 6px; }
+  .lg-entry { flex-direction: column; gap: 0; justify-content: center; padding: 4px 0; }
+  .lg-page tbody th, .lg-page tbody td { height: auto; min-height: var(--row); }
+  .lg-addcat, .lg-map { grid-template-columns: 1fr; }
+  .lg-map .check { grid-column: auto; }
+  .lq-save { padding: 0 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lq-line, .lq-save { transition: none; }
+}

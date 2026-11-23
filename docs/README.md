@@ -5,7 +5,7 @@ Phase 0 foundation documents, in reading order:
 1. [VISION](VISION.md): what ETERNALL is, for whom, and its three principles
 2. [BRAND](BRAND.md): house and imprints, naming rules, voice, logo
 3. [DESIGN](DESIGN.md): "bold on the surface, clear in the hand", the spine, 3D rules, budgets
-4. App designs: [ETERNALL, the house](design/eternall.md) · [AMAZEEN](design/amazeen.md) · [REFRAIN](design/refrain.md) · [KINDRED](design/kindred.md) · [MARGINALIA](design/marginalia.md) · retired: [archive](design/archive/) (ENVOI, FOLIO, ALMANACK, PROLOGUE; ADR 0011)
+4. App designs: [ETERNALL, the house](design/eternall.md) · [AMAZEEN](design/amazeen.md) · [REFRAIN](design/refrain.md) · [KINDRED](design/kindred.md) · [MARGINALIA](design/marginalia.md) · [LEDGER](design/ledger.md) · retired: [archive](design/archive/) (ENVOI, FOLIO, ALMANACK, PROLOGUE; ADR 0011)
 5. [ARCHITECTURE](ARCHITECTURE.md): monorepo, one core many doors, the imprint contract
 6. [PRIVACY](PRIVACY.md): the vault, lock, sync, licences, threat model
 7. [BUSINESS](BUSINESS.md): free vs Patron, payments, lifecycle

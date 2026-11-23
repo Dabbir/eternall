@@ -154,6 +154,12 @@ Sync and immersive modes require an active licence (`BUSINESS.md`). The licence 
 
 Consolidating to four apps changed no keys, no encryption and no sync. Records of the retired imprints keep their paths and stay encrypted in the vault and in exports. The only new writes are house inscriptions created from PROLOGUE seasons and a migration log (`house/migrations`), both ordinary encrypted vault records. Each app's theme is scoped on `<body data-imprint>`, which carries only the app's id, never content.
 
+### LEDGER: money (ADR 0012)
+
+- **Amounts never leave LEDGER.** The house shows counts only (Almanac). Nothing about money reaches the lifeline, week panel or house search.
+- **No bank connections and no outside service.** The quick line is read by plain rules on the device. Learned words (`ledger/words`) are ordinary encrypted vault records.
+- **CSV imports** are read in memory on the device. The file is never stored, only the entries you choose to write.
+
 ### Local reminders and photos
 
 - **Reminders** are computed on the device from vault data (`ImprintDefinition.reminders`), never scheduled on a server and never sent anywhere. The house delivers each one once: as an in-app toast, or, when the person turned on system notifications and the app is open in the background, through the service worker's `showNotification`. Which reminders were delivered is a vault record (`house/reminders`), so it is encrypted and syncs like everything else.

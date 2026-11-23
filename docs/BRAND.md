@@ -12,9 +12,9 @@ ETERNALL is modelled on a **publishing house**. The house has one name, one prom
                     ETERNALL — a private publishing house for your life
            (the lifeline · inscriptions · chapters · almanac, on the house's own pages)
                                        │
-        ┌──────────────────┬───────────┴──────┬──────────────────┐
-     AMAZEEN            REFRAIN            KINDRED          MARGINALIA
-     journal + letters  rituals            people           reading
+        ┌──────────────┬───────────┴──┬──────────────┬──────────────┐
+     AMAZEEN         REFRAIN        KINDRED       MARGINALIA       LEDGER
+     journal+letters rituals        people        reading          money
 ```
 
 **Since ADR 0011 (2026-11-23):** four apps, each its own site. ENVOI became AMAZEEN's Letters, FOLIO and ALMANACK became house pages (Chapters, Almanac), and PROLOGUE was retired. All four names are now reserved (§2).
@@ -53,6 +53,7 @@ Accent values come from the validated palettes in `design/<imprint>.md`.
 | **REFRAIN** | *Rituals & habits* | the line that returns in a song or poem | *The lines you come back to.* | A repeat sign (𝄆 𝄇) | indigo `#3b3a8f` / `#a6a4ff` |
 | ~~PROLOGUE~~ (retired; reserved) | *Hopes for the season* | the opening of a play, before the first act | *Every season opens with a prologue.* | A proscenium arch | curtain `#8e1b2a` / `#e05a6a` |
 | **KINDRED** | *The people who matter* | of the same kind; family by blood or by choice | *Keep the people close.* | Two overlapping letterpress circles | press green `#1f5f5b` / `#6fc2b8` |
+| **LEDGER** (ADR 0012) | *Money, kept plainly* | the accountant's book where every sum is entered | *Write it in one line.* | A ruled page with a double red rule | bookkeeper green `#2f5d3a` / `#8fc79b` |
 | **MARGINALIA** | *Reading & underlines* | notes written in the margins of a book | *Everything you underlined, kept.* | A pencil bracket in a margin | marginal blue `#1d4ea8` / `#8db0ff` |
 
 ## 4. Plain words beside every name (a hard rule)
@@ -82,6 +83,7 @@ Clear space equals the height of the seal dot × 3. The seal is always vermilion
 - **REFRAIN** is a beamed pair of notes on a staff, in indigo.
 - **KINDRED** is a tabbed index card with a coral star, in press green.
 - **MARGINALIA** is a page with a red margin rule, a highlighted line and a pencil note, in marginal blue.
+- **LEDGER** is a ruled ledger page with a double red rule and figures, in bookkeeper green.
 
 Each app provides an SVG, PNGs at 180, 192 and 512 px, and a maskable 512.
 

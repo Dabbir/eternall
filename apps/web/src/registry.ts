@@ -3,11 +3,12 @@ import { amazeen } from '@eternall/amazeen';
 import { refrain } from '@eternall/refrain';
 import { kindred } from '@eternall/kindred';
 import { marginalia } from '@eternall/marginalia';
+import { ledger } from '@eternall/ledger';
 import { chaptersSection } from './house/chapters/section';
 import { almanacSection } from './house/almanac/section';
 
-/** The four apps, each its own door (docs/adr/0011). Definitions are light; UIs load lazily. */
-export const IMPRINTS: readonly ImprintDefinition[] = [amazeen, refrain, kindred, marginalia];
+/** The apps, each its own door (docs/adr/0011, 0012). Definitions are light; UIs load lazily. */
+export const IMPRINTS: readonly ImprintDefinition[] = [amazeen, refrain, kindred, marginalia, ledger];
 
 /** Parts of the house that keep records and contribute like apps do (once FOLIO and ALMANACK). */
 export const HOUSE_SECTIONS: readonly HouseSection[] = [chaptersSection, almanacSection];
