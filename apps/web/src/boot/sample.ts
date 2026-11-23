@@ -1,6 +1,6 @@
 import { addDays, addYears, createId, parseISO, type ISODate, type Tone } from '@eternall/core';
 import type { VaultRecord } from '@eternall/vault';
-import { fingerprintOf } from '@eternall/envoi/letters';
+import { fingerprintOf } from '@eternall/amazeen/imprint/letters/letters';
 
 type Seed = [age: number, dayOfYear: number, tone: Tone, title: string, body: string];
 

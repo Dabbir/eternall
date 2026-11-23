@@ -11,7 +11,7 @@ import { LifelineCanvas } from '../lifeline/LifelineCanvas';
 
 type Profile = HouseProfile;
 
-/** Southern-hemisphere time zones, for PROLOGUE's default seasons. Everything else defaults north. */
+/** Southern-hemisphere time zones, for the hemisphere of the seasons. Everything else defaults north. */
 function guessHemisphere(): 'north' | 'south' {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone ?? '';
   return /^(Australia|Antarctica|Pacific\/Auckland|America\/(Argentina|Santiago|Sao_Paulo|Montevideo|Asuncion|La_Paz|Lima)|Africa\/(Johannesburg|Maputo|Harare|Windhoek|Gaborone|Lusaka)|Indian\/(Mauritius|Reunion))/.test(tz) ? 'south' : 'north';

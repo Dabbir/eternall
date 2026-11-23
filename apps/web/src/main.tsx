@@ -13,6 +13,11 @@ import '@eternall/ui/ui.css';
 import './styles/app.css';
 import './styles/shell.css';
 import { Root } from './shell/Root';
+import { retiredDoorRedirect } from './shell/router';
+
+// Retired doors (ENVOI, FOLIO, ALMANACK, PROLOGUE) point to where their pages live now.
+const moved = retiredDoorRedirect(window.location.pathname, window.location.search);
+if (moved) window.history.replaceState(null, '', moved);
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Missing #root');

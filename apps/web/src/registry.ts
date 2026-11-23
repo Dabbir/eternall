@@ -1,15 +1,19 @@
-import type { ImprintDefinition, ImprintId } from '@eternall/core';
+import type { Contributor, HouseSection, ImprintDefinition, ImprintId } from '@eternall/core';
 import { amazeen } from '@eternall/amazeen';
-import { envoi } from '@eternall/envoi';
-import { folio } from '@eternall/folio';
-import { almanack } from '@eternall/almanack';
 import { refrain } from '@eternall/refrain';
-import { prologue } from '@eternall/prologue';
 import { kindred } from '@eternall/kindred';
 import { marginalia } from '@eternall/marginalia';
+import { chaptersSection } from './house/chapters/section';
+import { almanacSection } from './house/almanac/section';
 
-/** Every imprint the house knows, in doors-menu order. Definitions are light; UIs load lazily. */
-export const IMPRINTS: readonly ImprintDefinition[] = [amazeen, envoi, folio, almanack, refrain, prologue, kindred, marginalia];
+/** The four apps, each its own door (docs/adr/0011). Definitions are light; UIs load lazily. */
+export const IMPRINTS: readonly ImprintDefinition[] = [amazeen, refrain, kindred, marginalia];
+
+/** Parts of the house that keep records and contribute like apps do (once FOLIO and ALMANACK). */
+export const HOUSE_SECTIONS: readonly HouseSection[] = [chaptersSection, almanacSection];
 
 export const IMPRINT_IDS: readonly ImprintId[] = IMPRINTS.map((d) => d.id);
 export const imprintById = (id: ImprintId) => IMPRINTS.find((d) => d.id === id);
+
+/** Everything that contributes to the lifeline, week panel, search and almanac. */
+export const contributorsOf = (enabled: readonly ImprintDefinition[]): readonly Contributor[] => [...HOUSE_SECTIONS, ...enabled];

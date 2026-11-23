@@ -11,6 +11,7 @@ import styles from './MastheadStrip.module.css';
 const NAV = [
   { name: 'desk', label: 'Desk', to: paths.desk() },
   { name: 'shelf', label: 'Shelf', to: paths.shelf() },
+  { name: 'letters', label: 'Letters', to: '/letters' },
   { name: 'settings', label: 'Office', to: paths.settings() },
 ] as const;
 
@@ -19,7 +20,8 @@ const NAV = [
  * and this masthead strip in AMAZEEN's own voice — sections in Fraunces small caps and the press deadline.
  */
 export function MastheadStrip({ children }: { children: ReactNode }) {
-  const { route, navigate } = useRouter();
+  const { route, navigate, path } = useRouter();
+  const here = (name: string) => (name === 'letters' ? path.startsWith('/letters') : route.name === name && !path.startsWith('/letters'));
   const { data, current } = useStore();
   const now = useNow();
   useHotkeys({
@@ -47,7 +49,7 @@ export function MastheadStrip({ children }: { children: ReactNode }) {
         <ul className={styles.tabs}>
           {NAV.map((n) => (
             <li key={n.name}>
-              <Link to={n.to} className={styles.tab} aria-current={route.name === n.name ? 'page' : undefined}>
+              <Link to={n.to} className={styles.tab} aria-current={here(n.name) ? 'page' : undefined}>
                 {n.label}
               </Link>
             </li>

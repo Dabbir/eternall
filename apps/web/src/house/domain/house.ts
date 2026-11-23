@@ -113,7 +113,7 @@ export function validateInscription(
   if (body.length > LIMITS.inscriptionBody) errors.body = `Keep it under ${LIMITS.inscriptionBody.toLocaleString('en-GB')} characters.`;
   if (!isValidISO(input.date)) errors.date = 'Enter a valid date.';
   else if (profile && parseISO(input.date) < parseISO(profile.birthDate)) errors.date = 'That’s before you were born.';
-  else if (parseISO(input.date) > parseISO(today)) errors.date = 'Memories are for days already lived. Write a letter to the future in ENVOI.';
+  else if (parseISO(input.date) > parseISO(today)) errors.date = 'Memories are for days already lived. Write a letter to the future in AMAZEEN’s Letters.';
   if (!isTone(input.tone)) errors.tone = 'Choose a tone.';
   return finish(errors, () => ({ date: input.date, title: title.value, body, tone: input.tone as Tone }));
 }

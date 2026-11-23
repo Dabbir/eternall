@@ -155,7 +155,7 @@ export function validateUnderline(input: UnderlineInput): Validation<Omit<Underl
   return finish(errors, () => ({ text: text.value, locator, note, offered: input.offered }));
 }
 
-/** For ALMANACK: finished this year by kind, the most-underlined work. */
+/** For the Almanac: finished this year by kind, the most-underlined work. */
 export function marginaliaStats(works: readonly Work[], underlines: readonly Underline[], today: ISODate) {
   const year = today.slice(0, 4);
   const byKind = new Map<Kind, number>();

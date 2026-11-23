@@ -7,7 +7,7 @@ import type { ImprintId } from '@eternall/core';
  * The shell owns the first path segment: an imprint id, or a house page.
  */
 
-export const HOUSE_PAGES = ['', 'inscriptions', 'settings', 'welcome', 'begin', 'patron'] as const;
+export const HOUSE_PAGES = ['', 'inscriptions', 'chapters', 'almanac', 'settings', 'welcome', 'begin', 'patron'] as const;
 export type HousePage = (typeof HOUSE_PAGES)[number];
 
 export type Location =
@@ -24,6 +24,28 @@ export function parseLocation(pathname: string, search: string, imprints: readon
   }
   const page = (HOUSE_PAGES as readonly string[]).includes(first) ? (first as HousePage) : '';
   return { kind: 'house', page, search: params };
+}
+
+/**
+ * Doors retired in docs/adr/0011, and where their pages live now. Old links, bookmarks and installed
+ * apps keep working: `/envoi/letter/x` → `/amazeen/letters/letter/x`, `/folio/chapter/x` → `/chapters?open=x`.
+ */
+export function retiredDoorRedirect(pathname: string, search: string): string | null {
+  const segs = pathname.replace(/^\/+/, '').split('/').filter(Boolean);
+  const [door, ...rest] = segs;
+  const q = search && search !== '?' ? (search.startsWith('?') ? search : `?${search}`) : '';
+  switch (door) {
+    case 'envoi':
+      return `/amazeen/letters${rest.length ? `/${rest.join('/')}` : ''}${q}`;
+    case 'folio':
+      return rest[0] === 'chapter' && rest[1] ? `/chapters?open=${encodeURIComponent(rest[1])}` : `/chapters${q}`;
+    case 'almanack':
+      return '/almanac';
+    case 'prologue':
+      return '/inscriptions';
+    default:
+      return null;
+  }
 }
 
 /** Read straight from the location each time; equal strings compare equal, so React stays stable. */

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { addDays, type ISODate, type ImprintDefinition, type ReadContext, type Reminder } from '@eternall/core';
+import { addDays, type Contributor, type ISODate, type ReadContext, type Reminder } from '@eternall/core';
 import { useCollection } from '@eternall/vault';
 import { useToast } from '@eternall/ui';
 import { navigate } from './router';
@@ -56,7 +56,7 @@ function useVisible(): boolean {
   return visible;
 }
 
-export function useReminders(enabled: readonly ImprintDefinition[], ctx: ReadContext, system: boolean): void {
+export function useReminders(enabled: readonly Contributor[], ctx: ReadContext, system: boolean): void {
   const { col } = useCollection<ReminderLog>(REMINDER_LOG_PATH);
   const toast = useToast();
   const visible = useVisible();

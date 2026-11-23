@@ -3,7 +3,8 @@ import type { ImprintDefinition, ImprintId, ReadContext } from '@eternall/core';
 import { HouseProvider, type CapabilityId, type Capabilities, type House, type PrimaryAction } from '@eternall/kit';
 import { useToast } from '@eternall/ui';
 import { useVault, useVaultVersion } from '@eternall/vault';
-import { IMPRINTS, IMPRINT_IDS, imprintById } from '../registry';
+import { IMPRINTS, IMPRINT_IDS, contributorsOf, imprintById } from '../registry';
+import { migratePrologue } from '../house/domain/migrations';
 import { INSCRIPTION_PATH, type Inscription } from '../house/domain/house';
 import { HousePages } from '../house/HousePages';
 import { DoorsMenu } from './DoorsMenu';
@@ -43,8 +44,13 @@ export function Shell({ today: fixedToday }: { today?: string }) {
 
   const ctx: ReadContext = useMemo(() => ({ data: vault, today, profile }), [vault, today, profile, version]); // eslint-disable-line react-hooks/exhaustive-deps
   const enabled = useMemo(() => IMPRINTS.filter((d) => !settings.hidden.includes(d.id)), [settings.hidden]);
+  const contributors = useMemo(() => contributorsOf(enabled), [enabled]);
+  // Retired PROLOGUE seasons become inscriptions, once each, including ones that arrive by sync.
+  useEffect(() => {
+    migratePrologue(vault, today);
+  }, [vault, version, today]);
   const used = useMemo(() => enabled.filter((d) => d.hasData(ctx)), [enabled, ctx]);
-  useReminders(enabled, ctx, settings.systemNotifications);
+  useReminders(contributors, ctx, settings.systemNotifications);
   const current = loc.kind === 'imprint' ? imprintById(loc.id) ?? null : null;
 
   // Focus mode: an imprint used on its own, with no lifeline yet, keeps the platform out of the way.
@@ -52,11 +58,11 @@ export function Shell({ today: fixedToday }: { today?: string }) {
 
   const providers = useMemo(() => {
     const out: Partial<Record<string, unknown>> = {};
-    for (const d of enabled) Object.assign(out, d.provides?.({ ...ctx, navigate }) ?? {});
+    for (const d of contributors) Object.assign(out, d.provides?.({ ...ctx, navigate }) ?? {});
     return out;
-  }, [enabled, ctx]);
+  }, [contributors, ctx]);
 
-  const others = useCallback((self: ImprintId | null) => enabled.filter((d) => d.id !== self), [enabled]);
+  const others = useCallback((self: ImprintId | null) => contributors.filter((d) => d.id !== self), [contributors]);
 
   const makeHouse = useCallback(
     (def: ImprintDefinition | null): House => ({

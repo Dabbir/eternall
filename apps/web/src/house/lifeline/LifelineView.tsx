@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
-import { TONES, TONE_LABEL, coordOf, formatNumber, ordinal, type ContributionContext, type ImprintDefinition } from '@eternall/core';
+import { TONES, TONE_LABEL, coordOf, formatNumber, ordinal, type ContributionContext, type Contributor, type ImprintDefinition } from '@eternall/core';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
 import { DimensionToggle, Stage3D, themeColors } from '@eternall/stage';
 import { useThemeVersion } from '../../shell/theme';
@@ -30,10 +30,10 @@ function useIsNarrow(query = '(max-width: 1099px)') {
   return narrow;
 }
 
-export function LifelineView({ ctx, enabled, search }: { ctx: ContributionContext; enabled: readonly ImprintDefinition[]; search: URLSearchParams }) {
+export function LifelineView({ ctx, enabled, contributors, search }: { ctx: ContributionContext; enabled: readonly ImprintDefinition[]; contributors: readonly Contributor[]; search: URLSearchParams }) {
   const profile = ctx.profile!;
   const [settings, updateSettings] = useSettings();
-  const layers = useMemo(() => enabled.map((d) => d.lifeline?.(ctx) ?? {}), [enabled, ctx]);
+  const layers = useMemo(() => contributors.map((d) => d.lifeline?.(ctx) ?? {}), [contributors, ctx]);
   const model = useMemo(() => buildLifeline(ctx, layers)!, [ctx, layers]);
   const narrow = useIsNarrow();
   const param = Number(search.get('week'));
@@ -52,7 +52,8 @@ export function LifelineView({ ctx, enabled, search }: { ctx: ContributionContex
   const here = coordOf(model.now);
   const lived = model.now;
   const ahead = model.total - model.now;
-  const waiting = enabled.map((d) => ({ d, badge: d.badge?.(ctx) ?? null })).filter((x) => x.badge && x.d.id === 'envoi');
+  // Letters ready to open (AMAZEEN's post room) get a banner on the lifeline.
+  const waiting = enabled.map((d) => ({ d, badge: d.badge?.(ctx) ?? null })).filter((x) => x.badge && x.d.id === 'amazeen' && /letters? ready/u.test(x.badge));
   const lens = settings.lens;
   const chapters = [...new Map([...model.bands.values()].map((b) => [b.label, b.color])).entries()];
 
@@ -88,8 +89,8 @@ export function LifelineView({ ctx, enabled, search }: { ctx: ContributionContex
           <p>
             <strong>{d.name}</strong> <span className="muted">· {badge}.</span>
           </p>
-          <Button variant="accent" size="s" onClick={() => navigate(d.basePath)}>
-            Open {d.name}
+          <Button variant="accent" size="s" onClick={() => navigate(`${d.basePath}letters`)}>
+            Open the letters
           </Button>
         </aside>
       ))}
@@ -117,8 +118,8 @@ export function LifelineView({ ctx, enabled, search }: { ctx: ContributionContex
                   ))
                 ) : (
                   <li className="legend__hint">
-                    <a className="link" {...linkProps('/folio/')}>
-                      Name your chapters in FOLIO
+                    <a className="link" {...linkProps('/chapters')}>
+                      Name your chapters
                     </a>{' '}
                     to colour your lifeline.
                   </li>
@@ -158,12 +159,12 @@ export function LifelineView({ ctx, enabled, search }: { ctx: ContributionContex
         {narrow ? (
           sheetOpen && (
             <div className="week-sheet" role="dialog" aria-modal="false" aria-label="Selected week">
-              <WeekPanel index={selected} model={model} ctx={ctx} enabled={enabled} onMove={select} onClose={closeSheet} />
+              <WeekPanel index={selected} model={model} ctx={ctx} enabled={enabled} contributors={contributors} onMove={select} onClose={closeSheet} />
             </div>
           )
         ) : (
           <aside className="lifeline-view__panel">
-            <WeekPanel index={selected} model={model} ctx={ctx} enabled={enabled} onMove={select} />
+            <WeekPanel index={selected} model={model} ctx={ctx} enabled={enabled} contributors={contributors} onMove={select} />
           </aside>
         )}
       </div>

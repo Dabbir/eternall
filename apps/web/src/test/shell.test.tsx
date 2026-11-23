@@ -2,14 +2,14 @@ import { act, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { addDays, addYears, todayISO } from '@eternall/core';
 import { createMemoryStore, type VaultRecord } from '@eternall/vault';
-import { fingerprintOf } from '@eternall/envoi/letters';
+import { fingerprintOf } from '@eternall/amazeen/imprint/letters/letters';
 import { Root } from '../shell/Root';
 
 const today = todayISO();
 const stamp = new Date().toISOString();
 const rec = (key: string, value: unknown): VaultRecord => ({ key, updatedAt: stamp, deleted: false, value });
 const profile = rec('house/profile/me', { id: 'me', name: 'Ada', birthDate: addYears(today, -30), horizonYears: 90, hemisphere: 'north', createdAt: stamp });
-const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:envoi', 'intro:folio', 'intro:almanack'], hidden: [], autoLockMinutes: 15 });
+const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:amazeen', 'intro:refrain', 'intro:kindred', 'intro:marginalia'], hidden: [], autoLockMinutes: 15 });
 
 function at(path: string) {
   window.history.replaceState(null, '', path);
@@ -25,8 +25,9 @@ describe('the house', () => {
     render(<Root store={createMemoryStore()} />);
     expect(await screen.findByRole('heading', { name: /Your life,\s*in weeks/ })).toBeInTheDocument();
     const doors = screen.getByRole('navigation', { name: 'Or start with one imprint' });
-    expect(within(doors).getByText('ENVOI')).toBeInTheDocument();
-    expect(within(doors).getByText('Chapters of your life')).toBeInTheDocument();
+    expect(within(doors).getByText('KINDRED')).toBeInTheDocument();
+    expect(within(doors).getByText('The people who matter')).toBeInTheDocument();
+    expect(within(doors).queryByText('ENVOI')).not.toBeInTheDocument();
   });
 
   it('shows the lifeline and spine action once a profile exists', async () => {
@@ -50,18 +51,17 @@ describe('the house', () => {
   });
 });
 
-describe('ENVOI on its own', () => {
-  it('works standalone in focus mode, without a profile', async () => {
-    at('/envoi/');
+describe('Letters, in AMAZEEN', () => {
+  it('opens the post room without a profile or a magazine', async () => {
+    at('/amazeen/letters');
     render(<Root store={createMemoryStore([quiet])} />);
     expect(await screen.findByRole('heading', { name: /Write to the person/ })).toBeInTheDocument();
-    expect(document.querySelector('.shell')).toHaveClass('is-focus');
   });
 
   it('seals a letter and never shows its contents before the day', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);
-    at('/envoi/write');
+    at('/amazeen/letters/write');
     render(<Root store={store} />);
     await user.type(await screen.findByLabelText('Title'), 'For later');
     await user.type(screen.getByLabelText('Your letter'), 'THE SECRET BODY');
@@ -77,7 +77,7 @@ describe('ENVOI on its own', () => {
     const user = userEvent.setup();
     const l = { title: 'Hello again', body: 'You made it.', sealedOn: addDays(today, -400), opensOn: addDays(today, -1) };
     const letter = rec('envoi/letter/l1', { id: 'l1', ...l, fingerprint: await fingerprintOf(l), openedAt: null });
-    at('/envoi/letter/l1');
+    at('/amazeen/letters/letter/l1');
     render(<Root store={createMemoryStore([quiet, letter])} />);
     await user.click((await screen.findAllByRole('button', { name: 'Break the seal' })).at(-1)!);
     expect(await screen.findByText('You made it.')).toBeInTheDocument();
@@ -85,11 +85,11 @@ describe('ENVOI on its own', () => {
   });
 });
 
-describe('FOLIO and the lifeline', () => {
-  it('names a chapter and offers it to the house as a band', async () => {
+describe('Chapters, in the house', () => {
+  it('names a chapter and offers it to the lifeline as a band', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([profile, quiet]);
-    at('/folio/?new=1');
+    at('/chapters?new=1');
     render(<Root store={store} />);
     const dialog = await screen.findByRole('dialog', { name: 'New chapter' });
     await user.type(within(dialog).getByLabelText('Title'), 'Berlin');
@@ -98,6 +98,36 @@ describe('FOLIO and the lifeline', () => {
     await user.type(began, addYears(today, -5));
     await user.click(within(dialog).getByRole('button', { name: 'Add to the shelf' }));
     expect(await screen.findByRole('button', { name: /Berlin/ })).toBeInTheDocument();
+    await waitFor(() => expect(store.dump().some((r) => r.key.startsWith('folio/chapter/'))).toBe(true));
+  });
+});
+
+describe('retired doors', () => {
+  it('send old links to where their pages live now', async () => {
+    const { retiredDoorRedirect } = await import('../shell/router');
+    expect(retiredDoorRedirect('/envoi/', '')).toBe('/amazeen/letters');
+    expect(retiredDoorRedirect('/envoi/letter/l1', '')).toBe('/amazeen/letters/letter/l1');
+    expect(retiredDoorRedirect('/envoi/write', '?opensOn=2030-01-01')).toBe('/amazeen/letters/write?opensOn=2030-01-01');
+    expect(retiredDoorRedirect('/folio/chapter/c1', '')).toBe('/chapters?open=c1');
+    expect(retiredDoorRedirect('/folio/', '')).toBe('/chapters');
+    expect(retiredDoorRedirect('/almanack/', '')).toBe('/almanac');
+    expect(retiredDoorRedirect('/prologue/lobby', '')).toBe('/inscriptions');
+    expect(retiredDoorRedirect('/kindred/', '')).toBeNull();
+    expect(retiredDoorRedirect('/', '')).toBeNull();
+  });
+
+  it('keep a PROLOGUE season as an inscription', async () => {
+    const store = createMemoryStore([profile, quiet, rec('prologue/season/s1', { id: 's1', name: 'Autumn 2026', theme: 'staying close', start: '2026-09-01', end: '2026-11-30', closedAt: null, epilogue: '' })]);
+    at('/inscriptions');
+    render(<Root store={store} />);
+    expect(await screen.findByText('Autumn 2026: the season of staying close')).toBeInTheDocument();
+    expect(store.dump().some((r) => r.key === 'prologue/season/s1')).toBe(true);
+  });
+
+  it('show the Almanac as a house page', async () => {
+    at('/almanac');
+    render(<Root store={createMemoryStore([profile, quiet])} />);
+    expect(await screen.findByRole('heading', { name: 'The Almanac' })).toBeInTheDocument();
   });
 });
 
@@ -109,6 +139,7 @@ describe('command palette', () => {
     act(() => {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }));
     });
-    expect(await screen.findByRole('option', { name: /ENVOI · Letters to your future/ })).toBeInTheDocument();
+    expect(await screen.findByRole('option', { name: /KINDRED · The people who matter/ })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: /Chapters/ })).toBeInTheDocument();
   });
 });

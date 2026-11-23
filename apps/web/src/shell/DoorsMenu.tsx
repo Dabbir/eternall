@@ -23,7 +23,7 @@ export function DoorsMenu({ open, onClose, ctx, enabled, used, current, hasProfi
 
   return (
     <Dialog open={open} onClose={onClose} title="Doors" hideTitle className="doors">
-      <nav aria-label="ETERNALL imprints">
+      <nav aria-label="Doors">
         <button type="button" className={`door door--house ${current === null ? 'is-here' : ''}`} onClick={() => go('/')}>
           <span className="door__name door__name--house">Your lifeline</span>
           <span className="door__fn">{hasProfile ? 'Every week of your life, on one page' : 'See it all on one page'}</span>
@@ -35,7 +35,7 @@ export function DoorsMenu({ open, onClose, ctx, enabled, used, current, hasProfi
           <Door key={d.id} def={d} here={current?.id === d.id} badge={d.badge?.(ctx) ?? null} onOpen={() => go(d.basePath)} />
         ))}
 
-        {discover.length > 0 && <p className="doors__group">{used.length ? 'Discover' : 'Imprints'}</p>}
+        {discover.length > 0 && <p className="doors__group">{used.length ? 'Discover' : 'Apps'}</p>}
         {discover.map((d) => (
           <Door key={d.id} def={d} here={current?.id === d.id} badge={null} onOpen={() => go(d.basePath)} />
         ))}
@@ -43,6 +43,12 @@ export function DoorsMenu({ open, onClose, ctx, enabled, used, current, hasProfi
       <div className="doors__foot">
         <button type="button" className="doors__link" onClick={() => go('/inscriptions')}>
           <Icon name="book" size={16} /> Inscriptions
+        </button>
+        <button type="button" className="doors__link" onClick={() => go('/chapters')}>
+          <Icon name="grid" size={16} /> Chapters
+        </button>
+        <button type="button" className="doors__link" onClick={() => go('/almanac')}>
+          <Icon name="today" size={16} /> Almanac
         </button>
         <button type="button" className="doors__link" onClick={() => go('/settings')}>
           <Icon name="settings" size={16} /> Settings

@@ -26,7 +26,7 @@ describe('validateInscription', () => {
     const r = validateInscription({ date: '2027-01-01', title: 'x', body: '', tone: 'meh' }, profile, today);
     expect(r.ok).toBe(false);
     if (!r.ok) {
-      expect(r.errors.date).toMatch(/ENVOI/);
+      expect(r.errors.date).toMatch(/AMAZEEN/);
       expect(r.errors.tone).toBeDefined();
     }
   });

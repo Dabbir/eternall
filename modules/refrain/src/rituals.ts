@@ -152,7 +152,7 @@ export interface RitualStats {
   keptThisYear: number;
 }
 
-/** For ALMANACK: totals, the ritual kept in the largest share of its bars, notes this year. */
+/** For the Almanac: totals, the ritual kept in the largest share of its bars, notes this year. */
 export function ritualStats(rituals: readonly Ritual[], marks: readonly Mark[], today: ISODate): RitualStats {
   const kept = keySet(marks);
   let best: RitualStats['mostConstant'] = null;

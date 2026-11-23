@@ -6,7 +6,9 @@ import type { ISODate, Tone } from './tones';
  * The house knows imprints only through `ImprintDefinition`; imprints never import each other.
  */
 
-export type ImprintId = 'amazeen' | 'envoi' | 'folio' | 'almanack' | 'refrain' | 'prologue' | 'kindred' | 'marginalia';
+export type ImprintId = 'amazeen' | 'refrain' | 'kindred' | 'marginalia';
+/** Where a contribution comes from: one of the apps, or the house itself (chapters, almanac, inscriptions). */
+export type SourceId = ImprintId | 'house';
 
 export interface HouseProfile {
   id: 'me';
@@ -49,7 +51,7 @@ export interface LifelineLayer {
 
 /** One line in the house week panel. */
 export interface WeekLine {
-  imprint: ImprintId;
+  imprint: SourceId;
   text: string;
   href: string;
   tone?: Tone;
@@ -58,7 +60,7 @@ export interface WeekLine {
 
 /** Something remembered on a date, used for echoes and search across imprints. */
 export interface Memory {
-  imprint: ImprintId | 'house';
+  imprint: SourceId;
   id: string;
   date: ISODate;
   title: string;
@@ -68,14 +70,14 @@ export interface Memory {
 }
 
 export interface AlmanacFact {
-  imprint: ImprintId;
+  imprint: SourceId;
   label: string;
   value: string;
   note?: string;
 }
 
 export interface RedLetterDay {
-  imprint: ImprintId;
+  imprint: SourceId;
   date: ISODate;
   label: string;
   href: string;
@@ -86,7 +88,7 @@ export interface RedLetterDay {
  * Delivered by the house once per `key`, only while the app is open; nothing comes from a server.
  */
 export interface Reminder {
-  imprint: ImprintId;
+  imprint: SourceId;
   /** Stable and unique per occasion, e.g. "kindred_<person>_birthday_2026-12-01_0". */
   key: string;
   /** The day it is for; reminders older than a week are never delivered late. */
@@ -102,9 +104,24 @@ export interface ImprintAppProps {
   search: URLSearchParams;
 }
 
-export interface ImprintDefinition {
+/** What a contributor (an app, or a house section) may add to the shared views. All optional. */
+export interface Contributions {
+  lifeline?(ctx: ContributionContext): LifelineLayer;
+  weekLines?(ctx: ContributionContext, start: ISODate, end: ISODate): WeekLine[];
+  memories?(ctx: ReadContext): Memory[];
+  almanacFacts?(ctx: ReadContext): AlmanacFact[];
+  redLetterDays?(ctx: ReadContext): RedLetterDay[];
+  /** A short status for the doors menu, e.g. "1 ready". */
+  badge?(ctx: ReadContext): string | null;
+  /** Local reminders due today (empty unless the person opted in). */
+  reminders?(ctx: ReadContext): Reminder[];
+  /** Cross-imprint capabilities this imprint offers (typed in @eternall/kit). */
+  provides?(ctx: ProvideContext): Record<string, unknown>;
+}
+
+export interface ImprintDefinition extends Contributions {
   id: ImprintId;
-  /** Wordmark, e.g. "ENVOI". */
+  /** Wordmark, e.g. "KINDRED". */
   name: string;
   /** Plain function line, always shown beside the name (docs/BRAND.md §4). */
   functionLine: string;
@@ -119,18 +136,25 @@ export interface ImprintDefinition {
   collections: readonly string[];
   /** Whether this imprint holds any of the person's records. */
   hasData(ctx: ReadContext): boolean;
-  lifeline?(ctx: ContributionContext): LifelineLayer;
-  weekLines?(ctx: ContributionContext, start: ISODate, end: ISODate): WeekLine[];
-  memories?(ctx: ReadContext): Memory[];
-  almanacFacts?(ctx: ReadContext): AlmanacFact[];
-  redLetterDays?(ctx: ReadContext): RedLetterDay[];
-  /** A short status for the doors menu, e.g. "1 ready". */
-  badge?(ctx: ReadContext): string | null;
-  /** Local reminders due today (empty unless the person opted in). */
-  reminders?(ctx: ReadContext): Reminder[];
-  /** Cross-imprint capabilities this imprint offers (typed in @eternall/kit). */
-  provides?(ctx: ProvideContext): Record<string, unknown>;
 }
+
+/**
+ * A part of the house that keeps its own records and contributes like an app does, but has no
+ * door of its own (Chapters and Almanac live on house pages: docs/adr/0011).
+ */
+export interface HouseSection extends Contributions {
+  id: 'chapters' | 'almanac';
+  name: string;
+  functionLine: string;
+  /** The house page, e.g. "/chapters". */
+  href: string;
+  accent: { light: string; dark: string };
+  collections: readonly string[];
+  hasData(ctx: ReadContext): boolean;
+}
+
+/** Anything that contributes to the lifeline, week panel, search and almanac. */
+export type Contributor = ImprintDefinition | HouseSection;
 
 export interface ProvideContext extends ReadContext {
   navigate(href: string): void;

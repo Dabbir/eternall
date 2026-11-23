@@ -50,7 +50,7 @@ export interface House {
   profile: HouseProfile | null;
   /** The imprint currently hosting this tree, or null in the house. */
   imprint: ImprintId | null;
-  /** Navigate to an absolute in-app href, e.g. "/envoi/letter/abc" or "/". */
+  /** Navigate to an absolute in-app href, e.g. "/amazeen/letters" or "/". */
   navigate(href: string, options?: { replace?: boolean }): void;
   /** Absolute href for a path inside the current imprint. */
   href(subpath: string): string;
@@ -58,7 +58,7 @@ export interface House {
   setPrimaryAction(action: PrimaryAction | null): void;
   capability<K extends CapabilityId>(id: K): Capabilities[K] | null;
   isEnabled(id: ImprintId): boolean;
-  /** Read-only aggregates across the other enabled imprints (for ALMANACK and search). */
+  /** Read-only aggregates across the other enabled imprints (for the Almanac and search). */
   gather: {
     memories(): Memory[];
     facts(): AlmanacFact[];

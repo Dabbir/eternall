@@ -9,7 +9,7 @@ import {
   parseISO,
   weekRange,
   type ContributionContext,
-  type ImprintDefinition,
+  type ImprintDefinition, type Contributor,
 } from '@eternall/core';
 import { Button, IconButton } from '@eternall/ui';
 import { INSCRIPTION_PATH, type Inscription } from '../domain/house';
@@ -21,11 +21,12 @@ interface Props {
   model: LifelineModel;
   ctx: ContributionContext;
   enabled: readonly ImprintDefinition[];
+  contributors: readonly Contributor[];
   onMove(i: number): void;
   onClose?(): void;
 }
 
-export function WeekPanel({ index, model, ctx, enabled, onMove, onClose }: Props) {
+export function WeekPanel({ index, model, ctx, enabled, contributors, onMove, onClose }: Props) {
   const profile = ctx.profile!;
   const c = coordOf(index);
   const { start, end } = weekRange(profile.birthDate, c);
@@ -35,14 +36,14 @@ export function WeekPanel({ index, model, ctx, enabled, onMove, onClose }: Props
     .all()
     .filter((i) => i.date >= start && i.date <= end)
     .sort((a, b) => a.date.localeCompare(b.date));
-  const lines = enabled.flatMap((d) => (d.weekLines?.(ctx, start, end) ?? []).map((l) => ({ ...l, def: d })));
+  const lines = contributors.flatMap((d) => (d.weekLines?.(ctx, start, end) ?? []).map((l) => ({ ...l, def: d })));
   const total = model.total;
-  const envoiOn = enabled.some((d) => d.id === 'envoi');
+  const lettersOn = enabled.some((d) => d.id === 'amazeen');
 
   // A future letter opens on the first day of the week, or tomorrow if this is the current week.
   const tomorrow = addDays(ctx.today, 1);
   const letterDate = parseISO(start) >= parseISO(tomorrow) ? start : tomorrow;
-  const canWrite = envoiOn && parseISO(letterDate) <= parseISO(end);
+  const canWrite = lettersOn && parseISO(letterDate) <= parseISO(end);
   const inscribeDate = when === 'now' ? ctx.today : start;
 
   return (
@@ -123,7 +124,7 @@ export function WeekPanel({ index, model, ctx, enabled, onMove, onClose }: Props
           </Button>
         )}
         {when !== 'lived' && canWrite && (
-          <Button variant={when === 'ahead' ? 'accent' : 'ghost'} icon="seal" onClick={() => navigate(`/envoi/write?opensOn=${letterDate}`)}>
+          <Button variant={when === 'ahead' ? 'accent' : 'ghost'} icon="seal" onClick={() => navigate(`/amazeen/letters/write?opensOn=${letterDate}`)}>
             {when === 'ahead' ? 'Write a letter for this week' : 'Write to the future'}
           </Button>
         )}

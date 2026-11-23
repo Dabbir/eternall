@@ -16,7 +16,7 @@ const Settings = lazy(() => import('./features/settings/Settings'));
 const Privacy = lazy(() => import('./features/Privacy'));
 
 /** AMAZEEN's own spine, unless the host supplied another frame. */
-function Frame({ children }: { children: ReactNode }) {
+export function Frame({ children }: { children: ReactNode }) {
   const slot = useContext(ShellSlot);
   return slot ? createElement(slot, null, children) : <AppShell>{children}</AppShell>;
 }
