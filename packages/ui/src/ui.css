@@ -18,6 +18,7 @@
   font-style: var(--btn-style, normal);
   letter-spacing: var(--btn-tracking, -0.005em);
   text-transform: var(--btn-case, none);
+  font-variant-caps: var(--btn-caps, normal);
   white-space: nowrap;
   border: var(--btn-border-w, 1px) solid transparent;
   transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2), border-color var(--dur-2),
@@ -61,7 +62,7 @@
 /* ---------- Fields ---------- */
 .field { display: grid; gap: 6px; }
 .field__top { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
-.field__label { font-family: var(--label-font, inherit); font-size: var(--label-size, var(--fs-small)); font-weight: var(--label-weight, 500); letter-spacing: var(--label-tracking, normal); text-transform: var(--label-case, none); color: var(--ink-2); }
+.field__label { font-family: var(--label-font, inherit); font-size: var(--label-size, var(--fs-small)); font-weight: var(--label-weight, 500); letter-spacing: var(--label-tracking, normal); text-transform: var(--label-case, none); font-variant-caps: var(--label-caps, normal); color: var(--ink-2); }
 .field__count { font-size: var(--fs-micro); color: var(--ink-3); opacity: 0; transition: opacity var(--dur-2); }
 .field:focus-within .field__count, .field__count.is-near { opacity: 1; }
 .field__count.is-near { color: var(--warn); }
@@ -133,7 +134,7 @@ input[type='date']::-webkit-calendar-picker-indicator { opacity: 0.55; cursor: p
   display: grid; place-items: center;
   padding: 6px 14px; min-height: 32px;
   font-family: var(--seg-font, inherit); font-size: var(--seg-size, 0.8125rem); font-weight: 500; color: var(--ink-3);
-  letter-spacing: var(--seg-tracking, normal); text-transform: var(--seg-case, none);
+  letter-spacing: var(--seg-tracking, normal); text-transform: var(--seg-case, none); font-variant-caps: var(--seg-caps, normal);
   cursor: pointer; border-radius: var(--seg-radius, 999px);
   transition: color var(--dur-2);
 }
@@ -169,7 +170,7 @@ html.has-modal { overflow: hidden; }
   padding: 22px 24px 8px;
 }
 .dialog__head.is-hidden { position: absolute; right: 8px; top: 8px; padding: 0; z-index: 2; }
-.dialog__title { font-family: var(--dialog-title-font, var(--font-display)); font-size: var(--dialog-title-size, var(--fs-d3)); font-style: var(--dialog-title-style, normal); letter-spacing: var(--dialog-title-tracking, -0.015em); text-transform: var(--dialog-title-case, none); margin-top: 4px; }
+.dialog__title { font-family: var(--dialog-title-font, var(--font-display)); font-size: var(--dialog-title-size, var(--fs-d3)); font-style: var(--dialog-title-style, normal); letter-spacing: var(--dialog-title-tracking, -0.015em); text-transform: var(--dialog-title-case, none); font-variant-caps: var(--dialog-title-caps, normal); margin-top: 4px; }
 .dialog__close { margin: -4px -8px 0 0; }
 .dialog__body { padding: 12px 24px 24px; overflow-y: auto; overscroll-behavior: contain; }
 .dialog__foot {
@@ -295,7 +296,7 @@ html.has-modal { overflow: hidden; }
 
 /* ---------- dimension toggle (Flat | 3D) and the 3D stage ---------- */
 .dimension-toggle { display: inline-flex; padding: 3px; border-radius: var(--toggle-radius, 999px); border: 1px solid var(--rule-strong); background: var(--toggle-bg, var(--paper-sunk)); }
-.dimension-toggle button { padding: 5px 12px; border-radius: var(--toggle-radius, 999px); font-family: var(--toggle-font, inherit); font-size: var(--toggle-size, 0.8125rem); font-weight: 500; letter-spacing: var(--toggle-tracking, normal); text-transform: var(--toggle-case, none); color: var(--ink-3); transition: background-color 200ms, color 200ms; }
+.dimension-toggle button { padding: 5px 12px; border-radius: var(--toggle-radius, 999px); font-family: var(--toggle-font, inherit); font-size: var(--toggle-size, 0.8125rem); font-weight: 500; letter-spacing: var(--toggle-tracking, normal); text-transform: var(--toggle-case, none); font-variant-caps: var(--toggle-caps, normal); color: var(--ink-3); transition: background-color 200ms, color 200ms; }
 .dimension-toggle button.is-on { background: var(--toggle-on-bg, var(--ink)); color: var(--toggle-on-fg, var(--paper)); }
 .dimension-toggle button:disabled { opacity: 0.45; cursor: not-allowed; }
 .stage3d { position: relative; width: 100%; overflow: hidden; border-radius: var(--radius-m); }

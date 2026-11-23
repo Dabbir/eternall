@@ -1,0 +1,180 @@
+/* ─────────────────────────────────────────────────────────────
+   KINDRED · its own kit (docs/adr/0011): the cabinet face, and every shared
+   primitive re-cut as letterpress on card stock. Nothing here looks like the house.
+   ───────────────────────────────────────────────────────────── */
+[data-imprint='kindred'] {
+  /* Letterpress blocks: square corners, small caps, a pressed-in shadow. */
+  --btn-radius: 2px;
+  --btn-h: 42px;
+  --btn-h-s: 32px;
+  --btn-pad: 0 20px;
+  --btn-font: var(--font-ui);
+  --btn-weight: 600;
+  --btn-size: 0.9375rem;
+  --btn-size-s: 0.875rem;
+  --btn-tracking: 0.08em;
+  --btn-caps: all-small-caps;
+  --btn-press: translateY(1px);
+  --btn-primary-bg: var(--accent);
+  --btn-primary-fg: var(--on-accent);
+  --btn-primary-hover: var(--accent-deep);
+  --btn-accent-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.18);
+  --icon-btn-radius: 2px;
+  /* Fields: a ruled line on card stock. */
+  --field-radius: 0;
+  --field-bg: transparent;
+  --field-pad: 10px 2px;
+  --field-focus: 0 2px 0 0 var(--accent);
+  --label-size: 0.8125rem;
+  --label-weight: 600;
+  --label-tracking: 0.12em;
+  --label-caps: all-small-caps;
+  /* Dialogs are cards. */
+  --dialog-radius: 3px;
+  --dialog-bg: var(--card);
+  --dialog-shadow: 0 1px 0 var(--card-edge), 8px 10px 0 -2px color-mix(in srgb, var(--ink) 14%, transparent), 0 30px 60px -30px rgb(0 0 0 / 0.5);
+  --dialog-title-font: var(--font-display);
+  --dialog-title-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+  --dialog-title-tracking: 0;
+  --dialog-foot-rule: 1px dashed var(--rule-strong);
+  --dialog-foot-bg: transparent;
+  --veil-blur: 0px;
+  /* Toasts: a calling card slipped onto the desk. */
+  --toast-radius: 2px;
+  --toast-bg: var(--card);
+  --toast-fg: var(--ink);
+  --toast-border: 1px solid var(--rule-strong);
+  --toast-shadow: 4px 5px 0 -1px color-mix(in srgb, var(--ink) 16%, transparent);
+  --toast-pad: 12px 10px 12px 18px;
+  /* Segmented and the Flat/3D toggle become index tabs. */
+  --seg-radius: 2px 2px 0 0;
+  --seg-bg: transparent;
+  --seg-thumb: var(--card);
+  --seg-thumb-shadow: inset 0 2px 0 var(--accent);
+  --seg-size: 0.875rem;
+  --seg-tracking: 0.08em;
+  --seg-caps: all-small-caps;
+  --toggle-radius: 2px;
+  --toggle-bg: transparent;
+  --toggle-on-bg: var(--accent);
+  --toggle-on-fg: var(--on-accent);
+  --toggle-size: 0.875rem;
+  --toggle-tracking: 0.08em;
+  --toggle-caps: all-small-caps;
+  --focus: var(--accent);
+  --selection: color-mix(in srgb, var(--accent-2) 30%, transparent);
+  --on-selection: var(--ink);
+}
+[data-imprint='kindred'] .btn--primary,
+[data-imprint='kindred'] .btn--accent { box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.2), inset 0 1px 0 rgb(255 255 255 / 0.12); }
+[data-imprint='kindred'] .btn--ghost { background: var(--card); border: 1.5px solid var(--ink); box-shadow: 2px 2px 0 var(--rule-strong); }
+[data-imprint='kindred'] .btn--ghost:hover:not(:disabled) { background: var(--card); box-shadow: 1px 1px 0 var(--rule-strong); transform: translate(1px, 1px); }
+[data-imprint='kindred'] .btn--quiet { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+[data-imprint='kindred'] .btn--quiet:hover:not(:disabled) { background: transparent; color: var(--accent); }
+[data-imprint='kindred'] .input { border-width: 0 0 1.5px; border-color: var(--rule-strong); }
+[data-imprint='kindred'] .input:focus { border-color: var(--accent); }
+[data-imprint='kindred'] .dialog { border: 1px solid var(--card-edge); }
+[data-imprint='kindred'] .dialog__head { border-bottom: 2px solid var(--accent-2); margin: 0 24px; padding-left: 0; padding-right: 0; }
+[data-imprint='kindred'] .dialog .eyebrow { font-family: var(--font-ui); letter-spacing: 0.16em; color: var(--accent-2); font-weight: 600; }
+[data-imprint='kindred'] .toast { border-left: 5px solid var(--accent); }
+[data-imprint='kindred'] .toast__dot { display: none; }
+[data-imprint='kindred'] .segmented { border: 0; border-bottom: 1px solid var(--rule-strong); padding: 0; }
+[data-imprint='kindred'] .segmented__thumb { top: 0; bottom: -1px; left: 0; width: calc(100% / var(--n)); border: 1px solid var(--rule-strong); border-bottom-color: var(--card); }
+[data-imprint='kindred'] .dimension-toggle { border-color: var(--ink); padding: 2px; }
+
+/* ---------- the cabinet face ---------- */
+.kc { min-height: 100dvh; display: flex; flex-direction: column; }
+.kc-cabinet {
+  position: sticky; top: 0; z-index: 30;
+  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
+  padding: 12px var(--gutter);
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 0.06), transparent 40%),
+    color-mix(in srgb, var(--paper-sunk) 70%, var(--brass) 8%);
+  border-bottom: 1px solid var(--rule-strong);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.4) inset, 0 6px 14px -12px rgb(0 0 0 / 0.5);
+}
+.kc-exit {
+  justify-self: start; display: inline-flex; align-items: center; gap: 8px;
+  font-size: 0.8125rem; color: var(--ink-2); padding: 8px 2px;
+  text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--rule-strong);
+}
+.kc-exit:hover { color: var(--ink); text-decoration-color: currentColor; }
+.kc-exit__arrow { font-size: 1rem; line-height: 1; }
+.kc-exit__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); }
+
+/* The brass label holder, screws and all, with the name letterpressed onto the card behind it. */
+.kc-plate {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 6px 12px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--brass) 70%, #fff 30%), var(--brass) 55%, color-mix(in srgb, var(--brass) 75%, #000 25%));
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.5) inset, 0 -1px 0 rgb(0 0 0 / 0.25) inset, 0 2px 4px -1px rgb(0 0 0 / 0.35);
+  text-decoration: none;
+}
+.kc-plate__screw { width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff8 0, transparent 45%), color-mix(in srgb, var(--brass) 60%, #000 40%); box-shadow: 0 0 0 1px rgb(0 0 0 / 0.2); }
+.kc-plate__text {
+  display: grid; justify-items: center; gap: 1px; padding: 4px 14px;
+  background: var(--card); box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.25);
+}
+.kc-plate__name { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.22em; color: var(--ink); text-shadow: 0 1px 0 rgb(255 255 255 / 0.6), 0 -1px 0 rgb(0 0 0 / 0.14); }
+.kc-plate__fn { font-size: 0.8125rem; letter-spacing: 0.1em; font-variant-caps: all-small-caps; color: var(--ink-3); }
+.kc-tools { justify-self: end; display: flex; align-items: center; gap: 6px; }
+.kc-tool { display: grid; place-items: center; width: 38px; height: 38px; color: var(--ink-2); border: 1px solid transparent; border-radius: 2px; }
+.kc-tool:hover { color: var(--ink); border-color: var(--rule-strong); background: var(--card); }
+.kc-press {
+  height: 40px; padding: 0 18px; border-radius: 2px;
+  font-size: 1rem; font-weight: 600; letter-spacing: 0.06em; font-variant-caps: all-small-caps;
+  background: var(--accent); color: var(--on-accent);
+  box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.22), inset 0 1px 0 rgb(255 255 255 / 0.14);
+  transition: transform 120ms var(--ease-out), box-shadow 120ms;
+}
+.kc-press { white-space: nowrap; }
+.kc-press:hover { background: var(--accent-deep); }
+.kc-press:active { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.22), inset 0 2px 3px rgb(0 0 0 / 0.25); }
+
+/* Index tabs standing up from the top of the drawer. */
+.kc-tabs { display: flex; gap: 4px; padding: 18px var(--gutter) 0; max-width: 1200px; width: 100%; margin: 0 auto; border-bottom: 1px solid var(--rule-strong); }
+.kc-tab {
+  position: relative; top: 1px; padding: 8px 20px 7px;
+  font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.06em; font-variant-caps: all-small-caps; text-decoration: none; color: var(--ink-3);
+  background: var(--paper-sunk); border: 1px solid var(--rule-strong); border-radius: 6px 6px 0 0;
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 100%, 0 100%);
+}
+.kc-tab:hover { color: var(--ink); }
+.kc-tab[aria-current='page'] { background: var(--card); color: var(--ink); border-bottom-color: var(--card); box-shadow: inset 0 3px 0 var(--accent); }
+.kc-body { flex: 1; }
+
+/* The house's first-contact note, set as a slip of card. */
+[data-imprint='kindred'] .imprint-intro { border: 1px solid var(--card-edge); background: var(--card); border-left: 5px solid var(--accent-2); border-radius: 2px; font-family: var(--font-ui); }
+[data-imprint='kindred'] .imprint-intro strong { font-family: var(--font-display); letter-spacing: 0.18em; }
+
+/* KINDRED's own lock: a card behind a brass plate. */
+[data-imprint='kindred'] .unlock__card { background: var(--card); border-radius: 3px; border: 1px solid var(--card-edge); box-shadow: 8px 10px 0 -2px color-mix(in srgb, var(--ink) 14%, transparent); }
+[data-imprint='kindred'] .unlock__app { padding: 6px 16px; background: linear-gradient(180deg, color-mix(in srgb, var(--brass) 70%, #fff 30%), var(--brass)); border-radius: 3px; }
+[data-imprint='kindred'] .unlock__app-name { color: #1f2422; letter-spacing: 0.22em; }
+[data-imprint='kindred'] .unlock__app-fn { color: #3a3226; font-size: 0.8125rem; letter-spacing: 0.1em; font-variant-caps: all-small-caps; }
+[data-imprint='kindred'] .unlock__title { font-family: var(--font-display); }
+
+@media (max-width: 720px) {
+  .kc-cabinet { grid-template-columns: auto 1fr auto; gap: 10px; padding: 10px 14px; }
+  .kc-plate { justify-self: center; padding: 4px 8px; gap: 8px; }
+  .kc-plate__fn { display: none; }
+  .kc-exit { font-size: 0.75rem; gap: 6px; }
+  .kc-press { padding: 0 12px; font-size: 0.9375rem; }
+  .kc-tabs { padding-top: 12px; }
+}
+@media (max-width: 460px) {
+  .kc-cabinet { gap: 6px; padding: 8px 10px; }
+  .kc-exit { font-size: 0; gap: 0; padding: 8px 4px; }
+  .kc-exit__arrow { font-size: 1.2rem; }
+  .kc-plate { padding: 3px 6px; gap: 6px; }
+  .kc-plate__text { padding: 3px 8px; }
+  .kc-plate__name { font-size: 0.875rem; letter-spacing: 0.14em; }
+  .kc-tools { gap: 0; }
+  .kc-tool { width: 34px; }
+  .kc-press { height: 36px; padding: 0 10px; font-size: 0.875rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .kc-press { transition: none; }
+}

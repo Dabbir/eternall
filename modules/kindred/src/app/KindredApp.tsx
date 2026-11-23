@@ -3,6 +3,7 @@ import '@fontsource/work-sans/latin-400.css';
 import '@fontsource/work-sans/latin-400-italic.css';
 import '@fontsource/work-sans/latin-600.css';
 import '../theme/kindred.css';
+import '../theme/kindred.kit.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { diffDays, formatLong, formatMedium, type ImprintAppProps } from '@eternall/core';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
@@ -11,13 +12,10 @@ import { DimensionToggle, Stage3D, themeColors } from '@eternall/stage';
 import { useCollection } from '@eternall/vault';
 import { CLOSENESS_LABEL, DEFAULT_PREF, PERSON_PATH, PHOTO_PATH, PREF_PATH, REMIND, REMIND_LABEL, SEEN_PATH, constellation, drawers, lastSeen, nextOccurrence, seenId, sinceLabel, upcomingDates, type KindredPref, type Person, type Photo, type Remind, type Seen, type Star } from '../people';
 import { PersonEditor } from './PersonEditor';
+import { Chrome } from './Chrome';
 import type { SkyProps } from './constellationScene';
 
 type View = 'file' | 'sky';
-const VIEWS = [
-  { value: 'file', label: 'Card file' },
-  { value: 'sky', label: 'Constellation' },
-] as const;
 
 export default function KindredApp({ path, search }: ImprintAppProps) {
   const house = useHouse();
@@ -25,12 +23,15 @@ export default function KindredApp({ path, search }: ImprintAppProps) {
   const [editing, setEditing] = useState<null | { existing?: Person }>(search.get('new') ? {} : null);
   const m = /^\/person\/([A-Za-z0-9_-]+)$/.exec(path);
   const open = m ? people.find((p) => p.id === m[1]) : undefined;
+  const view: View = path === '/sky' ? 'sky' : 'file';
   usePrimaryAction({ label: 'Add a person', run: () => setEditing({}) });
   return (
-    <div className="kd">
-      {open ? <PersonPage person={open} onEdit={() => setEditing({ existing: open })} /> : m ? <p className="kd-missing">That card isn’t in the file. <button type="button" className="kd-link" onClick={() => house.navigate(house.href('/'))}>Back to the card file</button></p> : <Home onNew={() => setEditing({})} />}
-      {editing && <PersonEditor key={editing.existing?.id ?? 'new'} existing={editing.existing} drawers={[...new Set(people.map((p) => p.drawer).filter(Boolean))].sort()} onClose={() => setEditing(null)} />}
-    </div>
+    <Chrome here={m ? 'person' : view}>
+      <div className="kd">
+        {open ? <PersonPage person={open} onEdit={() => setEditing({ existing: open })} /> : m ? <p className="kd-missing">That card isn’t in the file. <button type="button" className="kd-link" onClick={() => house.navigate(house.href('/'))}>Back to the card file</button></p> : <Home view={view} onNew={() => setEditing({})} />}
+        {editing && <PersonEditor key={editing.existing?.id ?? 'new'} existing={editing.existing} drawers={[...new Set(people.map((p) => p.drawer).filter(Boolean))].sort()} onClose={() => setEditing(null)} />}
+      </div>
+    </Chrome>
   );
 }
 
@@ -46,11 +47,10 @@ function useSeen() {
   return { seen: items, col, sawToday };
 }
 
-function Home({ onNew }: { onNew(): void }) {
+function Home({ view, onNew }: { view: View; onNew(): void }) {
   const house = useHouse();
   const { items: people } = useCollection<Person>(PERSON_PATH);
   const { seen } = useSeen();
-  const [view, setView] = useState<View>(() => (matchMedia('(prefers-color-scheme: dark)').matches && document.documentElement.dataset.theme !== 'light' ? 'sky' : 'file'));
   const upcoming = upcomingDates(people, house.today, 30);
   const open = (id: string) => house.navigate(house.href(`/person/${id}`));
   const hasDates = people.some((p) => p.dates.length > 0);
@@ -58,11 +58,13 @@ function Home({ onNew }: { onNew(): void }) {
   return (
     <>
       <header className="kd-head">
-        <div>
-          <p className="kd-eyebrow">KINDRED · The people who matter</p>
-          <h1 className="kd-title">Keep the people close.</h1>
-        </div>
-        {people.length > 0 && <Segmented label="View" options={VIEWS} value={view} onChange={(v) => setView(v as View)} />}
+        <h1 className="kd-title">Keep the people close.</h1>
+        {people.length > 0 && (
+          <p className="kd-count">
+            {people.length} {people.length === 1 ? 'card' : 'cards'} in the file
+            {view === 'sky' ? ' · nearer the centre means seen more recently' : ''}
+          </p>
+        )}
       </header>
       {upcoming.length > 0 && (
         <ul className="kd-dates" aria-label="Dates coming up">
