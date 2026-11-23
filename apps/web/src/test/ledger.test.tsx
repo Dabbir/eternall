@@ -77,6 +77,23 @@ describe('LEDGER', () => {
     expect(within(row).getByText('over by 5.000')).toBeInTheDocument();
   });
 
+  it('the thumb index opens every month of the year, and The month leads back from Budget', async () => {
+    const user = userEvent.setup();
+    const store = createMemoryStore([quiet]);
+    at(`/ledger/budget/${month}`);
+    render(<Root store={store} />);
+    const index = await screen.findByRole('list', { name: `Months of ${month.slice(0, 4)}` });
+    // all twelve notches are links, months still to come included
+    expect(within(index).getAllByRole('link')).toHaveLength(12);
+    await user.click(screen.getByRole('link', { name: 'The month' }));
+    expect(await screen.findByLabelText('Write one line')).toBeInTheDocument();
+    expect(window.location.pathname).toBe(`/ledger/${month}`);
+    const december = `${month.slice(0, 4)}-12`;
+    await user.click(within(index).getAllByRole('link')[11]!);
+    expect(window.location.pathname).toBe(`/ledger/${december}`);
+    if (december > month) expect(screen.getByText(/hasn’t begun/)).toBeInTheDocument();
+  });
+
   it('sets a limit by typing it the short way', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);

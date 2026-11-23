@@ -62,6 +62,7 @@
 .lg-monthnav__btn { align-self: center; font-family: var(--font-mono); font-size: 1.6rem; line-height: 1; width: 40px; height: 40px; border: 1px solid var(--rule-strong); color: var(--ink-2); }
 .lg-monthnav__btn:hover:not(:disabled) { color: var(--accent); }
 .lg-monthnav__btn:disabled { opacity: 0.3; cursor: default; }
+.lg-ahead { order: 9; flex-basis: 100%; margin: 0; }
 
 /* ---------- the quick line: the front door ---------- */
 .lq { margin: 4px 0 26px; }
@@ -181,7 +182,7 @@
   .lg-map .check { grid-column: auto; }
   .lq-save { padding: 0 12px; }
   /* beside the thumb index the page is narrow: keep ‹ month › on one line, tighten the ruled page */
-  .lg-monthnav { flex-wrap: nowrap; gap: 8px; }
+  .lg-monthnav { gap: 8px; }
   .lg-month { font-size: 1.6rem; white-space: nowrap; }
   .lg-monthnav__btn { width: 34px; height: 34px; font-size: 1.3rem; flex: none; }
   .lg-col-date { width: 2.9rem; font-size: 0.875rem; }

@@ -62,9 +62,10 @@ function MonthNav({ month, base }: { month: string; base: string }) {
         ‹
       </button>
       <h1 className="lg-month">{monthLabel(month)}</h1>
-      <button type="button" className="lg-monthnav__btn" disabled={month >= current} onClick={() => house.navigate(house.href(`${base}/${addMonths(month, 1)}`))} aria-label={`Next month, ${monthLabel(addMonths(month, 1))}`}>
+      <button type="button" className="lg-monthnav__btn" disabled={month >= `${current.slice(0, 4)}-12`} onClick={() => house.navigate(house.href(`${base}/${addMonths(month, 1)}`))} aria-label={`Next month, ${monthLabel(addMonths(month, 1))}`}>
         ›
       </button>
+      {month > current && <p className="lg-note lg-ahead">{monthLabel(month).split(' ')[0]} hasn’t begun. Lines you write go on today’s date; its budget can be set now.</p>}
       {month !== current && (
         <button type="button" className="lg-link" onClick={() => house.navigate(house.href(`${base}/${current}`))}>
           Back to this month

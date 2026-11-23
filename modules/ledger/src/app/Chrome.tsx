@@ -11,8 +11,8 @@ const LETTERS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 /**
  * LEDGER's own frame (docs/design/ledger.md §Chrome; ADR 0011/0012): a ledger's **thumb index**
  * cut into the right edge of the page. The clasp closes the book (back to the house), the year
- * sits at the top of the index, the twelve months are notches you jump to in one tap, then the
- * Budget and Your words tabs, and at the foot search, the lock and "Add an entry". The page itself
+ * sits at the top of the index, the twelve months are notches you jump to in one tap (the months
+ * still to come open too, to plan their budget), then the pages: The month, Budget and Your words; and at the foot search, the lock and "Add an entry". The page itself
  * carries only a running head with the name and function line.
  */
 export function Chrome({ here, month, children }: { here: LedgerPlace; month: string; children: ReactNode }) {
@@ -52,11 +52,11 @@ export function Chrome({ here, month, children }: { here: LedgerPlace; month: st
 
         <div className="lr-year">
           <button type="button" className="lr-year__btn" onClick={() => jumpYear(year - 1)} aria-label={`Previous year, ${year - 1}`}>
-            ‹
+            <span aria-hidden="true">‹</span>
           </button>
           <span className="lr-year__num lg-num">{year}</span>
           <button type="button" className="lr-year__btn" disabled={year >= thisYear} onClick={() => jumpYear(year + 1)} aria-label={`Next year, ${year + 1}`}>
-            ›
+            <span aria-hidden="true">›</span>
           </button>
         </div>
 
@@ -67,21 +67,18 @@ export function Chrome({ here, month, children }: { here: LedgerPlace; month: st
             const on = (here === 'month' || here === 'budget') && key === month;
             return (
               <li key={key}>
-                {future ? (
-                  <span className="lr-thumb is-future" aria-hidden="true">
-                    {letter}
-                  </span>
-                ) : (
-                  <a className="lr-thumb" href={house.href(`${base}/${key}`)} onClick={go(`${base}/${key}`)} aria-current={on ? 'page' : undefined} aria-label={monthLabel(key)}>
-                    {letter}
-                  </a>
-                )}
+                <a className={future ? 'lr-thumb is-future' : 'lr-thumb'} href={house.href(`${base}/${key}`)} onClick={go(`${base}/${key}`)} aria-current={on ? 'page' : undefined} aria-label={future ? `${monthLabel(key)}, not begun` : monthLabel(key)}>
+                  {letter}
+                </a>
               </li>
             );
           })}
         </ol>
 
         <div className="lr-tabs">
+          <a className="lr-tab" href={house.href(`/${month}`)} onClick={go(`/${month}`)} aria-current={here === 'month' ? 'page' : undefined}>
+            <span className="lr-vert">The month</span>
+          </a>
           <a className="lr-tab" href={house.href(`/budget/${month}`)} onClick={go(`/budget/${month}`)} aria-current={here === 'budget' ? 'page' : undefined}>
             <span className="lr-vert">Budget</span>
           </a>

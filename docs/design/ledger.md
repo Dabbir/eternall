@@ -84,7 +84,7 @@ Motion is almost none, on purpose:
 - reduced motion removes both
 
 ## 8. Chrome and kit (its own site, ADR 0011)
-- **The thumb index** (the navigation, fixed to the right edge, 64px; 46px on a phone): the book's **clasp** with "Close the book" (exit) at the top; the year with ‹ ›; **twelve half-moon month notches**, so any month is one tap away (the open month stands out in green, future months are faint and inert); **Budget** and **Your words** tabs; then search, the lock and **Add an entry**, which focuses the quick line from anywhere. On the budget page the notches open that month's budget.
+- **The thumb index** (the navigation, fixed to the right edge, 64px; 46px on a phone): the book's **clasp** with "Close the book" (exit) at the top; the year with ‹ ›; **twelve half-moon month notches**, so any month is one tap away (the open month stands out in green; months still to come are dashed but open, to plan their budget, and say "December hasn’t begun"); the pages **The month**, **Budget** and **Your words** as tabs, so Budget always leads back to writing; then search, the lock and **Add an entry**, which focuses the quick line from anywhere. On the budget page the notches open that month's budget. Nothing in the index is ever squeezed: in a short window it scrolls.
 - **The page** carries only a running head: the spaced LEDGER name and its function line over a double rule.
 - **`theme/ledger.kit.css`:**
   - Buttons: square, Caslon bold.

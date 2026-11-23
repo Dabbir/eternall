@@ -96,13 +96,19 @@
 
 .lr-year { display: grid; justify-items: center; padding: 6px 0; border-bottom: 1px solid var(--rule-strong); }
 .lr-year__num { font-size: 0.8125rem; color: var(--ink); }
-.lr-year__btn { width: 100%; height: 22px; font-family: var(--font-mono); color: var(--ink-3); transform: rotate(90deg); }
+.lr-year__btn { width: 100%; height: 22px; font-family: var(--font-mono); color: var(--ink-3); }
+/* only the glyph turns; turning the button would turn its hit area across the clasp and January */
+.lr-year__btn > span { display: inline-block; transform: rotate(90deg); }
 .lr-year__btn:hover:not(:disabled) { color: var(--accent); }
 .lr-year__btn:disabled { opacity: 0.3; cursor: default; }
 
 /* Twelve half-moon notches, the way a bound ledger's months are cut into its fore-edge. */
-.lr-thumbs { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 8px 0 8px 10px; min-height: 0; }
-.lr-thumbs li { flex: 0 0 auto; height: clamp(24px, 3.2dvh, 34px); display: flex; }
+/* Nothing in the index may be squeezed: a squeezed list spills under the tabs below it. If the window
+   is too short for all of it, the index scrolls instead. */
+.lr > * { flex: none; }
+.lr > .lr-thumbs { flex: 1 0 auto; }
+.lr-thumbs { display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 8px 0 8px 10px; }
+.lr-thumbs li { flex: 0 0 auto; height: clamp(22px, 3dvh, 34px); display: flex; }
 .lr-thumb {
   flex: 1; display: grid; place-items: center; text-decoration: none;
   font-family: var(--font-display); font-weight: 700; font-size: 0.9375rem; color: var(--ink-2);
@@ -112,7 +118,8 @@
 }
 a.lr-thumb:hover { transform: translateX(-4px); color: var(--ink); }
 .lr-thumb[aria-current='page'] { background: var(--accent); color: var(--on-accent); box-shadow: none; transform: translateX(-6px); }
-.lr-thumb.is-future { color: var(--ink-3); opacity: 0.35; }
+.lr-thumb.is-future { color: var(--ink-3); background: transparent; box-shadow: inset 2px 0 0 var(--rule), inset 0 1px 0 var(--rule), inset 0 -1px 0 var(--rule); border: 1px dashed var(--rule-strong); border-right: 0; }
+.lr-thumb.is-future[aria-current='page'] { background: var(--accent); color: var(--on-accent); border-color: transparent; }
 
 .lr-tabs { display: grid; gap: 4px; padding: 8px 0 8px 10px; border-top: 1px solid var(--rule-strong); }
 .lr-tab { display: grid; place-items: center; padding: 10px 0; background: var(--paper); border-radius: 6px 0 0 6px; box-shadow: inset 2px 0 0 var(--rule-strong); text-decoration: none; color: var(--ink-2); font-size: 0.9375rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; }
@@ -149,13 +156,17 @@ a.lr-thumb:hover { transform: translateX(-4px); color: var(--ink); }
   .lc-running__fn { display: none; }
 }
 /* A short window: the clasp and the action keep their marks and accessible names, not their words. */
-@media (max-height: 980px) {
+@media (max-height: 1100px) {
   .lr-clasp .lr-vert, .lr-write .lr-vert { display: none; }
   .lr-clasp { padding: 10px 0; }
   .lr-dot { right: 8px; }
 }
+@media (max-height: 900px) {
+  .lr-tab { padding: 7px 0; font-size: 0.8125rem; }
+  .lr-tabs { gap: 3px; }
+}
 @media (max-height: 760px) {
-  .lr-tab { padding: 6px 0; font-size: 0.875rem; }
+  .lr-tab { padding: 5px 0; }
   .lr-year { padding: 2px 0; }
 }
 @media (prefers-reduced-motion: reduce) {

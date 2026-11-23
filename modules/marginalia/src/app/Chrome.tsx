@@ -24,6 +24,7 @@ export function Chrome({ here, children }: { here: MarginaliaPlace; children: Re
     e.preventDefault();
     house.navigate(house.href(to));
   };
+  // A work's page is a card from the catalogue, so Catalogue stays ringed while one is open.
   return (
     <div className="mc">
       <nav className="mm" aria-label="MARGINALIA">
@@ -45,7 +46,7 @@ export function Chrome({ here, children }: { here: MarginaliaPlace; children: Re
         <ul className="mm-notes">
           {NOTES.map((n) => (
             <li key={n.place}>
-              <a className="mm-note" href={house.href(n.to)} onClick={go(n.to)} aria-current={here === n.place ? 'page' : undefined}>
+              <a className="mm-note" href={house.href(n.to)} onClick={go(n.to)} aria-current={here === n.place ? 'page' : here === 'work' && n.place === 'catalogue' ? 'true' : undefined}>
                 {n.label}
               </a>
             </li>
