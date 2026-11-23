@@ -150,6 +150,8 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 - **Amounts stay inside LEDGER**; the Almanac shows counts only.
 - **Verified:** 21 domain tests and 7 integration tests; in the browser at 390px and desktop, light and dark.
 
+**Each app navigates from its own edge (2026-11-23, `DESIGN.md` §2):** AMAZEEN left (its spine), REFRAIN top (the head of a score), LEDGER right (a thumb index of months), KINDRED bottom (a row of drawer fronts), MARGINALIA in the wide left margin (pencilled notes under a ribbon bookmark). Checked in the browser at 390, 768 and desktop.
+
 ## Release 2
 The four apps and the house, as of ADR 0011.
 

@@ -2,67 +2,111 @@ import type { ReactNode } from 'react';
 import { IntroNote, useHouse, usePrimaryActionValue } from '@eternall/kit';
 import { Icon } from '@eternall/ui';
 import { ledger } from '../index';
+import { monthKey, monthLabel } from '../ledger';
 
 export type LedgerPlace = 'month' | 'budget' | 'import' | 'words';
 
+const LETTERS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+
 /**
- * LEDGER's own frame (docs/design/ledger.md §Chrome; ADR 0011/0012): the head of a ledger page.
- * A bound book's spine edge with "Close the book", the title written across the ruled head,
- * the folio (place) in the corner, and the action that matters most here: writing a line.
+ * LEDGER's own frame (docs/design/ledger.md §Chrome; ADR 0011/0012): a ledger's **thumb index**
+ * cut into the right edge of the page. The clasp closes the book (back to the house), the year
+ * sits at the top of the index, the twelve months are notches you jump to in one tap, then the
+ * Budget and Your words tabs, and at the foot search, the lock and "Add an entry". The page itself
+ * carries only a running head with the name and function line.
  */
 export function Chrome({ here, month, children }: { here: LedgerPlace; month: string; children: ReactNode }) {
   const house = useHouse();
   const primary = usePrimaryActionValue();
+  const current = monthKey(house.today);
+  const year = Number(month.slice(0, 4));
+  const thisYear = Number(current.slice(0, 4));
+  const base = here === 'budget' ? '/budget' : '';
   const go = (to: string) => (e: { preventDefault(): void }) => {
     e.preventDefault();
     house.navigate(house.href(to));
   };
-  const places: { place: LedgerPlace; label: string; to: string }[] = [
-    { place: 'month', label: 'The month', to: `/${month}` },
-    { place: 'budget', label: 'Budget', to: `/budget/${month}` },
-    { place: 'words', label: 'Your words', to: '/words' },
-  ];
+  const jumpYear = (y: number) => {
+    const m = `${y}-${month.slice(5)}`;
+    house.navigate(house.href(`${base}/${m > current ? current : m}`));
+  };
   return (
     <div className="lc">
-      <header className="lc-head">
-        <button type="button" className="lc-close" onClick={house.leave} aria-label={`${ledger.brand.leaveLabel}, back to your lifeline`}>
-          <span className="lc-close__clasp" aria-hidden="true" />
-          <span className="lc-close__text">{ledger.brand.leaveLabel}</span>
-          {house.notices > 0 && <span className="lc-close__dot" role="img" aria-label={`${house.notices} waiting elsewhere`} />}
+      <div className="lc-page">
+        <header className="lc-running">
+          <a href={house.href('/')} onClick={go('/')} className="lc-running__name">
+            {ledger.name}
+          </a>
+          <span className="lc-running__fn">{ledger.functionLine}</span>
+        </header>
+        <IntroNote />
+        <div className="lc-body">{children}</div>
+      </div>
+
+      <nav className="lr" aria-label="LEDGER">
+        <button type="button" className="lr-clasp" onClick={house.leave} aria-label={`${ledger.brand.leaveLabel}, back to your lifeline`} title={ledger.brand.leaveLabel}>
+          <span className="lr-clasp__strap" aria-hidden="true" />
+          <span className="lr-vert">{ledger.brand.leaveLabel}</span>
+          {house.notices > 0 && <span className="lr-dot" aria-hidden="true" />}
         </button>
 
-        <a className="lc-title" href={house.href('/')} onClick={go('/')}>
-          <span className="lc-title__name">{ledger.name}</span>
-          <span className="lc-title__fn">{ledger.functionLine}</span>
-        </a>
+        <div className="lr-year">
+          <button type="button" className="lr-year__btn" onClick={() => jumpYear(year - 1)} aria-label={`Previous year, ${year - 1}`}>
+            ‹
+          </button>
+          <span className="lr-year__num lg-num">{year}</span>
+          <button type="button" className="lr-year__btn" disabled={year >= thisYear} onClick={() => jumpYear(year + 1)} aria-label={`Next year, ${year + 1}`}>
+            ›
+          </button>
+        </div>
 
-        <div className="lc-tools">
-          <button type="button" className="lc-tool" onClick={house.openSearch} aria-label="Search LEDGER" title="Search (⌘K)" aria-keyshortcuts="Meta+K Control+K">
+        <ol className="lr-thumbs" aria-label={`Months of ${year}`}>
+          {LETTERS.map((letter, i) => {
+            const key = `${year}-${String(i + 1).padStart(2, '0')}`;
+            const future = key > current;
+            const on = (here === 'month' || here === 'budget') && key === month;
+            return (
+              <li key={key}>
+                {future ? (
+                  <span className="lr-thumb is-future" aria-hidden="true">
+                    {letter}
+                  </span>
+                ) : (
+                  <a className="lr-thumb" href={house.href(`${base}/${key}`)} onClick={go(`${base}/${key}`)} aria-current={on ? 'page' : undefined} aria-label={monthLabel(key)}>
+                    {letter}
+                  </a>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+
+        <div className="lr-tabs">
+          <a className="lr-tab" href={house.href(`/budget/${month}`)} onClick={go(`/budget/${month}`)} aria-current={here === 'budget' ? 'page' : undefined}>
+            <span className="lr-vert">Budget</span>
+          </a>
+          <a className="lr-tab" href={house.href('/words')} onClick={go('/words')} aria-current={here === 'words' ? 'page' : undefined}>
+            <span className="lr-vert">Your words</span>
+          </a>
+        </div>
+
+        <div className="lr-tools">
+          <button type="button" className="lr-tool" onClick={house.openSearch} aria-label="Search LEDGER" title="Search (⌘K)" aria-keyshortcuts="Meta+K Control+K">
             <Icon name="search" size={18} />
           </button>
           {house.canLock && (
-            <button type="button" className="lc-tool" onClick={house.lock} aria-label="Lock" title="Lock (⌘⇧L)">
+            <button type="button" className="lr-tool" onClick={house.lock} aria-label="Lock" title="Lock (⌘⇧L)">
               <Icon name="lock" size={18} />
             </button>
           )}
           {primary && (
-            <button type="button" className="lc-write" onClick={primary.run}>
-              {primary.label}
+            <button type="button" className="lr-write" onClick={primary.run} aria-label={primary.label} title={primary.label}>
+              <span aria-hidden="true">+</span>
+              <span className="lr-vert">{primary.label}</span>
             </button>
           )}
         </div>
-      </header>
-
-      <nav className="lc-places" aria-label="LEDGER">
-        {places.map((p) => (
-          <a key={p.place} className="lc-place" href={house.href(p.to)} onClick={go(p.to)} aria-current={here === p.place ? 'page' : undefined}>
-            {p.label}
-          </a>
-        ))}
       </nav>
-
-      <IntroNote />
-      <div className="lc-body">{children}</div>
     </div>
   );
 }

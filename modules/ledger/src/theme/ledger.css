@@ -180,6 +180,14 @@
   .lg-addcat, .lg-map { grid-template-columns: 1fr; }
   .lg-map .check { grid-column: auto; }
   .lq-save { padding: 0 12px; }
+  /* beside the thumb index the page is narrow: keep ‹ month › on one line, tighten the ruled page */
+  .lg-monthnav { flex-wrap: nowrap; gap: 8px; }
+  .lg-month { font-size: 1.6rem; white-space: nowrap; }
+  .lg-monthnav__btn { width: 34px; height: 34px; font-size: 1.3rem; flex: none; }
+  .lg-col-date { width: 2.9rem; font-size: 0.875rem; }
+  .lg-col-num { font-size: 0.875rem; }
+  .lg-page th, .lg-page td { padding: 0 4px; }
+  .lg-page thead th { letter-spacing: 0.02em; }
 }
 @media (prefers-reduced-motion: reduce) {
   .lq-line, .lq-save { transition: none; }

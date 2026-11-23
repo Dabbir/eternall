@@ -85,47 +85,62 @@
 [data-imprint='marginalia'] .dimension-toggle { border-color: var(--rule-strong); padding: 0; }
 [data-imprint='marginalia'] .dimension-toggle button.is-on { box-shadow: inset 0 2px 0 var(--card-rule); }
 
-/* ---------- the catalogue card ---------- */
-.mc { min-height: 100dvh; display: flex; flex-direction: column; }
-.mc-desk {
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
-  padding: 16px var(--gutter) 14px;
-  background:
-    linear-gradient(to bottom, rgb(255 255 255 / 0.05), transparent),
-    color-mix(in srgb, var(--oak) 22%, var(--paper));
-  border-bottom: 1px solid color-mix(in srgb, var(--oak-dark) 40%, transparent);
-}
-.mc-exit {
-  justify-self: start; display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--font-hand); font-size: 1.35rem; line-height: 1; color: var(--ink-2);
-}
-.mc-exit { white-space: nowrap; }
-.mc-exit:hover { color: var(--ink); text-decoration: underline wavy; text-underline-offset: 4px; }
-.mc-exit__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--card-rule); }
+/* ---------- the margin: MARGINALIA's navigation, pencilled beside the page ---------- */
+.mc { --margin-w: 216px; min-height: 100dvh; display: grid; grid-template-columns: var(--margin-w) minmax(0, 1fr); }
+.mc-page { min-width: 0; display: flex; flex-direction: column; }
+.mc-body { flex: 1; }
 
-/* A real 3×5 catalogue card, landscape, with the rod hole punched at the foot. */
+.mm {
+  position: sticky; top: 0; height: 100dvh; overflow-y: auto;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 22px;
+  padding: 0 18px 22px 22px;
+  /* the margin is the same paper, ruled off from the text block by a faint pencil line */
+  background: linear-gradient(to right, transparent calc(100% - 1px), color-mix(in srgb, var(--ink) 18%, transparent) calc(100% - 1px));
+}
+/* A cloth ribbon marker hanging from the head of the book. */
+.mm-ribbon { position: relative; display: flex; align-items: flex-start; gap: 10px; padding: 0; color: var(--ink-2); text-align: left; }
+.mm-ribbon__tail {
+  flex: none; width: 18px; height: 74px; background: linear-gradient(to right, color-mix(in srgb, var(--card-rule) 80%, #000 20%), var(--card-rule) 45%, color-mix(in srgb, var(--card-rule) 85%, #000 15%));
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.3);
+  transition: height 180ms var(--ease-out);
+}
+.mm-ribbon__text { margin-top: 46px; font-family: var(--font-hand); font-size: 1.3rem; line-height: 1; white-space: nowrap; }
+.mm-ribbon:hover { color: var(--ink); }
+.mm-ribbon:hover .mm-ribbon__tail { height: 84px; }
+.mm-ribbon:hover .mm-ribbon__text { text-decoration: underline wavy; text-underline-offset: 4px; }
+.mm-dot { position: absolute; top: 8px; left: 24px; width: 7px; height: 7px; border-radius: 50%; background: var(--card-rule); }
+
+/* The catalogue card: the app's name, typed on ruled stock with the rod hole at the foot. */
 .mc-card {
-  position: relative; display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: start;
-  width: min(380px, 52vw); padding: 12px 18px 22px;
+  position: relative; display: grid; gap: 2px; width: 100%; padding: 10px 14px 24px;
   background:
-    repeating-linear-gradient(to bottom, transparent 0 17px, color-mix(in srgb, var(--accent) 16%, transparent) 17px 18px) 0 30px / 100% calc(100% - 30px) no-repeat,
+    repeating-linear-gradient(to bottom, transparent 0 17px, color-mix(in srgb, var(--accent) 16%, transparent) 17px 18px) 0 28px / 100% calc(100% - 28px) no-repeat,
     var(--card);
   border-top: 3px solid var(--card-rule);
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.18), 0 10px 18px -12px rgb(0 0 0 / 0.5);
   text-decoration: none; color: var(--ink);
-  transform: rotate(-0.4deg);
+  transform: rotate(-1.2deg);
 }
-.mc-card__call { font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.5; color: var(--ink-2); padding-top: 2px; }
-.mc-card__text { display: grid; gap: 2px; }
-.mc-card__name { font-family: var(--font-mono); font-size: 1.05rem; font-weight: 600; letter-spacing: 0.08em; }
-.mc-card__fn { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--ink-2); }
-.mc-card__hole { position: absolute; left: 50%; bottom: 6px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: color-mix(in srgb, var(--oak) 22%, var(--paper)); box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35); }
+.mc-card__call { font-family: var(--font-mono); font-size: 0.6875rem; color: var(--ink-3); }
+.mc-card__name { font-family: var(--font-mono); font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.06em; }
+.mc-card__fn { font-family: var(--font-mono); font-size: 0.75rem; color: var(--ink-2); }
+.mc-card__hole { position: absolute; left: 50%; bottom: 6px; width: 10px; height: 10px; margin-left: -5px; border-radius: 50%; background: var(--paper); box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35); }
 
-.mc-tools { justify-self: end; display: flex; align-items: center; gap: 4px; }
-.mc-tool { display: grid; place-items: center; width: 38px; height: 38px; color: var(--ink-2); }
-.mc-tool:hover { color: var(--accent); }
+/* Places, written in pencil. The current one is ringed by hand. */
+.mm-notes { display: grid; gap: 6px; }
+.mm-note { position: relative; display: inline-block; padding: 2px 8px; font-family: var(--font-hand); font-size: 1.55rem; line-height: 1.1; color: var(--ink-2); text-decoration: none; }
+.mm-note:hover { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 5px; }
+.mm-note[aria-current='page'] { color: var(--ink); }
+.mm-note[aria-current='page']::before {
+  content: ''; position: absolute; inset: -2px -6px -1px -4px;
+  border: 1.5px solid color-mix(in srgb, var(--card-rule) 85%, var(--ink));
+  border-radius: 52% 46% 55% 43% / 60% 50% 55% 45%;
+  transform: rotate(-2.5deg);
+}
+
 .mc-type {
-  height: 40px; padding: 0 14px; white-space: nowrap;
+  max-width: 100%; min-height: 40px; padding: 8px 12px; text-align: left; line-height: 1.35;
   font-family: var(--font-mono); font-size: 0.875rem; font-weight: 500;
   color: var(--on-accent); background: var(--accent);
   box-shadow: 2px 2px 0 color-mix(in srgb, var(--accent-deep) 60%, #000 40%);
@@ -135,17 +150,10 @@
 .mc-type:hover { background: var(--accent-deep); }
 .mc-type:active { transform: translate(2px, 2px); box-shadow: none; }
 
-/* Guide cards: taller cards with tabs, standing between the sections of the drawer. */
-.mc-guides { display: flex; gap: 0; max-width: 1160px; width: 100%; margin: 0 auto; padding: 16px var(--gutter) 0; }
-.mc-guide {
-  padding: 7px 20px 6px; margin-right: -1px;
-  font-family: var(--font-mono); font-size: 0.8125rem; text-decoration: none; color: var(--ink-3);
-  background: var(--paper-sunk); border: 1px solid var(--rule-strong); border-bottom: 0;
-  border-radius: 10px 10px 0 0;
-}
-.mc-guide:hover { color: var(--ink); }
-.mc-guide[aria-current='page'] { position: relative; z-index: 1; background: var(--card); color: var(--ink); box-shadow: inset 0 3px 0 var(--card-rule); }
-.mc-body { flex: 1; border-top: 1px solid var(--rule-strong); }
+.mm-tools { margin-top: auto; display: grid; gap: 2px; }
+.mm-tool { display: inline-flex; align-items: center; gap: 8px; height: 34px; padding: 0 4px; color: var(--ink-2); }
+.mm-tool__word { font-family: var(--font-hand); font-size: 1.3rem; line-height: 1; }
+.mm-tool:hover { color: var(--accent); }
 
 /* The house's first-contact note, pencilled on a slip. */
 [data-imprint='marginalia'] .imprint-intro { border: 0; border-radius: 1px; background: color-mix(in srgb, var(--highlight) 28%, var(--card)); font-family: var(--font-hand); font-size: 1.25rem; box-shadow: 0 10px 20px -14px rgb(0 0 0 / 0.4); }
@@ -157,24 +165,34 @@
 [data-imprint='marginalia'] .unlock__app-fn { font-family: var(--font-mono); }
 [data-imprint='marginalia'] .unlock__title { font-family: var(--font-display); font-style: italic; }
 
-@media (max-width: 960px) {
-  .mc-card { width: min(290px, 40vw); }
-  .mc-card__call { display: none; }
-  .mc-card { grid-template-columns: 1fr; }
-}
-@media (max-width: 720px) {
-  .mc-desk { grid-template-columns: auto 1fr auto; gap: 8px; padding: 10px 12px; }
-  .mc-card { width: auto; justify-self: center; grid-template-columns: 1fr; padding: 8px 14px 24px; }
-  .mc-card__call, .mc-card__fn { display: none; }
-  .mc-card__name { font-size: 0.875rem; letter-spacing: 0.04em; }
-  .mc-exit { font-size: 0; gap: 0; }
-  .mc-exit > span:first-child { font-size: 1.5rem; }
-  .mc-type { padding: 0 10px; font-size: 0.8125rem; }
-  .mc-tool { width: 32px; }
+/* A narrow page has no margin to write in: the notes fold into a pencilled line across the top. */
+@media (max-width: 760px) {
+  .mc { grid-template-columns: minmax(0, 1fr); }
+  .mm {
+    position: sticky; top: 0; z-index: 30; height: auto; overflow: visible;
+    flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 14px;
+    padding: 0 12px 6px;
+    background: var(--paper); border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  }
+  .mm-ribbon__tail { width: 14px; height: 44px; }
+  .mm-ribbon:hover .mm-ribbon__tail { height: 50px; }
+  .mm-ribbon__text { display: none; }
+  .mm-dot { left: 18px; }
+  .mc-card { width: auto; padding: 6px 10px 6px; transform: rotate(-1deg); background: var(--card); }
+  .mc-card__call, .mc-card__fn, .mc-card__hole { display: none; }
+  .mc-card__name { font-size: 0.8125rem; }
+  .mm-notes { order: 5; flex-basis: 100%; display: flex; gap: 16px; padding-left: 2px; }
+  .mm-note { font-size: 1.35rem; }
+  .mm-tools { margin: 0 0 0 auto; display: flex; gap: 0; }
+  .mm-tool__word { display: none; }
+  .mm-tool { width: 34px; justify-content: center; }
+  .mc-type { min-height: 36px; padding: 6px 10px; font-size: 0.8125rem; white-space: nowrap; }
 }
 @media (max-width: 420px) {
   .mc-type::before, .mc-type::after { content: none; }
-  .mc-tools { gap: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mm-ribbon__tail { transition: none; }
 }
 
 /* ⌘K: the chosen line highlighted, as with a marker. */

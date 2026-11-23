@@ -5,15 +5,17 @@ import { marginalia } from '../index';
 
 export type MarginaliaPlace = 'catalogue' | 'underlines' | 'work';
 
-const GUIDES: { place: Exclude<MarginaliaPlace, 'work'>; label: string; to: string }[] = [
+const NOTES: { place: Exclude<MarginaliaPlace, 'work'>; label: string; to: string }[] = [
   { place: 'catalogue', label: 'Catalogue', to: '/' },
   { place: 'underlines', label: 'Every underline', to: '/underlines' },
 ];
 
 /**
- * MARGINALIA's own frame (docs/design/marginalia.md §Chrome; docs/adr/0011): a library catalogue
- * card. A typed call number and title on ruled stock with a red head rule and the rod hole,
- * guide cards for places, the primary action typed in brackets, and a pencilled way back.
+ * MARGINALIA's own frame (docs/design/marginalia.md §Chrome; docs/adr/0011): **the navigation is
+ * pencilled in the page's wide margin.** A ribbon bookmark hangs from the top edge ("Back to the
+ * stacks"), the catalogue card names the app, the places are written in pencil with the current one
+ * ringed, the primary action is typed in brackets, and "find" and "lock" are pencilled at the foot.
+ * On a narrow page the margin folds into a pencilled line across the top.
  */
 export function Chrome({ here, children }: { here: MarginaliaPlace; children: ReactNode }) {
   const house = useHouse();
@@ -24,52 +26,60 @@ export function Chrome({ here, children }: { here: MarginaliaPlace; children: Re
   };
   return (
     <div className="mc">
-      <header className="mc-desk">
-        <button type="button" className="mc-exit" onClick={house.leave} aria-label={`${marginalia.brand.leaveLabel}, back to your lifeline`}>
-          <span aria-hidden="true">↶</span> {marginalia.brand.leaveLabel}
-          {house.notices > 0 && <span className="mc-exit__dot" role="img" aria-label={`${house.notices} waiting elsewhere`} />}
+      <nav className="mm" aria-label="MARGINALIA">
+        <button type="button" className="mm-ribbon" onClick={house.leave} aria-label={`${marginalia.brand.leaveLabel}, back to your lifeline`}>
+          <span className="mm-ribbon__tail" aria-hidden="true" />
+          <span className="mm-ribbon__text">{marginalia.brand.leaveLabel}</span>
+          {house.notices > 0 && <span className="mm-dot" aria-hidden="true" />}
         </button>
 
         <a className="mc-card" href={house.href('/')} onClick={go('/')}>
           <span className="mc-card__call" aria-hidden="true">
-            028.8
-            <br />
-            MAR
+            028.8 MAR
           </span>
-          <span className="mc-card__text">
-            <span className="mc-card__name">{marginalia.name}</span>
-            <span className="mc-card__fn">{marginalia.functionLine}.</span>
-          </span>
+          <span className="mc-card__name">{marginalia.name}</span>
+          <span className="mc-card__fn">{marginalia.functionLine}.</span>
           <span className="mc-card__hole" aria-hidden="true" />
         </a>
 
-        <div className="mc-tools">
-          <button type="button" className="mc-tool" onClick={house.openSearch} aria-label="Search MARGINALIA" title="Search (⌘K)" aria-keyshortcuts="Meta+K Control+K">
-            <Icon name="search" size={18} />
+        <ul className="mm-notes">
+          {NOTES.map((n) => (
+            <li key={n.place}>
+              <a className="mm-note" href={house.href(n.to)} onClick={go(n.to)} aria-current={here === n.place ? 'page' : undefined}>
+                {n.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        {primary && (
+          <button type="button" className="mc-type" onClick={primary.run}>
+            {primary.label}
+          </button>
+        )}
+
+        <div className="mm-tools">
+          <button type="button" className="mm-tool" onClick={house.openSearch} aria-label="Search MARGINALIA" title="Search (⌘K)" aria-keyshortcuts="Meta+K Control+K">
+            <Icon name="search" size={16} />
+            <span className="mm-tool__word" aria-hidden="true">
+              find
+            </span>
           </button>
           {house.canLock && (
-            <button type="button" className="mc-tool" onClick={house.lock} aria-label="Lock" title="Lock (⌘⇧L)">
-              <Icon name="lock" size={18} />
-            </button>
-          )}
-          {primary && (
-            <button type="button" className="mc-type" onClick={primary.run}>
-              {primary.label}
+            <button type="button" className="mm-tool" onClick={house.lock} aria-label="Lock" title="Lock (⌘⇧L)">
+              <Icon name="lock" size={16} />
+              <span className="mm-tool__word" aria-hidden="true">
+                lock
+              </span>
             </button>
           )}
         </div>
-      </header>
-
-      <nav className="mc-guides" aria-label="MARGINALIA">
-        {GUIDES.map((g) => (
-          <a key={g.place} className="mc-guide" href={house.href(g.to)} onClick={go(g.to)} aria-current={here === g.place ? 'page' : undefined}>
-            {g.label}
-          </a>
-        ))}
       </nav>
 
-      <IntroNote />
-      <div className="mc-body">{children}</div>
+      <div className="mc-page">
+        <IntroNote />
+        <div className="mc-body">{children}</div>
+      </div>
     </div>
   );
 }

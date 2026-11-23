@@ -15,7 +15,7 @@ export const ledger: ImprintDefinition = {
   basePath: '/ledger/',
   release: 2,
   accent: { light: '#2f5d3a', dark: '#8fc79b' },
-  intro: 'Write money down in one line, like a message to yourself: “kopi 25rb”, “gaji 8jt”, “grab 32.500 kemarin”. It learns your words as you go.',
+  intro: 'Write money down in one line, like a message to yourself: “kopi 25rb”, “gaji 8jt”, “grab 32.500 kemarin”. It learns your words as you go. Months are on the right edge, like a ledger’s thumb index.',
   brand: { icon: '/icons/ledger.svg', themeColor: { light: '#eef1e4', dark: '#111611' }, lockTitle: 'The book is closed.', leaveLabel: 'Close the book' },
   load: () => import('./app/LedgerApp'),
   collections: [ENTRY_PATH, CATEGORY_PATH, BUDGET_PATH, WORDS_PATH, PREF_PATH],

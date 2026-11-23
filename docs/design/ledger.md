@@ -34,11 +34,11 @@ Red is never the only signal. "Over by Rp 35.000" is always written out, so the 
 
 ### 5.1 The month (home: `/ledger/`, `/ledger/2026-11`)
 ```
-┌ ⊐ Close the book          L E D G E R            ⌕  🔒  [ Add an entry ] ┐
-│                         Money, kept plainly                              │
-╞══════════════════════════════════════════════════════════════════════════╡
-  THE MONTH   BUDGET
-  [‹] November 2026 [›]
+            L E D G E R   Money, kept plainly                       ┃ ⊐ Close the book
+╞═══════════════════════════════════════════════════════════════════╡ ‹ 2026 ›
+  [‹] November 2026 [›]                                             ┃ (J)(F)(M)…(N)  D
+                                                                    ┃ Budget · Your words
+                                                                    ┃ ⌕ 🔒 [+ Add an entry]
   WRITE ONE LINE
   ┌──────────────────────────────────────────────────────────┬──────────┐
   │ ✎ grab 32.500 kemarin                                    │ Write it │
@@ -84,8 +84,8 @@ Motion is almost none, on purpose:
 - reduced motion removes both
 
 ## 8. Chrome and kit (its own site, ADR 0011)
-- **The head of a ledger page:** the book's **clasp** with "Close the book" (exit), the spaced LEDGER title with its function line, search, the lock, and **Add an entry**, which focuses the quick line from anywhere.
-- **Places** are set as folio headings: The month · Budget.
+- **The thumb index** (the navigation, fixed to the right edge, 64px; 46px on a phone): the book's **clasp** with "Close the book" (exit) at the top; the year with ‹ ›; **twelve half-moon month notches**, so any month is one tap away (the open month stands out in green, future months are faint and inert); **Budget** and **Your words** tabs; then search, the lock and **Add an entry**, which focuses the quick line from anywhere. On the budget page the notches open that month's budget.
+- **The page** carries only a running head: the spaced LEDGER name and its function line over a double rule.
 - **`theme/ledger.kit.css`:**
   - Buttons: square, Caslon bold.
   - Fields: ruled lines.
@@ -101,7 +101,7 @@ Motion is almost none, on purpose:
 - Storage failure: the house banner.
 
 ## 10. Mobile
-- The head keeps the clasp, title, search, lock and action, with the exit label carried by its accessible name.
+- The thumb index stays on the right edge, narrowed to 46px; the clasp and action drop their words and keep their accessible names. The month title stays on one line with its ‹ › and the ruled page tightens to fit beside the index.
 - Totals wrap to two columns.
 - Particulars stack note over category.
 - The quick line stays first on the page, and `enterKeyHint="done"` gives phone keyboards a done key.

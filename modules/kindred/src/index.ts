@@ -14,7 +14,7 @@ export const kindred: ImprintDefinition = {
   basePath: '/kindred/',
   release: 2,
   accent: { light: '#1f5f5b', dark: '#6fc2b8' },
-  intro: 'KINDRED is for you. People you add never receive anything and are never contacted.',
+  intro: 'KINDRED is for you. People you add never receive anything and are never contacted. The drawers along the bottom take you between the card file and the constellation.',
   brand: { icon: '/icons/kindred.svg', themeColor: { light: '#f6f2ea', dark: '#111615' }, lockTitle: 'The card file is locked.', leaveLabel: 'Close the drawer' },
   load: () => import('./app/KindredApp'),
   collections: [PERSON_PATH, SEEN_PATH, PHOTO_PATH, PREF_PATH],

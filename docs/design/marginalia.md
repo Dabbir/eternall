@@ -106,11 +106,13 @@ The margin column moves **inline**: each margin note follows its passage as an i
   3. Find every underline from books you read last year.
 
 ## 12. Chrome and kit (its own site, ADR 0011)
-MARGINALIA's head is a library catalogue card on an oak desk:
-- **The card:** the call number and title typed on ruled stock, with the red head rule and the rod hole.
-- **Places are guide cards:** Catalogue (`/`) and Every underline (`/underlines`).
-- **The primary action** is typed in brackets.
-- **The exit** is pencilled: **"Back to the stacks"**.
+**MARGINALIA's navigation is pencilled in the page's wide left margin** (216px, sticky, ruled off from the text by a faint pencil line):
+- **The exit** is a cloth **ribbon bookmark** hanging from the head of the book: **"Back to the stacks"**.
+- **The catalogue card:** the call number and name typed on ruled stock, with the red head rule and the rod hole.
+- **Places are pencilled notes** in Caveat: Catalogue (`/`) and Every underline (`/underlines`). The current one is ringed by hand.
+- **The primary action** is typed in brackets, and wraps inside the margin.
+- **"find" and "lock"** are pencilled at the foot of the margin.
+- Below 760px there is no margin to write in, so the notes fold into a pencilled line across the top: ribbon, card, action, search and lock, with the places on a second line.
 
 `theme/marginalia.kit.css` types and pencils the shared primitives:
 - **Buttons:** square monospace; ghost buttons are bracketed.

@@ -82,26 +82,9 @@
 [data-imprint='kindred'] .segmented__thumb { top: 0; bottom: -1px; left: 0; width: calc(100% / var(--n)); border: 1px solid var(--rule-strong); border-bottom-color: var(--card); }
 [data-imprint='kindred'] .dimension-toggle { border-color: var(--ink); padding: 2px; }
 
-/* ---------- the cabinet face ---------- */
-.kc { min-height: 100dvh; display: flex; flex-direction: column; }
-.kc-cabinet {
-  position: sticky; top: 0; z-index: 30;
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
-  padding: 12px var(--gutter);
-  background:
-    linear-gradient(to bottom, rgb(255 255 255 / 0.06), transparent 40%),
-    color-mix(in srgb, var(--paper-sunk) 70%, var(--brass) 8%);
-  border-bottom: 1px solid var(--rule-strong);
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.4) inset, 0 6px 14px -12px rgb(0 0 0 / 0.5);
-}
-.kc-exit {
-  justify-self: start; display: inline-flex; align-items: center; gap: 8px;
-  font-size: 0.8125rem; color: var(--ink-2); padding: 8px 2px;
-  text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--rule-strong);
-}
-.kc-exit:hover { color: var(--ink); text-decoration-color: currentColor; }
-.kc-exit__arrow { font-size: 1rem; line-height: 1; }
-.kc-exit__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); }
+/* ---------- the cabinet face: plate at the top, drawer fronts along the bottom ---------- */
+.kc { --dock: 76px; min-height: 100dvh; display: flex; flex-direction: column; padding-bottom: calc(var(--dock) + env(safe-area-inset-bottom)); }
+.kc-top { display: flex; justify-content: center; padding: 16px var(--gutter) 4px; }
 
 /* The brass label holder, screws and all, with the name letterpressed onto the card behind it. */
 .kc-plate {
@@ -119,30 +102,59 @@
 }
 .kc-plate__name { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.22em; color: var(--ink); text-shadow: 0 1px 0 rgb(255 255 255 / 0.6), 0 -1px 0 rgb(0 0 0 / 0.14); }
 .kc-plate__fn { font-size: 0.8125rem; letter-spacing: 0.1em; font-variant-caps: all-small-caps; color: var(--ink-3); }
-.kc-tools { justify-self: end; display: flex; align-items: center; gap: 6px; }
-.kc-tool { display: grid; place-items: center; width: 38px; height: 38px; color: var(--ink-2); border: 1px solid transparent; border-radius: 2px; }
-.kc-tool:hover { color: var(--ink); border-color: var(--rule-strong); background: var(--card); }
 .kc-press {
-  height: 40px; padding: 0 18px; border-radius: 2px;
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 44px; padding: 0 18px; border-radius: 2px; white-space: nowrap;
   font-size: 1rem; font-weight: 600; letter-spacing: 0.06em; font-variant-caps: all-small-caps;
   background: var(--accent); color: var(--on-accent);
   box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.22), inset 0 1px 0 rgb(255 255 255 / 0.14);
   transition: transform 120ms var(--ease-out), box-shadow 120ms;
 }
-.kc-press { white-space: nowrap; }
+.kc-press__plus { font-size: 1.25rem; line-height: 1; font-variant-caps: normal; }
 .kc-press:hover { background: var(--accent-deep); }
 .kc-press:active { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.22), inset 0 2px 3px rgb(0 0 0 / 0.25); }
 
-/* Index tabs standing up from the top of the drawer. */
-.kc-tabs { display: flex; gap: 4px; padding: 18px var(--gutter) 0; max-width: 1200px; width: 100%; margin: 0 auto; border-bottom: 1px solid var(--rule-strong); }
-.kc-tab {
-  position: relative; top: 1px; padding: 8px 20px 7px;
-  font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.06em; font-variant-caps: all-small-caps; text-decoration: none; color: var(--ink-3);
-  background: var(--paper-sunk); border: 1px solid var(--rule-strong); border-radius: 6px 6px 0 0;
-  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 100%, 0 100%);
+/* The cabinet's bottom row. Oak-dark carcass, card-coloured fronts, brass label holders and pulls. */
+.kn {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  padding: 8px var(--gutter) calc(8px + env(safe-area-inset-bottom));
+  background:
+    linear-gradient(to bottom, rgb(255 255 255 / 0.05), transparent 30%),
+    color-mix(in srgb, #221a14 86%, var(--brass) 14%);
+  box-shadow: 0 -1px 0 rgb(0 0 0 / 0.35), 0 -10px 22px -16px rgb(0 0 0 / 0.6);
 }
-.kc-tab:hover { color: var(--ink); }
-.kc-tab[aria-current='page'] { background: var(--card); color: var(--ink); border-bottom-color: var(--card); box-shadow: inset 0 3px 0 var(--accent); }
+.kn-row { display: flex; align-items: stretch; gap: 10px; max-width: 1200px; margin: 0 auto; height: calc(var(--dock) - 16px); }
+.kn-drawers { flex: 1; display: flex; gap: 8px; justify-content: center; }
+.kn-front {
+  position: relative; display: grid; align-content: center; justify-items: center; gap: 6px;
+  min-width: 0; padding: 6px 18px; text-decoration: none; color: var(--ink);
+  background: linear-gradient(to bottom, var(--card), color-mix(in srgb, var(--card) 88%, #000 12%));
+  border-radius: 2px;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 -2px 0 rgb(0 0 0 / 0.18), 0 1px 0 rgb(0 0 0 / 0.4);
+  transition: transform 160ms var(--ease-out), box-shadow 160ms;
+}
+.kn-drawers .kn-front { flex: 0 1 220px; }
+/* The label card sits in a small brass frame. */
+.kn-label {
+  padding: 2px 12px; font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.06em; font-variant-caps: all-small-caps; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+  background: var(--paper); color: var(--ink);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brass) 80%, #000 20%), inset 0 1px 2px rgb(0 0 0 / 0.2);
+}
+.kn-pull { width: 46px; height: 9px; border-radius: 0 0 10px 10px; background: linear-gradient(to bottom, color-mix(in srgb, var(--brass) 65%, #fff 35%), color-mix(in srgb, var(--brass) 70%, #000 30%)); box-shadow: 0 2px 2px rgb(0 0 0 / 0.35); }
+a.kn-front:hover { transform: translateY(-2px); }
+/* The open drawer is pulled out toward you: lifted, with its shadow falling on the carcass. */
+.kn-front[aria-current] { transform: translateY(-7px); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 -2px 0 rgb(0 0 0 / 0.18), 0 9px 0 -2px color-mix(in srgb, var(--card) 70%, #000 30%), 0 12px 14px -6px rgb(0 0 0 / 0.6); }
+.kn-front[aria-current] .kn-label { box-shadow: 0 0 0 2px color-mix(in srgb, var(--brass) 80%, #000 20%), inset 0 -3px 0 var(--accent); }
+.kn { --oak-ink: #efe6d6; }
+.kn-front--exit { flex: none; background: transparent; box-shadow: none; color: var(--oak-ink); padding: 6px 4px; }
+.kn-front--exit .kn-label { background: transparent; color: var(--oak-ink); box-shadow: none; font-style: italic; font-weight: 400; font-variant-caps: normal; letter-spacing: 0; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: color-mix(in srgb, var(--oak-ink) 40%, transparent); }
+.kn-front--exit:hover .kn-label { text-decoration-color: currentColor; }
+.kn-dot { position: absolute; top: 10px; right: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); }
+.kn-label__short { display: none; }
+.kn-tools { flex: none; display: flex; align-items: center; gap: 4px; }
+.kn-tool { display: grid; place-items: center; width: 40px; height: 40px; color: var(--oak-ink); border-radius: 2px; }
+.kn-tool:hover { background: rgb(255 255 255 / 0.1); }
+[data-imprint='kindred'] .toasts { bottom: calc(var(--dock, 76px) + 16px + env(safe-area-inset-bottom)); }
 .kc-body { flex: 1; }
 
 /* The house's first-contact note, set as a slip of card. */
@@ -157,26 +169,22 @@
 [data-imprint='kindred'] .unlock__title { font-family: var(--font-display); }
 
 @media (max-width: 720px) {
-  .kc-cabinet { grid-template-columns: auto 1fr auto; gap: 10px; padding: 10px 14px; }
-  .kc-plate { justify-self: center; padding: 4px 8px; gap: 8px; }
+  .kc { --dock: 68px; }
   .kc-plate__fn { display: none; }
-  .kc-exit { font-size: 0.75rem; gap: 6px; }
-  .kc-press { padding: 0 12px; font-size: 0.9375rem; }
-  .kc-tabs { padding-top: 12px; }
-}
-@media (max-width: 460px) {
-  .kc-cabinet { gap: 6px; padding: 8px 10px; }
-  .kc-exit { font-size: 0; gap: 0; padding: 8px 4px; }
-  .kc-exit__arrow { font-size: 1.2rem; }
-  .kc-plate { padding: 3px 6px; gap: 6px; }
-  .kc-plate__text { padding: 3px 8px; }
-  .kc-plate__name { font-size: 0.875rem; letter-spacing: 0.14em; }
-  .kc-tools { gap: 0; }
-  .kc-tool { width: 34px; }
-  .kc-press { height: 36px; padding: 0 10px; font-size: 0.875rem; }
+  .kn { padding-left: 8px; padding-right: 8px; }
+  .kn-row { gap: 6px; }
+  .kn-drawers { gap: 6px; }
+  .kn-drawers .kn-front { flex: 1 1 0; padding: 6px 6px; }
+  .kn-label { padding: 2px 6px; font-size: 0.875rem; }
+  .kn-label__long, .kc-press__long { display: none; }
+  .kn-label__short { display: inline; }
+  .kn-front--exit .kn-label { font-size: 1.2rem; font-style: normal; text-decoration: none; }
+  .kn-tools { gap: 0; }
+  .kn-tool { width: 36px; }
+  .kc-press { height: 44px; width: 44px; padding: 0; justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .kc-press { transition: none; }
+  .kc-press, .kn-front { transition: none; }
 }
 
 /* ⌘K: a card, with the chosen line marked by a teal edge rather than a house pill. */

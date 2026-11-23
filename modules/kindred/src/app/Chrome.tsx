@@ -5,16 +5,18 @@ import { kindred } from '../index';
 
 export type KindredPlace = 'file' | 'sky' | 'person';
 
-const TABS: { place: Exclude<KindredPlace, 'person'>; label: string; to: string }[] = [
-  { place: 'file', label: 'Card file', to: '/' },
-  { place: 'sky', label: 'Constellation', to: '/sky' },
+const DRAWERS: { place: Exclude<KindredPlace, 'person'>; label: string; short: string; to: string }[] = [
+  { place: 'file', label: 'Card file', short: 'Cards', to: '/' },
+  { place: 'sky', label: 'Constellation', short: 'Sky', to: '/sky' },
 ];
 
 /**
- * KINDRED's own frame (docs/design/kindred.md §Chrome; docs/adr/0011): the face of a card cabinet.
- * A brass label plate with the name, index tabs for the two views, search, the key, the primary
- * action as a letterpress block, and a small "Close the drawer" exit back to the house.
- * Every control sits in the same place on every KINDRED screen.
+ * KINDRED's own frame (docs/design/kindred.md §Chrome; docs/adr/0011): a card cabinet seen from
+ * the front. The brass label plate sits at the top of the page; **the navigation is the row of
+ * drawer fronts along the bottom**, each with a label card and a brass pull. The open drawer stands
+ * pulled out. The row also holds "Close the drawer" (back to the house), search, the key and the
+ * primary action as a letterpress block, in the same place on every KINDRED screen, and within
+ * reach of a thumb on a phone.
  */
 export function Chrome({ here, children }: { here: KindredPlace; children: ReactNode }) {
   const house = useHouse();
@@ -23,17 +25,11 @@ export function Chrome({ here, children }: { here: KindredPlace; children: React
     e.preventDefault();
     house.navigate(house.href(to));
   };
+  // A person's card is filed in the card file, so that drawer stays out while one is open.
+  const open = here === 'person' ? 'file' : here;
   return (
     <div className="kc">
-      <header className="kc-cabinet">
-        <button type="button" className="kc-exit" onClick={house.leave}>
-          <span className="kc-exit__arrow" aria-hidden="true">
-            ←
-          </span>
-          {kindred.brand.leaveLabel}
-          {house.notices > 0 && <span className="kc-exit__dot" role="img" aria-label={`${house.notices} waiting elsewhere`} />}
-        </button>
-
+      <header className="kc-top">
         <a className="kc-plate" href={house.href('/')} onClick={go('/')}>
           <span className="kc-plate__screw" aria-hidden="true" />
           <span className="kc-plate__text">
@@ -42,34 +38,52 @@ export function Chrome({ here, children }: { here: KindredPlace; children: React
           </span>
           <span className="kc-plate__screw" aria-hidden="true" />
         </a>
-
-        <div className="kc-tools">
-          <button type="button" className="kc-tool" onClick={house.openSearch} aria-label="Search KINDRED" title="Search (⌘K)" aria-keyshortcuts="Meta+K Control+K">
-            <Icon name="search" size={18} />
-          </button>
-          {house.canLock && (
-            <button type="button" className="kc-tool" onClick={house.lock} aria-label="Lock" title="Lock (⌘⇧L)">
-              <Icon name="lock" size={18} />
-            </button>
-          )}
-          {primary && (
-            <button type="button" className="kc-press" onClick={primary.run}>
-              {primary.label}
-            </button>
-          )}
-        </div>
       </header>
-
-      <nav className="kc-tabs" aria-label="KINDRED">
-        {TABS.map((t) => (
-          <a key={t.place} className="kc-tab" href={house.href(t.to)} onClick={go(t.to)} aria-current={here === t.place ? 'page' : undefined}>
-            {t.label}
-          </a>
-        ))}
-      </nav>
 
       <IntroNote />
       <div className="kc-body">{children}</div>
+
+      <nav className="kn" aria-label="KINDRED">
+        <div className="kn-row">
+          <button type="button" className="kn-front kn-front--exit" onClick={house.leave} aria-label={`${kindred.brand.leaveLabel}, back to your lifeline`}>
+            <span className="kn-label">
+              <span aria-hidden="true">←</span> <span className="kn-label__long">{kindred.brand.leaveLabel}</span>
+            </span>
+            {house.notices > 0 && <span className="kn-dot" aria-hidden="true" />}
+          </button>
+
+          <div className="kn-drawers">
+            {DRAWERS.map((d) => (
+              <a key={d.place} className="kn-front" href={house.href(d.to)} onClick={go(d.to)} aria-current={here === d.place ? 'page' : open === d.place ? 'true' : undefined}>
+                <span className="kn-label">
+                  <span className="kn-label__long">{d.label}</span>
+                  <span className="kn-label__short">{d.short}</span>
+                </span>
+                <span className="kn-pull" aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+
+          <div className="kn-tools">
+            <button type="button" className="kn-tool" onClick={house.openSearch} aria-label="Search KINDRED" title="Search (⌘K)" aria-keyshortcuts="Meta+K Control+K">
+              <Icon name="search" size={18} />
+            </button>
+            {house.canLock && (
+              <button type="button" className="kn-tool" onClick={house.lock} aria-label="Lock" title="Lock (⌘⇧L)">
+                <Icon name="lock" size={18} />
+              </button>
+            )}
+            {primary && (
+              <button type="button" className="kc-press" onClick={primary.run} aria-label={primary.label}>
+                <span className="kc-press__plus" aria-hidden="true">
+                  +
+                </span>
+                <span className="kc-press__long">{primary.label}</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </nav>
     </div>
   );
 }
