@@ -92,3 +92,5 @@ Letters to your future self live in AMAZEEN's **post room** (`/amazeen/letters`)
 - **Contributions** (lifeline markers, red-letter days, the "letter ready" badge) now come from AMAZEEN.
 - **Old links** to `/envoi/*` redirect.
 - **Kit:** `imprint/amazeen.kit.css` dresses the shared primitives AMAZEEN meets inside the house (Letters, ⌘K, house toasts) in the newsroom's voice: 2px corners, mono small caps, and the offset shadow of a block of type.
+
+**Ceremony (`DESIGN.md` §5.1).** Sealing a letter now writes it first, then plays **Sealed** full screen, kin to the "Filed" stamp: hot wax spreads, the seal comes down with the letter's fingerprint ring, and "Sealed until <date>" is set beneath (`imprint/letters/Ceremony.tsx`).

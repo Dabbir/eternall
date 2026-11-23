@@ -30,6 +30,7 @@ import {
   type LetterInput,
 } from './letters';
 import { Postmark } from './Envelope';
+import { SealedRite } from './Ceremony';
 
 const reduced = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 
@@ -92,11 +93,13 @@ export function Composer({ prefill }: { prefill: Partial<LetterInput> }) {
     try {
       const contents = { ...r.value, sealedOn: today };
       const letter: Letter = { id: createId(), ...contents, fingerprint: await fingerprintOf(contents), openedAt: null };
+      // Written first, then the ceremony: nothing waits on an animation (docs/DESIGN.md §5).
+      letters.put(letter);
+      drafts.remove('current');
       setSealing(letter);
+      house.ceremony(<SealedRite fingerprint={letter.fingerprint} initial={profile?.name ?? 'A'} opensOn={formatLong(letter.opensOn)} />, 900);
       window.setTimeout(
         () => {
-          letters.put(letter);
-          drafts.remove('current');
           house.toast({ message: `Sealed until ${formatLong(letter.opensOn)}.`, tone: 'accent' });
           house.navigate(house.href('/letters'));
         },

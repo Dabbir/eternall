@@ -243,3 +243,14 @@
 .envoi-mention input:focus { outline: none; border-color: var(--accent); }
 .envoi-mention ul { display: flex; flex-wrap: wrap; gap: 6px; }
 .envoi-mention button { padding: 4px 12px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+
+/* ---------- ceremony: sealed (kin to the "Filed" stamp) ---------- */
+.amz-rite { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 22px; animation: amz-veil var(--rite-ms, 900ms) ease-out both; }
+.amz-rite__wax { position: absolute; top: 50%; left: 50%; width: 240px; height: 240px; margin: -206px 0 0 -120px; border-radius: 47% 53% 51% 49% / 52% 46% 54% 48%; background: radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--press) 80%, #fff 20%), var(--press) 55%, color-mix(in srgb, var(--press) 70%, #000 30%)); transform: scale(0); animation: amz-wax calc(var(--rite-ms, 900ms) * 0.45) cubic-bezier(0.2, 0.8, 0.3, 1.2) forwards; }
+.amz-rite__seal { position: relative; margin-top: -60px; animation: amz-press var(--rite-ms, 900ms) cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.amz-rite__label { position: relative; margin-top: 24px; font-family: var(--font-mono); font-size: 1rem; letter-spacing: 0.06em; color: var(--ink); opacity: 0; animation: amz-in 220ms calc(var(--rite-ms, 900ms) * 0.55) ease-out forwards; }
+.amz-rite__label span { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: var(--press-text); margin-right: 6px; }
+@keyframes amz-veil { 0% { background: transparent; } 20%, 75% { background: color-mix(in srgb, var(--paper) 70%, transparent); opacity: 1; } 100% { background: transparent; opacity: 0; } }
+@keyframes amz-wax { to { transform: scale(1); } }
+@keyframes amz-press { 0%, 25% { opacity: 0; transform: scale(2.2) rotate(-14deg); } 55% { opacity: 1; transform: scale(0.95) rotate(-4deg); } 100% { opacity: 1; transform: scale(1) rotate(-4deg); } }
+@keyframes amz-in { to { opacity: 1; } }
