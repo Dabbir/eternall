@@ -30,7 +30,8 @@ export function Dialog({ open, onClose, title, eyebrow, hideTitle, size = 'm', c
       document.documentElement.classList.add('has-modal');
       // showModal() focuses the first focusable element (the close button), overriding React's autoFocus.
       // Move focus to the first meaningful control instead: a field, then an action.
-      const target = el.querySelector<HTMLElement>(
+      // A control marked `data-autofocus` (e.g. the checked choice) wins.
+      const target = el.querySelector<HTMLElement>('.dialog__body [data-autofocus]:not([disabled])') ?? el.querySelector<HTMLElement>(
         '.dialog__body :is(input:not([type=hidden]):not([type=radio]):not([type=checkbox]), textarea):not([disabled]), .dialog__body button:not([disabled]), .dialog__foot button:not([disabled])',
       );
       target?.focus();

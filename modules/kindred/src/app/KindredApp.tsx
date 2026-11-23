@@ -386,7 +386,7 @@ function RemindControl() {
               <legend>When</legend>
               {REMIND.map((r) => (
                 <label key={r} className="kd-pill">
-                  <input type="radio" name="remind" checked={choice === r} onChange={() => setChoice(r)} />
+                  <input type="radio" name="remind" checked={choice === r} onChange={() => setChoice(r)} {...(pref.remind === r ? { 'data-autofocus': true } : {})} />
                   <span>{REMIND_LABEL[r]}</span>
                 </label>
               ))}

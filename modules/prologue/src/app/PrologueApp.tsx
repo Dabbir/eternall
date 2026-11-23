@@ -5,7 +5,7 @@ import '@fontsource/libre-baskerville/latin-400-italic.css';
 import '@fontsource/libre-baskerville/latin-700.css';
 import '../theme/prologue.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { addDays, formatLong, formatMedium, plural, type ImprintAppProps } from '@eternall/core';
+import { addDays, diffDays, formatLong, formatMedium, plural, type ImprintAppProps } from '@eternall/core';
 import { useHouse, usePrimaryAction } from '@eternall/kit';
 import { Button, Icon } from '@eternall/ui';
 import { DimensionToggle, Stage3D, themeColors } from '@eternall/stage';
@@ -135,7 +135,7 @@ function StageView({ season, hopes, onHope, onSeason }: { season: Season; hopes:
         <header className="pl-bill">
           <TypedTitle text={word!.toUpperCase().split('').join(' ')} play={opening} />
           {rest.length > 0 && <p className="pl-year">{rest.join(' ')}</p>}
-          {rehearsal && <p className="pl-direction">(In rehearsal. The curtain rises on {formatLong(season.start)}.)</p>}
+          {rehearsal && <p className="pl-direction pl-rehearsal">(In rehearsal. The curtain rises on {formatLong(season.start)}.)</p>}
           {season.theme && (
             <>
               <p className="pl-of">— the season of —</p>
@@ -188,7 +188,7 @@ function StageView({ season, hopes, onHope, onSeason }: { season: Season; hopes:
           {overdue ? (
             <p className="pl-note">{season.name.replace(/\s+\d{4}$/u, '')} has ended. Close the season when you’re ready.</p>
           ) : (
-            <p className="pl-note">{plural(daysRemaining(season, today), 'day')} remain</p>
+            <p className="pl-note">{rehearsal ? `Opens in ${plural(diffDays(today, season.start), 'day')}` : `${plural(daysRemaining(season, today), 'day')} remain`}</p>
           )}
           <p className="pl-note">{plural(hopes.length, 'act')} of seven</p>
           <button type="button" className="pl-link" onClick={onSeason}>

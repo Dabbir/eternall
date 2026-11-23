@@ -94,6 +94,7 @@
 @keyframes pl-bow { from { background-size: 0 2px; transform: translateY(4px); } }
 .pl-noacts { display: grid; justify-items: center; gap: 18px; text-align: center; padding: 20px 0; }
 .pl-direction { font-family: var(--font-script); color: var(--ink-2); max-width: 44ch; }
+.pl-rehearsal { justify-self: center; margin-top: 6px; }
 .pl-closebar { display: flex; justify-content: center; margin-top: 36px; padding-top: 22px; border-top: 1px solid var(--rule); }
 
 .pl-wing { font-size: 0.875rem; padding-top: 56px; }

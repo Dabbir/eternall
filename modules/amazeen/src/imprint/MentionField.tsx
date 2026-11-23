@@ -1,4 +1,4 @@
-import { createContext, useContext, useId, useState, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
+import { createContext, useContext, useId, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
 import type { Capabilities } from '@eternall/kit';
 import { applyMention, mentionQuery } from './mentions';
 import styles from './MentionField.module.css';
@@ -31,6 +31,9 @@ export function useMentions(ref: RefObject<HTMLTextAreaElement | null>, value: s
   const [q, setQ] = useState<{ start: number; query: string } | null>(null);
   const [active, setActive] = useState(0);
   const [closedAt, setClosedAt] = useState<number | null>(null);
+  // Where the popup sits: just under the caret's line, not under a tall field's bottom edge.
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [top, setTop] = useState(4);
   const matches = people && q && q.query ? people.search(q.query).slice(0, 5) : [];
   const open = matches.length > 0 && q !== null && closedAt !== q.start;
 
@@ -41,6 +44,7 @@ export function useMentions(ref: RefObject<HTMLTextAreaElement | null>, value: s
     setQ((prev) => (prev?.start === next?.start && prev?.query === next?.query ? prev : next));
     if (!next || next.start !== q?.start || next.query !== q?.query) setActive(0);
     if (!next) setClosedAt(null);
+    if (next && wrapRef.current) setTop(caretBottom(el) - (wrapRef.current.offsetTop - el.offsetTop) + 4);
   };
   const pick = (name: string) => {
     const el = ref.current;
@@ -83,9 +87,9 @@ export function useMentions(ref: RefObject<HTMLTextAreaElement | null>, value: s
       ...(open ? { 'aria-activedescendant': optionId(active) } : {}),
     },
     popup: (
-      <div className={styles.wrap}>
+      <div ref={wrapRef} className={styles.wrap}>
         {open && (
-          <div className={styles.list}>
+          <div className={styles.list} style={{ top }}>
           <div id={`${id}-list`} role="listbox" aria-label="People from KINDRED">
             {matches.map((p, i) => (
               <div
@@ -114,4 +118,23 @@ export function useMentions(ref: RefObject<HTMLTextAreaElement | null>, value: s
       </div>
     ),
   };
+}
+
+/** The caret line's bottom edge, in px from the textarea's top (a hidden mirror with the same text metrics). */
+function caretBottom(el: HTMLTextAreaElement): number {
+  const cs = getComputedStyle(el);
+  const mirror = document.createElement('div');
+  for (const k of ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'letterSpacing', 'lineHeight', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'boxSizing', 'textIndent', 'wordSpacing', 'fontVariationSettings', 'fontFeatureSettings'] as const) {
+    mirror.style[k] = cs[k];
+  }
+  Object.assign(mirror.style, { position: 'absolute', visibility: 'hidden', top: '0', left: '-9999px', width: `${el.offsetWidth}px`, whiteSpace: 'pre-wrap', overflowWrap: 'break-word' });
+  mirror.textContent = el.value.slice(0, el.selectionStart ?? el.value.length);
+  const mark = document.createElement('span');
+  mark.textContent = '\u200b';
+  mirror.append(mark);
+  document.body.append(mirror);
+  const line = Number.parseFloat(cs.lineHeight) || mark.offsetHeight;
+  const bottom = mark.offsetTop + line - el.scrollTop;
+  mirror.remove();
+  return Math.min(bottom, el.offsetHeight);
 }
