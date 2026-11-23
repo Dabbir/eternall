@@ -82,80 +82,63 @@
 [data-imprint='kindred'] .segmented__thumb { top: 0; bottom: -1px; left: 0; width: calc(100% / var(--n)); border: 1px solid var(--rule-strong); border-bottom-color: var(--card); }
 [data-imprint='kindred'] .dimension-toggle { border-color: var(--ink); padding: 2px; }
 
-/* ---------- the cabinet face: plate at the top, drawer fronts along the bottom ---------- */
-.kc { --dock: 76px; min-height: 100dvh; display: flex; flex-direction: column; padding-bottom: calc(var(--dock) + env(safe-area-inset-bottom)); }
-.kc-top { display: flex; justify-content: center; padding: 16px var(--gutter) 4px; }
-
+/* ---------- the cabinet face, on the shared app bar (ADR 0013) ---------- */
+.kc { min-height: 100dvh; display: flex; flex-direction: column; }
+[data-imprint='kindred'] .appbar {
+  --appbar-h: 72px; --appbar-dot: var(--accent-2);
+  --appbar-bg: color-mix(in srgb, var(--paper-sunk) 70%, var(--brass) 8%);
+  background-image: linear-gradient(to bottom, rgb(255 255 255 / 0.06), transparent 40%);
+  border-bottom: 1px solid var(--rule-strong);
+  box-shadow: 0 1px 0 rgb(255 255 255 / 0.4) inset, 0 6px 14px -12px rgb(0 0 0 / 0.5);
+}
+.kc-arrow { font-size: 1.1rem; line-height: 1; }
+[data-imprint='kindred'] .appbar__exit { font-size: 0.875rem; color: var(--ink-2); text-decoration: underline; text-underline-offset: 4px; text-decoration-color: var(--rule-strong); }
+[data-imprint='kindred'] .appbar__exit:hover { color: var(--ink); text-decoration-color: currentColor; }
 /* The brass label holder, screws and all, with the name letterpressed onto the card behind it. */
-.kc-plate {
-  display: inline-flex; align-items: center; gap: 12px;
-  padding: 6px 12px;
+[data-imprint='kindred'] .appbar__title {
+  position: relative; flex-direction: column; align-items: center; gap: 1px; padding: 6px 30px;
   background: linear-gradient(180deg, color-mix(in srgb, var(--brass) 70%, #fff 30%), var(--brass) 55%, color-mix(in srgb, var(--brass) 75%, #000 25%));
-  border-radius: 3px;
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.5) inset, 0 -1px 0 rgb(0 0 0 / 0.25) inset, 0 2px 4px -1px rgb(0 0 0 / 0.35);
-  text-decoration: none;
+  border-radius: 3px; box-shadow: 0 1px 0 rgb(255 255 255 / 0.5) inset, 0 -1px 0 rgb(0 0 0 / 0.25) inset, 0 2px 4px -1px rgb(0 0 0 / 0.35);
 }
-.kc-plate__screw { width: 7px; height: 7px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff8 0, transparent 45%), color-mix(in srgb, var(--brass) 60%, #000 40%); box-shadow: 0 0 0 1px rgb(0 0 0 / 0.2); }
-.kc-plate__text {
-  display: grid; justify-items: center; gap: 1px; padding: 4px 14px;
-  background: var(--card); box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.25);
+[data-imprint='kindred'] .appbar__title::before, [data-imprint='kindred'] .appbar__title::after {
+  content: ''; position: absolute; top: 50%; width: 7px; height: 7px; margin-top: -3.5px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fff8 0, transparent 45%), color-mix(in srgb, var(--brass) 60%, #000 40%);
 }
-.kc-plate__name { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.22em; color: var(--ink); text-shadow: 0 1px 0 rgb(255 255 255 / 0.6), 0 -1px 0 rgb(0 0 0 / 0.14); }
-.kc-plate__fn { font-size: 0.8125rem; letter-spacing: 0.1em; font-variant-caps: all-small-caps; color: var(--ink-3); }
-.kc-press {
-  display: inline-flex; align-items: center; gap: 8px;
-  height: 44px; padding: 0 18px; border-radius: 2px; white-space: nowrap;
-  font-size: 1rem; font-weight: 600; letter-spacing: 0.06em; font-variant-caps: all-small-caps;
+[data-imprint='kindred'] .appbar__title::before { left: 10px; }
+[data-imprint='kindred'] .appbar__title::after { right: 10px; }
+[data-imprint='kindred'] .appbar__name { padding: 2px 14px 0; background: var(--card); box-shadow: inset 0 1px 3px rgb(0 0 0 / 0.25); font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.22em; color: var(--ink); }
+[data-imprint='kindred'] .appbar__fn { padding: 0 14px 3px; background: var(--card); box-shadow: inset 0 -1px 2px rgb(0 0 0 / 0.15); font-size: 0.75rem; letter-spacing: 0.1em; font-variant-caps: all-small-caps; color: var(--ink-3); }
+/* Drawer fronts: a label card in a brass frame over a brass pull. The open drawer is pulled out. */
+[data-imprint='kindred'] .appbar__places { --appbar-places-gap: 10px; }
+[data-imprint='kindred'] .appbar__place {
+  position: relative; flex-direction: column; gap: 5px; padding: 6px 18px 4px;
+  font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.06em; font-variant-caps: all-small-caps; color: var(--ink-2);
+  background: linear-gradient(to bottom, var(--card), color-mix(in srgb, var(--card) 88%, #000 12%));
+  border-radius: 2px; box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 -2px 0 rgb(0 0 0 / 0.15), 0 1px 0 rgb(0 0 0 / 0.3);
+  transition: transform 160ms var(--ease-out), box-shadow 160ms;
+}
+[data-imprint='kindred'] .appbar__place::after { content: ''; width: 38px; height: 7px; border-radius: 0 0 9px 9px; background: linear-gradient(to bottom, color-mix(in srgb, var(--brass) 65%, #fff 35%), color-mix(in srgb, var(--brass) 70%, #000 30%)); box-shadow: 0 2px 2px rgb(0 0 0 / 0.3); }
+[data-imprint='kindred'] .appbar__place:hover { color: var(--ink); transform: translateY(1px); }
+[data-imprint='kindred'] .appbar__place[aria-current] { color: var(--ink); transform: translateY(3px); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 -3px 0 var(--accent), 0 6px 10px -6px rgb(0 0 0 / 0.5); }
+[data-imprint='kindred'] .appbar__tool { color: var(--ink-2); border-radius: 2px; }
+[data-imprint='kindred'] .appbar__tool:hover { color: var(--ink); background: var(--card); }
+[data-imprint='kindred'] .appbar__primary {
+  border-radius: 2px; font-size: 1rem; font-weight: 600; letter-spacing: 0.06em; font-variant-caps: all-small-caps;
   background: var(--accent); color: var(--on-accent);
   box-shadow: inset 0 -3px 0 rgb(0 0 0 / 0.22), inset 0 1px 0 rgb(255 255 255 / 0.14);
   transition: transform 120ms var(--ease-out), box-shadow 120ms;
 }
-.kc-press__plus { font-size: 1.25rem; line-height: 1; font-variant-caps: normal; }
-.kc-press:hover { background: var(--accent-deep); }
-.kc-press:active { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.22), inset 0 2px 3px rgb(0 0 0 / 0.25); }
-
-/* The cabinet's bottom row. Oak-dark carcass, card-coloured fronts, brass label holders and pulls. */
-.kn {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-  padding: 8px var(--gutter) calc(8px + env(safe-area-inset-bottom));
-  background:
-    linear-gradient(to bottom, rgb(255 255 255 / 0.05), transparent 30%),
-    color-mix(in srgb, #221a14 86%, var(--brass) 14%);
-  box-shadow: 0 -1px 0 rgb(0 0 0 / 0.35), 0 -10px 22px -16px rgb(0 0 0 / 0.6);
-}
-.kn-row { display: flex; align-items: stretch; gap: 10px; max-width: 1200px; margin: 0 auto; height: calc(var(--dock) - 16px); }
-.kn-drawers { flex: 1; display: flex; gap: 8px; justify-content: center; }
-.kn-front {
-  position: relative; display: grid; align-content: center; justify-items: center; gap: 6px;
-  min-width: 0; padding: 6px 18px; text-decoration: none; color: var(--ink);
-  background: linear-gradient(to bottom, var(--card), color-mix(in srgb, var(--card) 88%, #000 12%));
-  border-radius: 2px;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 -2px 0 rgb(0 0 0 / 0.18), 0 1px 0 rgb(0 0 0 / 0.4);
-  transition: transform 160ms var(--ease-out), box-shadow 160ms;
-}
-.kn-drawers .kn-front { flex: 0 1 220px; }
-/* The label card sits in a small brass frame. */
-.kn-label {
-  padding: 2px 12px; font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.06em; font-variant-caps: all-small-caps; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
-  background: var(--paper); color: var(--ink);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--brass) 80%, #000 20%), inset 0 1px 2px rgb(0 0 0 / 0.2);
-}
-.kn-pull { width: 46px; height: 9px; border-radius: 0 0 10px 10px; background: linear-gradient(to bottom, color-mix(in srgb, var(--brass) 65%, #fff 35%), color-mix(in srgb, var(--brass) 70%, #000 30%)); box-shadow: 0 2px 2px rgb(0 0 0 / 0.35); }
-a.kn-front:hover { transform: translateY(-2px); }
-/* The open drawer is pulled out toward you: lifted, with its shadow falling on the carcass. */
-.kn-front[aria-current] { transform: translateY(-7px); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5), inset 0 -2px 0 rgb(0 0 0 / 0.18), 0 9px 0 -2px color-mix(in srgb, var(--card) 70%, #000 30%), 0 12px 14px -6px rgb(0 0 0 / 0.6); }
-.kn-front[aria-current] .kn-label { box-shadow: 0 0 0 2px color-mix(in srgb, var(--brass) 80%, #000 20%), inset 0 -3px 0 var(--accent); }
-.kn { --oak-ink: #efe6d6; }
-.kn-front--exit { flex: none; background: transparent; box-shadow: none; color: var(--oak-ink); padding: 6px 4px; }
-.kn-front--exit .kn-label { background: transparent; color: var(--oak-ink); box-shadow: none; font-style: italic; font-weight: 400; font-variant-caps: normal; letter-spacing: 0; text-decoration: underline; text-underline-offset: 4px; text-decoration-color: color-mix(in srgb, var(--oak-ink) 40%, transparent); }
-.kn-front--exit:hover .kn-label { text-decoration-color: currentColor; }
-.kn-dot { position: absolute; top: 10px; right: 0; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); }
-.kn-label__short { display: none; }
-.kn-tools { flex: none; display: flex; align-items: center; gap: 4px; }
-.kn-tool { display: grid; place-items: center; width: 40px; height: 40px; color: var(--oak-ink); border-radius: 2px; }
-.kn-tool:hover { background: rgb(255 255 255 / 0.1); }
-[data-imprint='kindred'] .toasts { bottom: calc(var(--dock, 76px) + 16px + env(safe-area-inset-bottom)); }
+[data-imprint='kindred'] .appbar__primary:hover { background: var(--accent-deep); }
+[data-imprint='kindred'] .appbar__primary:active { transform: translateY(2px); box-shadow: inset 0 -1px 0 rgb(0 0 0 / 0.22), inset 0 2px 3px rgb(0 0 0 / 0.25); }
 .kc-body { flex: 1; }
+@media (max-width: 819px) {
+  [data-imprint='kindred'] .appbar { --appbar-h: 58px; }
+  [data-imprint='kindred'] .appbar__title { padding: 4px 22px; }
+  [data-imprint='kindred'] .appbar__name { font-size: 0.875rem; letter-spacing: 0.14em; }
+  [data-imprint='kindred'] .appbar__places { --appbar-dock-bg: color-mix(in srgb, #221a14 86%, var(--brass) 14%); --appbar-dock-shadow: 0 -1px 0 rgb(0 0 0 / 0.35); padding-top: 6px; padding-bottom: calc(6px + env(safe-area-inset-bottom)); }
+  [data-imprint='kindred'] .appbar__place { height: 100%; padding: 4px; }
+  [data-imprint='kindred'] .appbar__primary { width: 56px; padding: 0; font-size: 1.5rem; font-variant-caps: normal; }
+}
 
 /* The house's first-contact note, set as a slip of card. */
 [data-imprint='kindred'] .imprint-intro { border: 1px solid var(--card-edge); background: var(--card); border-left: 5px solid var(--accent-2); border-radius: 2px; font-family: var(--font-ui); }
@@ -168,23 +151,8 @@ a.kn-front:hover { transform: translateY(-2px); }
 [data-imprint='kindred'] .unlock__app-fn { color: #3a3226; font-size: 0.8125rem; letter-spacing: 0.1em; font-variant-caps: all-small-caps; }
 [data-imprint='kindred'] .unlock__title { font-family: var(--font-display); }
 
-@media (max-width: 720px) {
-  .kc { --dock: 68px; }
-  .kc-plate__fn { display: none; }
-  .kn { padding-left: 8px; padding-right: 8px; }
-  .kn-row { gap: 6px; }
-  .kn-drawers { gap: 6px; }
-  .kn-drawers .kn-front { flex: 1 1 0; padding: 6px 6px; }
-  .kn-label { padding: 2px 6px; font-size: 0.875rem; }
-  .kn-label__long, .kc-press__long { display: none; }
-  .kn-label__short { display: inline; }
-  .kn-front--exit .kn-label { font-size: 1.2rem; font-style: normal; text-decoration: none; }
-  .kn-tools { gap: 0; }
-  .kn-tool { width: 36px; }
-  .kc-press { height: 44px; width: 44px; padding: 0; justify-content: center; }
-}
 @media (prefers-reduced-motion: reduce) {
-  .kc-press, .kn-front { transition: none; }
+  [data-imprint='kindred'] .appbar__place, [data-imprint='kindred'] .appbar__primary { transition: none; }
 }
 
 /* ⌘K: a card, with the chosen line marked by a teal edge rather than a house pill. */

@@ -305,3 +305,53 @@ html.has-modal { overflow: hidden; }
 .stage3d.is-ready .stage3d__canvas { opacity: 1; }
 .stage3d__loading { position: absolute; inset: 0; background: linear-gradient(90deg, transparent, var(--rule), transparent) 0 50% / 40% 2px no-repeat; animation: stage-load 1.2s linear infinite; }
 @keyframes stage-load { from { background-position: -40% 50%; } to { background-position: 140% 50%; } }
+
+/* ---------- The app bar: one set of positions for every app (docs/adr/0013) ----------
+   Structure and positions only. Each app styles these hooks in its theme/<id>.kit.css. */
+.appbar {
+  position: sticky; top: 0; z-index: 40;
+  display: flex; align-items: center; gap: var(--appbar-gap, 18px);
+  min-height: var(--appbar-h, 60px); padding: 0 var(--appbar-pad, clamp(12px, 2.4vw, 28px));
+  background: var(--appbar-bg, var(--paper)); color: var(--appbar-fg, var(--ink));
+}
+.appbar__exit { flex: none; position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; min-height: 44px; padding: 0 2px; color: inherit; }
+.appbar__title { flex: none; display: inline-flex; align-items: baseline; gap: 10px; min-width: 0; min-height: 44px; color: inherit; text-decoration: none; }
+.appbar__fn { white-space: nowrap; }
+.appbar__places { flex: 1; display: flex; align-items: center; justify-content: var(--appbar-places-justify, center); gap: var(--appbar-places-gap, 6px); min-width: 0; }
+.appbar__place { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 12px; white-space: nowrap; color: inherit; text-decoration: none; }
+.appbar__place-short { display: none; }
+.appbar__extra { flex: none; }
+.appbar__tools { flex: none; display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.appbar__places + .appbar__extra + .appbar__tools, .appbar__places + .appbar__tools { margin-left: 0; }
+.appbar__tool { display: grid; place-items: center; width: 44px; height: 44px; color: inherit; }
+.appbar__primary { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px; margin-left: 6px; white-space: nowrap; }
+.appbar__primary-plus { font-size: 1.25em; line-height: 1; }
+.appbar__dot { position: absolute; top: 8px; right: -6px; width: 7px; height: 7px; border-radius: 50%; background: var(--appbar-dot, var(--accent)); }
+
+@media (max-width: 819px) {
+  :root { --appbar-bottom: calc(64px + env(safe-area-inset-bottom)); }
+  body:has(.appbar) .stage--app { padding-bottom: var(--appbar-bottom); }
+  body:has(.appbar) .toasts { bottom: calc(var(--appbar-bottom) + 12px); }
+  .appbar { gap: 8px; min-height: 56px; }
+  .appbar__exit-label, .appbar__fn, .appbar__extra { display: none; }
+  .appbar__title { flex: 1 1 0; justify-content: center; align-items: center; overflow: hidden; }
+  .appbar__tools { margin-left: 0; gap: 0; }
+  /* The bottom bar: the places, and the primary action raised at its right end. */
+  .appbar__places {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    height: var(--appbar-bottom); padding: 0 8px env(safe-area-inset-bottom);
+    justify-content: space-around; gap: 2px;
+    background: var(--appbar-dock-bg, var(--appbar-bg, var(--paper)));
+    box-shadow: var(--appbar-dock-shadow, 0 -1px 0 var(--rule-strong, rgb(0 0 0 / 0.15)));
+  }
+  .appbar__places.has-primary { padding-right: 84px; }
+  .appbar__place { flex: 1; padding: 0 4px; }
+  .appbar__place:has(.appbar__place-short) .appbar__place-long { display: none; }
+  .appbar__place-short { display: inline; }
+  .appbar__primary {
+    position: fixed; right: 12px; bottom: calc(10px + env(safe-area-inset-bottom)); z-index: 41;
+    width: 56px; height: 56px; min-height: 0; padding: 0; margin: 0; justify-content: center;
+  }
+  .appbar__primary-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  /* An app with no places still keeps its raised primary action. */
+}

@@ -13,7 +13,7 @@ export const marginalia: ImprintDefinition = {
   basePath: '/marginalia/',
   release: 2,
   accent: { light: '#1d4ea8', dark: '#8db0ff' },
-  intro: 'Every work you take in gets a catalogue card. Open one to keep the lines you underlined, with your notes in the margin. The way around is pencilled in the margin on the left.',
+  intro: 'Every work you take in gets a catalogue card. Open one to keep the lines you underlined, with your notes in the margin.',
   brand: { icon: '/icons/marginalia.svg', themeColor: { light: '#f8f5ee', dark: '#121110' }, lockTitle: 'The stacks are closed.', leaveLabel: 'Back to the stacks' },
   load: () => import('./app/MarginaliaApp'),
   collections: [WORK_PATH, UNDERLINE_PATH, PREF_PATH],

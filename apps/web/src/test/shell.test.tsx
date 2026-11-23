@@ -238,3 +238,25 @@ describe('apps on and off (ADR 0013)', () => {
     await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Money' })).not.toBeChecked());
   });
 });
+
+describe('one app bar (ADR 0013)', () => {
+  const apps: [door: string, primary: RegExp][] = [
+    ['/amazeen/', /^Write$/],
+    ['/casheen/', /^Add an entry$/],
+    ['/refrain/', /^(Mark today|New ritual)$/],
+    ['/kindred/', /^Add a person$/],
+    ['/marginalia/', /^Add a work$/],
+  ];
+  it.each(apps)('%s keeps back, search and its primary action in the same order', async (door, primary) => {
+    at(door);
+    const magazine = rec('amazeen/meta/main', { id: 'main', magazine: { title: 'The Weekly Me', editor: 'Ada', createdAt: stamp }, overrides: {} });
+    render(<Root store={createMemoryStore([profile, quiet, magazine])} />);
+    const back = (await screen.findAllByRole('button', { name: /back to ETERNALL/ }))[0]!;
+    const bar = back.closest('header')!;
+    const search = within(bar).getByRole('button', { name: 'Search' });
+    const action = await within(bar).findByRole(door === '/amazeen/' ? 'link' : 'button', { name: primary });
+    const before = (a: Element, b: Element) => Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
+    expect(before(back, search)).toBe(true);
+    expect(before(search, action)).toBe(true);
+  });
+});

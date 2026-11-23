@@ -77,7 +77,7 @@ describe('CASHEEN', () => {
     expect(within(row).getByText('over by 5.000')).toBeInTheDocument();
   });
 
-  it('the thumb index opens every month of the year, and The month leads back from Budget', async () => {
+  it('the month notches open every month of the year, and The month leads back from Budget', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([quiet]);
     at(`/casheen/budget/${month}`);
@@ -89,7 +89,9 @@ describe('CASHEEN', () => {
     expect(await screen.findByLabelText('Write one line')).toBeInTheDocument();
     expect(window.location.pathname).toBe(`/casheen/${month}`);
     const december = `${month.slice(0, 4)}-12`;
-    await user.click(within(index).getAllByRole('link')[11]!);
+    // the notches are part of the page now (ADR 0013), so find the month page's own
+    const monthIndex = await screen.findByRole('list', { name: `Months of ${month.slice(0, 4)}` });
+    await user.click(within(monthIndex).getAllByRole('link')[11]!);
     expect(window.location.pathname).toBe(`/casheen/${december}`);
     if (december > month) expect(screen.getByText(/hasn’t begun/)).toBeInTheDocument();
   });

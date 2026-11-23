@@ -105,14 +105,12 @@ The margin column moves **inline**: each margin note follows its passage as an i
   2. Save a passage with a margin note.
   3. Find every underline from books you read last year.
 
-## 12. Chrome and kit (its own site, ADR 0011)
-**MARGINALIA's navigation is pencilled in the page's wide left margin** (216px, sticky, ruled off from the text by a faint pencil line):
-- **The exit** is a cloth **ribbon bookmark** hanging from the head of the book: **"Back to the stacks"**.
-- **The catalogue card:** the call number and name typed on ruled stock, with the red head rule and the rod hole.
-- **Places are pencilled notes** in Caveat: Catalogue (`/`) and Every underline (`/underlines`). The current one is ringed by hand.
-- **The primary action** is typed in brackets, and wraps inside the margin.
-- **"find" and "lock"** are pencilled at the foot of the margin.
-- Below 760px there is no margin to write in, so the notes fold into a pencilled line across the top: ribbon, card, action, search and lock, with the places on a second line.
+## 12. Chrome and kit (its own site, ADR 0011; shared positions, ADR 0013)
+MARGINALIA's chrome is an oak desk, set on the shared app bar (`DESIGN.md` §2):
+- **The way back** is a cloth **ribbon bookmark** hanging from the head of the bar: **"Back to the stacks"**.
+- **The name** is typed on a compact catalogue card: call number, red head rule, ruled stock.
+- **The places are pencilled** in Caveat: Catalogue (`/`) and Every underline (`/underlines`). The current one is ringed by hand; a work's page keeps Catalogue ringed.
+- **Add a work** (or Add an underline) is typed in brackets at the end of the bar; on a phone it is the raised "+" on the bottom bar, which is a card with a red head rule.
 
 `theme/marginalia.kit.css` types and pencils the shared primitives:
 - **Buttons:** square monospace; ghost buttons are bracketed.

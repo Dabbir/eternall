@@ -82,53 +82,50 @@
 [data-imprint='refrain'] .dimension-toggle { border: 0; padding: 0; gap: 10px; }
 [data-imprint='refrain'] .dimension-toggle button.is-on { text-decoration: underline; text-underline-offset: 5px; }
 
-/* ---------- the head of the score ---------- */
+/* ---------- the head of the score, on the shared app bar (ADR 0013) ---------- */
 .rc { min-height: 100dvh; display: flex; flex-direction: column; }
-.rc-head {
-  position: relative;
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
-  padding: 18px var(--gutter) 22px;
-  background: var(--paper);
-  border-bottom: 3px double var(--ink);
-}
-/* Five hairlines across the whole head, the page's first system. */
-.rc-staff {
-  position: absolute; inset: 50% 0 auto; height: 33px; transform: translateY(-50%);
+[data-imprint='refrain'] .appbar { --appbar-h: 76px; --appbar-bg: var(--paper); --appbar-dot: var(--accent); border-bottom: 3px double var(--ink); }
+/* Five hairlines across the whole bar, the page's first system. */
+[data-imprint='refrain'] .appbar::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 33px; transform: translateY(-50%);
   background: repeating-linear-gradient(to bottom, var(--rule-strong) 0 1px, transparent 1px 8px);
-  opacity: 0.55; pointer-events: none;
+  opacity: 0.5; pointer-events: none;
 }
-.rc-fine {
-  position: relative; justify-self: start; display: inline-flex; align-items: center; gap: 10px;
-  padding: 4px 10px 4px 0; background: var(--paper); color: var(--ink);
-}
+[data-imprint='refrain'] .appbar > :not(.appbar__places) { position: relative; }
+[data-imprint='refrain'] .appbar__exit, [data-imprint='refrain'] .appbar__title, [data-imprint='refrain'] .appbar__place, [data-imprint='refrain'] .appbar__tools { background: var(--paper); }
 .rc-fine__bar { width: 7px; height: 34px; border-left: 1px solid var(--ink); border-right: 4px solid var(--ink); }
-.rc-fine__text { display: grid; line-height: 1.05; text-align: left; }
-.rc-fine__text em { font-family: var(--font-display); font-size: 1.35rem; font-weight: 600; }
-.rc-fine__text span { font-size: 0.75rem; color: var(--ink-3); }
-.rc-fine:hover .rc-fine__text em { color: var(--accent); }
-.rc-fine__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); align-self: flex-start; }
-
-.rc-title { position: relative; display: grid; justify-items: center; gap: 2px; padding: 4px 18px; background: var(--paper); text-decoration: none; color: var(--ink); }
-.rc-title__name { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.5rem, 1.2rem + 1vw, 2.1rem); letter-spacing: 0.32em; margin-right: -0.32em; }
-.rc-title__fn { font-family: var(--font-display); font-style: italic; font-size: 0.9375rem; color: var(--ink-2); }
-
-.rc-tools { position: relative; justify-self: end; display: flex; align-items: center; gap: 4px; padding-left: 10px; background: var(--paper); }
-.rc-tool { display: grid; place-items: center; width: 38px; height: 38px; color: var(--ink-2); }
-.rc-tool:hover { color: var(--accent); }
-.rc-mark {
-  height: 40px; padding: 0 18px; white-space: nowrap;
-  font-family: var(--font-display); font-style: italic; font-weight: 700; font-size: 1.125rem;
-  color: var(--paper); background: var(--ink);
-  transition: background-color 160ms;
+[data-imprint='refrain'] .appbar__exit { padding-right: 10px; }
+[data-imprint='refrain'] .appbar__exit-label { font-family: var(--font-display); font-style: italic; font-size: 1.35rem; font-weight: 600; }
+[data-imprint='refrain'] .appbar__exit:hover .appbar__exit-label { color: var(--accent); }
+[data-imprint='refrain'] .appbar__title { flex-direction: column; align-items: center; gap: 2px; padding: 4px 16px; }
+[data-imprint='refrain'] .appbar__name { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.4rem, 1.1rem + 0.9vw, 1.9rem); letter-spacing: 0.32em; margin-right: -0.32em; }
+[data-imprint='refrain'] .appbar__fn { font-family: var(--font-display); font-style: italic; font-size: 0.875rem; color: var(--ink-2); }
+[data-imprint='refrain'] .appbar__places { --appbar-places-justify: flex-start; }
+[data-imprint='refrain'] .appbar__place { font-family: var(--font-display); font-size: 1.0625rem; color: var(--ink-3); }
+[data-imprint='refrain'] .appbar__place[aria-current] { color: var(--ink); font-style: italic; }
+[data-imprint='refrain'] .appbar__place:hover { color: var(--accent); }
+[data-imprint='refrain'] .appbar__tools { padding-left: 10px; }
+[data-imprint='refrain'] .appbar__tool { color: var(--ink-2); }
+[data-imprint='refrain'] .appbar__tool:hover { color: var(--accent); }
+[data-imprint='refrain'] .appbar__primary {
+  height: 40px; font-family: var(--font-display); font-style: italic; font-weight: 700; font-size: 1.125rem;
+  color: var(--paper); background: var(--ink); transition: background-color 160ms;
 }
-.rc-mark:hover { background: var(--accent); }
-
-.rc-movements { display: flex; flex-wrap: wrap; gap: 6px 26px; max-width: 1240px; width: 100%; margin: 0 auto; padding: 14px var(--gutter) 0; }
-.rc-movement { font-family: var(--font-display); font-size: 1.0625rem; color: var(--ink-3); text-decoration: none; }
-.rc-movement__no { font-weight: 700; margin-right: 4px; }
-.rc-movement[aria-current='page'] { color: var(--ink); font-style: italic; }
-a.rc-movement:hover { color: var(--accent); }
+[data-imprint='refrain'] .appbar__primary:hover { background: var(--accent); }
+.rc-movement { max-width: 1240px; width: 100%; margin: 0 auto; padding: 12px var(--gutter) 0; font-family: var(--font-display); font-size: 1.0625rem; font-style: italic; color: var(--ink); }
+.rc-movement__no { font-style: normal; font-weight: 700; margin-right: 4px; }
 .rc-body { flex: 1; }
+@media (max-width: 819px) {
+  [data-imprint='refrain'] .appbar { --appbar-h: 60px; }
+  [data-imprint='refrain'] .appbar__name { font-size: 1.1rem; letter-spacing: 0.16em; margin-right: -0.16em; }
+  [data-imprint='refrain'] .appbar__title { padding: 4px 6px; }
+  [data-imprint='refrain'] .appbar__places { --appbar-dock-shadow: none; border-top: 3px double var(--ink); }
+  [data-imprint='refrain'] .appbar__place { background: transparent; }
+  [data-imprint='refrain'] .appbar__primary { height: 56px; border-radius: 50%; font-style: normal; font-size: 1.5rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-imprint='refrain'] .appbar__primary { transition: none; }
+}
 
 /* The house's first-contact note, set as a performance direction. */
 [data-imprint='refrain'] .imprint-intro { border: 0; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); background: transparent; border-radius: 0; font-family: var(--font-display); font-style: italic; }
@@ -139,22 +136,6 @@ a.rc-movement:hover { color: var(--accent); }
 [data-imprint='refrain'] .unlock__app-name { color: var(--ink); letter-spacing: 0.32em; font-size: 1.4rem; }
 [data-imprint='refrain'] .unlock__app-fn { font-family: var(--font-display); font-style: italic; font-size: 0.9375rem; }
 [data-imprint='refrain'] .unlock__title { font-family: var(--font-display); font-style: italic; }
-
-@media (max-width: 720px) {
-  .rc-head { grid-template-columns: auto 1fr auto; gap: 8px; padding: 12px 14px 14px; }
-  .rc-fine__text span, .rc-title__fn { display: none; }
-  .rc-title__name { font-size: 1.25rem; letter-spacing: 0.22em; margin-right: -0.22em; }
-  .rc-mark { height: 36px; padding: 0 12px; font-size: 1rem; }
-  .rc-tool { width: 32px; }
-}
-@media (max-width: 420px) {
-  .rc-head { gap: 4px; padding: 10px 10px 12px; }
-  .rc-title { padding: 4px 6px; }
-  .rc-title__name { font-size: 1.05rem; letter-spacing: 0.16em; margin-right: -0.16em; }
-  .rc-tools { gap: 0; padding-left: 4px; }
-  .rc-tool { width: 30px; }
-  .rc-mark { padding: 0 10px; font-size: 0.9375rem; }
-}
 
 /* ⌘K: the chosen line underlined like a marking. */
 [data-imprint='refrain'] { --palette-radius: 0; --palette-on-bg: transparent; --palette-on-fg: var(--accent); --palette-on-shadow: inset 0 -1px 0 var(--accent); --palette-font: var(--font-display); }

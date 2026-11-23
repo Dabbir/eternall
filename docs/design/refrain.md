@@ -97,12 +97,12 @@ One bar (a week) per screen width, swiping between weeks. Beats are 44px touch t
   2. Mark today's run as done.
   3. Play back this week.
 
-## 12. Chrome and kit (its own site, ADR 0011)
-REFRAIN's head is the head of a score:
-- **Five hairlines** run behind it, with a **centred title** in spaced Bodoni.
-- **The exit** is the score's end mark: **"Fine"** with its double barline, plus a plain "leave the score".
-- **Places are movements:** "I. The score", and "II. Programme notes · <ritual>" on a ritual.
-- **Mark today** is set like a dynamic marking.
+## 12. Chrome and kit (its own site, ADR 0011; shared positions, ADR 0013)
+REFRAIN's chrome is the head of a score, set on the shared app bar (`DESIGN.md` §2):
+- **Five hairlines** run under the bar, with the name in spaced Bodoni and the function line in italic.
+- **The way back** is the score's end mark: **"Fine"** with its double barline.
+- **The place is the first movement**, "I. The score". On a ritual, "II. Programme notes · <ritual>" is named under the bar.
+- **Mark today** (or **New ritual** when there are none) is set like a marking, at the end of the bar; on a phone it is the raised round button on the bottom bar.
 
 `theme/refrain.kit.css` engraves the shared primitives:
 - **Buttons:** hairline boxes in italic Bodoni.

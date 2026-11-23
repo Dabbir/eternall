@@ -170,51 +170,162 @@
   margin-bottom: 22px;
 }
 
-/* Inside ETERNALL: the lock where the theme switch sits, and a small way out at the foot of the spine. */
-/* With the exit and a fifth section, the spine tightens so the deadline stays in view. */
-.spine[data-host] .spineNav {
-  margin-top: 16px;
+/* ── Inside ETERNALL: the same positions as every app (docs/adr/0013) ──────── */
+/* One ink-black band across the top: Leave, monogram and masthead, the sections, the deadline,
+   then search, the lock and Write. The left spine is AMAZEEN's own frame when it runs alone. */
+.shell[data-host] {
+  --spine-w: 0px;
 }
-.spine[data-host] .spineLink {
-  padding: 9px 0;
-  gap: 7px;
+.hostbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  min-height: 60px;
+  padding: 0 clamp(12px, 2.4vw, 28px);
+  background: var(--spine);
+  color: var(--spine-ink);
+  box-shadow: inset 0 -1px 0 rgb(255 255 255 / 0.06), 0 6px 24px -14px rgb(0 0 0 / 0.45);
 }
-@media (max-height: 760px) {
-  .spine[data-host] .spineTitle {
-    display: none;
-  }
+.hostbarExit {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  font-variant-caps: all-small-caps;
+  color: var(--spine-dim);
 }
-.hostLock {
+.hostbarExit:hover {
+  color: var(--spine-ink);
+}
+.hostbarBrand {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+}
+.hostbarBrand .brandTile {
+  width: 36px;
+  height: 36px;
+  border-radius: 7px;
+}
+.hostbarBrand .brandGlyph {
+  width: 23px;
+}
+.hostbarBrand:hover .brandTile {
+  transform: rotate(-8deg) scale(1.06);
+}
+.hostbarTitle {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  font-variant-caps: all-small-caps;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  max-width: 14ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hostbarNav {
+  flex: 1;
+  min-width: 0;
+}
+.hostbarNav ol {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+}
+.hostbarLink {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  min-height: 44px;
+  align-content: center;
+  padding: 12px 12px 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-variant-caps: all-small-caps;
+  text-decoration: none;
+  color: var(--spine-dim);
+  border-bottom: 3px solid transparent;
+  transition: color 200ms, border-color 200ms;
+}
+.hostbarLink:hover {
+  color: var(--spine-ink);
+}
+.hostbarLink[aria-current='page'] {
+  color: var(--spine-ink);
+  border-bottom-color: var(--press);
+}
+.hostbarLink:focus-visible {
+  outline: 2px solid var(--press);
+  outline-offset: 2px;
+}
+.hostbarDeadline {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+}
+.hostbarDeadline .deadlineValue {
+  font-size: 1.05rem;
+}
+.hostbarSync {
+  flex: none;
+}
+.hostbarTool {
+  flex: none;
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  margin-bottom: 14px;
+  width: 44px;
+  height: 44px;
   border-radius: 6px;
   color: var(--spine-dim);
 }
-.hostLock:hover {
+.hostbarTool:hover {
   color: var(--spine-ink);
   background: rgb(255 255 255 / 0.06);
 }
-.hostExit {
-  position: relative;
-  display: grid;
-  justify-items: center;
-  gap: 4px;
-  margin-bottom: 12px;
-  padding: 2px 6px 10px;
-  border-bottom: 1px solid rgb(255 255 255 / 0.12);
-  color: var(--spine-dim);
+.hostbarWrite {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 0 16px;
   font-family: var(--font-mono);
-}
-.hostExit:hover {
-  color: var(--spine-ink);
-}
-.hostExitLabel {
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
   font-variant-caps: all-small-caps;
+  text-decoration: none;
+  border-radius: 4px;
+  background: var(--press);
+  color: var(--press-ink);
+  box-shadow: 0 8px 20px -12px rgb(212 58 36 / 0.9);
+}
+.hostbarWrite:hover {
+  filter: brightness(1.06);
+}
+@media (max-width: 1100px) {
+  .hostbarDeadline .deadlineLabel,
+  .hostbarTitle {
+    display: none;
+  }
 }
 .hostDot {
   position: absolute;
@@ -296,7 +407,8 @@
 }
 
 @media (max-width: 899px) {
-  .spine {
+  .spine,
+  .hostbar {
     display: none;
   }
 
@@ -367,6 +479,20 @@
   .topSync + .topHost,
   .topBrand + .topHost {
     margin-left: auto;
+  }
+  .shell[data-host] .topbar {
+    gap: 4px;
+    padding: 0 8px;
+  }
+  .shell[data-host] .topBrand {
+    flex: 1;
+    justify-content: center;
+  }
+  .shell[data-host] .topSync {
+    margin-left: 0;
+  }
+  .shell[data-host] .topMeta {
+    display: none;
   }
 
   .topMeta {

@@ -59,22 +59,29 @@ If a design contains any of these, it is sent back:
 
 **The house spine** appears on house pages only: the lifeline, inscriptions, chapters, almanac, settings and onboarding. It is ink-black in both themes. It has a 52px band across the top on desktop and a 60px band at the bottom on mobile, with the house mark (opens the doors menu), search, the page's primary action, the lock and settings.
 
-**Each app draws its own chrome** (`modules/<id>/src/app/Chrome.tsx`; for AMAZEEN, its own `AppShell`), in its own idiom. It shares no look with the house or with the other apps, and **each app's navigation sits on a different edge of the screen**, shaped by the object the app is modelled on, so moving around is part of the metaphor:
+**Each app draws its own chrome, on one shared set of positions (ADR 0013).** The kit's headless `AppBar` (`packages/kit/src/appbar.tsx`; structure in `packages/ui/src/ui.css`) decides **where** things are and how they behave; each app's `modules/<id>/src/app/Chrome.tsx` passes its ornaments, and its `theme/<id>.kit.css` decides **how they look** through the class hooks `.appbar`, `__exit`, `__title`, `__name`, `__fn`, `__places`, `__place`, `__extra`, `__tools`, `__tool`, `__primary`, `__dot`. AMAZEEN keeps its own `AppShell` and mirrors the same positions inside ETERNALL.
 
-| App | Edge | Navigation | Primary action | Exit to the house |
-|---|---|---|---|---|
-| AMAZEEN | left | its magazine spine, monogram and deadline: Desk · Write · Shelf · Letters · Office | Write (in the spine) | "Leave", top of the spine |
-| REFRAIN | top | the head of a score: five hairlines, a centred title, movements ("I. The score", "II. Programme notes") | Mark today, set like a marking | "Fine" with the end barline |
-| KINDRED | bottom | a row of **drawer fronts** on an oak carcass, each with a label card in a brass frame and a pull; the open drawer stands pulled out: Card file · Constellation. The brass label plate names the app at the top of the page | a pressed letterpress block, at the end of the row | "Close the drawer", at the start of the row |
-| MARGINALIA | the wide left margin (a pencilled line across the top below 760px) | pencilled notes under the catalogue card: Catalogue · Every underline, the current one ringed by hand; "find" and "lock" pencilled at the foot | typed in brackets | a **ribbon bookmark** hanging from the head of the book: "Back to the stacks" |
-| CASHEEN | right | a **thumb index** cut into the fore-edge: the year, twelve month notches (one tap to any month), then Budget and Your words tabs, then search, lock | Add an entry, at the foot of the index (focuses the quick line) | "Close the book", the clasp at the top of the index |
+```
+wide (≥ 820px)   [← Back]  NAME  fn      place · place · place      [extra]  ⌕  🔒  [+ Action]
+phone            [←]           NAME                                          ⌕  🔒
+                 place     place     place                                     (+)   ← fixed bottom bar
+```
+
+| App | Way back | Name | Places | Primary action | Its own ornament |
+|---|---|---|---|---|---|
+| AMAZEEN | "Leave" | monogram + masthead on the ink-black band | 01 Desk · 02 Shelf · 03 Letters · 04 Office | Write (vermilion) | the press deadline as `extra`; on its own (no ETERNALL) it keeps its left spine |
+| CASHEEN | the clasp, "Close the book" | spaced Caslon over a double rule | The month · Budget · Your words | Add an entry (focuses the quick line) | the thumb index sits in the page under the month: twelve half-moon notches |
+| REFRAIN | "Fine" with the end barline | spaced Bodoni | I. The score (a ritual's notes are movement II, named under the bar) | Mark today, a marking | five staff hairlines run under the bar |
+| KINDRED | "Close the drawer" | the brass label plate | Card file · Constellation, as drawer fronts with brass pulls; the open one pulled out | Add a person, a letterpress block | the carcass of the cabinet on the phone's bottom bar |
+| MARGINALIA | the ribbon bookmark, "Back to the stacks" | the catalogue card, call number typed | Catalogue · Every underline, pencilled; the current one ringed by hand | Add a work, typed in brackets | the oak desk |
 
 **Behavioural invariants for every app's chrome:**
-- one fixed place each for the exit, search (⌘K), the lock (⌘⇧L) and the primary action
-- a visible label on the exit, or an accessible name where a narrow screen hides it
+- the same place, in every app, for the way back, the name, the places, search (⌘K), the lock (⌘⇧L) and the primary action
+- 44px touch targets; a visible label on the way back, or an accessible name ("…, back to ETERNALL") where a phone hides it
+- on phones the places and the raised primary action are a fixed bottom bar; `--appbar-bottom` lifts the page and the toasts clear of it. Nothing an app adds to the bar may set `position`, `transform` or `filter` on `.appbar` or its children in a way that breaks the fixed bottom bar
 - keyboard paths throughout, and reduced motion respected
-- the app's first-contact note (kit `IntroNote`) sits under its chrome, never above it, and says where the navigation is when it isn't at the top
-- the navigation is a `nav` landmark of ordinary links and buttons whatever edge it sits on; a fixed edge reserves its own space (page padding, and toasts lifted above a bottom row)
+- the app's first-contact note (kit `IntroNote`) sits under its chrome, never above it
+- the places are a `nav` landmark of ordinary links; the app's in-page controls (CASHEEN's month notches) are not navigation chrome
 
 The chrome reads its behaviour from the kit (`House.leave`, `lock`, `canLock`, `openSearch`, `notices`, `primaryAction`).
 
@@ -216,7 +223,7 @@ Used on every screen, in every imprint, before it ships:
 - [ ] None of the forbidden patterns (§1.2)?
 - [ ] Spatial system follows the imprint's doc, with no stray generic spacing?
 - [ ] 5-second test passes; the primary action is obvious and plainly worded?
-- [ ] The app's own chrome is complete: exit, search, lock and primary action in their fixed places, with accessible names?
+- [ ] The app's chrome sits on the shared `AppBar` positions (ADR 0013): way back, name, places, search, lock and primary action, with accessible names, at 390, 768 and 1440? (`shell.test.tsx` › one app bar)
 - [ ] All four states designed (loading, empty, success, error)?
 - [ ] Contrast and CVD validated; keyboard and screen reader paths work?
 - [ ] Reduced-motion and 2D fallback complete and equivalent?

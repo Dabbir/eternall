@@ -13,7 +13,7 @@ import { useCollection } from '@eternall/vault';
 import { BUDGET_PATH, DEFAULT_CATEGORIES, DEFAULT_PREF, PREF_PATH, addMonths, budgetFor, budgetRows, budgetTotal, byDay, entriesIn, isMonthKey, monthKey, monthLabel, totals, validateCategoryName, validateEntry, type Budget, type Category, type Entry, type EntryInput, type Kind, type LedgerPref } from '../ledger';
 import { formatPlain, formatRupiah, parseAmount } from '../money';
 import { learn } from '../quick';
-import { Chrome, type LedgerPlace } from './Chrome';
+import { Chrome, MonthIndex, type LedgerPlace } from './Chrome';
 import { QuickLine, useLedgerData } from './QuickLine';
 import { ImportPage } from './ImportPage';
 import { WordsPage } from './WordsPage';
@@ -53,25 +53,28 @@ export default function CasheenApp({ path, search }: ImprintAppProps) {
   );
 }
 
-function MonthNav({ month, base }: { month: string; base: string }) {
+function MonthNav({ month, base }: { month: string; base: '' | '/budget' }) {
   const house = useHouse();
   const current = monthKey(house.today);
   return (
-    <div className="lg-monthnav">
-      <button type="button" className="lg-monthnav__btn" onClick={() => house.navigate(house.href(`${base}/${addMonths(month, -1)}`))} aria-label={`Previous month, ${monthLabel(addMonths(month, -1))}`}>
-        ‹
-      </button>
-      <h1 className="lg-month">{monthLabel(month)}</h1>
-      <button type="button" className="lg-monthnav__btn" disabled={month >= `${current.slice(0, 4)}-12`} onClick={() => house.navigate(house.href(`${base}/${addMonths(month, 1)}`))} aria-label={`Next month, ${monthLabel(addMonths(month, 1))}`}>
-        ›
-      </button>
-      {month > current && <p className="lg-note lg-ahead">{monthLabel(month).split(' ')[0]} hasn’t begun. Lines you write go on today’s date; its budget can be set now.</p>}
-      {month !== current && (
-        <button type="button" className="lg-link" onClick={() => house.navigate(house.href(`${base}/${current}`))}>
-          Back to this month
+    <>
+      <div className="lg-monthnav">
+        <button type="button" className="lg-monthnav__btn" onClick={() => house.navigate(house.href(`${base}/${addMonths(month, -1)}`))} aria-label={`Previous month, ${monthLabel(addMonths(month, -1))}`}>
+          ‹
         </button>
-      )}
-    </div>
+        <h1 className="lg-month">{monthLabel(month)}</h1>
+        <button type="button" className="lg-monthnav__btn" disabled={month >= `${current.slice(0, 4)}-12`} onClick={() => house.navigate(house.href(`${base}/${addMonths(month, 1)}`))} aria-label={`Next month, ${monthLabel(addMonths(month, 1))}`}>
+          ›
+        </button>
+        {month > current && <p className="lg-note lg-ahead">{monthLabel(month).split(' ')[0]} hasn’t begun. Lines you write go on today’s date; its budget can be set now.</p>}
+        {month !== current && (
+          <button type="button" className="lg-link" onClick={() => house.navigate(house.href(`${base}/${current}`))}>
+            Back to this month
+          </button>
+        )}
+      </div>
+      <MonthIndex month={month} base={base} />
+    </>
   );
 }
 

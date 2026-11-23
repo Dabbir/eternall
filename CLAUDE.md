@@ -12,14 +12,14 @@ The **house** (ETERNALL) keeps the optional lifeline (a life shown in weeks), in
 ## Current state (read this before changing anything)
 
 - The owner approved the docs and asked to build through every phase. Work happens on branch `platform`, one commit per verified phase, never pushed (`docs/ROADMAP.md` tracks progress).
-- **Phase 8 is in progress (ADR 0013):** AMAZEEN first. The steps (`docs/ROADMAP.md`): LEDGER was renamed CASHEEN (done: `modules/casheen`, door `/casheen/`, `/ledger/*` redirects, collection paths stay `ledger/*`, old settings ids read through `withCurrentIds`); Journal and Money on by default, other apps opt-in in Settings → Apps, new people land in the app not the lifeline, CASHEEN contributes nothing to the house (done: `house/domain/apps.ts` `appsOn`/`withApp`, `house/AppOff.tsx`); one app bar with the same positions in every app; personal looks for AMAZEEN.
+- **Phase 8 is in progress (ADR 0013):** AMAZEEN first. The steps (`docs/ROADMAP.md`): LEDGER was renamed CASHEEN (done: `modules/casheen`, door `/casheen/`, `/ledger/*` redirects, collection paths stay `ledger/*`, old settings ids read through `withCurrentIds`); Journal and Money on by default, other apps opt-in in Settings → Apps, new people land in the app not the lifeline, CASHEEN contributes nothing to the house (done: `house/domain/apps.ts` `appsOn`/`withApp`, `house/AppOff.tsx`); one app bar with the same positions in every app (done: kit `AppBar`, `packages/kit/src/appbar.tsx`, structure in `packages/ui/src/ui.css`; AMAZEEN mirrors it in `AppShell`); personal looks for AMAZEEN.
 - **Phase 7 is done (ADR 0012):** LEDGER, now CASHEEN (`modules/casheen`). The quick-line parser is `quick.ts`; amounts never leave CASHEEN.
 - **Phase 6 is done (ADR 0011):** consolidated from 8 imprints to 4 apps.
   - ENVOI became AMAZEEN's Letters (`modules/amazeen/src/imprint/letters/`).
   - FOLIO and ALMANACK became house sections (`apps/web/src/house/{chapters,almanac}/`).
   - PROLOGUE was retired, with its seasons migrated to inscriptions.
   - Collection paths never changed, and old doors redirect.
-  - Each app renders its own chrome (`modules/<id>/src/app/Chrome.tsx`, AMAZEEN's `AppShell`) and its own kit stylesheet (`theme/<id>.kit.css`). The house spine appears on house pages only.
+  - Each app renders its own chrome (`modules/<id>/src/app/Chrome.tsx` on the kit `AppBar`, AMAZEEN's `AppShell`) and its own kit stylesheet (`theme/<id>.kit.css`). The house spine appears on house pages only.
 - **Phase 1 is done:** the monorepo (`apps/web`, `packages/{core,vault,kit,ui,stage}`, `modules/*`, `services/sync-worker`) replaces the original single app.
 - **Phase 5 is done:** REFRAIN, KINDRED and MARGINALIA live in `modules/` (PROLOGUE was later retired), with their capabilities wired and tested with and without their providers. Local reminders go through `ImprintDefinition.reminders` and the shell (`apps/web/src/shell/reminders.ts`).
 - **Release 1 is built:** sync, anonymous licences, Patron and the PWA (`services/sync-worker`, `packages/vault/src/{protocol,sync}.ts`). Owner TODOs (payment provider, prices, trademark checks, independent privacy review, D1 database) are listed in `docs/ROADMAP.md`.

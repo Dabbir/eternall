@@ -150,7 +150,7 @@ Status: accepted · Phases 0–7 done, Phase 8 in progress (ADR 0013) · Each ph
 - **Amounts stay inside LEDGER**; the Almanac shows counts only.
 - **Verified:** 21 domain tests and 7 integration tests; in the browser at 390px and desktop, light and dark.
 
-**Each app navigates from its own edge (2026-11-23, `DESIGN.md` §2):** AMAZEEN left (its spine), REFRAIN top (the head of a score), LEDGER right (a thumb index of months), KINDRED bottom (a row of drawer fronts), MARGINALIA in the wide left margin (pencilled notes under a ribbon bookmark). Checked in the browser at 390, 768 and desktop.
+*Each app navigating from its own edge (2026-11-23) was replaced by one app bar in Phase 8 (ADR 0013).*
 
 ## Phase 8: AMAZEEN first (ADR 0013, `PRODUCT.md`)
 **Goal:** a launch that is easy to understand. AMAZEEN is the way in, LEDGER (renamed **CASHEEN**, labelled *Money*) sits beside it, and the other apps wait in Settings.

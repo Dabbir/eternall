@@ -52,7 +52,7 @@ Named dark mode: **Night edition**.
 
 | Area | Today | In ETERNALL | Why |
 |---|---|---|---|
-| Navigation spine | AMAZEEN's own 76px ink-black left spine | **Unchanged: AMAZEEN keeps its own spine** (ADR 0011). Inside ETERNALL it gains a fifth section, **Letters**; a small **Leave** exit at the top; and the **lock** in place of the theme switch, since the house owns the theme. No house spine appears. | Each app is its own site. *(The masthead strip of the first integration is retired.)* |
+| Navigation | AMAZEEN's own 76px ink-black left spine | **On its own, unchanged.** Inside ETERNALL (ADR 0013) it keeps the shared positions every app uses: one **ink-black band across the top** — Leave, the monogram and masthead, 01 Desk · 02 Shelf · 03 Letters · 04 Office, the press deadline, then search, the lock and a vermilion **Write**. The house owns the theme, so there is no theme switch and the `t` key does nothing. | Each app is its own site, with the same controls in the same places. |
 | Storage and sync | Own IndexedDB + own sync account | The ETERNALL vault (encrypted at rest) and vault sync | Platform privacy (`PRIVACY.md`) |
 | Routes | `/`, `/write/:kind`, `/issue/:week`, `/shelf`, `/settings` | Same, under `/amazeen/` | One origin, many doors |
 | PWA | `amazeen-app` manifest | Its own manifest with `scope: /amazeen/`, installable as **AMAZEEN** | Keeps its identity |
@@ -70,7 +70,7 @@ Page turns in the Reader; the rubber-stamp *FILED*; the deadline countdown; the 
 `States.tsx` covers loading and empty states in newsroom voice; a rescue export appears when stored data is unreadable; and the backup reminder appears after 14 days of un-exported changes. In ETERNALL, the backup reminder becomes a vault-level reminder (`FLOWS.md`).
 
 ## 10. Mobile (existing)
-A 56px top bar replaces the spine below 900px, with index tabs along the bottom (as in AMAZEEN today). Inside ETERNALL the top bar carries the lock and the Leave exit, and the tabs fit five sections.
+A 56px top bar replaces the spine below 900px, with index tabs along the bottom (as in AMAZEEN today). Inside ETERNALL the top bar holds Leave, the masthead, search and the lock, in that order, and the tabs end with **Write**, raised: Desk · Shelf · Letters · Office · Write.
 
 ## 11. Clarity checks
 - **Forbidden patterns:** none. The only card-like grid is the Shelf of covers, which is a real object (magazines on a shelf), not a generic card grid.

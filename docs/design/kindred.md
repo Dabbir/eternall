@@ -103,12 +103,13 @@ Drawers become vertical lists of full-width cards (no overlap), and tapping flip
   2. Note that you saw a friend today.
   3. Find who you haven't seen in the longest time.
 
-## 12. Chrome and kit (its own site, ADR 0011)
-KINDRED is a card cabinet seen from the front. **Its navigation is the bottom row of the cabinet**, fixed to the foot of the screen, where a thumb reaches it on a phone:
-- A **brass label plate** at the top of the page holds the name, letterpressed on card, with the function line.
-- **Drawer fronts** on an oak carcass: Card file (`/`) and Constellation (`/sky`), each a label card in a brass frame with a pull. The open drawer stands **pulled out** (lifted, its shadow on the carcass); a person's card counts as the card file.
-- **"Close the drawer"** (back to the house) starts the row; **search, the key and the primary action** (a pressed letterpress block) end it.
-- Below 720px the drawer labels shorten to "Cards" and "Sky", the exit to its arrow and the action to "+", each keeping its accessible name. Toasts rise above the row.
+## 12. Chrome and kit (its own site, ADR 0011; shared positions, ADR 0013)
+KINDRED is the face of a card cabinet, set on the shared app bar (`DESIGN.md` §2):
+- **"Close the drawer"** is the way back.
+- The **brass label plate**, screws and all, holds the name letterpressed on card with the function line.
+- **The places are drawer fronts** with brass pulls: Card file (`/`) and Constellation (`/sky`). The open drawer is pulled out; a person's card counts as the card file.
+- **Add a person** is a pressed letterpress block at the end of the bar.
+- **On a phone** the drawer fronts ("Cards", "Sky") sit on the cabinet's oak carcass along the bottom, with the action raised at its end.
 
 `theme/kindred.kit.css` re-cuts the shared primitives as letterpress on card stock:
 - **Buttons:** square, small caps, with a pressed-in shadow.

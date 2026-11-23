@@ -36,11 +36,10 @@ Red is never the only signal. "Over by Rp 35.000" is always written out, so the 
 
 ### 5.1 The month (home: `/casheen/`, `/casheen/2026-11`)
 ```
-            L E D G E R   Money, kept plainly                       ┃ ⊐ Close the book
-╞═══════════════════════════════════════════════════════════════════╡ ‹ 2026 ›
-  [‹] November 2026 [›]                                             ┃ (J)(F)(M)…(N)  D
-                                                                    ┃ Budget · Your words
-                                                                    ┃ ⌕ 🔒 [+ Add an entry]
+⊐ Close the book  C A S H E E N  Money, kept plainly   THE MONTH · BUDGET · YOUR WORDS   ⌕ 🔒 [+ Add an entry]
+╞══════════════════════════════════════════════════════════════════════════════════════════════════╡
+  [‹] November 2026 [›]
+  ‹ 2026 ›  (J)(F)(M)(A)(M)(J)(J)(A)(S)(O)[N](D)        ← the thumb index, in the page
   WRITE ONE LINE
   ┌──────────────────────────────────────────────────────────┬──────────┐
   │ ✎ grab 32.500 kemarin                                    │ Write it │
@@ -85,10 +84,10 @@ Motion is almost none, on purpose:
 - the "Add an entry" block presses in
 - reduced motion removes both
 
-## 8. Chrome and kit (its own site, ADR 0011)
-- **The thumb index** (the navigation, fixed to the right edge, 64px; 46px on a phone): the book's **clasp** with "Close the book" (exit) at the top; the year with ‹ ›; **twelve half-moon month notches**, so any month is one tap away (the open month stands out in green; months still to come are dashed but open, to plan their budget, and say "December hasn’t begun"); the pages **The month**, **Budget** and **Your words** as tabs, so Budget always leads back to writing; then search, the lock and **Add an entry**, which focuses the quick line from anywhere. On the budget page the notches open that month's budget. Nothing in the index is ever squeezed: in a short window it scrolls.
-- **The page** carries only a running head: the spaced CASHEEN name and its function line over a double rule.
-- **`theme/ledger.kit.css`:**
+## 8. Chrome and kit (its own site, ADR 0011; shared positions, ADR 0013)
+- **The bar** (`DESIGN.md` §2): the book's **clasp** with "Close the book" (the way back); CASHEEN spaced in Caslon over a double rule, with its function line; the places **The month**, **Budget** and **Your words**, so Budget always leads back to writing; then search, the lock and **Add an entry**, which focuses the quick line from anywhere.
+- **The thumb index lives in the page**, under "‹ November 2026 ›" on the month and the budget: the year with ‹ ›, then **twelve half-moon notches**, so any month is one tap away. The open month stands out in green; months still to come are dashed but open, to plan their budget, and say "December hasn’t begun". On the budget page the notches open that month's budget.
+- **`theme/casheen.kit.css`:**
   - Buttons: square, Caslon bold.
   - Fields: ruled lines.
   - Dialogs: ledger leaves with a double red margin and blue ruling.
@@ -103,7 +102,7 @@ Motion is almost none, on purpose:
 - Storage failure: the house banner.
 
 ## 10. Mobile
-- The thumb index stays on the right edge, narrowed to 46px; the clasp and action drop their words and keep their accessible names. The month title stays on one line with its ‹ › and the ruled page tightens to fit beside the index.
+- The bar keeps the clasp, the name, search and the lock; Month · Budget · Words and the raised "+" (Add an entry) sit on the bottom bar. The thumb index takes the full width under the month title, the year above the twelve notches.
 - Totals wrap to two columns.
 - Particulars stack note over category.
 - The quick line stays first on the page, and `enterKeyHint="done"` gives phone keyboards a done key.

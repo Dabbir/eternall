@@ -61,14 +61,22 @@ function shortCountdown(target: Date, now: Date): string {
 }
 
 /**
- * The production room's frame. On wide screens, a magazine spine runs down the left edge:
- * monogram, the sections set vertically like spine titles, the masthead, and the press deadline.
- * On phones, a slim masthead bar on top and index tabs along the bottom.
+ * The production room's frame. On its own, on wide screens, a magazine spine runs down the left
+ * edge: monogram, the sections set vertically like spine titles, the masthead, and the press
+ * deadline. On phones, a slim masthead bar on top and index tabs along the bottom.
+ *
+ * Inside ETERNALL (a host is present) the frame keeps every control where every other app keeps it
+ * (docs/adr/0013): on wide screens one ink-black band across the top — Leave, the monogram and
+ * masthead, the sections, the press deadline, then search, the lock and Write; on phones the top
+ * bar holds Leave, the masthead, search and the lock, and the index tabs end with Write, raised.
  */
 export function AppShell({ children }: { children: ReactNode }) {
   const { route, navigate, path } = useRouter();
   const host = useHostControls();
   const nav = host ? [...NAV.slice(0, 3), LETTERS, ...NAV.slice(3)] : NAV;
+  // Inside ETERNALL, Write is the primary action at the end of the bar, like every app's.
+  const places = host ? nav.filter((item) => item.name !== 'write') : nav;
+  const tabs = host ? [...places, NAV[1]!] : nav;
   const inLetters = path === '/letters' || path.startsWith('/letters/');
   const { data, current } = useStore();
   const now = useNow();
@@ -84,7 +92,10 @@ export function AppShell({ children }: { children: ReactNode }) {
       e.preventDefault();
       navigate(paths.write('story'));
     },
-    t: () => toggleTheme(theme, visibleThemeSwitch()),
+    // Inside ETERNALL the house owns the theme (docs/adr/0013): "t" does nothing there.
+    t: () => {
+      if (!host) toggleTheme(theme, visibleThemeSwitch());
+    },
     '/': (e) => {
       e.preventDefault();
       if (route.name === 'shelf') document.getElementById('shelf-search')?.focus();
@@ -95,19 +106,61 @@ export function AppShell({ children }: { children: ReactNode }) {
   const isCurrent = (item: NavItem) => ((item.name === 'letters' ? inLetters : route.name === item.name && !inLetters) ? 'page' : undefined);
 
   return (
-    <div className={styles.shell}>
+    <div className={styles.shell} data-host={host ? '' : undefined}>
       <a className={styles.skip} href="#main">
         Skip to content
       </a>
 
-      <header className={styles.spine} data-host={host ? '' : undefined}>
-        {host && (
-          <button type="button" className={styles.hostExit} onClick={host.leave} aria-label={`${host.leaveLabel}, back to your lifeline`} title={host.leaveLabel}>
+      {host && (
+        <header className={styles.hostbar}>
+          <button type="button" className={styles.hostbarExit} onClick={host.leave} aria-label={`${host.leaveLabel}, back to ETERNALL`} title={host.leaveLabel}>
             <Icon name="exit" size={18} />
-            <span className={styles.hostExitLabel}>Leave</span>
+            <span>Leave</span>
             {host.notices > 0 && <span className={styles.hostDot} aria-hidden="true" />}
           </button>
-        )}
+          <Link to={paths.desk()} className={styles.hostbarBrand}>
+            <span className={styles.brandTile} aria-hidden="true">
+              <Monogram className={styles.brandGlyph} />
+            </span>
+            <span className={styles.hostbarTitle}>{masthead}</span>
+          </Link>
+          <nav className={styles.hostbarNav} aria-label="Primary">
+            <ol>
+              {places.map((item, i) => (
+                <li key={item.name}>
+                  <Link to={item.to} className={styles.hostbarLink} aria-current={isCurrent(item)}>
+                    <span className={styles.spineIndex} aria-hidden="true">
+                      0{i + 1}
+                    </span>
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ol>
+          </nav>
+          <p className={styles.hostbarDeadline} title={`Issue No. ${current.number} goes to press in ${timeUntil(current.weekEnd, now)}`}>
+            <span className={styles.pulse} aria-hidden="true" />
+            <span className={styles.deadlineValue}>{shortCountdown(current.weekEnd, now)}</span>
+            <span className={styles.deadlineLabel}>to press</span>
+          </p>
+          <SyncDot className={styles.hostbarSync} />
+          <button type="button" className={styles.hostbarTool} onClick={host.search} aria-label="Search" title="Search (⌘K)" aria-keyshortcuts="Meta+K Control+K">
+            <Icon name="search" size={18} />
+          </button>
+          {host.canLock && (
+            <button type="button" className={styles.hostbarTool} onClick={host.lock} aria-label="Lock" title="Lock (⌘⇧L)">
+              <Icon name="lock" size={18} />
+            </button>
+          )}
+          <Link to={paths.write('story')} className={styles.hostbarWrite}>
+            <Icon name="plus" size={18} />
+            Write
+          </Link>
+        </header>
+      )}
+
+      {!host && (
+      <header className={styles.spine}>
         <Link to={paths.desk()} className={styles.brand}>
           <span className={styles.brandTile} aria-hidden="true">
             <Monogram className={styles.brandGlyph} />
@@ -134,15 +187,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <span className={styles.spineTitle} data-text={`${masthead} · Nº ${current.number}`} aria-hidden="true" />
 
         <SyncDot className={styles.spineSync} />
-        {host ? (
-          host.canLock && (
-            <button type="button" className={styles.hostLock} onClick={host.lock} aria-label="Lock" title="Lock (⌘⇧L)">
-              <Icon name="lock" size={18} />
-            </button>
-          )
-        ) : (
-          <ThemeToggle orientation="vertical" className={styles.spineToggle} />
-        )}
+        <ThemeToggle orientation="vertical" className={styles.spineToggle} />
 
         <p className={styles.deadline} title={`Issue No. ${current.number} goes to press in ${timeUntil(current.weekEnd, now)}`}>
           <span className={styles.pulse} aria-hidden="true" />
@@ -150,8 +195,15 @@ export function AppShell({ children }: { children: ReactNode }) {
           <span className={styles.deadlineLabel}>to press</span>
         </p>
       </header>
+      )}
 
       <header className={styles.topbar}>
+        {host && (
+          <button type="button" className={styles.topHost} onClick={host.leave} aria-label={`${host.leaveLabel}, back to ETERNALL`}>
+            <Icon name="exit" size={18} />
+            {host.notices > 0 && <span className={styles.hostDot} aria-hidden="true" />}
+          </button>
+        )}
         <Link to={paths.desk()} className={styles.topBrand}>
           <span className={styles.brandTile} aria-hidden="true">
             <Monogram className={styles.brandGlyph} />
@@ -161,15 +213,14 @@ export function AppShell({ children }: { children: ReactNode }) {
         <SyncDot className={styles.topSync} />
         {host ? (
           <>
+            <button type="button" className={styles.topHost} onClick={host.search} aria-label="Search">
+              <Icon name="search" size={18} />
+            </button>
             {host.canLock && (
               <button type="button" className={styles.topHost} onClick={host.lock} aria-label="Lock">
                 <Icon name="lock" size={18} />
               </button>
             )}
-            <button type="button" className={styles.topHost} onClick={host.leave} aria-label={`${host.leaveLabel}, back to your lifeline`}>
-              <Icon name="exit" size={18} />
-              {host.notices > 0 && <span className={styles.hostDot} aria-hidden="true" />}
-            </button>
           </>
         ) : (
           <ThemeToggle size="small" className={styles.topToggle} />
@@ -187,7 +238,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
 
       <nav className={styles.tabs} aria-label="Sections" data-host={host ? '' : undefined}>
-        {nav.map((item) =>
+        {tabs.map((item) =>
           item.name === 'write' ? (
             <Link key={item.name} to={item.to} className={styles.tabWrite}>
               <Icon name="plus" size={22} />

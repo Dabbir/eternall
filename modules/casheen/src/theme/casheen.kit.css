@@ -71,69 +71,46 @@
 [data-imprint='casheen'] .toast__dot { display: none; }
 [data-imprint='casheen'] .toast__action { font-family: var(--font-display); font-weight: 700; border-radius: 0; }
 
-/* ---------- the thumb index: CASHEEN's navigation, cut into the right edge ---------- */
-.lc { --rail: 64px; min-height: 100dvh; }
-.lc-page { min-height: 100dvh; display: flex; flex-direction: column; padding-right: var(--rail); }
-.lc-running { display: flex; align-items: baseline; justify-content: center; gap: 12px; padding: 14px var(--gutter) 10px; border-bottom: 3px double var(--ink); box-shadow: inset 0 -5px 0 -4px var(--margin-red); }
-.lc-running__name { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; letter-spacing: 0.24em; margin-right: -0.12em; color: var(--ink); text-decoration: none; }
-.lc-running__fn { font-style: italic; font-size: 0.9375rem; color: var(--ink-2); }
+/* ---------- the head of a ledger page, on the shared app bar (ADR 0013) ---------- */
+.lc { min-height: 100dvh; display: flex; flex-direction: column; }
 .lc-body { flex: 1; }
+[data-imprint='casheen'] .appbar { --appbar-h: 64px; --appbar-bg: var(--paper); --appbar-dot: var(--red); border-bottom: 3px double var(--ink); box-shadow: inset 0 -5px 0 -4px var(--margin-red); }
+/* The book's clasp: a strap folded over the fore-edge. */
+.lc-clasp { width: 14px; height: 30px; border: 1.5px solid currentColor; border-left: 0; border-radius: 0 5px 5px 0; box-shadow: inset -3px 0 0 var(--paper-sunk); }
+[data-imprint='casheen'] .appbar__exit { color: var(--ink-2); }
+[data-imprint='casheen'] .appbar__exit-label { font-style: italic; font-size: 1rem; }
+[data-imprint='casheen'] .appbar__exit:hover { color: var(--ink); }
+[data-imprint='casheen'] .appbar__exit:hover .appbar__exit-label { text-decoration: underline; text-underline-offset: 4px; }
+[data-imprint='casheen'] .appbar__name { font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; letter-spacing: 0.24em; margin-right: -0.12em; }
+[data-imprint='casheen'] .appbar__fn { font-style: italic; font-size: 0.9375rem; color: var(--ink-2); }
+[data-imprint='casheen'] .appbar__place { font-size: 1.0625rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-3); border-bottom: 2px solid transparent; }
+[data-imprint='casheen'] .appbar__place:hover { color: var(--ink); }
+[data-imprint='casheen'] .appbar__place[aria-current] { color: var(--ink); border-bottom-color: var(--accent); }
+[data-imprint='casheen'] .appbar__tool { color: var(--ink-2); }
+[data-imprint='casheen'] .appbar__tool:hover { color: var(--accent); }
+[data-imprint='casheen'] .appbar__primary { height: 40px; font-family: var(--font-display); font-weight: 700; font-size: 1rem; background: var(--accent); color: var(--on-accent); box-shadow: 3px 3px 0 var(--ink); }
+[data-imprint='casheen'] .appbar__primary:hover { background: var(--accent-deep); }
+[data-imprint='casheen'] .appbar__primary:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
 
-.lr {
-  position: fixed; top: 0; right: 0; bottom: 0; z-index: 40; width: var(--rail);
-  display: flex; flex-direction: column; align-items: stretch;
-  overflow-y: auto; overscroll-behavior: contain; scrollbar-width: none;
-  background: var(--paper-sunk);
-  border-left: 3px double var(--margin-red);
-  box-shadow: inset 8px 0 12px -10px rgb(0 0 0 / 0.35);
-}
-.lr-vert { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; }
-.lr-clasp { position: relative; display: grid; justify-items: center; gap: 8px; padding: 12px 0 10px; color: var(--ink-2); border-bottom: 1px solid var(--rule-strong); }
-.lr-clasp__strap { width: 30px; height: 14px; border: 1.5px solid currentColor; border-top: 0; border-radius: 0 0 6px 6px; box-shadow: inset 0 -3px 0 var(--paper); }
-.lr-clasp .lr-vert { font-style: italic; font-size: 0.875rem; }
-.lr-clasp:hover { color: var(--ink); }
-.lr-dot { position: absolute; top: 8px; right: 10px; width: 7px; height: 7px; border-radius: 50%; background: var(--red); }
-
-.lr-year { display: grid; justify-items: center; padding: 6px 0; border-bottom: 1px solid var(--rule-strong); }
-.lr-year__num { font-size: 0.8125rem; color: var(--ink); }
-.lr-year__btn { width: 100%; height: 22px; font-family: var(--font-mono); color: var(--ink-3); }
-/* only the glyph turns; turning the button would turn its hit area across the clasp and January */
-.lr-year__btn > span { display: inline-block; transform: rotate(90deg); }
-.lr-year__btn:hover:not(:disabled) { color: var(--accent); }
-.lr-year__btn:disabled { opacity: 0.3; cursor: default; }
-
-/* Twelve half-moon notches, the way a bound ledger's months are cut into its fore-edge. */
-/* Nothing in the index may be squeezed: a squeezed list spills under the tabs below it. If the window
-   is too short for all of it, the index scrolls instead. */
-.lr > * { flex: none; }
-.lr > .lr-thumbs { flex: 1 0 auto; }
-.lr-thumbs { display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 8px 0 8px 10px; }
-.lr-thumbs li { flex: 0 0 auto; height: clamp(22px, 3dvh, 34px); display: flex; }
-.lr-thumb {
-  flex: 1; display: grid; place-items: center; text-decoration: none;
+/* The thumb index, laid along the top of the page: twelve half-moon notches cut into the edge. */
+.lm { display: flex; align-items: center; gap: 14px; margin: -6px 0 18px; }
+.lm-year { display: flex; align-items: center; gap: 2px; flex: none; }
+.lm-year__num { font-size: 0.875rem; color: var(--ink); padding: 0 4px; }
+.lm-year__btn { width: 30px; height: 36px; font-family: var(--font-mono); font-size: 1.1rem; color: var(--ink-3); }
+.lm-year__btn:hover:not(:disabled) { color: var(--accent); }
+.lm-year__btn:disabled { opacity: 0.3; cursor: default; }
+.lm-notches { flex: 1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 3px; max-width: 560px; }
+.lm-notch {
+  display: grid; place-items: center; height: 40px; text-decoration: none;
   font-family: var(--font-display); font-weight: 700; font-size: 0.9375rem; color: var(--ink-2);
-  background: var(--paper); border-radius: 999px 0 0 999px;
-  box-shadow: inset 2px 0 0 var(--rule-strong), inset 0 1px 0 var(--rule), inset 0 -1px 0 var(--rule);
+  background: var(--paper-raised); border-radius: 0 0 999px 999px;
+  box-shadow: inset 0 2px 0 var(--rule-strong), inset 1px 0 0 var(--rule), inset -1px 0 0 var(--rule);
   transition: transform 140ms var(--ease-out), background-color 140ms;
 }
-a.lr-thumb:hover { transform: translateX(-4px); color: var(--ink); }
-.lr-thumb[aria-current='page'] { background: var(--accent); color: var(--on-accent); box-shadow: none; transform: translateX(-6px); }
-.lr-thumb.is-future { color: var(--ink-3); background: transparent; box-shadow: inset 2px 0 0 var(--rule), inset 0 1px 0 var(--rule), inset 0 -1px 0 var(--rule); border: 1px dashed var(--rule-strong); border-right: 0; }
-.lr-thumb.is-future[aria-current='page'] { background: var(--accent); color: var(--on-accent); border-color: transparent; }
-
-.lr-tabs { display: grid; gap: 4px; padding: 8px 0 8px 10px; border-top: 1px solid var(--rule-strong); }
-.lr-tab { display: grid; place-items: center; padding: 10px 0; background: var(--paper); border-radius: 6px 0 0 6px; box-shadow: inset 2px 0 0 var(--rule-strong); text-decoration: none; color: var(--ink-2); font-size: 0.9375rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; }
-.lr-tab:hover { color: var(--ink); transform: translateX(-3px); }
-.lr-tab[aria-current='page'] { background: var(--ink); color: var(--paper); box-shadow: none; transform: translateX(-5px); }
-
-.lr-tools { display: grid; justify-items: center; gap: 2px; padding: 6px 0 10px; border-top: 1px solid var(--rule-strong); }
-.lr-tool { display: grid; place-items: center; width: 40px; height: 36px; color: var(--ink-2); }
-.lr-tool:hover { color: var(--accent); }
-.lr-write { display: grid; justify-items: center; gap: 6px; width: 46px; margin-top: 4px; padding: 10px 0; font-family: var(--font-display); font-weight: 700; background: var(--accent); color: var(--on-accent); box-shadow: -3px 3px 0 var(--ink); }
-.lr-write > span:first-child { font-size: 1.3rem; line-height: 1; }
-.lr-write .lr-vert { font-size: 0.875rem; }
-.lr-write:hover { background: var(--accent-deep); }
-.lr-write:active { transform: translate(-2px, 2px); box-shadow: -1px 1px 0 var(--ink); }
+.lm-notch:hover { transform: translateY(3px); color: var(--ink); }
+.lm-notch[aria-current='page'] { background: var(--accent); color: var(--on-accent); box-shadow: none; transform: translateY(5px); }
+.lm-notch.is-future { color: var(--ink-3); background: transparent; box-shadow: none; border: 1px dashed var(--rule-strong); border-top: 0; }
+.lm-notch.is-future[aria-current='page'] { background: var(--accent); color: var(--on-accent); border-color: transparent; }
 
 [data-imprint='casheen'] .imprint-intro { border: 0; border-top: 1px solid var(--ruling); border-bottom: 1px solid var(--ruling); background: transparent; border-radius: 0; font-style: italic; }
 [data-imprint='casheen'] .imprint-intro strong { font-style: normal; letter-spacing: 0.2em; }
@@ -144,33 +121,20 @@ a.lr-thumb:hover { transform: translateX(-4px); color: var(--ink); }
 [data-imprint='casheen'] .unlock__app-fn { font-style: italic; }
 [data-imprint='casheen'] .unlock__title { font-family: var(--font-display); }
 
-@media (max-width: 720px) {
-  .lc { --rail: 46px; }
-  .lr-clasp .lr-vert, .lr-write .lr-vert { display: none; }
-  .lr-clasp { padding: 10px 0; }
-  .lr-thumbs { padding-left: 6px; gap: 2px; }
-  .lr-thumb { font-size: 0.8125rem; }
-  .lr-tabs { padding-left: 6px; }
-  .lr-tab { font-size: 0.875rem; padding: 8px 0; }
-  .lr-write { width: 36px; }
-  .lc-running__fn { display: none; }
-}
-/* A short window: the clasp and the action keep their marks and accessible names, not their words. */
-@media (max-height: 1100px) {
-  .lr-clasp .lr-vert, .lr-write .lr-vert { display: none; }
-  .lr-clasp { padding: 10px 0; }
-  .lr-dot { right: 8px; }
-}
-@media (max-height: 900px) {
-  .lr-tab { padding: 7px 0; font-size: 0.8125rem; }
-  .lr-tabs { gap: 3px; }
-}
-@media (max-height: 760px) {
-  .lr-tab { padding: 5px 0; }
-  .lr-year { padding: 2px 0; }
+@media (max-width: 819px) {
+  [data-imprint='casheen'] .appbar { --appbar-h: 56px; }
+  [data-imprint='casheen'] .appbar__name { font-size: 1.05rem; letter-spacing: 0.16em; }
+  [data-imprint='casheen'] .appbar__places { --appbar-dock-shadow: none; border-top: 3px double var(--ink); }
+  [data-imprint='casheen'] .appbar__place { border-bottom: 0; }
+  [data-imprint='casheen'] .appbar__place[aria-current] { box-shadow: inset 0 -3px 0 var(--accent); }
+  [data-imprint='casheen'] .appbar__primary { height: 56px; font-size: 1.5rem; }
+  .lm { flex-direction: column; align-items: stretch; gap: 6px; }
+  .lm-year { justify-content: flex-start; }
+  .lm-notches { max-width: none; gap: 2px; }
+  .lm-notch { height: 34px; font-size: 0.8125rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .lr-thumb, .lr-tab { transition: none; }
+  .lm-notch { transition: none; }
 }
 
 /* ---------- ceremony: entered ---------- */
