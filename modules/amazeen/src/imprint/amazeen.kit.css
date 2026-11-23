@@ -57,3 +57,6 @@
 [data-imprint='amazeen'] .btn--ghost:hover:not(:disabled) { box-shadow: 4px 4px 0 var(--ink); transform: translate(-2px, -2px); background: inherit; }
 [data-imprint='amazeen'] .btn--quiet:hover:not(:disabled) { background: transparent; color: var(--press-text); }
 [data-imprint='amazeen'] .dialog .eyebrow { font-family: var(--font-mono); color: var(--proof); }
+
+/* ⌘K: the chosen line as a proof-blue editor's mark. */
+[data-imprint='amazeen'] { --palette-radius: 2px; --palette-on-bg: var(--proof); --palette-on-fg: var(--paper); --palette-font: var(--font-mono); }

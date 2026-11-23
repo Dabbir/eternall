@@ -39,9 +39,10 @@ Named dark mode: **After hours** (the library at night, with highlights glowing 
 
 ### 5.1 The catalogue (home)
 ```
-┌ spine: [◖L•] MARGINALIA · Reading & underlines     ⌘K          [ Add a work ] ┐
-   MARGINALIA                                      ( by author | title | year | kind )
-   Everything you underlined, kept.
+┌ ↶ Back to the stacks     ┌▔▔▔ red rule ▔▔▔┐               ⌕  🔒  [ Add a work ] ┐
+                            │028.8 MARGINALIA │  (a typed catalogue card, rod hole below)
+   ╭Catalogue╮╭Every underline╮                 (guide cards: / and /underlines)
+   Everything you underlined, kept.                ( author | title | year | kind )
    ┌ A–C ─────────┐ ┌ D–G ─────────┐ ┌ H–L ─────────┐ ┌ M–P ─────────┐
    │▔▔▔▔▔▔▔▔▔▔▔▔▔▔│ │▔▔▔▔▔▔▔▔▔▔▔▔▔▔│ │▔▔▔▔▔▔▔▔▔▔▔▔▔▔│ │▔▔▔▔▔▔▔▔▔▔▔▔▔▔│  ← card headers
    │ Calvino, I.  │ │ Didion, J.   │ │ Le Guin, U.  │ │ Morrison, T. │     edge-on
@@ -80,7 +81,7 @@ A blank catalogue card in a typewriter carriage: *Title*, *By*, *Kind* (book · 
 | Margin note appears | bracket draws, note fades in aligned to passage | 300ms |
 | Card pull | translateY up + slight rotateX, then flip | 600ms |
 | Drawer open (3D) | translateZ out with shadow | 420ms |
-| Send to Overheard | quote lifts and slides toward the spine's house mark, toast confirms | 600ms |
+| Send to Overheard | quote lifts and slides off the page edge toward AMAZEEN, toast confirms | 600ms |
 
 ## 8. Components unique to MARGINALIA
 Catalogue drawer (edge-on cards) · catalogue card (typewritten) · annotated page (text + anchored margin) · highlighter mark (SVG mask) · marginal bracket · rating (stars or one word) · "send to Overheard" action (cross-link) · cabinet (CSS 3D).
@@ -103,3 +104,18 @@ The margin column moves **inline**: each margin note follows its passage as an i
   1. Add the book you're reading now.
   2. Save a passage with a margin note.
   3. Find every underline from books you read last year.
+
+## 12. Chrome and kit (its own site, ADR 0011)
+MARGINALIA's head is a library catalogue card on an oak desk:
+- **The card:** the call number and title typed on ruled stock, with the red head rule and the rod hole.
+- **Places are guide cards:** Catalogue (`/`) and Every underline (`/underlines`).
+- **The primary action** is typed in brackets.
+- **The exit** is pencilled: **"Back to the stacks"**.
+
+`theme/marginalia.kit.css` types and pencils the shared primitives:
+- **Buttons:** square monospace; ghost buttons are bracketed.
+- **Quiet actions:** a wavy pencil underline.
+- **Dialogs:** index cards with the red head rule and blue ruling.
+- **Toasts:** pencilled slips.
+- **Choices:** guide-card tabs.
+- **Unlock card:** the catalogue card again.

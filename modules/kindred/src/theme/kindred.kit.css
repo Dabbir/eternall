@@ -178,3 +178,7 @@
 @media (prefers-reduced-motion: reduce) {
   .kc-press { transition: none; }
 }
+
+/* ⌘K: a card, with the chosen line marked by a teal edge rather than a house pill. */
+[data-imprint='kindred'] { --palette-radius: 2px; --palette-on-bg: var(--accent-soft); --palette-on-fg: var(--ink); --palette-on-shadow: inset 4px 0 0 var(--accent); }
+[data-imprint='kindred'] .dialog__head.is-hidden { border: 0; margin: 0; }

@@ -1,6 +1,6 @@
 # ADR 0004 — Each imprint has its own visual theme, layout and motion
 
-Status: Proposed · Date: 2026-11-22
+Status: Accepted, amended by ADR 0011 (no shared spine; primitives are skinned per app) · Date: 2026-11-22
 
 ## Context
 The owner wants every module to be unique, anti-mainstream and stunning, as AMAZEEN is, while staying easy to understand.

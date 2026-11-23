@@ -18,19 +18,17 @@ A life leaves traces everywhere, and they are scattered and borrowed.
 
 ## 2. What ETERNALL is
 
-ETERNALL is **one place, with many doors**. Each module is a complete product with its own name, look, layout and character, a separate *imprint* of the same house:
+ETERNALL is **one place, with many doors**. Each app is a complete product with its own name, look, layout and character, and it feels like its own site: it carries no trace of the house (ADR 0011).
 
-| Imprint | What it keeps | The object it borrows from |
+| | What it keeps | The object it borrows from |
 |---|---|---|
-| **ETERNALL** | the overview: your life in weeks | an atlas / ledger with a wax seal |
-| **AMAZEEN** | your journal, pressed into a weekly magazine | a magazine |
-| **ENVOI** | letters to your future self | letters, envelopes, postmarks |
-| **FOLIO** | the chapters of your life | a bound book on a shelf |
-| **ALMANACK** | reflections and measures of your time | an antique almanac |
+| **ETERNALL** (the house) | the overview: your life in weeks, plus inscriptions, the chapters of your life, and an almanac of your time | an atlas / ledger with a wax seal |
+| **AMAZEEN** | your journal, pressed into a weekly magazine, and letters to your future self, sealed in its post room | a magazine and its post room |
 | **REFRAIN** | the rituals you return to | a musical score, a repeated verse |
-| **PROLOGUE** | what you hope for each season | a playbill and a script |
 | **KINDRED** | the people who matter | an address book, letterpress cards |
 | **MARGINALIA** | what you read, watch and underline | an annotated page, a card catalogue |
+
+*Consolidated on 2026-11-23 (ADR 0011):* ENVOI became AMAZEEN's Letters, FOLIO and ALMANACK became house pages, and PROLOGUE was retired, with its seasons kept as inscriptions.
 
 You can use a single imprint on its own, for example AMAZEEN as a journal and nothing else. When you use two or more, ETERNALL offers to bind them together on the lifeline.
 
@@ -73,7 +71,7 @@ ETERNALL is built for people who come in through **one door**, not through the p
  focus mode, nothing else            "Seal this week's            letter and chapter on
  to learn                            cover story as a             one page of weeks
                                      letter to next year?"
-                                     → ENVOI
+                                     → AMAZEEN · Letters
 ```
 
 1. **Arrive.** Someone opens an imprint directly by link, install or recommendation. They meet that imprint's own onboarding and its own visual world, with no platform tour and no birth date asked.
@@ -86,38 +84,35 @@ ETERNALL is built for people who come in through **one door**, not through the p
 
 Saying no is part of the design.
 
-- **Not a to-do or project manager.** No tasks, deadlines or kanban. PROLOGUE holds *hopes for a season*, not tickets.
+- **Not a to-do or project manager.** No tasks, deadlines or kanban.
 - **Not a second brain or wiki.** No backlinks graph, databases or templates marketplace. Notion and Obsidian do that well.
-- **Not social.** No feeds, likes, followers or public profiles. Sharing, when it comes, is one-to-one and deliberate (for example a future ENVOI letter to a loved one).
+- **Not social.** No feeds, likes, followers or public profiles. Sharing, when it comes, is one-to-one and deliberate (for example a future letter to a loved one).
 - **Not an AI writer.** No AI in v1. Any future AI runs on your device and never sends your words anywhere.
-- **Not a quantified-self dashboard.** ALMANACK measures gently, as reflection, never as performance. There are no scores, rankings or guilt.
+- **Not a quantified-self dashboard.** The Almanac measures gently, as reflection, never as performance. There are no scores, rankings or guilt.
 - **Not an engagement machine.** No streak-shaming, dark patterns or notifications designed to pull you back. Reminders are local, opt-in and kind.
 
 ## 7. People we design for
 
 | Persona | Who they are | Arrives through | What success looks like |
 |---|---|---|---|
-| **The Keeper** | Mid-30s. Has journaled on and off for years, in paper notebooks and abandoned apps. Wants the habit to stick and the archive to feel worth keeping. | AMAZEEN | A shelf of weekly issues they actually reread. Six months later they name their first FOLIO chapter. |
-| **The Parent** | New parent who wants to remember the years that blur together and leave something for their child. | ENVOI | Letters sealed for their child's 18th birthday (when sending to others ships), plus a lifeline that shows the early years at a glance. |
-| **The Transitioner** | Just moved city, changed career or ended something. Feels the need to mark a "before" and "after". | FOLIO or PROLOGUE | A named chapter, hopes set for the new season, and a reflection when the season ends. |
+| **The Keeper** | Mid-30s. Has journaled on and off for years, in paper notebooks and abandoned apps. Wants the habit to stick and the archive to feel worth keeping. | AMAZEEN | A shelf of weekly issues they actually reread. Six months later they name their first chapter. |
+| **The Parent** | New parent who wants to remember the years that blur together and leave something for their child. | AMAZEEN · Letters | Letters sealed for their child's 18th birthday (when sending to others ships), plus a lifeline that shows the early years at a glance. |
+| **The Transitioner** | Just moved city, changed career or ended something. Feels the need to mark a "before" and "after". | ETERNALL · Chapters | A named chapter, a letter sealed to the person on the other side of it, and the lifeline marking the turn. |
 | **The Reader** | Reads widely, underlines everything, loses all of it. | MARGINALIA | Their highlights found again years later, surfacing in AMAZEEN's "Overheard" page and on the lifeline. |
 | **The Privacy-minded** | Won't write anything personal into a cloud service. Has read the threat model. | Any imprint | Trusts ETERNALL enough to write the truth, because the architecture makes that rational. |
 
 ### Scenarios
 - *A Sunday evening:* AMAZEEN presses the week's issue. On the lifeline that week takes the colour of its mood, and REFRAIN has added three marks for the runs kept.
-- *A birthday:* ENVOI unseals a letter written five years ago. ALMANACK notes how many summers have passed since, and the letter mentions someone now kept in KINDRED.
-- *The end of a season:* PROLOGUE asks which hopes came true. The answers close the act, and FOLIO suggests that the season might be the start of a new chapter.
+- *A birthday:* AMAZEEN unseals a letter written five years ago. The Almanac notes how many summers have passed since, and the letter mentions someone now kept in KINDRED.
+- *A turning point:* a new chapter is named in the house, and the lifeline changes colour from that week on.
 
 ## 8. Module map
 
-- **ETERNALL** is the house and the overview. It holds the lifeline (every week of a life on one page, or as a 3D coil you can travel along), the vault, and the doors between imprints. It never competes with an imprint for attention.
+- **ETERNALL** is the house and the overview. It holds the lifeline (every week of a life on one page, or as a 3D coil you can travel along), inscriptions, **Chapters** (the eras of your life as books on a shelf, colouring the lifeline), the **Almanac** (gentle measures, echoes of earlier years), the vault, and the doors to the apps. It never appears inside an app.
 - **AMAZEEN** turns everyday writing (stories, notes, quotes, lists) into a laid-out weekly magazine issue every Sunday. It already exists (v1.4) and keeps its identity and its loyal users.
-- **ENVOI** holds letters to your future self. A letter is fingerprinted, sealed, and unreadable, even to you, until its day arrives.
-- **FOLIO** names the chapters of your life, with each chapter shown as a book on a shelf. Chapters colour the lifeline and give memories their context.
-- **ALMANACK** offers gentle measures and reflections: weeks lived, seasons turned, echoes from the same week in earlier years, and the climate of your memories.
+- **AMAZEEN · Letters** (once ENVOI) holds letters to your future self. A letter is fingerprinted, sealed, and unreadable, even to you, until its day arrives.
 - **REFRAIN** holds the rituals you return to, each written as a line in a score. A week of rituals becomes a short melody you can play back.
-- **PROLOGUE** holds hopes for a season, set at its start like the opening of a play and reflected on when the curtain falls.
-- **KINDRED** keeps the people who matter: when you last saw them, what you've shared, the dates you shouldn't forget. They can be mentioned across AMAZEEN and ENVOI.
+- **KINDRED** keeps the people who matter: when you last saw them, what you've shared, the dates you shouldn't forget. They can be mentioned in AMAZEEN's pieces and letters.
 - **MARGINALIA** keeps what you read, watch and listen to, and the lines you underlined, filed like a card catalogue.
 
 The data model, contributions to the lifeline and cross-links for each imprint are in `MODULES.md`.
@@ -140,5 +135,5 @@ What we explicitly won't optimise: time-in-app, daily active streaks, notificati
 ## 10. Open questions (to be resolved in later docs)
 
 - Pricing, currency and exactly which features sit in the paid tier → `BUSINESS.md`.
-- How ENVOI letters to *other people* work without breaking zero-knowledge → `PRIVACY.md`, `MODULES.md` (designed now, built later).
+- How letters to *other people* work without breaking zero-knowledge → `PRIVACY.md`, `MODULES.md` (designed now, built later).
 - Final wordmarks and accent colours for each imprint, plus trademark and domain checks → `BRAND.md`.

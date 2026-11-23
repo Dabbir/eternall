@@ -93,7 +93,13 @@ The lifeline is the page. Everything else is marginalia around it.
 Each row is set in **that imprint's own wordmark style** (a tiny preview of its identity), with the function line in plain house type.
 
 ### 5.3 Unlock (vault locked)
-A centred paper card, the only centred layout in the house, on purpose: the threshold. It holds the wordmark, "Your archive is locked", a passphrase field or a passkey button, and a quiet link to "Use recovery kit". When the person arrived through an imprint's door, the unlock card wears **that imprint's theme**, so an AMAZEEN user never sees a foreign screen.
+A centred paper card, the only centred layout in the house, on purpose: the threshold. It holds the wordmark, "Your archive is locked", a passphrase field or a passkey button, and a quiet link to "Use recovery kit". At an app's door the unlock card is **that app's own lock**, with nothing of the house: its name and function line instead of the wordmark, its own heading ("The card file is locked."), and its kit's look (ADR 0011).
+
+### 5.4 Chapters (once FOLIO; ADR 0011)
+A house page (`/chapters`, `?open=<id>` for one chapter) set in the house's own type and palette. It is a shelf of the eras of your life, one plank per decade, with gaps shown as pale "unnamed" volumes. An opened chapter keeps FOLIO's page proportions (`archive/folio.md`). The bookshelf in the round (3D) remains. Chapters colour the lifeline's chapters lens and provide `chapters.at`.
+
+### 5.5 Almanac (once ALMANACK; ADR 0011)
+A house page (`/almanac`) set in the house's own type. It holds your time measured gently, facts gathered from the four apps and the house, echoes of this week in earlier years, and red-letter days ahead. The mechanical orrery (3D) remains.
 
 ## 6. Signature moment
 - **2D (free):** *the drawing of a life.* At first binding, the grid fills row by row while a counter climbs to the number of weeks lived, then the "now" seal pulses (this exists today).

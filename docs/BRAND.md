@@ -10,16 +10,19 @@ ETERNALL is modelled on a **publishing house**. The house has one name, one prom
 
 ```
                     ETERNALL — a private publishing house for your life
+           (the lifeline · inscriptions · chapters · almanac, on the house's own pages)
                                        │
-   ┌──────────┬──────────┬──────────┬──┴───────┬──────────┬──────────┬──────────┬────────────┐
- AMAZEEN    ENVOI      FOLIO     ALMANACK   REFRAIN   PROLOGUE   KINDRED   MARGINALIA
- journal    letters    chapters  measures   rituals   seasons    people    reading
+        ┌──────────────────┬───────────┴──────┬──────────────────┐
+     AMAZEEN            REFRAIN            KINDRED          MARGINALIA
+     journal + letters  rituals            people           reading
 ```
 
-**Endorsement rule:** an imprint stands on its own first and the house is mentioned second.
-- In the imprint's own door (its path, PWA icon, onboarding): **"AMAZEEN"**, with *"an ETERNALL imprint"* in small type.
-- In the house (dashboard, doors menu): **"AMAZEEN · Journal"**. The function always sits beside the name (see §4).
-- In legal and footer contexts: *"AMAZEEN by ETERNALL"*.
+**Since ADR 0011 (2026-11-23):** four apps, each its own site. ENVOI became AMAZEEN's Letters, FOLIO and ALMANACK became house pages (Chapters, Almanac), and PROLOGUE was retired. All four names are now reserved (§2).
+
+**Endorsement rule:** each app stands entirely on its own. The house is not mentioned inside it (ADR 0011).
+- **Inside an app** (its pages, icon, manifest, unlock card, onboarding): only the app's name and function line, in its own type. There is no "an ETERNALL imprint", no house mark or seal, and no house wordmark. The way back is the app's own exit ("Close the drawer", "Fine", "Back to the stacks", "Leave").
+- **In the house** (lifeline, doors menu, search): **"AMAZEEN · Journal"**. The function always sits beside the name (see §4).
+- **In legal, privacy and payment contexts:** *"AMAZEEN by ETERNALL"*, because ETERNALL is the house that keeps the data. The recovery kit is also named ETERNALL, since it opens the whole vault.
 
 AMAZEEN keeps its existing name, wordmark and magazine identity. Its users should feel nothing was taken away.
 
@@ -44,11 +47,11 @@ Accent values come from the validated palettes in `design/<imprint>.md`.
 |---|---|---|---|---|---|
 | **ETERNALL** | *Your life in weeks* | eternal + all; the final L runs on into a seal | **Keep a life.** | The long L ending in a wax-seal dot (existing) | seal `#b8321f` / `#e0553a` |
 | **AMAZEEN** | *Journal* | "a magazine", and "amazing" | *The weekly magazine of your own life.* | Existing AMAZEEN masthead | press `#b92e1a` / `#ff6b55` |
-| **ENVOI** | *Letters to your future* | the closing stanza of a poem, addressed to someone | *Write to the person you're becoming.* | A postmark ring with a date line | airmail red `#b3202f` / `#f06a5a` |
-| **FOLIO** | *Chapters of your life* | a sheet folded into pages; a bound volume | *Every life is a book. Name its chapters.* | A book spine with two gilt bands | bookcloth `#2f4a3a` / `#7fae8f` |
-| **ALMANACK** | *Measures & reflections* | the old almanac of days, moons and seasons | *A life, measured gently.* | A crescent inside an engraved circle | prussian `#1f3d6b` / `#9db4e8` |
+| ~~ENVOI~~ (now AMAZEEN · Letters; reserved) | *Letters to your future* | the closing stanza of a poem, addressed to someone | *Write to the person you're becoming.* | A postmark ring with a date line | airmail red `#b3202f` / `#f06a5a` |
+| ~~FOLIO~~ (now house · Chapters; reserved) | *Chapters of your life* | a sheet folded into pages; a bound volume | *Every life is a book. Name its chapters.* | A book spine with two gilt bands | bookcloth `#2f4a3a` / `#7fae8f` |
+| ~~ALMANACK~~ (now house · Almanac; reserved) | *Measures & reflections* | the old almanac of days, moons and seasons | *A life, measured gently.* | A crescent inside an engraved circle | prussian `#1f3d6b` / `#9db4e8` |
 | **REFRAIN** | *Rituals & habits* | the line that returns in a song or poem | *The lines you come back to.* | A repeat sign (𝄆 𝄇) | indigo `#3b3a8f` / `#a6a4ff` |
-| **PROLOGUE** | *Hopes for the season* | the opening of a play, before the first act | *Every season opens with a prologue.* | A proscenium arch | curtain `#8e1b2a` / `#e05a6a` |
+| ~~PROLOGUE~~ (retired; reserved) | *Hopes for the season* | the opening of a play, before the first act | *Every season opens with a prologue.* | A proscenium arch | curtain `#8e1b2a` / `#e05a6a` |
 | **KINDRED** | *The people who matter* | of the same kind; family by blood or by choice | *Keep the people close.* | Two overlapping letterpress circles | press green `#1f5f5b` / `#6fc2b8` |
 | **MARGINALIA** | *Reading & underlines* | notes written in the margins of a book | *Everything you underlined, kept.* | A pencil bracket in a margin | marginal blue `#1d4ea8` / `#8db0ff` |
 
@@ -56,7 +59,7 @@ Accent values come from the validated palettes in `design/<imprint>.md`.
 
 Imprint names are memorable because they are unusual, and that makes them unclear on their own. The rule:
 
-- **Every navigation surface shows the name and its function line together**, for example "ENVOI · Letters to your future". This applies to the doors menu, the dashboard, search results and first-run screens.
+- **Every navigation surface shows the name and its function line together**, for example "KINDRED · The people who matter". This applies to the doors menu, the dashboard, search results, first-run screens, and each app's own masthead and unlock card.
 - **Buttons and actions never use the imprint's metaphor as the only label.** It's "Write a letter", not "Compose an envoi", and "New chapter", not "Bind a folio".
 - The metaphor lives in visuals, headings and delight moments, never in the instructions.
 
@@ -72,9 +75,15 @@ The house mark already exists in `public/brand/`:
 | `maskable.svg`, `icon-*.png`, `apple-touch-icon.png` | Platform icons. |
 | `og-image.png` | 1200×630 social card. |
 
-Clear space equals the height of the seal dot × 3. The seal is always vermilion and never recoloured to an imprint's accent. That way the seal is how people recognise the house inside every imprint.
+Clear space equals the height of the seal dot × 3. The seal is always vermilion and never recoloured. It belongs to the house's own pages and never appears inside an app (ADR 0011).
 
-**Imprint marks** are designed in Phase 4/5 with their imprint, following the "mark idea" column above. Each imprint provides: a wordmark, a square icon (maskable), an OG image in its own visual language, and a favicon. The ETERNALL seal appears on imprint icons only as a tiny corner dot, an endorsement and never a co-brand.
+**App marks** (`apps/web/public/icons/`) carry no house mark at all:
+- **AMAZEEN** keeps its own monogram.
+- **REFRAIN** is a beamed pair of notes on a staff, in indigo.
+- **KINDRED** is a tabbed index card with a coral star, in press green.
+- **MARGINALIA** is a page with a red margin rule, a highlighted line and a pencil note, in marginal blue.
+
+Each app provides an SVG, PNGs at 180, 192 and 512 px, and a maskable 512.
 
 ## 6. Voice
 

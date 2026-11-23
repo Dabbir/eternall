@@ -50,7 +50,7 @@ Status: draft for review · Phase 0 · Builds on `amazeen-app/docs/sync-security
 
 ## 3. Encryption at rest
 
-- **Every record** (an AMAZEEN entry, an ENVOI letter, a KINDRED card…) is encrypted individually: AES-256-GCM, a fresh random 96-bit IV, and **AAD = `vaultId ‖ 0x00 ‖ rid`**, so a record can't be swapped or moved between vaults undetected (AMAZEEN's construction, generalised).
+- **Every record** (an AMAZEEN entry, a sealed letter, a KINDRED card…) is encrypted individually: AES-256-GCM, a fresh random 96-bit IV, and **AAD = `vaultId ‖ 0x00 ‖ rid`**, so a record can't be swapped or moved between vaults undetected (AMAZEEN's construction, generalised).
 - **What is stored in plaintext locally:**
   - The wrapped VK blobs and their KDF parameters.
   - The vault ID.
@@ -122,12 +122,12 @@ Sync and immersive modes require an active licence (`BUSINESS.md`). The licence 
 **What we can link, stated plainly:** the payment provider knows who paid, and our server knows *which licence* a sync vault uses. So with both datasets, a payer could be linked to a sync vault's existence and size, **never to its content**.
 **Planned improvement:** unlinkable tokens via privacy-preserving blind signatures (RFC 9474 / Privacy Pass style), so the server can verify a licence without knowing which purchase it came from. This is tracked in `ROADMAP.md`.
 
-## 9. ENVOI's seal: what "sealed" means
+## 9. A letter's seal: what "sealed" means (AMAZEEN · Letters, once ENVOI)
 
-- An ENVOI letter is encrypted like every record. The **time-lock is enforced by the app**: the UI will not reveal a letter before its date, and the letter carries a SHA-256 fingerprint verified on opening (exists today).
+- A letter (still stored as `envoi/letter`) is encrypted like every record. The **time-lock is enforced by the app**: the UI will not reveal a letter before its date, and the letter carries a SHA-256 fingerprint verified on opening (exists today).
 - This is a **promise of the interface, not of cryptography**. Someone with your Recovery Key and determination could extract a letter early. The ENVOI UI states this once, in plain words, at first use.
 - **Future (optional):** a cryptographic time-lock via a public randomness beacon (drand/tlock), where the letter key is encrypted to a future beacon round, so even you can't open it early. This requires the network at opening and is designed but not in v1.
-- **Future: letters to other people** (`MODULES.md` ENVOI "later").
+- **Future: letters to other people** (`MODULES.md` §3, "later").
   - Each letter gets its own random key, and the ciphertext is stored on the server with a release date.
   - The key travels **only in the link fragment** (`#k=…`), which never reaches the server.
   - Delivery is either *manual* (you hand over the link) or *server-delivered*, which requires storing the recipient's contact address. That is a disclosed privacy trade-off, and it is opt-in per letter.
@@ -149,6 +149,10 @@ Sync and immersive modes require an active licence (`BUSINESS.md`). The licence 
 | Coercion / legal request to us | We can hand over only ciphertext and the metadata in §6. |
 | Someone glances at a locked phone while reminders are on | A system notification shows its title (e.g. "Dad’s birthday is today") on the lock screen. System notifications are off by default, opted into in Settings → Reminders with this warning, and only fire while ETERNALL is open. |
 | Tab closed within milliseconds of a write | The last write can be lost: encryption is asynchronous, so there is no synchronous mirror (a plaintext one is forbidden). Writes flush on hide and close. |
+
+### Retired imprints (ADR 0011)
+
+Consolidating to four apps changed no keys, no encryption and no sync. Records of the retired imprints keep their paths and stay encrypted in the vault and in exports. The only new writes are house inscriptions created from PROLOGUE seasons and a migration log (`house/migrations`), both ordinary encrypted vault records. Each app's theme is scoped on `<body data-imprint>`, which carries only the app's id, never content.
 
 ### Local reminders and photos
 

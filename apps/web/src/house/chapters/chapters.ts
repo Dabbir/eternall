@@ -15,7 +15,7 @@ import {
 export const CHAPTER_PATH = 'folio/chapter';
 export const LIMITS = { title: 60, note: 400 } as const;
 
-/** Bookcloth palette: validated for colour-vision deficiency in light and dark (docs/design/folio.md §2). */
+/** Bookcloth palette: validated for colour-vision deficiency in light and dark (docs/design/archive/folio.md §2). */
 export const CLOTHS = [
   { id: 1, name: 'Ochre', color: '#a8760c' },
   { id: 2, name: 'Cobalt', color: '#2f6fca' },

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Plate I: an engraved orrery (docs/design/almanack.md §6). The sun at the centre; decades lived as
+ * Plate I: an engraved orrery (docs/design/archive/almanack.md §6). The sun at the centre; decades lived as
  * solid orbits and decades ahead as dotted ones; the current year a planet on its orbit, with the
  * moon in today's phase beside it. Hatched line art only, no fills, like an engraving.
  */

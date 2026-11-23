@@ -1,5 +1,8 @@
 # PROLOGUE — Design
 
+> **Archived (ADR 0011, 2026-11-23).** This imprint was retired as a separate app. It lives on in house inscriptions (each season became one; `apps/web/src/house/domain/migrations.ts`). Kept for its reasoning, palette and spatial system; the spine rows in its wireframes describe the old shared spine.
+
+
 Status: draft for review · Hopes for the season · New imprint (Release 2)
 
 ## 1. Metaphor

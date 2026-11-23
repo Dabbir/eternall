@@ -155,3 +155,6 @@ a.rc-movement:hover { color: var(--accent); }
   .rc-tool { width: 30px; }
   .rc-mark { padding: 0 10px; font-size: 0.9375rem; }
 }
+
+/* ⌘K: the chosen line underlined like a marking. */
+[data-imprint='refrain'] { --palette-radius: 0; --palette-on-bg: transparent; --palette-on-fg: var(--accent); --palette-on-shadow: inset 0 -1px 0 var(--accent); --palette-font: var(--font-display); }

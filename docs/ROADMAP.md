@@ -123,8 +123,24 @@ Status: draft for review · Phase 0 · Each phase ends with its exit criteria me
 - Capabilities wired with a with/without matrix in tests; the lifeline draws ritual, person, work and season signals.
 - Finished after the first pass (2026-11-23): KINDRED photos (shrunk on the device, encrypted), opt-in local reminders for dates (the house delivers them; `FLOWS.md` F20), and AMAZEEN's own `@` mention picker in stories and notes. PROLOGUE now shows a planned season "in rehearsal" when none is running.
 
+## Phase 6: Four apps, each its own site (ADR 0011)
+**Why:** after Release 2, the owner asked for fewer modules (keep what's truly useful, like journaling), and for each module to feel like its own app, with no resemblance to ETERNALL.
+
+**Done (2026-11-23):**
+- **Consolidation (8 → 4).**
+  - ENVOI became AMAZEEN's Letters room.
+  - FOLIO and ALMANACK became house pages (Chapters, Almanac) as house sections.
+  - PROLOGUE was retired, with each season kept as an inscription.
+  - No data moved, and old links redirect.
+- **Apps as their own sites.**
+  - The shell renders an app bare and swaps the tab icon, theme colour and manifest.
+  - Primitives are skinnable through tokens.
+  - Each app has its own chrome, its own kit stylesheet, its own unlock card and its own icons: AMAZEEN's magazine spine, REFRAIN's score head, KINDRED's card cabinet, MARGINALIA's catalogue card.
+- **Verified** with typecheck, lint, unit and integration tests, and budgets. In the browser: each app at 390 and 768px and desktop, light and dark, with reduced motion; its own unlock card; ⌘K scoped to the app; exit and Back; the house unchanged.
+- **Still open:** a real-device pass (iOS install icons per door, Android maskable icons), and the owner's 5-second test on the four chromes.
+
 ## Release 2
-All nine imprints live.
+The four apps and the house, as of ADR 0011.
 
 ## Later (designed, not scheduled)
 - **Native apps** via Capacitor (ADR 0009): App Store and Play Store, in-app purchase licences, native notifications.

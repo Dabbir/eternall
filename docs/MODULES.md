@@ -1,6 +1,8 @@
 # ETERNALL — Modules (imprints)
 
-Status: draft for review · Phase 0 · Related: `ARCHITECTURE.md` §3 (contract), §5 (capabilities), `design/*`
+Status: as built, consolidated to four apps by ADR 0011 (2026-11-23) · Related: `ARCHITECTURE.md` §3 (contract), §5 (capabilities), `design/*`
+
+> **Since ADR 0011** there are four apps, each its own site: AMAZEEN, REFRAIN, KINDRED and MARGINALIA. The sections below for ENVOI, FOLIO, ALMANACK and PROLOGUE describe where their records and behaviour live now. Collection paths never changed.
 
 Conventions:
 - All dates are civil ISO dates (`YYYY-MM-DD`); timestamps are ISO-8601.
@@ -23,8 +25,8 @@ Conventions:
 
 **Lifeline:** combines all imprints' `WeekContribution`s per week.
 - *Moments* lens: the tone of the house inscription > the AMAZEEN mood-derived tone > none.
-- *Chapters* lens: FOLIO.
-- Markers: ENVOI letters, REFRAIN rituals.
+- *Chapters* lens: the house's Chapters section (once FOLIO).
+- Markers: AMAZEEN letters (once ENVOI), REFRAIN rituals, KINDRED people, MARGINALIA works.
 
 **v1 (Release 1):** lifeline 2D + 3D coil, doors menu, unlock, recovery kit, binding onboarding, house inscriptions, command palette, settings.
 
@@ -44,7 +46,10 @@ Conventions:
 - **v1 (Release 1):** everything in v1.4 + vault storage + lifeline contribution + turnable covers (immersive).
 - **Later:** a printed bound annual volume (à la carte).
 
-## 3. ENVOI: Letters to your future (`modules/envoi`)
+## 3. Letters, in AMAZEEN (once ENVOI; `modules/amazeen/src/imprint/letters/`)
+
+*Moved by ADR 0011.* The `envoi/*` records, rules and lifeline contributions below now belong to the `amazeen` definition (`imprint/letters/contributions.ts`). Routes are `/amazeen/letters`, `/amazeen/letters/write` and `/amazeen/letters/letter/<id>`, and `/envoi/*` redirects there. `letters.compose` is gone; sealing a piece as a letter is internal to AMAZEEN.
+
 
 | Entity | Fields |
 |---|---|
@@ -58,7 +63,10 @@ Conventions:
 - **v1 (Release 1):** desk, writing, sealing ceremony 2D, physical envelope 3D (immersive), pigeonholes, reading with verification.
 - **Later:** letters to other people (`PRIVACY.md` §9), with an optional cryptographic time-lock.
 
-## 4. FOLIO: Chapters of your life (`modules/folio`)
+## 4. Chapters, a house section (once FOLIO; `apps/web/src/house/chapters/`)
+
+*Moved by ADR 0011.* `chaptersSection` (a `HouseSection`) contributes the bands, week lines and facts below, and provides `chapters.at`. The page is `/chapters` (`?open=<id>`, `?new=1`), and `/folio/*` redirects there. Records stay `folio/chapter`.
+
 
 | Entity | Fields |
 |---|---|
@@ -71,7 +79,10 @@ Conventions:
 - **v1 (Release 1):** shelf, spread, edit, life bar, bookshelf 3D (immersive).
 - **Later:** sub-chapters ("parts"); a chapter cover image (local file, encrypted).
 
-## 5. ALMANACK: Measures & reflections (`modules/almanack`)
+## 5. Almanac, a house section (once ALMANACK; `apps/web/src/house/almanac/`)
+
+*Moved by ADR 0011.* The page is `/almanac`, and `/almanack/` redirects there. It gathers facts from the four apps and the house sections. Its record stays `almanack/settings`.
+
 
 - **Entities:** none of its own beyond `almanack/settings` (which measures to show, e.g. hide "heartbeats"). It is a **reader** of the house profile and other imprints' `almanacFacts()`.
 - **Standalone behaviour:** without a profile, it measures from the vault's creation date and offers to add a birth date.
@@ -92,7 +103,10 @@ Conventions:
 - **Capabilities:** provides `rituals.week`; PROLOGUE hopes can link to a ritual.
 - **v1 (Release 2):** score, marking, playback 2D, ritual pages; richer instruments and year playback (immersive).
 
-## 7. PROLOGUE: Hopes for the season (`modules/prologue`), Release 2
+## 7. PROLOGUE (retired by ADR 0011)
+
+*Retired.* Each `prologue/season`, with its `prologue/hope` acts and its epilogue, becomes one house inscription (`house/inscription/prologue_<season id>`, tone *wonder*). The conversion runs once per season, including seasons that arrive later by sync, and is logged in `house/migrations`; deleting the inscription does not bring it back. The original records stay in the vault and in exports. `/prologue/*` redirects to `/inscriptions`. The description below is historical.
+
 
 | Entity | Fields |
 |---|---|
@@ -137,19 +151,19 @@ Conventions:
 
 ---
 
-## Cross-imprint map
+## Cross-app map (since ADR 0011)
 
 ```
             people.mention                     quotes.offer
   KINDRED ───────────────▶ AMAZEEN ◀─────────────── MARGINALIA
-     │                        │ ▲
-     │ people.mention         │ │ letters.compose
-     ▼                        ▼ │
-   ENVOI ◀── letters.compose ─ PROLOGUE ──▶ rituals.week ◀── REFRAIN
-                               │
-                               └─ chapters.at ─▶ FOLIO ─ chapters.at ─▶ house · AMAZEEN · ALMANACK
+                        (pieces + Letters)
 
-  Every imprint ── weekSummary() ──▶ house lifeline;  almanacFacts() ──▶ ALMANACK
+  house · Chapters ── chapters.at ──▶ house inscriptions · AMAZEEN
+  REFRAIN ── rituals.list / rituals.week ──▶ (no consumer today)
+
+  Every app and house section ── lifeline() / weekLines() ──▶ house lifeline
+                              ── almanacFacts() ──────────▶ house · Almanac
+                              ── reminders() ─────────────▶ shell (local reminders)
 ```
 
 All arrows are optional. Removing any imprint leaves every other imprint fully functional.

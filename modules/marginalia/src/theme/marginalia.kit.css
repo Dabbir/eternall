@@ -99,6 +99,7 @@
   justify-self: start; display: inline-flex; align-items: center; gap: 6px;
   font-family: var(--font-hand); font-size: 1.35rem; line-height: 1; color: var(--ink-2);
 }
+.mc-exit { white-space: nowrap; }
 .mc-exit:hover { color: var(--ink); text-decoration: underline wavy; text-underline-offset: 4px; }
 .mc-exit__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--card-rule); }
 
@@ -156,6 +157,11 @@
 [data-imprint='marginalia'] .unlock__app-fn { font-family: var(--font-mono); }
 [data-imprint='marginalia'] .unlock__title { font-family: var(--font-display); font-style: italic; }
 
+@media (max-width: 960px) {
+  .mc-card { width: min(290px, 40vw); }
+  .mc-card__call { display: none; }
+  .mc-card { grid-template-columns: 1fr; }
+}
 @media (max-width: 720px) {
   .mc-desk { grid-template-columns: auto 1fr auto; gap: 8px; padding: 10px 12px; }
   .mc-card { width: auto; justify-self: center; grid-template-columns: 1fr; padding: 8px 14px 24px; }
@@ -170,3 +176,6 @@
   .mc-type::before, .mc-type::after { content: none; }
   .mc-tools { gap: 0; }
 }
+
+/* ⌘K: the chosen line highlighted, as with a marker. */
+[data-imprint='marginalia'] { --palette-radius: 0; --palette-on-bg: color-mix(in srgb, var(--highlight) 55%, transparent); --palette-on-fg: var(--ink); --palette-font: var(--font-mono); }

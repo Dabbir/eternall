@@ -52,7 +52,7 @@ Named dark mode: **Night edition**.
 
 | Area | Today | In ETERNALL | Why |
 |---|---|---|---|
-| Navigation spine | AMAZEEN's own 76px ink-black left spine | The **shared ETERNALL spine** (`DESIGN.md` §2). AMAZEEN's sections (Desk · Shelf · Office) move into an in-canvas **masthead strip** set in Fraunces small caps; "Write" becomes the spine's primary action | One spine across imprints. The strip keeps AMAZEEN's voice. *Largest visible change, so it needs a migration note in-app.* |
+| Navigation spine | AMAZEEN's own 76px ink-black left spine | **Unchanged: AMAZEEN keeps its own spine** (ADR 0011). Inside ETERNALL it gains a fifth section, **Letters**; a small **Leave** exit at the top; and the **lock** in place of the theme switch, since the house owns the theme. No house spine appears. | Each app is its own site. *(The masthead strip of the first integration is retired.)* |
 | Storage and sync | Own IndexedDB + own sync account | The ETERNALL vault (encrypted at rest) and vault sync | Platform privacy (`PRIVACY.md`) |
 | Routes | `/`, `/write/:kind`, `/issue/:week`, `/shelf`, `/settings` | Same, under `/amazeen/` | One origin, many doors |
 | PWA | `amazeen-app` manifest | Its own manifest with `scope: /amazeen/`, installable as **AMAZEEN** | Keeps its identity |
@@ -70,7 +70,7 @@ Page turns in the Reader; the rubber-stamp *FILED*; the deadline countdown; the 
 `States.tsx` covers loading and empty states in newsroom voice; a rescue export appears when stored data is unreadable; and the backup reminder appears after 14 days of un-exported changes. In ETERNALL, the backup reminder becomes a vault-level reminder (`FLOWS.md`).
 
 ## 10. Mobile (existing)
-A 56px top bar replaces the spine below 900px today. In ETERNALL the shared spine moves to the bottom on mobile (`DESIGN.md` §2), and the masthead strip becomes a horizontally scrollable tab row.
+A 56px top bar replaces the spine below 900px, with index tabs along the bottom (as in AMAZEEN today). Inside ETERNALL the top bar carries the lock and the Leave exit, and the tabs fit five sections.
 
 ## 11. Clarity checks
 - **Forbidden patterns:** none. The only card-like grid is the Shelf of covers, which is a real object (magazines on a shelf), not a generic card grid.
@@ -81,3 +81,14 @@ A 56px top bar replaces the spine below 900px today. In ETERNALL the shared spin
   1. File a quick note about today.
   2. Open last month's issue on page 3.
   3. Find every piece that mentions "Lisbon".
+
+## 12. Letters (the post room, once ENVOI; ADR 0011)
+Letters to your future self live in AMAZEEN's **post room** (`/amazeen/letters`). They are sealed until their day, and nobody can read them before it, not even you.
+- **Design:** the desk and its envelopes keep ENVOI's spatial system (`archive/envoi.md`), set in AMAZEEN's inks:
+  - press vermilion for seals and accents
+  - proof blue for marks
+  - Fraunces, Newsreader and JetBrains Mono
+- **Records** keep their `envoi/letter` and `envoi/draft` paths.
+- **Contributions** (lifeline markers, red-letter days, the "letter ready" badge) now come from AMAZEEN.
+- **Old links** to `/envoi/*` redirect.
+- **Kit:** `imprint/amazeen.kit.css` dresses the shared primitives AMAZEEN meets inside the house (Letters, ⌘K, house toasts) in the newsroom's voice: 2px corners, mono small caps, and the offset shadow of a block of type.

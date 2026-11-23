@@ -1,16 +1,17 @@
 # ETERNALL — Flows
 
-Status: draft for review · Phase 0 · Related: `ARCHITECTURE.md` §2, `PRIVACY.md`, `BUSINESS.md`
+Status: amended by ADR 0011 · Phase 0 · Related: `ARCHITECTURE.md` §2, `PRIVACY.md`, `BUSINESS.md`
 
 Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any imprint. Copy in quotes is indicative; final copy follows `BRAND.md` §6.
 
 ---
 
-## F1 · First arrival through an imprint's door
-1. Visitor opens `eternall.app/envoi/` (link, search, marketing domain redirect, or installed icon).
-2. The shell boots in **focus mode** with ENVOI's theme. ENVOI's onboarding runs in ENVOI's idiom (a blank sheet on a desk, with one sentence on what ENVOI is).
-3. On the first *meaningful write* (sealing a letter), the vault is created inline (**F2**). ENVOI does not ask for anything before the person has tried it.
-4. The first-contact metaphor hint is shown once, skippable.
+## F1 · First arrival through an app's door
+1. Visitor opens `eternall.app/kindred/` (link, search, marketing domain redirect, or installed icon).
+2. The app opens **as its own site** (ADR 0011): its own chrome, tab icon, theme colour and manifest, with no house spine or name. Its onboarding runs in its own idiom (KINDRED: an empty card and one sentence on what it is).
+3. On the first *meaningful write* (adding a person), the vault is created inline (**F2**). The app asks for nothing before the person has tried it.
+4. The first-contact note (kit `IntroNote`) appears once under the app's chrome, skippable.
+5. Old doors (`/envoi/`, `/folio/`, `/almanack/`, `/prologue/`) redirect to where their pages live now (AMAZEEN Letters, Chapters, Almanac, Inscriptions).
 
 **States and edge cases**
 - *Storage blocked* (private mode, or IndexedDB denied): a banner in the imprint's style: "This browser won't let ETERNALL save. You can look around, but nothing will be kept." Writes are disabled, never silently lost.
@@ -39,7 +40,7 @@ Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any
 **Edge cases:** printing is unavailable inside some installed PWAs, so file save is offered. Copy to clipboard is followed by an automatic clipboard clear after 60s (best-effort).
 
 ## F4 · Unlock and auto-lock
-1. Opening any door while locked shows the **unlock card in that imprint's theme**.
+1. Opening any door while locked shows **that door's own lock**: at an app, the app's name, heading ("The card file is locked.") and look, with nothing of the house; at the house, the house card.
 2. Passkey → biometric prompt; passphrase → field; "Use recovery key" link.
 3. On success, the person lands exactly where they were (route and scroll restored).
 4. Auto-lock after inactivity or after the tab is hidden (`PRIVACY.md` §4). Editors save encrypted drafts first.
@@ -51,8 +52,8 @@ Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any
 
 ## F5 · Discovering a second imprint
 1. A contextual, dismissible suggestion appears **inside** an imprint when it helps. Examples:
-   - AMAZEEN, after a cover story: "Seal this week's cover story as a letter to next year? → ENVOI".
-   - FOLIO, after naming a chapter: "Keep the people from this chapter close → KINDRED".
+   - AMAZEEN, after a cover story: "Seal this week's cover story as a letter to next year?" (stays in AMAZEEN: Letters).
+   - The house, after naming a chapter: "Keep the people from this chapter close → KINDRED".
 2. Tapping opens the other imprint's door **with context** (e.g. a pre-filled letter), and its onboarding is shortened because the vault exists.
 3. Dismissing hides that suggestion permanently. At most one suggestion per imprint per week.
 
@@ -67,9 +68,9 @@ Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any
 - The person declines → the invitation never auto-appears again, and the lifeline stays reachable from the house mark.
 - Birth date is validated against existing records (any record before birth produces an inline warning, not a block).
 
-## F7 · Installing an imprint as its own app
-1. On a door, the browser's install prompt (or a subtle "Install AMAZEEN" item in the doors menu) installs **that imprint**, with its name, icon and `scope`.
-2. The installed app opens in focus mode. The house mark still offers the doors (they open within the same installed window when in scope, or in the browser otherwise).
+## F7 · Installing an app as its own app
+1. On a door, the browser's install prompt installs **that app**, with its own name, icon (`apps/web/public/icons/`) and `scope`.
+2. The installed app opens as itself. Its only way to the house is its own exit ("Close the drawer", "Fine", "Back to the stacks", "Leave"), which opens the house in the browser when out of scope.
 
 **Edge cases:** iOS needs "Add to Home Screen" instructions per imprint, so each manifest carries its own `apple-touch-icon` and title.
 
@@ -90,7 +91,7 @@ Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any
 
 ## F9 · Turning on sync and adding a device
 1. Settings → Sync (Patron). "Turn on sync" → the vault registers with the server (`AS`), binds the licence, and pushes all records.
-2. **Add a device:** on the new device, open any door → "I already have an ETERNALL vault" → enter the Recovery Key, or scan a QR from an unlocked device's "Add a device" screen.
+2. **Add a device:** on the new device, open any door → "I already have a vault on another device" → enter the Recovery Key, or scan a QR from an unlocked device's "Add a device" screen.
 3. The new device derives keys, pulls records, then asks to set **its own** local lock method (lock methods are per device).
 
 **Edge cases:**
@@ -114,11 +115,11 @@ Settings → Security → "Rotate vault key" → explanation (other devices will
 
 ## F13 · Export
 - **Encrypted archive** (`.eternall`, default): the whole vault, decryptable with the Recovery Key. It is the best backup.
-- **Plain export** per imprint (JSON, plus imprint-specific formats: AMAZEEN issues as print/PDF, ENVOI opened letters as text, MARGINALIA underlines as Markdown). A clear warning: "This file isn't encrypted."
+- **Plain export** per imprint (JSON, plus imprint-specific formats: AMAZEEN issues as print/PDF, opened letters as text, MARGINALIA underlines as Markdown). A clear warning: "This file isn't encrypted."
 - **Backup reminder:** if there is no sync and no export in 30 days, a calm reminder appears in the doors menu (generalising AMAZEEN's 14-day reminder).
 
 ## F14 · Erase
-- **Per imprint:** Settings → Imprint → "Erase all ENVOI data" (type the imprint name to confirm). Sealed letters are destroyed unread, and this is warned.
+- **Per imprint:** Settings → Imprints → "Erase all AMAZEEN data" (type the name to confirm). Sealed letters are destroyed unread, and this is warned.
 - **Whole vault:** type your name, or "ERASE", to confirm. This removes the local vault, all drafts and mirrors, and (if synced) the cloud vault after one more confirmation. The licence stays valid at the provider.
 - The dialog waits until storage is actually wiped before closing (AMAZEEN audit finding #3).
 
@@ -128,16 +129,16 @@ AMAZEEN lives on another origin today, so its IndexedDB can't be read from `eter
 2. **Via AMAZEEN sync** *(ships with the sync-worker in Release 1)*: if the user had sync, entering their AMAZEEN sync key in ETERNALL's importer pulls the old account, decrypts it with the old derivation (`amazeen/sync/v1` salt) and re-encrypts it into the vault.
 3. **Via export file:** AMAZEEN's existing JSON export (format v2) is imported through `migrate()` and `parseAppData()` logic carried into `modules/amazeen`.
 
-After migration the AMAZEEN experience is the same (focus mode, AMAZEEN-first). A one-time note explains the new spine and the lock. Grandfathered Patron period per `BUSINESS.md` §3.
+After migration the AMAZEEN experience is the same (focus mode, AMAZEEN-first). AMAZEEN keeps its own spine, now with Letters, the lock and a small Leave exit. Grandfathered Patron period per `BUSINESS.md` §3.
 
 **Edge cases:**
 - Popup blocked → fall back to a link plus the export-file path.
 - Partial import → transactional: everything or nothing, with a retry.
 - Duplicate import → merge newest-wins, with no duplicates (ids preserved).
 
-## F16 · Opening an ENVOI letter
-1. On the opening day: a "ready" marker on the lifeline week, in ENVOI's pigeonholes and in the doors menu (badge). A local notification fires only if the person opted in.
-2. ENVOI → the focal letter → **Break the seal** → ceremony (2D or 3D) → fingerprint verified → letter shown → `openedAt` saved.
+## F16 · Opening a letter (AMAZEEN · Letters, once ENVOI)
+1. On the opening day: a "ready" marker on the lifeline week, in the post room's pigeonholes, a banner on the lifeline, and AMAZEEN's badge in the doors menu. A local notification fires only if the person opted in.
+2. AMAZEEN → Letters → the focal letter → **Break the seal** → ceremony (2D or 3D) → fingerprint verified → letter shown → `openedAt` saved.
 
 **Edge cases:**
 - Device clock set forward to open early → the app uses the device date (local-first). The `PRIVACY.md` §9 honesty note applies; with sync, a server-provided date check gently notes a skew.
@@ -151,7 +152,7 @@ After migration the AMAZEEN experience is the same (focus mode, AMAZEEN-first). 
 All tabs share one vault. Changes broadcast via BroadcastChannel, and lock and unlock propagate. An imprint open in two tabs shows live updates, and simultaneous edits to the same record resolve newest-wins with a non-blocking "Updated in another window" note.
 
 ## F19 · Offline
-Everything except sync, licence refresh and checkout works offline. Sync and licence work queues and resumes. The spine shows a small, quiet offline indicator only when something is waiting to sync.
+Everything except sync, licence refresh and checkout works offline. Sync and licence work queues and resumes. A small, quiet offline indicator (the house spine, or AMAZEEN's sync light) shows only when something is waiting to sync.
 
 ## F20 · Local reminders
 1. An imprint offers reminders inside itself, off by default (KINDRED: *Reminders for dates* → Off / On the day / The day before / A week before).

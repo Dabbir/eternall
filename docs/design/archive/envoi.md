@@ -1,5 +1,8 @@
 # ENVOI — Design
 
+> **Archived (ADR 0011, 2026-11-23).** This imprint was retired as a separate app. It lives on in AMAZEEN's Letters room (`docs/design/amazeen.md` §Letters). Kept for its reasoning, palette and spatial system; the spine rows in its wireframes describe the old shared spine.
+
+
 Status: draft for review · Letters to your future · Replaces "Capsules" in the current ETERNALL app
 
 ## 1. Metaphor

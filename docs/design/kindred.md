@@ -39,9 +39,9 @@ Named dark mode: **Dusk**. The card file recedes and the constellation view beco
 
 ### 5.1 The card file (home)
 ```
-┌ spine: [◖L•] KINDRED · The people who matter     ⌘K          [ Add a person ] ┐
-   KINDRED                                           ( Card file | Constellation )
-   Keep the people close.
+┌ ← Close the drawer        ▐● KINDRED ●▌ (brass plate)         ⌕  🔒  [ ADD A PERSON ] ┐
+   ╱Card file╲ ╱Constellation╲          (index tabs: / and /sky)
+   Keep the people close.   4 cards in the file
    ─ RECENTLY SEEN ──────────────────────────────────────────────────────────────
    ┌────────────┐┐┐┐
    │ Ana Sousa  ││││   (cards overlap like a drawer; fan out on hover)
@@ -102,3 +102,19 @@ Drawers become vertical lists of full-width cards (no overlap), and tapping flip
   1. Add your father with his birthday.
   2. Note that you saw a friend today.
   3. Find who you haven't seen in the longest time.
+
+## 12. Chrome and kit (its own site, ADR 0011)
+KINDRED is the face of a card cabinet:
+- A **brass label plate** holds the name, letterpressed on card, with the function line.
+- **Index tabs** stand up from the drawer: Card file (`/`) and Constellation (`/sky`).
+- **Search and the key** sit at the right, with the primary action as a **pressed letterpress block**.
+- **"Close the drawer"** goes back to the house.
+
+`theme/kindred.kit.css` re-cuts the shared primitives as letterpress on card stock:
+- **Buttons:** square, small caps, with a pressed-in shadow.
+- **Ghost buttons:** card with an ink border and an offset shadow.
+- **Fields:** ruled lines.
+- **Dialogs:** cards with a coral head rule and an offset shadow.
+- **Toasts:** calling cards with a teal edge.
+- **Choices:** index tabs.
+- **Unlock card:** a card behind the brass plate.

@@ -1,5 +1,8 @@
 # ALMANACK — Design
 
+> **Archived (ADR 0011, 2026-11-23).** This imprint was retired as a separate app. It lives on in the house's Almanac page (`docs/design/eternall.md` §Almanac). Kept for its reasoning, palette and spatial system; the spine rows in its wireframes describe the old shared spine.
+
+
 Status: draft for review · Measures & reflections · Replaces "Almanac" in the current ETERNALL app
 
 ## 1. Metaphor

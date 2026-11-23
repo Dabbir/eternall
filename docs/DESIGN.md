@@ -1,9 +1,9 @@
 # ETERNALL — Design
 
-Status: draft for review · Phase 0 · Related: `BRAND.md`, `design/*`, `ARCHITECTURE.md`
+Status: accepted, amended by ADR 0011 · Related: `BRAND.md`, `design/*`, `ARCHITECTURE.md`
 
 > **One publishing house, many publications.**
-> Every imprint is designed as if it were a different printed object made by a different studio, and all of them are bound by the same spine, the same standards and the same respect for the person reading.
+> Every app is designed as if it were a different printed object made by a different studio, and all of them are bound by the same standards and the same respect for the person reading. Since ADR 0011, each app is also its own site: no house spine, no house name, no shared look. The house keeps its own look on its own pages.
 
 ---
 
@@ -24,11 +24,10 @@ There is **no global spacing scale shared by imprints**. Each imprint derives it
 |---|---|---|
 | ETERNALL | One-page ledger: the week grid is the centrepiece; generous atlas margins; thin labels in the gutters; decade gaps break rhythm | an atlas plate, a ledger page |
 | AMAZEEN | Magazine grid with a baseline; asymmetric columns; display type allowed to break columns | magazine layout (existing system) |
-| ENVOI | An asymmetric writing desk: envelopes stacked at angles on open surface; no rigid columns; one focal letter at a time | a desk, correspondence |
-| FOLIO | Van de Graaf canon page proportions (2:3 page, inner margin ½ of outer, bottom margin 2× top); shelf rows of spines | classical book design |
-| ALMANACK | Dense two-column tables with tight leading and hairline rules; information in layers (figure, unit, note) | printed almanacs, ephemerides |
+| AMAZEEN · Letters (once ENVOI) | An asymmetric writing desk: envelopes stacked at angles on open surface; one focal letter at a time; in AMAZEEN's inks | a desk, correspondence |
+| House · Chapters (once FOLIO) | Shelf rows of spines by decade; an opened chapter on Van de Graaf proportions; in the house's type | classical book design |
+| House · Almanac (once ALMANACK) | Dense two-column tables with hairline rules; information in layers (figure, unit, note); in the house's type | printed almanacs, ephemerides |
 | REFRAIN | The five-line staff: vertical rhythm = staff spacing; horizontal rhythm = beats (7 per bar, one per day) | engraved sheet music |
-| PROLOGUE | A proscenium frame: content centred in an arch, with "wings" left and right for supporting notes | a theatre stage, a playbill |
 | KINDRED | Fixed modules in business-card ratio (85:55), arranged like drawers of a card file; generous card padding | address books, letterpress cards |
 | MARGINALIA | A text column plus a wide margin column (≈ 2:1), where notes and highlights live in the margin | an annotated book page |
 
@@ -47,7 +46,7 @@ If a design contains any of these, it is sent back:
 ### 1.3 Clarity guardrails (never broken)
 
 - **Metaphor in visuals, plain words in actions.** Button labels use everyday verbs ("Write a letter", "New chapter", "Mark as done"). Imprint names always carry their function line (`BRAND.md` §4).
-- **Predictable locations.** The spine (§2) puts *where am I*, *go elsewhere*, *search* and *the primary action* in the same place in every imprint, however different the canvas is.
+- **Predictable locations, within each app.** Each app's own chrome (§2) puts *where am I*, *the way back to the house*, *search*, *the lock* and *the primary action* in one fixed place on every screen of that app. In the house, the house spine does the same.
 - **One focus per screen** and **one primary action** that is visually dominant. Decoration never competes with content for attention.
 - **Standard interactions stay standard.** Links look like links, buttons look pressable, forms follow platform conventions, focus is always visible. Every 3D gesture has a click or keyboard equivalent. A 3D scene never traps the page: a plain wheel or vertical swipe over it scrolls the page, and zoom needs Ctrl/⌘ + wheel or a pinch (`letPageScroll` in `packages/stage`, applied to every `OrbitControls`).
 - **Guided first contact.** The first time an imprint opens, a single short, skippable moment explains its metaphor ("Each book on this shelf is a chapter of your life."). It is never shown again after it is dismissed.
@@ -55,39 +54,34 @@ If a design contains any of these, it is sent back:
   - *5-second test:* for every key screen, a first-time viewer can answer "what is this, and what can I do here?"
   - *3-task test:* three core tasks per imprint can be completed without help.
 
-## 2. The shared spine
+## 2. Chrome: the house spine, and each app's own
 
-The spine is the only UI that is identical across imprints. It is the binding that holds the publications together. It is deliberately small, neutral and **ink-black in both themes** (as in AMAZEEN today), so each imprint's colour owns the page.
+**The house spine** appears on house pages only: the lifeline, inscriptions, chapters, almanac, settings and onboarding. It is ink-black in both themes. It has a 52px band across the top on desktop and a 60px band at the bottom on mobile, with the house mark (opens the doors menu), search, the page's primary action, the lock and settings.
 
-```
-Desktop (≥ 820px): a 52px band across the top
-┌────────────────────────────────────────────────────────────────────────────────────┐
-│ [◖L•] ENVOI · Letters to your future        ⌘K Search         [ Write a letter ] 🔒 ⚙ │
-└────────────────────────────────────────────────────────────────────────────────────┘
-  house mark   imprint name + function       search            primary action  lock settings
-  (opens the doors menu)                                        (imprint-provided label)
+**Each app draws its own chrome** (`modules/<id>/src/app/Chrome.tsx`; for AMAZEEN, its own `AppShell`), in its own idiom. It shares no look with the house or with the other apps:
 
-Mobile (< 820px): a 60px band at the bottom (thumb zone), plus safe-area inset
-┌──────────────────────────────────────────┐
-│  [◖L•]      ⌕       [ ✎ Write ]      ☰    │
-└──────────────────────────────────────────┘
-```
+| App | Masthead | Places | Primary action | Exit to the house |
+|---|---|---|---|---|
+| AMAZEEN | its left magazine spine, monogram and deadline | Desk · Write · Shelf · Letters · Office | Write (in the spine) | "Leave", top of the spine |
+| REFRAIN | the head of a score: five hairlines, a centred title | movements: "I. The score", "II. Programme notes" | Mark today, set like a marking | "Fine" with the end barline |
+| KINDRED | a card cabinet's brass label plate | index tabs: Card file · Constellation | a pressed letterpress block | "Close the drawer" |
+| MARGINALIA | a typed library catalogue card | guide cards: Catalogue · Every underline | typed in brackets | "Back to the stacks", pencilled |
 
-- **House mark** opens the **doors menu**, the list of imprints (name + function), with "Your lifeline" at the top when the dashboard is enabled.
-- **Focus mode** (an imprint used on its own, or installed as its own PWA) collapses the spine to the house mark, the search and the primary action. Nothing about the platform is pushed on the person.
-- **Primary action** is supplied by the imprint (`ARCHITECTURE.md` §3) and always lives in the same spot.
-- **Lock** is visible whenever the vault has a lock method (`PRIVACY.md` §4).
-- **⌘K / Ctrl+K** opens the command palette, which is shared and searches across all enabled imprints.
+**Behavioural invariants for every app's chrome:**
+- one fixed place each for the exit, search (⌘K), the lock (⌘⇧L) and the primary action
+- a visible label on the exit, or an accessible name where a narrow screen hides it
+- keyboard paths throughout, and reduced motion respected
+- the app's first-contact note (kit `IntroNote`) sits under its chrome, never above it
 
-Imprints may add their own secondary navigation **inside their canvas**, styled in their own language (FOLIO's shelf tabs, AMAZEEN's page rail), but never duplicate the spine's functions.
+The chrome reads its behaviour from the kit (`House.leave`, `lock`, `canLock`, `openSearch`, `notices`, `primaryAction`).
 
-## 3. Moving between imprints
+## 3. Moving between the house and the apps
 
-Changing imprint is changing publication, and it should feel like it.
+Opening an app is opening another site, and it should feel like it.
 
-- **View Transitions API** with a two-part transition: the outgoing imprint's canvas *closes* in its own idiom (pages settle, an envelope folds, a curtain lowers) and the incoming one *opens* in its own idiom. The spine stays still, which is what makes the change legible.
-- Duration ≤ 700ms total, and interruptible. Under `prefers-reduced-motion` it becomes a 150ms cross-fade.
-- Themes switch by setting `data-imprint="<id>"` on the canvas root (§10). Colours never "flash" through the default theme.
+- **A clean cut.** Crossing between the house and an app, or between apps, swaps the whole page with no shared transition, and the page starts at the top. Moves between house pages keep a gentle view transition, and moves inside an app are the app's own business.
+- **The browser changes too.** The tab title, tab icon, theme colour and manifest switch to the app's own (`ImprintDefinition.brand`; `apps/web/src/shell/doorHead.ts`). Browser Back returns.
+- **Theme scope.** Themes switch by setting `data-imprint="<id>"` on `<body>`, so the app's tokens reach the page background, dialogs and toasts. Colours never "flash" through the house theme.
 
 ## 4. Accessibility standards (all imprints, both themes)
 
@@ -163,30 +157,41 @@ Palettes are owned by imprints, and only these meanings are shared:
 
 | Token | Meaning | Rule |
 |---|---|---|
-| `--seal` | the house: ETERNALL's vermilion seal | Appears in the spine's house mark in every imprint, and never used by an imprint for anything else |
-| `--focus` | focus ring | Each imprint sets it to its accent; it must reach 3:1 against the imprint's paper |
+| `--seal` | the house: ETERNALL's vermilion seal | Appears on house pages only (the house mark, house focus rings); never inside an app (ADR 0011) |
+| `--focus` | focus ring | Each app sets it to its accent in its kit stylesheet; it must reach 3:1 against the app's paper |
 | `--danger` | destructive actions | Each imprint sets it; it must be distinguishable from its accent by more than hue alone (label + icon) |
-| `--spine-*` | the spine | Ink-black band, paper-coloured text, identical everywhere |
+| `--spine-*` | the house spine | Ink-black band, paper-coloured text, on house pages only |
 
 The **tones** palette (joy, calm, tender, bold, grief, wonder) is shared data, since an inscription's tone is the same in every imprint. Its validated values (light and dark) live in `design/eternall.md`, and imprints render tones with them.
 
 ## 10. Theme mechanics
 
 - Each imprint ships `modules/<imprint>/theme/theme.css`, scoped to `[data-imprint="<imprint>"]`, defining its tokens for light and dark (`[data-theme]` + `prefers-color-scheme`, the pattern already used in ETERNALL and AMAZEEN).
-- Theme CSS and fonts are **lazy-loaded with the imprint's chunk**; the spine's CSS is the only global CSS.
-- `packages/ui` holds **behavioural primitives** (Dialog, Field, Toast, Segmented, Menu), styled only through CSS custom properties and `data-*` hooks, so each imprint skins them completely.
+- Theme CSS and fonts are **lazy-loaded with the app's chunk**. The theme is scoped on `<body data-imprint>` while the app is open, so it reaches dialogs and toasts.
+- `packages/ui` primitives read their shape from tokens with the house's values as fallbacks. Each app sets them in `modules/<id>/src/theme/<id>.kit.css`, adding scoped selectors where a token isn't enough:
+
+| Group | Tokens (fallback = the house's value) |
+|---|---|
+| Buttons | `--btn-radius`, `--btn-h`, `--btn-h-s`, `--btn-pad`, `--btn-font`, `--btn-weight`, `--btn-size`, `--btn-style`, `--btn-tracking`, `--btn-caps`, `--btn-press`, `--btn-primary-bg/fg/border/hover`, `--btn-accent-shadow`, `--icon-btn-radius` |
+| Fields and labels | `--field-radius`, `--field-h`, `--field-pad`, `--field-bg`, `--field-font`, `--field-focus`, `--label-font/size/weight/tracking/caps` |
+| Dialogs | `--dialog-radius`, `--dialog-bg`, `--dialog-shadow`, `--dialog-title-font/size/style/tracking/caps`, `--dialog-foot-rule`, `--dialog-foot-bg`, `--veil-blur` |
+| Toasts | `--toast-radius`, `--toast-bg`, `--toast-fg`, `--toast-border`, `--toast-font`, `--toast-size`, `--toast-pad`, `--toast-shadow`, `--toast-dot` |
+| Choices | `--seg-radius/bg/thumb/thumb-shadow/font/size/tracking/caps/on`, `--toggle-radius/bg/on-bg/on-fg/font/size/tracking/caps` |
+| Page | `--focus`, `--selection`, `--on-selection` |
+
+- **Small caps, not uppercase.** Use `font-variant-caps: all-small-caps` (the `--*-caps` tokens), never `text-transform: uppercase`. Chromium exposes transformed text to assistive tech in capitals; small caps keep the real words.
 - Light and dark exist for every imprint. Some imprints have a **named** dark mode (AMAZEEN's "Night edition", ALMANACK's "Night sky", PROLOGUE's "House lights down").
-- Print stylesheets exist for imprints with printable output (AMAZEEN issues, ENVOI letters, FOLIO chapter summaries, ALMANACK yearly sheet, recovery kit).
+- Print stylesheets exist where there is printable output (AMAZEEN issues and letters, chapter summaries, the almanac's yearly sheet, the recovery kit).
 
 ## 11. Design review checklist
 
 Used on every screen, in every imprint, before it ships:
 
-- [ ] Unmistakably this imprint (screenshot test without a logo)?
+- [ ] Unmistakably this app (screenshot test without a logo), and no resemblance to ETERNALL or another app: no house spine, mark, name, pill buttons, house dialog or toast?
 - [ ] None of the forbidden patterns (§1.2)?
 - [ ] Spatial system follows the imprint's doc, with no stray generic spacing?
 - [ ] 5-second test passes; the primary action is obvious and plainly worded?
-- [ ] Spine present and correct; focus mode works?
+- [ ] The app's own chrome is complete: exit, search, lock and primary action in their fixed places, with accessible names?
 - [ ] All four states designed (loading, empty, success, error)?
 - [ ] Contrast and CVD validated; keyboard and screen reader paths work?
 - [ ] Reduced-motion and 2D fallback complete and equivalent?
@@ -197,12 +202,9 @@ Used on every screen, in every imprint, before it ships:
 
 | Imprint | Doc |
 |---|---|
-| ETERNALL (house, lifeline) | `design/eternall.md` |
-| AMAZEEN | `design/amazeen.md` |
-| ENVOI | `design/envoi.md` |
-| FOLIO | `design/folio.md` |
-| ALMANACK | `design/almanack.md` |
+| ETERNALL (house: lifeline, inscriptions, chapters, almanac) | `design/eternall.md` |
+| AMAZEEN (with Letters) | `design/amazeen.md` |
 | REFRAIN | `design/refrain.md` |
-| PROLOGUE | `design/prologue.md` |
 | KINDRED | `design/kindred.md` |
 | MARGINALIA | `design/marginalia.md` |
+| Retired: ENVOI, FOLIO, ALMANACK, PROLOGUE | `design/archive/*.md` (their systems live on in Letters, Chapters and the Almanac) |

@@ -9,11 +9,12 @@ Status: draft for review · Phase 0 · Related: `PRIVACY.md`, `MODULES.md`, `adr
 ```
 ┌──────────────────────────────── one origin: eternall.app ────────────────────────────────┐
 │                                                                                            │
-│  /            /amazeen/      /envoi/      /folio/  …  /marginalia/      ← doors (HTML entries,│
-│  ETERNALL     AMAZEEN        ENVOI        FOLIO       MARGINALIA          one PWA manifest each)│
+│  /            /amazeen/      /refrain/    /kindred/     /marginalia/    ← doors (HTML entries,│
+│  ETERNALL     AMAZEEN        REFRAIN      KINDRED       MARGINALIA        one PWA manifest each)│
+│  (house)      (+ Letters)                                                                   │
 │     │             │              │           │             │                                │
 │     └─────────────┴──────┬───────┴───────────┴─────────────┘                                │
-│                   apps/web  (shell: spine, doors menu, unlock, ⌘K, router)                  │
+│   apps/web  (shell: house spine on house pages only, doors, unlock, ⌘K, router, head swap) │
 │                          │  lazy-loads one imprint chunk per door                           │
 │        ┌─────────────────┼───────────────────────────────┐                                  │
 │   packages/core     packages/vault                  packages/ui · packages/stage            │
@@ -26,7 +27,7 @@ Status: draft for review · Phase 0 · Related: `PRIVACY.md`, `MODULES.md`, `adr
 ```
 
 - **Local-first.** Every imprint works fully offline from the vault in IndexedDB. The network is only used for optional sync and licence checks.
-- **One origin.** All doors share one origin so they share one vault (§2). Imprints are separate *products* in the UI and separate *chunks* in the bundle, but not separate apps.
+- **One origin.** All doors share one origin so they share one vault (§2). Apps are separate *products* in the UI, each its own site with its own chrome, and separate *chunks* in the bundle, but one document and one vault (ADR 0011).
 
 ## 2. Access model: one core, many doors
 
@@ -34,12 +35,12 @@ Status: draft for review · Phase 0 · Related: `PRIVACY.md`, `MODULES.md`, `adr
 |---|---|
 | URLs | `eternall.app/` (house) and `eternall.app/<imprint>/…` per imprint. Deep links like `/amazeen/issue/2026-W46?p=3` keep working. |
 | Why not subdomains | `amazeen.eternall.app` is a different **origin**: different IndexedDB and different service worker, so the vault could not be shared without syncing through the server. One origin keeps local-first true. |
-| Marketing domains | `amazeen.app`, `envoi.app` etc. **301-redirect** to `eternall.app/<imprint>/`. The old AMAZEEN origin redirects after its migration window (`FLOWS.md` F15). |
-| HTML entries | Vite multi-page build emits `index.html` per door (`/`, `/amazeen/`, `/envoi/`, …). Each entry links **its own manifest**, theme colour, icons and OG image. All entries share the same JS chunks. |
+| Marketing domains | `amazeen.app`, `kindred.app` etc. **301-redirect** to `eternall.app/<imprint>/`. The old AMAZEEN origin redirects after its migration window (`FLOWS.md` F15). |
+| HTML entries | Vite multi-page build emits `index.html` per door (`/`, `/amazeen/`, `/refrain/`, `/kindred/`, `/marginalia/`). Each entry links **its own manifest**, theme colour, icons and OG image. All entries share the same JS chunks. |
 | PWA install | One manifest per door: `{ id: "/amazeen/", scope: "/amazeen/", start_url: "/amazeen/", name: "AMAZEEN" }`. Each installs as its own app icon. The house manifest has `scope: "/"`. |
 | Service worker | **One** SW at `/` (scope covers all doors), precaching the shell and lazily caching imprint chunks on first visit. Installed imprint apps share it. |
-| Focus mode | Determined at boot: `display-mode: standalone` with an imprint scope, **or** only one imprint has ever been used. The spine collapses (`DESIGN.md` §2). |
-| When the house dashboard is offered | After a second imprint gets its first record, a dismissible invitation appears once in the doors menu. The dashboard is always reachable from the house mark. |
+| Apps as their own sites | Since ADR 0011 an app never shows the house spine. Its own chrome is always on, standalone or not. Switching doors swaps `<body data-imprint>`, the tab icon, theme colour and manifest (`apps/web/src/shell/doorHead.ts`). Retired doors (`/envoi`, `/folio`, `/almanack`, `/prologue`) redirect at boot (`retiredDoorRedirect`). |
+| When the house dashboard is offered | After a second app gets its first record, a dismissible invitation appears once in the house's doors menu. From inside an app the house is one exit away (`House.leave()`). |
 | Standalone guarantee | An imprint must boot, onboard, read and write with **no other imprint's code loaded and no lifeline profile**. CI runs every imprint's e2e suite in isolation (§8). |
 
 ## 3. The imprint contract
@@ -49,10 +50,10 @@ Every imprint is a workspace package under `modules/<id>/` that default-exports 
 ```ts
 // packages/core/src/imprint.ts (sketch)
 export interface Imprint {
-  id: ImprintId;                         // 'amazeen' | 'envoi' | 'folio' | …
-  name: string;                          // 'ENVOI'
+  id: ImprintId;                         // 'amazeen' | 'refrain' | 'kindred' | 'marginalia'
+  name: string;                          // 'KINDRED'
   functionLine: string;                  // 'Letters to your future'  (BRAND.md §4)
-  basePath: `/${string}/`;               // '/envoi/'
+  basePath: `/${string}/`;               // '/kindred/'
   release: 1 | 2;
 
   /** Lazy UI. Loaded only when the door is opened. */
@@ -63,8 +64,9 @@ export interface Imprint {
   collections: readonly CollectionSpec[];          // e.g. [{ name: 'letters', schema: letterSchema }]
   migrate(from: number, records: AsyncIterable<VaultRecord>): AsyncIterable<VaultRecord>;
 
-  /** Spine integration. */
-  primaryAction(ctx: ImprintContext): { label: string; run(): void } | null;   // 'Write a letter'
+  /** Its own chrome (ADR 0011). As built: `brand: { icon, themeColor, lockTitle, leaveLabel }`, and the
+      app renders its own masthead using kit hooks: usePrimaryAction / usePrimaryActionValue,
+      House.leave(), lock(), canLock, openSearch(), notices, introNote (kit `IntroNote`). */
 
   /** Contributions (pure, run against decrypted data in a worker). */
   weekSummary?(week: WeekRef, ctx: ReadContext): Promise<WeekContribution | null>;
@@ -98,7 +100,7 @@ npm workspaces only, with no Nx, Turborepo or pnpm (ADR 0001). One root `tsconfi
 
 ```
 eternall/
-├─ apps/web/                  Vite app: shell, router, spine, doors menu, unlock, ⌘K, house dashboard (lifeline)
+├─ apps/web/                  Vite app: shell, router, house spine, doors menu, unlock, ⌘K, house pages (lifeline, inscriptions, chapters, almanac)
 │  ├─ index.html              house door
 │  ├─ amazeen/index.html …    one HTML entry per imprint door (generated from the registry)
 │  └─ src/
@@ -109,7 +111,7 @@ eternall/
 │  ├─ ui/                     behavioural primitives (Dialog, Field, Toast, Segmented, Menu, Sheet), skinned by shared token names
 │  └─ stage/                  capability detection, on-demand render loop, three.js loader, 2D fallback switch
 ├─ modules/
-│  ├─ amazeen/  envoi/  folio/  almanack/  refrain/  prologue/  kindred/  marginalia/
+│  ├─ amazeen/  refrain/  kindred/  marginalia/      (each: index.ts, app/Chrome.tsx, theme/<id>.css + <id>.kit.css)
 │  │  ├─ src/domain/          pure logic + tests
 │  │  ├─ src/app/             React UI (lazy)
 │  │  ├─ src/scene/           optional 3D scene (separate lazy chunk)
@@ -131,13 +133,16 @@ Imprints can enrich each other without depending on each other:
 
 | Capability | Provider | Consumers | Example |
 |---|---|---|---|
-| `people.mention` | KINDRED | AMAZEEN, ENVOI, PROLOGUE | "@Ana" picker in a journal piece links to Ana's card |
+| `people.mention` | KINDRED | AMAZEEN (pieces and letters) | "@Ana" picker in a journal piece |
 | `quotes.offer` | MARGINALIA | AMAZEEN | Underlines offered as candidates for the "Overheard" page |
-| `chapters.at` | FOLIO | house, AMAZEEN, ALMANACK | "This issue is part of *Lisbon*" |
-| `rituals.list` · `rituals.week` | REFRAIN | PROLOGUE | A hope linked to a ritual line: “REFRAIN: Read 20 pages, kept this week” |
-| `letters.compose` | ENVOI | AMAZEEN, PROLOGUE | "Seal this as a letter to next year" |
+| `chapters.at` | house (Chapters section) | house inscriptions, AMAZEEN | "This issue is part of *Lisbon*" |
+| `rituals.list` · `rituals.week` | REFRAIN | (none since PROLOGUE retired; kept for future consumers) | |
 
-**As built (Release 2):** KINDRED's `people.mention` is consumed by ENVOI (a “Mention someone” picker in the composer) and PROLOGUE (a hope's cast); MARGINALIA's `quotes.offer` by AMAZEEN (an “offered for Overheard” strip on the desk that adds a quote entry on a press, once per offer); ENVOI's `letters.compose` by PROLOGUE (“Write to yourself for next season” at the epilogue); REFRAIN's rituals by PROLOGUE. `apps/web/src/test/release2.test.tsx` runs each consumer with and without its provider. AMAZEEN consumes `people.mention` too: typing “@” and a few letters in a story or note offers KINDRED people and writes the name as plain text (`modules/amazeen/src/imprint/MentionField.tsx`, passed in through a context so AMAZEEN still runs without the house).
+*`letters.compose` is gone:* letters live inside AMAZEEN now, so sealing a cover story as a letter is an internal action.
+
+**House sections (ADR 0011).** Chapters and the Almanac are `HouseSection`s (`packages/core`): they keep records and contribute (lifeline layers, week lines, facts, `provides`) exactly like apps, but have no door. `registry.ts` exposes `HOUSE_SECTIONS` and `contributorsOf(enabled)`. The shell, lifeline, week panel and reminders iterate over contributors, not just apps.
+
+**As built:** KINDRED's `people.mention` is consumed by AMAZEEN's letter composer (a “Mention someone” picker). MARGINALIA's `quotes.offer` is consumed by AMAZEEN: an “offered for Overheard” strip on the Desk, injected through `DeskExtrasContext`, adds a quote entry on a press, once per offer. `apps/web/src/test/release2.test.tsx` runs each consumer with and without its provider. AMAZEEN consumes `people.mention` too: typing “@” and a few letters in a story or note offers KINDRED people and writes the name as plain text (`modules/amazeen/src/imprint/MentionField.tsx`, passed in through a context so AMAZEEN still runs without the house).
 
 **Local reminders.** An imprint may return `reminders(ctx)`: occasions due today, each with a stable key. The shell (`apps/web/src/shell/reminders.ts`) delivers each key once (a toast, or a system notification through the service worker when allowed and the page is hidden) and records it in the vault (`house/reminders`). This is the web implementation of `ctx.notify` below; nothing is scheduled off the device.
 
@@ -145,7 +150,7 @@ The shell keeps a **capability registry**. A consumer asks `ctx.capabilities.get
 
 ## 6. Rendering, routing and 3D
 
-- **Router:** path-based (AMAZEEN's `src/router/router.tsx` approach, generalised). The shell owns the first path segment, and the imprint owns the rest. Navigation between imprints uses the View Transitions API (`DESIGN.md` §3).
+- **Router:** path-based (AMAZEEN's `src/router/router.tsx` approach, generalised). The shell owns the first path segment, and the app owns the rest. Crossing between the house and an app is a clean cut with no shared transition (`DESIGN.md` §3). House pages keep a gentle view transition.
 - **Code splitting:** `imprint.load()` is a dynamic import. Theme CSS and fonts are imported by the imprint chunk, so they load with it. 3D scenes are a **second** dynamic import inside the imprint.
 - **`packages/stage`:**
   - `canUse3D()` checks WebGL2, `deviceMemory`, `prefers-reduced-motion`, the battery saver hint and the user's "Flat pages" setting.
@@ -156,7 +161,7 @@ The shell keeps a **capability registry**. A consumer asks `ctx.capabilities.get
 ## 7. Data flow
 
 ```
- imprint UI ──writes──▶ ctx.vault.collection('envoi/letters').put(letter)
+ imprint UI ──writes──▶ ctx.vault.collection('kindred/person').put(person)
                           │  validate (imprint schema) → encrypt (AES-GCM, AAD) → IndexedDB
                           │  emit change event (BroadcastChannel to other tabs)
                           ▼
@@ -195,10 +200,10 @@ Copy lives in `modules/<id>/messages/<locale>.ts` and `apps/web/messages/<locale
 | Today | Goes to |
 |---|---|
 | `src/domain/time.ts`, `types.ts` (shared parts), `validation.ts` helpers | `packages/core` |
-| `src/domain/lifeline.ts`, `stats.ts` (time measures) | `apps/web` (house) + `modules/almanack/domain` |
-| `src/domain/capsule.ts`, `features/capsules`, `features/editors/Capsule*` | `modules/envoi` |
-| `features/chapters`, `ChapterEditor` | `modules/folio` |
-| `features/almanac` | `modules/almanack` |
+| `src/domain/lifeline.ts`, `stats.ts` (time measures) | `apps/web` (house; the almanac's stats now in `apps/web/src/house/almanac/`) |
+| `src/domain/capsule.ts`, `features/capsules`, `features/editors/Capsule*` | `modules/envoi` (2026-11-22), then AMAZEEN's Letters (`modules/amazeen/src/imprint/letters/`, ADR 0011) |
+| `features/chapters`, `ChapterEditor` | `modules/folio`, then the house (`apps/web/src/house/chapters/`, ADR 0011) |
+| `features/almanac` | `modules/almanack`, then the house (`apps/web/src/house/almanac/`, ADR 0011) |
 | `features/archive`, `InscriptionEditor` (inscriptions) | the house's own lightweight inscriptions → see `MODULES.md` §2 |
 | `components/ui/*` | `packages/ui` (stripped of visual styles) |
 | `store/persistence.ts` (localStorage) | replaced by `packages/vault`; a one-time import migrates `eternall:archive` |
@@ -207,7 +212,7 @@ Copy lives in `modules/<id>/messages/<locale>.ts` and `apps/web/messages/<locale
 - Imported with `git subtree add --prefix=modules/amazeen <amazeen-repo> main`, keeping its 43-commit history (ADR 0006).
 - `src/sync/crypto.ts`, `keyphrase.ts`, `engine.ts`, `records.ts`, `src/domain/idb.ts` and `storage.ts` (mirror and adapter logic) are **lifted into `packages/vault`** and generalised. `modules/amazeen` keeps its domain (`issues.ts`, `layout.ts`, `search.ts`, `types.ts`) and features.
 - `worker/` and `migrations/` become the base of `services/sync-worker`.
-- AMAZEEN's own spine is retired in favour of the shared spine (`design/amazeen.md` §6).
+- AMAZEEN keeps its own spine (`AppShell`). Inside ETERNALL it adds Letters, the lock and a small Leave exit through `HostControlsContext` (`design/amazeen.md` §6, ADR 0011).
 
 ## 11. Native readiness (Capacitor, later)
 

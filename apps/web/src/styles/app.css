@@ -278,8 +278,9 @@
 .palette__input::placeholder { color: var(--ink-3); }
 .palette__list { max-height: min(420px, 55dvh); overflow-y: auto; padding: 8px; overscroll-behavior: contain; }
 .palette__group { padding: 12px 12px 6px; }
-.palette__item { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: var(--radius-m); cursor: pointer; color: var(--ink-2); }
-.palette__item.is-active { background: var(--ink); color: var(--paper); }
+/* An app's kit may set --palette-radius / --palette-on-bg / --palette-on-fg / --palette-on-shadow / --palette-font. */
+.palette__item { display: flex; align-items: center; gap: 12px; padding: 11px 12px; border-radius: var(--palette-radius, var(--radius-m)); cursor: pointer; color: var(--ink-2); font-family: var(--palette-font, inherit); }
+.palette__item.is-active { background: var(--palette-on-bg, var(--ink)); color: var(--palette-on-fg, var(--paper)); box-shadow: var(--palette-on-shadow, none); }
 .palette__label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .palette__hint { font-size: 0.6875rem; opacity: 0.6; }
 .palette__empty { padding: 28px 12px; text-align: center; }

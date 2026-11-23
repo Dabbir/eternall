@@ -40,9 +40,11 @@ Rituals do **not** get separate colours, because pitch, position and label ident
 
 ### 5.1 The score (home: this month)
 ```
-┌ spine: [◖L•] REFRAIN · Rituals & habits          ⌘K            [ Mark today ] ┐
-   REFRAIN                                                November · week 47
-   The lines you come back to.                            [ ▶ Play this week ]
+┌ ‖ Fine  ════════════  R E F R A I N  ════════════   ⌕  🔒  [ Mark today ] ┐
+   (five hairlines run behind the head)   Rituals & habits
+   I. The score
+                    The lines you come back to.        (centred, like a score title)
+                 November · this week 2 of 2 kept    [ ▶ Play this week ]
    ─────────────────────────────────────────────────────────────────────────────
                │ M  T  W  T  F  S  S │ M  T  W  T  F  S  S │ M  T  W  …
    Morning run 𝄞│ ♩  𝄽  ♩  ♩  𝄽  ♩  𝄽 │ ♩  ♩  𝄽  ♩  ♩  𝄽  𝄽 │ ♩  ♩  ·
@@ -53,7 +55,7 @@ Rituals do **not** get separate colours, because pitch, position and label ident
                                                              ↑ today
 ```
 - **Rituals have a cadence:** daily, n times per week, or weekly on a day. A weekly ritual (Call Mum on Saturdays) shows rests on the other days *in grey* so that they don't read as misses. Only an expected beat that wasn't kept is a black rest.
-- **Marking today:** the spine action marks today's note for the selected ritual, or tapping any beat toggles it (with undo).
+- **Marking today:** the primary action in REFRAIN's head marks today's note for the selected ritual, or tapping any beat toggles it (with undo).
 
 ### 5.2 A ritual's page
 Programme notes: the ritual's name, why it matters (your words), its cadence, its "instrument" (the timbre used on playback: piano, marimba, strings, or soft bell), and a long view as the full score of the year, reduced to a dense line.
@@ -84,7 +86,7 @@ Staff system (SVG + Bravura glyphs) · beat cell (toggle with ARIA `switch`) · 
 - **Audio unavailable:** the play button shows *"Sound isn't available in this browser; follow the playhead instead."* and plays silently.
 
 ## 10. Mobile
-One bar (a week) per screen width, swiping between weeks. Beats are 44px touch targets (the staff stretches vertically to fit). The spine's primary action **Mark today** opens a sheet listing today's expected rituals as large toggles.
+One bar (a week) per screen width, swiping between weeks. Beats are 44px touch targets (the staff stretches vertically to fit). The primary action in REFRAIN's head, **Mark today**, opens a sheet listing today's expected rituals as large toggles.
 
 ## 11. Clarity checks
 - **Forbidden patterns:** none. There are no streak flames, percentages or progress rings. The staff is the only visualisation.
@@ -94,3 +96,18 @@ One bar (a week) per screen width, swiping between weeks. Beats are 44px touch t
   1. Add a ritual "Read 20 pages, daily".
   2. Mark today's run as done.
   3. Play back this week.
+
+## 12. Chrome and kit (its own site, ADR 0011)
+REFRAIN's head is the head of a score:
+- **Five hairlines** run behind it, with a **centred title** in spaced Bodoni.
+- **The exit** is the score's end mark: **"Fine"** with its double barline, plus a plain "leave the score".
+- **Places are movements:** "I. The score", and "II. Programme notes · <ritual>" on a ritual.
+- **Mark today** is set like a dynamic marking.
+
+`theme/refrain.kit.css` engraves the shared primitives:
+- **Buttons:** hairline boxes in italic Bodoni.
+- **Fields:** a single staff line to write on.
+- **Dialogs:** staff paper inside a double rule.
+- **Toasts:** a fermata.
+- **Choices:** bracketed, with a rule under the chosen one.
+- **Unlock card:** a title page.
