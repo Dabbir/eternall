@@ -7,6 +7,7 @@ import type { Entry } from '../ledger';
 import { formatPlain } from '../money';
 import { parseQuick } from '../quick';
 import { useLedgerData } from './QuickLine';
+import { Entered } from './Ceremony';
 
 const MAX_BYTES = 5 * 1024 * 1024;
 
@@ -51,6 +52,8 @@ export function ImportPage() {
     const list = toEntries();
     for (const e of list) entryCol.put(e);
     house.toast({ message: `${list.length} entries brought in.`, tone: 'accent', action: { label: 'Undo', run: () => list.forEach((e) => entryCol.remove(e.id)) } });
+    const net = list.reduce((s, e) => s + (e.kind === 'in' ? e.amount : -e.amount), 0);
+    house.ceremony(<Entered amount={Math.abs(net)} kind={net >= 0 ? 'in' : 'out'} label={`${list.length} entries brought in`} />, 800);
     house.navigate(house.href('/'));
   };
 

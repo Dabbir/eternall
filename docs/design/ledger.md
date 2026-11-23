@@ -113,3 +113,6 @@ Motion is almost none, on purpose:
   2. Set a Food limit for this month.
   3. Correct yesterday's entry's category.
 - **Forbidden patterns:** no KPI tiles, gauges, progress rings, charts or streaks.
+
+## 12. Ceremony (`DESIGN.md` §5.1)
+**Entered.** On writing an entry: the sum written digit by digit in DM Mono, then ruled off with a double line in red pen (green ink and rule for money in), with "Out · Food" beneath. It lasts 600ms and is see-through, and the cursor stays in the quick line, so the next entry can be typed while it plays. Several lines or an import show one sum ("3 entries · net out"). `app/Ceremony.tsx`.

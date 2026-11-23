@@ -5,6 +5,7 @@ import { useCollection } from '@eternall/vault';
 import { CATEGORY_PATH, ENTRY_PATH, WORDS_PATH, categoriesOf, type Category, type Entry, type Kind } from '../ledger';
 import { formatRupiah, formatShort } from '../money';
 import { frequent, learn, parseQuick, type QuickResult, type WordsDoc } from '../quick';
+import { Entered } from './Ceremony';
 
 interface Overrides {
   kind?: Kind | undefined;
@@ -69,6 +70,15 @@ export function QuickLine({ inputRef }: { inputRef: React.RefObject<HTMLTextArea
     setText('');
     setOver({});
     inputRef.current?.focus();
+    const net = saved.reduce((s, e) => s + (e.kind === 'in' ? e.amount : -e.amount), 0);
+    house.ceremony(
+      saved.length > 1 ? (
+        <Entered amount={Math.abs(net)} kind={net >= 0 ? 'in' : 'out'} label={`${saved.length} entries · ${net >= 0 ? 'net in' : 'net out'}`} />
+      ) : (
+        <Entered amount={first.amount} kind={first.kind} label={`${first.kind === 'in' ? 'In' : 'Out'} · ${catName(first.categoryId)}`} />
+      ),
+      600,
+    );
   };
 
   const onKey = (e: KeyboardEvent<HTMLTextAreaElement>) => {

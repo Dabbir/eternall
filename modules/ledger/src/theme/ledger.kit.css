@@ -123,3 +123,19 @@
   .lc-tool { width: 32px; }
   .lc-tools { gap: 0; }
 }
+
+/* ---------- ceremony: entered ---------- */
+.lr-entered { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 10px; animation: lr-veil var(--rite-ms, 600ms) ease-out both; }
+.lr-entered__sum { position: relative; padding: 0 6px 14px; }
+.lr-entered__figure {
+  display: block; font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: clamp(2.6rem, 9vw, 5.5rem); line-height: 1; color: var(--ink);
+  white-space: nowrap; overflow: hidden; width: 0; animation: lr-write calc(var(--rite-ms, 600ms) * 0.5) steps(var(--chars, 10), end) forwards;
+}
+.lr-entered.is-in .lr-entered__figure { color: var(--accent); }
+.lr-entered__rule { position: absolute; left: 0; right: 0; bottom: 0; height: 8px; border-top: 2px solid var(--red); border-bottom: 2px solid var(--red); transform: scaleX(0); transform-origin: left; animation: lr-rule calc(var(--rite-ms, 600ms) * 0.3) calc(var(--rite-ms, 600ms) * 0.45) ease-out forwards; }
+.lr-entered.is-in .lr-entered__rule { border-color: var(--accent); }
+.lr-entered__label { font-style: italic; color: var(--ink-2); font-size: 1.125rem; opacity: 0; animation: lr-in 160ms calc(var(--rite-ms, 600ms) * 0.4) ease-out forwards; }
+@keyframes lr-veil { 0% { background: transparent; } 12%, 70% { background: color-mix(in srgb, var(--paper) 88%, transparent); opacity: 1; } 100% { background: transparent; opacity: 0; } }
+@keyframes lr-write { to { width: calc(var(--chars, 10) * 1ch); } }
+@keyframes lr-rule { to { transform: scaleX(1); } }
+@keyframes lr-in { to { opacity: 1; } }
