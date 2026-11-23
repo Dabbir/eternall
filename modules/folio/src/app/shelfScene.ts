@@ -1,4 +1,4 @@
-import type { SceneContext, SceneHandle } from '@eternall/stage';
+import { letPageScroll, type SceneContext, type SceneHandle } from '@eternall/stage';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 /**
@@ -115,6 +115,10 @@ export default async function createShelf(ctx: SceneContext, initial: ShelfProps
   build();
 
   const controls = new OrbitControls(camera, canvas);
+
+  // A plain wheel or swipe scrolls the page; Ctrl/⌘ + wheel or a pinch zooms.
+
+  const releaseScroll = letPageScroll(controls, canvas);
   controls.enableDamping = true;
   controls.screenSpacePanning = true;
   controls.minAzimuthAngle = -0.7;
@@ -196,6 +200,7 @@ export default async function createShelf(ctx: SceneContext, initial: ShelfProps
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerdown', onDown);
       canvas.removeEventListener('pointerup', onUp);
+      releaseScroll();
       controls.dispose();
       for (const d of disposables) d.dispose();
     },

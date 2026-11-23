@@ -209,7 +209,7 @@ function Sky3D({ stars, onOpen, onDowngrade }: { stars: Star[]; onOpen(id: strin
   return (
     <div ref={ref} className="kd-sky3d">
       {props && <Stage3D load={loadSky} props={props} label="Your people as stars around you; nearer means seen more recently." onDowngrade={onDowngrade} className="kd-sky3d__stage" />}
-      <p className="kd-sky3d__hint" aria-hidden="true">Drag to turn the sky · click a star to open the card</p>
+      <p className="kd-sky3d__hint" aria-hidden="true">Drag to turn the sky · Ctrl or ⌘ + scroll to zoom · click a star to open the card</p>
     </div>
   );
 }

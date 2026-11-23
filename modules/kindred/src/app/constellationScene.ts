@@ -1,4 +1,4 @@
-import type { SceneContext, SceneHandle } from '@eternall/stage';
+import { letPageScroll, type SceneContext, type SceneHandle } from '@eternall/stage';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 /**
@@ -53,6 +53,8 @@ export default function createSky(ctx: SceneContext, initial: SkyProps): SceneHa
   const camera = new THREE.PerspectiveCamera(45, ctx.width / ctx.height, 0.1, 200);
   camera.position.set(0, -6, 17);
   const controls = new OrbitControls(camera, canvas);
+  // A plain wheel or swipe scrolls the page; Ctrl/⌘ + wheel or a pinch zooms.
+  const releaseScroll = letPageScroll(controls, canvas);
   controls.enableDamping = true;
   controls.minDistance = 5;
   controls.maxDistance = 40;
@@ -158,6 +160,7 @@ export default function createSky(ctx: SceneContext, initial: SkyProps): SceneHa
     dispose() {
       canvas.removeEventListener('pointerdown', onDown);
       canvas.removeEventListener('pointerup', onUp);
+      releaseScroll();
       controls.dispose();
       scene.traverse((o) => {
         const m = (o as { material?: { map?: { dispose(): void } | null; dispose(): void } }).material;

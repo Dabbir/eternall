@@ -49,7 +49,7 @@ If a design contains any of these, it is sent back:
 - **Metaphor in visuals, plain words in actions.** Button labels use everyday verbs ("Write a letter", "New chapter", "Mark as done"). Imprint names always carry their function line (`BRAND.md` §4).
 - **Predictable locations.** The spine (§2) puts *where am I*, *go elsewhere*, *search* and *the primary action* in the same place in every imprint, however different the canvas is.
 - **One focus per screen** and **one primary action** that is visually dominant. Decoration never competes with content for attention.
-- **Standard interactions stay standard.** Links look like links, buttons look pressable, forms follow platform conventions, focus is always visible. Every 3D gesture has a click or keyboard equivalent.
+- **Standard interactions stay standard.** Links look like links, buttons look pressable, forms follow platform conventions, focus is always visible. Every 3D gesture has a click or keyboard equivalent. A 3D scene never traps the page: a plain wheel or vertical swipe over it scrolls the page, and zoom needs Ctrl/⌘ + wheel or a pinch (`letPageScroll` in `packages/stage`, applied to every `OrbitControls`).
 - **Guided first contact.** The first time an imprint opens, a single short, skippable moment explains its metaphor ("Each book on this shelf is a chapter of your life."). It is never shown again after it is dismissed.
 - **Comprehension tests**, documented in each `design/<imprint>.md`:
   - *5-second test:* for every key screen, a first-time viewer can answer "what is this, and what can I do here?"

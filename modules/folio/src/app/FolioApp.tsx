@@ -310,7 +310,7 @@ function Shelf3D({ shelves, profile, onOpen, onDowngrade }: { shelves: [number, 
           </li>
         ))}
       </ul>
-      <p className="folio-shelf3d__hint" aria-hidden="true">Drag to look along the shelves · click a book to open it</p>
+      <p className="folio-shelf3d__hint" aria-hidden="true">Drag to look along the shelves · Ctrl or ⌘ + scroll to zoom · click a book to open it</p>
     </div>
   );
 }

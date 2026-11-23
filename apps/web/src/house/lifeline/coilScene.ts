@@ -1,4 +1,4 @@
-import type { SceneContext, SceneHandle } from '@eternall/stage';
+import { letPageScroll, type SceneContext, type SceneHandle } from '@eternall/stage';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 /**
@@ -105,6 +105,8 @@ export default function createCoil(ctx: SceneContext, initial: CoilProps): Scene
   const yNow = helix(props.now).y;
   camera.position.set(0, yNow + 6, 38);
   const controls = new OrbitControls(camera, canvas);
+  // A plain wheel or swipe scrolls the page; Ctrl/⌘ + wheel or a pinch zooms.
+  const releaseScroll = letPageScroll(controls, canvas);
   controls.target.set(0, yNow, 0);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
@@ -193,6 +195,7 @@ export default function createCoil(ctx: SceneContext, initial: CoilProps): Scene
       canvas.removeEventListener('pointermove', onMove);
       canvas.removeEventListener('pointerdown', onDown);
       canvas.removeEventListener('pointerup', onUp);
+      releaseScroll();
       controls.dispose();
       geometry.dispose();
       material.dispose();

@@ -217,7 +217,7 @@ function Coil({ model, lens, selected, onSelect, onDowngrade }: { model: Lifelin
   return (
     <div ref={ref} className="coil" tabIndex={0} onKeyDown={onKeyDown} aria-label={`Life coil. Selected: age ${c.age}, week ${c.week + 1}. Arrow keys move between weeks; Page Up and Page Down jump a decade; T returns to this week.`}>
       {props && <Stage3D load={loadCoil} props={props} label="Your life in weeks, wound into a coil — one turn per year." onDowngrade={onDowngrade} className="coil__stage" />}
-      <p className="coil__hint" aria-hidden="true">Drag to turn · scroll to travel · click a week</p>
+      <p className="coil__hint" aria-hidden="true">Drag to turn · Ctrl or ⌘ + scroll to zoom · click a week</p>
     </div>
   );
 }

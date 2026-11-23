@@ -1,4 +1,4 @@
-import type { SceneContext, SceneHandle } from '@eternall/stage';
+import { letPageScroll, type SceneContext, type SceneHandle } from '@eternall/stage';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 /**
@@ -90,6 +90,10 @@ export default function createOrrery(ctx: SceneContext, initial: OrreryProps): S
   scene.add(g1, g2);
 
   const controls = new OrbitControls(camera, canvas);
+
+  // A plain wheel or swipe scrolls the page; Ctrl/⌘ + wheel or a pinch zooms.
+
+  const releaseScroll = letPageScroll(controls, canvas);
   controls.enableDamping = true;
   controls.enablePan = false;
   controls.minDistance = 10;
@@ -133,6 +137,7 @@ export default function createOrrery(ctx: SceneContext, initial: OrreryProps): S
       camera.updateProjectionMatrix();
     },
     dispose() {
+      releaseScroll();
       controls.dispose();
       for (const d of disposables) d.dispose();
     },
