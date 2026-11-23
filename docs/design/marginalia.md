@@ -119,3 +119,9 @@ MARGINALIA's head is a library catalogue card on an oak desk:
 - **Toasts:** pencilled slips.
 - **Choices:** guide-card tabs.
 - **Unlock card:** the catalogue card again.
+
+## 13. Ceremony (`DESIGN.md` §5.1)
+- **The sweep:** on a new underline, the passage set large on an index card, a highlighter drawn under it from left to right, and a pencil tick in the margin.
+- **Filed:** on a new work, its catalogue card drops into an oak drawer under its letter, with "Filed under W" pencilled beneath.
+
+Both last 900ms; see `app/Ceremony.tsx`.

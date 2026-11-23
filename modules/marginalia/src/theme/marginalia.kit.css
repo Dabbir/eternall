@@ -179,3 +179,26 @@
 
 /* ⌘K: the chosen line highlighted, as with a marker. */
 [data-imprint='marginalia'] { --palette-radius: 0; --palette-on-bg: color-mix(in srgb, var(--highlight) 55%, transparent); --palette-on-fg: var(--ink); --palette-font: var(--font-mono); }
+
+/* ---------- ceremonies: the sweep, and a card filed ---------- */
+.mr-sweep, .mr-filed { position: absolute; inset: 0; display: grid; place-items: center; align-content: center; gap: 14px; animation: mr-veil var(--rite-ms, 900ms) ease-out both; }
+.mr-sweep__page { position: relative; width: min(760px, 88vw); padding: 28px 64px 24px 28px; background: var(--card); border-top: 4px solid var(--card-rule); box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.5); animation: mr-rise var(--rite-ms, 900ms) var(--ease-out) both; }
+.mr-sweep__quote { margin: 0; font-family: var(--font-display); font-size: clamp(1.3rem, 1rem + 1.6vw, 2.1rem); line-height: 1.35; color: var(--ink); }
+.mr-sweep__hl {
+  background-image: linear-gradient(transparent 12%, color-mix(in srgb, var(--highlight) 85%, transparent) 12%, color-mix(in srgb, var(--highlight) 85%, transparent) 88%, transparent 88%);
+  background-repeat: no-repeat; background-size: 0% 100%; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  animation: mr-hl calc(var(--rite-ms, 900ms) * 0.45) calc(var(--rite-ms, 900ms) * 0.15) var(--ease-out) forwards;
+}
+.mr-sweep__tick { position: absolute; right: 22px; top: 26px; font-family: var(--font-hand); font-size: 2.2rem; color: var(--card-rule); opacity: 0; transform: rotate(-8deg) scale(1.4); animation: mr-tick 240ms calc(var(--rite-ms, 900ms) * 0.55) ease-out forwards; }
+.mr-sweep__src { margin-top: 14px; font-family: var(--font-mono); font-size: 0.875rem; color: var(--ink-2); }
+.mr-filed__drawer { position: relative; width: min(420px, 82vw); height: 190px; padding: 26px 22px 0; background: linear-gradient(var(--oak), var(--oak-dark)); border-radius: 4px 4px 0 0; overflow: hidden; box-shadow: inset 0 8px 16px rgb(0 0 0 / 0.35); }
+.mr-filed__label { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); padding: 1px 10px; font-family: var(--font-mono); font-size: 0.875rem; background: var(--brass); color: #1d1b18; }
+.mr-filed__card { display: grid; gap: 6px; padding: 14px 16px; background: var(--card); border-top: 3px solid var(--card-rule); box-shadow: 0 6px 14px -8px rgb(0 0 0 / 0.5); animation: mr-slot var(--rite-ms, 900ms) cubic-bezier(0.2, 0.9, 0.25, 1) both; }
+.mr-filed__head { font-family: var(--font-mono); font-weight: 600; color: var(--ink); }
+.mr-filed__title { font-family: var(--font-mono); color: var(--ink-2); }
+.mr-filed__note { font-family: var(--font-hand); font-size: 1.6rem; color: var(--ink); opacity: 0; animation: mr-tick 260ms calc(var(--rite-ms, 900ms) * 0.55) ease-out forwards; }
+@keyframes mr-veil { 0% { background: transparent; } 15%, 75% { background: color-mix(in srgb, var(--paper) 82%, transparent); opacity: 1; } 100% { background: transparent; opacity: 0; } }
+@keyframes mr-rise { 0% { opacity: 0; transform: translateY(18px); } 20%, 80% { opacity: 1; transform: none; } 100% { opacity: 0; } }
+@keyframes mr-hl { to { background-size: 100% 100%; } }
+@keyframes mr-tick { to { opacity: 1; transform: rotate(-8deg) scale(1); } }
+@keyframes mr-slot { 0% { transform: translateY(-140px); } 40% { transform: translateY(60px); } 55% { transform: translateY(48px); } 100% { transform: translateY(54px); } }

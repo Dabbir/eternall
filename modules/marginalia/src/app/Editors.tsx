@@ -3,7 +3,8 @@ import { createId, type FieldErrors } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button, Dialog, TextArea, TextField } from '@eternall/ui';
 import { useCollection } from '@eternall/vault';
-import { KINDS, KIND_LABEL, LIMITS, UNDERLINE_PATH, WORK_PATH, validateUnderline, validateWork, type Landing, type Underline, type UnderlineInput, type Work, type WorkInput } from '../works';
+import { Filed, Sweep } from './Ceremony';
+import { KINDS, KIND_LABEL, LIMITS, UNDERLINE_PATH, WORK_PATH, authorHeading, authorKey, validateUnderline, validateWork, type Landing, type Underline, type UnderlineInput, type Work, type WorkInput } from '../works';
 
 /** A blank catalogue card in a typewriter carriage (docs/design/marginalia.md §5.3). */
 export function WorkEditor({ existing, onClose }: { existing?: Work | undefined; onClose(): void }) {
@@ -27,6 +28,10 @@ export function WorkEditor({ existing, onClose }: { existing?: Work | undefined;
     const id = existing?.id ?? createId();
     col.put({ id, createdAt: existing?.createdAt ?? new Date().toISOString(), ...r.value });
     house.toast({ message: existing ? 'Card retyped.' : `“${r.value.title}” is filed.`, tone: 'accent' });
+    if (!existing) {
+      const key = r.value.by ? authorKey(r.value.by) : r.value.title.toLocaleLowerCase();
+      house.ceremony(<Filed heading={r.value.by ? authorHeading(r.value.by) : r.value.title} title={r.value.title} under={(key.match(/\p{L}/u)?.[0] ?? '#').toLocaleUpperCase()} />, 900);
+    }
     if (!existing) house.navigate(house.href(`/work/${id}`));
     onClose();
   };
@@ -139,6 +144,7 @@ export function UnderlineEditor({ work, existing, onSaved, onClose }: { work: Wo
     col.put({ id, workId: work.id, createdAt: existing?.createdAt ?? new Date().toISOString(), ...r.value });
     onSaved(id);
     house.toast({ message: existing ? 'Underline updated.' : 'Underlined.', tone: 'accent' });
+    if (!existing) house.ceremony(<Sweep text={r.value.text} source={[work.by, work.title].filter(Boolean).join(', ')} />, 900);
     onClose();
   };
   const remove = () => {
