@@ -160,6 +160,7 @@ Conventions:
 | `ledger/budget` | id `YYYY-MM`; `limits` (category id → rupiah). A month without one starts from the last month that had one. |
 | `ledger/words` | one record, `map` (word → category id), at most 500 words, learned from what you write and correct |
 | `ledger/pref` | `remindBudget` (off by default) |
+| `ledger/terms` | your shorthand: `units` (word → × 1.000 / × 1.000.000), `fixed` (word → an amount, e.g. goceng → 5.000), `days` (word → today/yesterday/… or a weekday), `income` (words meaning money in); at most 40 of each; a word means one thing, and never collides with a built-in word of another kind |
 
 - **Rules:** Rupiah only. The quick line is the main way in (`docs/design/ledger.md` §6). Going over is said plainly, never scored.
 - **Amounts never leave LEDGER.** No lifeline layer or week lines; Almanac facts are counts only ("Months kept in LEDGER this year", "Entries written this year").

@@ -1,6 +1,7 @@
 import { addDays, type ISODate } from '@eternall/core';
 import { FALLBACK, categoriesOf, type Category, type Entry, type Kind } from './ledger';
-import { parseAmount } from './money';
+import { formatRupiah, parseAmount } from './money';
+import type { Terms } from './terms';
 
 /**
  * One line in, one entry out (docs/design/ledger.md §Quick line): LEDGER's whole promise is that
@@ -25,6 +26,8 @@ export interface QuickContext {
   today: ISODate;
   categories: readonly Category[];
   words: Record<string, string>;
+  /** Your own shorthand (`ledger/terms`); built-in words always work too. */
+  terms?: Terms | undefined;
 }
 
 export interface QuickResult {
@@ -37,9 +40,11 @@ export interface QuickResult {
   /** The words that set the date ("kemarin", "1/11"), or null for today. */
   dateFrom: string | null;
   note: string;
+  /** Your own words it used and how it read them ("goceng → Rp 5.000"), for an honest preview. */
+  readAs: string[];
 }
 
-const INCOME = new Set(['gaji', 'salary', 'bonus', 'thr', 'refund', 'cashback', 'income', 'honor', 'honorarium', 'dividen', 'dividend', 'pemasukan', 'payday', 'upah', 'komisi', 'commission']);
+export const INCOME = new Set(['gaji', 'salary', 'bonus', 'thr', 'refund', 'cashback', 'income', 'honor', 'honorarium', 'dividen', 'dividend', 'pemasukan', 'payday', 'upah', 'komisi', 'commission']);
 
 /** Built-in guesses for the starting categories; your corrections always win. */
 const GUESS: Record<string, readonly string[]> = {
@@ -55,11 +60,13 @@ const GUESS: Record<string, readonly string[]> = {
 /** Words that never teach a category on their own. */
 const STOP = new Set(['dan', 'di', 'ke', 'dari', 'yang', 'buat', 'untuk', 'utk', 'sama', 'pakai', 'pake', 'beli', 'bayar', 'isi', 'top', 'the', 'for', 'and', 'with', 'from', 'buy', 'pay', 'paid', 'bought', 'lagi', 'aja']);
 
-const WEEKDAYS: Record<string, number> = {
+export const WEEKDAYS: Record<string, number> = {
   minggu: 0, ahad: 0, sunday: 0, senin: 1, monday: 1, selasa: 2, tuesday: 2, rabu: 3, wednesday: 3,
   kamis: 4, thursday: 4, jumat: 5, "jum'at": 5, friday: 5, sabtu: 6, saturday: 6,
 };
-const UNITS = new Set(['k', 'rb', 'ribu', 'jt', 'juta']);
+export const UNITS = new Set(['k', 'rb', 'ribu', 'jt', 'juta']);
+/** Words the date reader already knows, so nobody can turn them into something else. */
+export const DAY_WORDS = new Set(['hari', 'ini', 'today', 'kemarin', 'kmrn', 'yesterday', 'lusa', 'lalu', 'days', 'ago']);
 
 const lower = (s: string) => s.toLocaleLowerCase('id');
 export const wordsOf = (text: string) => lower(text).match(/[\p{L}\p{N}']+/gu) ?? [];
@@ -103,13 +110,39 @@ export function parseQuick(text: string, ctx: QuickContext): QuickResult {
   let date = ctx.today;
   let dateFrom: string | null = null;
   let amount: number | null = null;
+  const readAs: string[] = [];
+  const terms = ctx.terms;
+  const myUnits = new Map((terms?.units ?? []).map((u) => [u.word, u.mult === 1000000 ? 'jt' : 'rb'] as const));
+  const myFixed = new Map((terms?.fixed ?? []).map((f) => [f.word, f.amount] as const));
+  const myDays = new Map((terms?.days ?? []).map((d) => [d.word, d] as const));
+  const myIncome = new Set(terms?.income ?? []);
+  // Your unit words become the built-in ones before reading ("25rebu" → "25rb", "2 jeti" → "2 jt").
+  const norm = tokens.map((t) => {
+    const l = lower(t);
+    if (myUnits.has(l)) return myUnits.get(l)!;
+    for (const [w, unit] of myUnits) {
+      const m = new RegExp(`^((?:rp\\.?)?\\d[\\d.,]*)${w.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&')}$`, 'iu').exec(t);
+      if (m) {
+        readAs.push(`${w} → × ${unit === 'jt' ? '1.000.000' : '1.000'}`);
+        return `${m[1]}${unit}`;
+      }
+    }
+    return t;
+  });
+  for (const t of tokens) if (myUnits.has(lower(t))) readAs.push(`${lower(t)} → × ${myUnits.get(lower(t)) === 'jt' ? '1.000.000' : '1.000'}`);
 
   // Dates first, so "1/11" is never read as an amount.
   for (let i = 0; i < tokens.length && !dateFrom; i++) {
     const t = lower(tokens[i]!);
     const next = lower(tokens[i + 1] ?? '');
     const next2 = lower(tokens[i + 2] ?? '');
-    if (t === 'hari' && next === 'ini') {
+    const mine = myDays.get(t);
+    if (mine) {
+      used.add(i);
+      date = mine.weekday !== undefined ? weekdayBefore(ctx.today, mine.weekday) : addDays(ctx.today, -(mine.daysAgo ?? 0));
+      dateFrom = tokens[i]!;
+      readAs.push(`${t} → ${mine.weekday !== undefined ? ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][mine.weekday] : mine.daysAgo === 0 ? 'today' : mine.daysAgo === 1 ? 'yesterday' : `${mine.daysAgo} days ago`}`);
+    } else if (t === 'hari' && next === 'ini') {
       used.add(i).add(i + 1);
       dateFrom = 'hari ini';
     } else if (t === 'today') {
@@ -142,13 +175,26 @@ export function parseQuick(text: string, ctx: QuickContext): QuickResult {
     }
   }
 
+  // A word of yours that stands for a sum ("goceng"), times a small count before it ("2 ceban").
+  for (let i = 0; i < tokens.length && amount === null; i++) {
+    if (used.has(i)) continue;
+    const value = myFixed.get(lower(tokens[i]!));
+    if (value === undefined) continue;
+    const prev = tokens[i - 1];
+    const times = prev && !used.has(i - 1) && /^\d{1,2}$/u.test(prev) && Number(prev) > 0 ? Number(prev) : 1;
+    amount = Math.min(value * times, 1_000_000_000_000);
+    used.add(i);
+    if (times > 1) used.add(i - 1);
+    readAs.push(`${times > 1 ? `${times} ` : ''}${lower(tokens[i]!)} → ${formatRupiah(amount)}`);
+  }
+
   // The first thing that reads as money, with its unit if it was typed apart ("25 rb").
   for (let i = 0; i < tokens.length && amount === null; i++) {
     if (used.has(i)) continue;
-    const t = tokens[i]!;
-    const unit = lower(tokens[i + 1] ?? '');
+    const t = norm[i]!;
+    const unit = lower(norm[i + 1] ?? '');
     if (/^(rp\.?)?\d/iu.test(t) || lower(t) === 'rp') {
-      const glued = lower(t) === 'rp' ? `${t}${tokens[i + 1] ?? ''}` : t;
+      const glued = lower(t) === 'rp' ? `${t}${norm[i + 1] ?? ''}` : t;
       const withUnit = UNITS.has(unit) ? parseAmount(`${glued}${unit}`) : null;
       if (withUnit !== null) {
         amount = withUnit;
@@ -171,7 +217,9 @@ export function parseQuick(text: string, ctx: QuickContext): QuickResult {
 
   // What you taught it comes first, and can say "this is income" on its own.
   const learned = words.map((w) => byId.get(ctx.words[w] ?? '')).find(Boolean);
-  let kind: Kind = forcedIn || words.some((w) => INCOME.has(w)) ? 'in' : 'out';
+  const myIn = words.find((w) => myIncome.has(w));
+  if (myIn) readAs.push(`${myIn} → money in`);
+  let kind: Kind = forcedIn || myIn !== undefined || words.some((w) => INCOME.has(w)) ? 'in' : 'out';
   let categoryId: string;
   let categoryFrom: QuickResult['categoryFrom'];
   if (learned) {
@@ -183,7 +231,10 @@ export function parseQuick(text: string, ctx: QuickContext): QuickResult {
     categoryId = guess ?? (byId.has(FALLBACK[kind]) ? FALLBACK[kind] : (cats.find((c) => c.kind === kind)?.id ?? FALLBACK[kind]));
     categoryFrom = guess ? 'guess' : 'default';
   }
-  return { amount, kind, categoryId, categoryFrom, date, dateFrom, note };
+  // Listed in the order the words were typed.
+  const at = (r: string) => lower(raw).indexOf(r.split(' → ')[0]!.replace(/^\d+ /u, ''));
+  readAs.sort((x, y) => at(x) - at(y));
+  return { amount, kind, categoryId, categoryFrom, date, dateFrom, note, readAs };
 }
 
 /** After you save (or correct) an entry, its words point at its category next time. */

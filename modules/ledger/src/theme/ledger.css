@@ -184,3 +184,33 @@
 @media (prefers-reduced-motion: reduce) {
   .lq-line, .lq-save { transition: none; }
 }
+
+/* ---------- your words (shorthand) ---------- */
+.lq-readas { font-family: var(--font-mono); font-size: 0.8125rem; color: var(--accent); }
+.lw-try { margin: 8px 0 10px; padding: 16px 18px; background: var(--paper-raised); border: 1px solid var(--rule-strong); border-left: 3px double var(--margin-red); }
+.lw-try .lg-h2 { margin-top: 0; }
+.lw-try__out { margin-top: 10px; font-family: var(--font-mono); font-size: 0.9375rem; color: var(--ink); }
+.lw-section { margin-top: 10px; }
+.lw-builtin { color: var(--ink-3); font-style: italic; font-size: 0.9375rem; margin-bottom: 10px; }
+.lw-list { border-top: 1px solid var(--rule-strong); }
+.lw-list li { display: grid; grid-template-columns: minmax(7rem, 1fr) minmax(8rem, 1fr) 2fr auto; align-items: center; gap: 14px; min-height: var(--row); border-bottom: 1px solid var(--ruling); }
+.lw-word { font-family: var(--font-mono); font-weight: 500; }
+.lw-means { color: var(--ink); }
+.lw-example { color: var(--ink-3); font-style: italic; font-size: 0.875rem; }
+.lw-select { border: 0; border-bottom: 1px dashed var(--rule-strong); background: transparent; color: var(--ink); font: inherit; padding: 4px 0; }
+.lw-add { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; margin-top: 12px; }
+.lw-add > .field { flex: 1 1 11rem; }
+.lw-add > .btn { flex: none; }
+.lw-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.lw-chips li { display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px 4px 12px; border: 1px solid var(--rule-strong); background: var(--paper-raised); font-family: var(--font-mono); }
+.lw-chips button { width: 26px; height: 26px; color: var(--ink-3); }
+.lw-chips button:hover { color: var(--red); }
+.lw-confirm { margin-top: 12px; color: var(--ink-2); }
+@media (max-width: 640px) {
+  .lw-list li { grid-template-columns: 1fr auto; gap: 2px 10px; padding: 6px 0; }
+  .lw-word { grid-column: 1; grid-row: 1; }
+  .lw-remove { grid-column: 2; grid-row: 1; }
+  .lw-means { grid-column: 1 / -1; grid-row: 2; }
+  .lw-example { grid-column: 1 / -1; grid-row: 3; }
+  .lw-example:empty { display: none; }
+}

@@ -5,6 +5,7 @@ import { useCollection } from '@eternall/vault';
 import { CATEGORY_PATH, ENTRY_PATH, WORDS_PATH, categoriesOf, type Category, type Entry, type Kind } from '../ledger';
 import { formatRupiah, formatShort } from '../money';
 import { frequent, learn, parseQuick, type QuickResult, type WordsDoc } from '../quick';
+import { EMPTY_TERMS, TERMS_PATH, type Terms } from '../terms';
 import { Entered } from './Ceremony';
 
 interface Overrides {
@@ -26,7 +27,9 @@ export function useLedgerData() {
   const { col: wordsCol } = useCollection<WordsDoc>(WORDS_PATH);
   const categories = useMemo(() => categoriesOf(storedCats), [storedCats]);
   const words = wordsCol.get('words')?.map ?? {};
-  return { entries, entryCol, categories, storedCats, catCol, words, wordsCol };
+  const { col: termsCol } = useCollection<Terms>(TERMS_PATH);
+  const terms = termsCol.get('terms') ?? EMPTY_TERMS;
+  return { entries, entryCol, categories, storedCats, catCol, words, wordsCol, terms, termsCol };
 }
 
 /**
@@ -37,7 +40,7 @@ export function useLedgerData() {
 export function QuickLine({ inputRef }: { inputRef: React.RefObject<HTMLTextAreaElement | null> }) {
   const house = useHouse();
   const { today } = house;
-  const { entries, entryCol, categories, words, wordsCol } = useLedgerData();
+  const { entries, entryCol, categories, words, wordsCol, terms } = useLedgerData();
   const [text, setText] = useState('');
   const [over, setOver] = useState<Overrides>({});
   const id = useId();
@@ -45,7 +48,7 @@ export function QuickLine({ inputRef }: { inputRef: React.RefObject<HTMLTextArea
 
   const lines = useMemo(() => text.split('\n').map((l) => l.trim()).filter(Boolean), [text]);
   const many = lines.length > 1;
-  const parsed = useMemo(() => lines.map((l) => parseQuick(l, { today, categories, words })), [lines, today, categories, words]);
+  const parsed = useMemo(() => lines.map((l) => parseQuick(l, { today, categories, words, terms })), [lines, today, categories, words, terms]);
   const one = parsed.length === 1 ? resolveLine(parsed[0]!, over, categories) : null;
   const ready = many ? parsed.filter((p) => p.amount !== null) : one && one.amount !== null ? [one] : [];
   const chips = useMemo(() => frequent(entries, today, 6), [entries, today]);
@@ -179,6 +182,7 @@ export function QuickLine({ inputRef }: { inputRef: React.RefObject<HTMLTextArea
               <input type="date" value={one.date} max="9999-12-31" onChange={(e) => e.target.value && correct({ date: e.target.value })} />
             </label>
             {one.note && <span className="lq-part lq-part--note">“{one.note}”</span>}
+            {one.readAs.length > 0 && <span className="lq-readas">your words: {one.readAs.join(' · ')}</span>}
           </div>
         ) : null}
       </div>

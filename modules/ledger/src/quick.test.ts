@@ -7,7 +7,7 @@ const q = (text: string, words: Record<string, string> = {}) => parseQuick(text,
 
 describe('the quick line', () => {
   it('reads the examples on the box', () => {
-    expect(q('kopi 25rb')).toEqual({ amount: 25000, kind: 'out', categoryId: 'food', categoryFrom: 'guess', date: today, dateFrom: null, note: 'kopi' });
+    expect(q('kopi 25rb')).toEqual({ amount: 25000, kind: 'out', categoryId: 'food', categoryFrom: 'guess', date: today, dateFrom: null, note: 'kopi', readAs: [] });
     expect(q('grab 32.500 kemarin')).toMatchObject({ amount: 32500, kind: 'out', categoryId: 'transport', date: '2026-11-22', dateFrom: 'kemarin', note: 'grab' });
     expect(q('gaji 8jt')).toMatchObject({ amount: 8000000, kind: 'in', categoryId: 'salary', note: 'gaji' });
     expect(q('listrik 450k 1/11')).toMatchObject({ amount: 450000, categoryId: 'bills', date: '2026-11-01', dateFrom: '1/11', note: 'listrik' });

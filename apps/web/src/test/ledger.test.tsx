@@ -88,6 +88,34 @@ describe('LEDGER', () => {
     expect(await screen.findByDisplayValue('60.000')).toBeInTheDocument();
   });
 
+  it('learns your own shorthand on Your words, then reads it in the quick line', async () => {
+    const user = userEvent.setup();
+    const store = createMemoryStore([quiet]);
+    at('/ledger/words');
+    const { unmount } = render(<Root store={store} />);
+    const amount = (await screen.findByRole('heading', { name: 'Amount words' })).closest('section')!;
+    await user.type(within(amount).getByLabelText('Word'), 'goceng');
+    await user.type(within(amount).getByLabelText('Amount'), '5rb');
+    await user.click(within(amount).getByRole('button', { name: 'Add' }));
+    const days = screen.getByRole('heading', { name: 'Day words' }).closest('section')!;
+    await user.type(within(days).getByLabelText('Word'), 'kemarin');
+    await user.click(within(days).getByRole('button', { name: 'Add' }));
+    expect(within(days).getByText('“kemarin” is already understood.')).toBeInTheDocument();
+    await user.clear(within(days).getByLabelText('Word'));
+    await user.type(within(days).getByLabelText('Word'), 'semalem');
+    await user.click(within(days).getByRole('button', { name: 'Add' }));
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'ledger/terms/terms')?.value).toMatchObject({ fixed: [{ word: 'goceng', amount: 5000 }], days: [{ word: 'semalem', daysAgo: 1 }] }));
+    unmount();
+
+    at('/ledger/');
+    render(<Root store={store} />);
+    const line = await screen.findByLabelText('Write one line');
+    await user.type(line, 'parkir goceng semalem');
+    expect(screen.getByText(/your words: goceng → Rp 5\.000 · semalem → yesterday/)).toBeInTheDocument();
+    await user.keyboard('{Enter}');
+    await waitFor(() => expect(entries(store)[0]).toMatchObject({ amount: 5000, categoryId: 'transport', note: 'parkir' }));
+  });
+
   it('keeps amounts inside LEDGER: the house Almanac only counts', async () => {
     at('/almanac');
     render(<Root store={createMemoryStore([quiet, profile, rec('ledger/entry/a', { id: 'a', kind: 'out', amount: 777777, categoryId: 'food', date: today, note: 'x', createdAt: stamp })])} />);

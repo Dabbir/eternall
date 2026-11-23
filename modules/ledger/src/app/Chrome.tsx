@@ -3,7 +3,7 @@ import { IntroNote, useHouse, usePrimaryActionValue } from '@eternall/kit';
 import { Icon } from '@eternall/ui';
 import { ledger } from '../index';
 
-export type LedgerPlace = 'month' | 'budget' | 'import';
+export type LedgerPlace = 'month' | 'budget' | 'import' | 'words';
 
 /**
  * LEDGER's own frame (docs/design/ledger.md §Chrome; ADR 0011/0012): the head of a ledger page.
@@ -20,6 +20,7 @@ export function Chrome({ here, month, children }: { here: LedgerPlace; month: st
   const places: { place: LedgerPlace; label: string; to: string }[] = [
     { place: 'month', label: 'The month', to: `/${month}` },
     { place: 'budget', label: 'Budget', to: `/budget/${month}` },
+    { place: 'words', label: 'Your words', to: '/words' },
   ];
   return (
     <div className="lc">

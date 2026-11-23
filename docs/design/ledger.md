@@ -116,3 +116,19 @@ Motion is almost none, on purpose:
 
 ## 12. Ceremony (`DESIGN.md` §5.1)
 **Entered.** On writing an entry: the sum written digit by digit in DM Mono, then ruled off with a double line in red pen (green ink and rule for money in), with "Out · Food" beneath. It lasts 600ms and is see-through, and the cursor stays in the quick line, so the next entry can be typed while it plays. Several lines or an import show one sum ("3 entries · net out"). `app/Ceremony.tsx`.
+
+## 13. Your words (`/ledger/words`)
+Your own shorthand for the quick line. Built-in words keep working; yours are added on top.
+
+- **Amount words:** units (`rebu` → × 1.000, `jeti` → × 1.000.000, typed glued or apart) and words that stand for a sum (`goceng` → Rp 5.000, `ceban` → Rp 10.000). A small count before a sum multiplies it ("2 ceban" → Rp 20.000).
+- **Day words:** today, yesterday, two days ago, or the last Monday…Sunday (`semalem`, `tadi`, `sab`).
+- **Money-in words:** words that make an entry money in (`cair`, `dapet`).
+- **Words it has learned:** the category memory made visible. Each word can be pointed at another category or forgotten, and "Forget everything it learned" asks first and offers Undo.
+
+How it stays honest:
+- **One meaning per word.** A word can't collide with a built-in word of another kind ("“kemarin” already means a day") or repeat one ("“rb” is already understood").
+- **The preview shows it.** When your words are used, the quick line says how it read them, in the order typed: "your words: goceng → Rp 5.000 · semalem → yesterday".
+- **Try a line** at the top of the page shows any line's reading.
+
+The rules are in `src/terms.ts` and `src/quick.ts`, with tests in `terms.test.ts`.
+

@@ -158,6 +158,7 @@ Consolidating to four apps changed no keys, no encryption and no sync. Records o
 
 - **Amounts never leave LEDGER.** The house shows counts only (Almanac). Nothing about money reaches the lifeline, week panel or house search.
 - **No bank connections and no outside service.** The quick line is read by plain rules on the device. Learned words (`ledger/words`) are ordinary encrypted vault records.
+- **Your shorthand** (`ledger/terms`) and learned words (`ledger/words`) are ordinary encrypted vault records, read only on the device.
 - **CSV imports** are read in memory on the device. The file is never stored, only the entries you choose to write.
 
 ### Local reminders and photos

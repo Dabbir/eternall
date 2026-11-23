@@ -45,3 +45,13 @@ Behaviour:
 - **A separate product:** rejected for this scope (a budget and a daily record). The vault, sync and lock already fit.
 - **Voice or receipt-photo input:** rejected for now. Chrome's speech recognition sends audio to a server. On-device OCR could come later under ADR 0010.
 - **Natural-language parsing with an AI model:** rejected (ADR 0010). Plain rules plus learned words are enough and stay on the device.
+
+## Addendum (2026-11-23): your own shorthand
+People's money shorthand differs (goceng, ceban, rebu, semalem, cair). The quick line now also reads each person's own words, set on `/ledger/words` and kept as `ledger/terms`:
+- units, fixed sums, day words and money-in words
+- the learned category words made visible and editable
+
+**Built-in words keep working.** A word means one thing only, and can never shadow a built-in word of another kind.
+
+**Rejected: whole-line templates** ("kopi pagi" → 25rb Food). Frequent-entry chips already cover them.
+

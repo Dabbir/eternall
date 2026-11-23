@@ -18,7 +18,7 @@ const MAX_BYTES = 5 * 1024 * 1024;
  */
 export function ImportPage() {
   const house = useHouse();
-  const { entryCol, categories, words } = useLedgerData();
+  const { entryCol, categories, words, terms } = useLedgerData();
   const [rows, setRows] = useState<string[][] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [m, setM] = useState<CsvMapping>({ date: 0, amount: 1, note: 2, allOut: false, header: true });
@@ -43,7 +43,7 @@ export function ImportPage() {
   const cols = rows?.[0]?.map((h, i) => ({ i, label: m.header && h ? h : `Column ${i + 1}` })) ?? [];
   const toEntries = (): Entry[] =>
     (result?.ok ?? []).map((r, i) => {
-      const guess = parseQuick(`${r.note} 1`, { today: house.today, categories, words });
+      const guess = parseQuick(`${r.note} 1`, { today: house.today, categories, words, terms });
       const categoryId = guess.kind === r.kind ? guess.categoryId : r.kind === 'in' ? 'other-in' : 'other-out';
       return { id: createId(), kind: r.kind, amount: r.amount, categoryId, date: r.date, note: r.note, createdAt: new Date(Date.now() + i).toISOString() };
     });

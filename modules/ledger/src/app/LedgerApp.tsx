@@ -16,13 +16,14 @@ import { learn } from '../quick';
 import { Chrome, type LedgerPlace } from './Chrome';
 import { QuickLine, useLedgerData } from './QuickLine';
 import { ImportPage } from './ImportPage';
+import { WordsPage } from './WordsPage';
 
 export default function LedgerApp({ path, search }: ImprintAppProps) {
   const house = useHouse();
   const current = monthKey(house.today);
   const quickRef = useRef<HTMLTextAreaElement>(null);
   const seg = path.split('/').filter(Boolean);
-  const place: LedgerPlace = seg[0] === 'budget' ? 'budget' : seg[0] === 'import' ? 'import' : 'month';
+  const place: LedgerPlace = seg[0] === 'budget' ? 'budget' : seg[0] === 'import' ? 'import' : seg[0] === 'words' ? 'words' : 'month';
   const asked = place === 'budget' ? seg[1] : seg[0];
   const month = asked && isMonthKey(asked) ? asked : current;
 
@@ -46,7 +47,7 @@ export default function LedgerApp({ path, search }: ImprintAppProps) {
   return (
     <Chrome here={place} month={month}>
       <div className="lg">
-        {place === 'budget' ? <BudgetPage month={month} /> : place === 'import' ? <ImportPage /> : <MonthPage month={month} quickRef={quickRef} />}
+        {place === 'budget' ? <BudgetPage month={month} /> : place === 'import' ? <ImportPage /> : place === 'words' ? <WordsPage /> : <MonthPage month={month} quickRef={quickRef} />}
       </div>
     </Chrome>
   );
