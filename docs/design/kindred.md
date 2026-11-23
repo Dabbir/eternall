@@ -118,3 +118,6 @@ KINDRED is the face of a card cabinet:
 - **Toasts:** calling cards with a teal edge.
 - **Choices:** index tabs.
 - **Unlock card:** a card behind the brass plate.
+
+## 13. Ceremony (`DESIGN.md` §5.1)
+**Letterpress strike.** On "I saw them today" and on a new card: the name comes down onto card stock like a platen, presses in (the inset shadow deepens), leaves a faint ring of ink, and lifts (900ms). `app/Ceremony.tsx`, styles in `theme/kindred.kit.css`.

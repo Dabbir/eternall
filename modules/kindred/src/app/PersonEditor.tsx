@@ -5,6 +5,7 @@ import { Button, Dialog, TextArea, TextField } from '@eternall/ui';
 import { useCollection } from '@eternall/vault';
 import { CLOSENESS, CLOSENESS_LABEL, LIMITS, PERSON_PATH, PHOTO_PATH, SEEN_PATH, validatePerson, type Person, type PersonInput, type Photo, type Seen } from '../people';
 import { shrinkPhoto } from './photo';
+import { Strike } from './Ceremony';
 
 /** Printing a card: name, drawer, closeness, how you met, dates to remember. */
 export function PersonEditor({ existing, drawers, onClose }: { existing?: Person | undefined; drawers: string[]; onClose(): void }) {
@@ -49,6 +50,7 @@ export function PersonEditor({ existing, drawers, onClose }: { existing?: Person
     if (photo && photo !== initialPhoto) photoCol.put({ id, src: photo });
     else if (!photo && initialPhoto) photoCol.remove(id);
     house.toast({ message: existing ? 'Card updated.' : `${r.value.name} joins the card file.`, tone: 'accent' });
+    if (!existing) house.ceremony(<Strike name={r.value.name} line={`A new card · ${r.value.drawer || 'Unfiled'}`} />, 900);
     if (!existing) house.navigate(house.href(`/person/${id}`));
     onClose();
   };

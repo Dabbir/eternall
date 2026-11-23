@@ -13,6 +13,7 @@ import { useCollection } from '@eternall/vault';
 import { CLOSENESS_LABEL, DEFAULT_PREF, PERSON_PATH, PHOTO_PATH, PREF_PATH, REMIND, REMIND_LABEL, SEEN_PATH, constellation, drawers, lastSeen, nextOccurrence, seenId, sinceLabel, upcomingDates, type KindredPref, type Person, type Photo, type Remind, type Seen, type Star } from '../people';
 import { PersonEditor } from './PersonEditor';
 import { Chrome } from './Chrome';
+import { Strike } from './Ceremony';
 import type { SkyProps } from './constellationScene';
 
 type View = 'file' | 'sky';
@@ -43,6 +44,7 @@ function useSeen() {
     const prev = col.get(id);
     col.put({ id, personId: p.id, date: house.today, note: note || prev?.note || '' });
     house.toast({ message: `Noted: you saw ${p.name} today.`, tone: 'accent', ...(prev ? {} : { action: { label: 'Undo', run: () => col.remove(id) } }) });
+    house.ceremony(<Strike name={p.name} line={`Seen today · ${formatMedium(house.today)}`} />, 900);
   };
   return { seen: items, col, sawToday };
 }
