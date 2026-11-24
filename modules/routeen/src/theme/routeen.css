@@ -51,7 +51,6 @@
 
 /* ---------- pages ---------- */
 .rs { padding: 0 0 120px; }
-.rs-page > :not(.rs-band):first-child { padding-top: clamp(14px, 2.4vw, 28px); }
 .rs-section { margin-top: 30px; }
 .rs-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9375rem; font-weight: 600; letter-spacing: 0.08em; font-variant-caps: all-small-caps; color: var(--ink-2); }
 .rs-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(2rem, 1.4rem + 2.4vw, 3.4rem); line-height: 1.04; color: var(--ink); }
@@ -94,17 +93,17 @@
     linear-gradient(to bottom, var(--sky-top), var(--band-foot));
   border-bottom: 1px solid var(--rule-strong);
 }
-.rs-band__head, .rs-band__sky { position: relative; max-width: 1100px; margin-inline: auto; padding-inline: var(--gutter); }
+.rs-band__head, .rs-band__sky { position: relative; margin-inline: max(var(--gutter), (100% - 1040px) / 2 + var(--gutter)); }
 .rs-band__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px 16px; }
 .rs-band__head > .rs-title, .rs-band__head > .rs-lede, .rs-band__head > .rs-eyebrow, .rs-band__head > .rs-why { grid-column: 1; }
 .rs-band__sky { container-type: inline-size; height: var(--band-h); margin-top: 8px; }
 .rs-band--full { --band-h: clamp(180px, 28vh, 280px); }
 .rs-band--short { --band-h: 72px; }
 .rs-band--small { --band-h: 110px; }
-.rs-band__arc { position: absolute; inset: 0 var(--gutter); width: calc(100% - 2 * var(--gutter)); height: calc(100% - 22px); overflow: visible; }
+.rs-band__arc { position: absolute; inset: 0; width: 100%; height: calc(100% - 22px); overflow: visible; }
 .rs-band__path { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 1 6; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: 0.8; }
 .rs-band__horizon { stroke: var(--ink-2); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.rs-band__bodies { position: absolute; inset: 0 var(--gutter) 22px; }
+.rs-band__bodies { position: absolute; inset: 0 0 22px; }
 .rs-body { position: absolute; display: grid; justify-items: center; width: 0; height: 0; color: var(--accent); }
 .rs-body .rs-shape { position: absolute; max-width: none; width: 26px; height: 26px; transform: translate(-50%, -50%); }
 .rs-body--unlit, .rs-body--rest { color: var(--ink-2); }
@@ -121,11 +120,11 @@
 .rs-band::before, .rs-band::after { content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; pointer-events: none; }
 .rs-band::before {
   background:
-    radial-gradient(ellipse 26% 40% at 14% 30%, var(--paper) 0 50%, transparent 72%),
-    radial-gradient(ellipse 22% 34% at 40% 16%, var(--paper) 0 48%, transparent 70%),
+    radial-gradient(ellipse 26% 40% at 14% 42%, var(--paper) 0 50%, transparent 72%),
+    radial-gradient(ellipse 22% 34% at 40% 30%, var(--paper) 0 48%, transparent 70%),
     radial-gradient(ellipse 30% 44% at 70% 34%, var(--paper) 0 50%, transparent 72%),
-    radial-gradient(ellipse 20% 30% at 92% 18%, var(--paper) 0 48%, transparent 70%),
-    color-mix(in srgb, var(--paper) 45%, transparent);
+    radial-gradient(ellipse 20% 30% at 92% 32%, var(--paper) 0 48%, transparent 70%),
+    linear-gradient(to bottom, transparent, color-mix(in srgb, var(--paper) 45%, transparent) 45%);
 }
 .rs-band::after {
   background:
@@ -133,13 +132,14 @@
     radial-gradient(circle, var(--ink-2) 0 0.9px, transparent 1.5px) 61px 5px / 131px 71px,
     radial-gradient(circle, var(--ink) 0 1.5px, transparent 2.1px) 37px 49px / 173px 109px,
     radial-gradient(circle, var(--ink-2) 0 1px, transparent 1.6px) 89px 31px / 211px 127px,
-    color-mix(in srgb, var(--paper) 40%, transparent);
+    linear-gradient(to bottom, transparent, color-mix(in srgb, var(--paper) 40%, transparent) 45%);
 }
+.rs-band::after { -webkit-mask-image: linear-gradient(to bottom, transparent 15%, #000 55%); mask-image: linear-gradient(to bottom, transparent 15%, #000 55%); }
 .rs-band.rs-mode--low::before { opacity: 0.6; }
 .rs-band.rs-mode--off::after { opacity: 1; }
 
 /* Pages: the band spans the page; everything after it keeps the reading column. */
-.rs-page > :not(.rs-band) { box-sizing: border-box; max-width: 1040px; margin-inline: auto; padding-inline: var(--gutter); }
+.rs-page > :not(.rs-band) { margin-inline: max(var(--gutter), (100% - 1040px) / 2 + var(--gutter)); }
 
 /* ---------- rows: one practice, one tap (ADR 0016) ----------
    A row never changes its size or place: the body, the name and a line under it, then the three tiers,
@@ -167,6 +167,7 @@
 .rs-row:has(.rs-row__note) .rs-row__main { grid-column: 1; grid-row: 1; }
 .rs-row:has(.rs-row__note) .rs-row__tiers { grid-column: 2; grid-row: 1 / span 2; }
 .rs-row:has(.rs-row__note) .rs-row__main { min-height: 44px; padding-bottom: 0; }
+.rs-row__sub { display: block; min-height: 1.5em; }
 .rs-row__note { grid-column: 1; margin: 0 0 10px 48px; }
 .rs-row.is-lit .rs-row__note { color: var(--accent-text); font-weight: 600; }
 .rs-row.is-lit .rs-row__sub { color: var(--accent-text); font-weight: 600; }

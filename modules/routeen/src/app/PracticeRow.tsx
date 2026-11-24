@@ -34,7 +34,8 @@ export function PracticeRow({ practice: p, date, routine: r, state, note, onTap,
         <BodyIcon kind={tier ?? 'unlit'} className="rs-row__body" />
         <span className="rs-row__text">
           <span className="rs-row__name">{p.name}</span>
-          {sub && <span className="rs-row__sub"> {sub}</span>}
+          {/* Always there, empty or not, so lighting a row never changes its height. */}
+          {!note && <span className="rs-row__sub">{sub ? ` ${sub}` : ''}</span>}
         </span>
       </button>
       <span className="rs-row__tiers" role="group" aria-label={copy.aria.tierChoice}>
