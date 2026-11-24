@@ -63,6 +63,10 @@ export const copy = {
     dome: 'View the sky as a dome',
     flat: 'View the sky flat',
     thisWeek: 'This week',
+    weekOf: (date: string) => `Week of ${date}`,
+    earlier: 'Earlier',
+    later: 'Later',
+    backToThisWeek: 'Back to this week',
     year: 'The year',
     practices: 'Practices',
     noPractices: 'Your first practice starts the sky.',
@@ -82,6 +86,17 @@ export const copy = {
     unlit: 'unlit',
     open: 'not marked yet',
     plain: 'nothing planned',
+    future: 'still ahead',
+  },
+  /** How one practice stood on a day, said on the day's page. Never "missed". */
+  dayState: {
+    'lit-minimum': 'lit, a little',
+    'lit-target': 'lit, as planned',
+    'lit-more': 'lit, more',
+    unlit: 'not lit',
+    open: 'not lit yet',
+    rest: 'day off',
+    plain: 'not expected',
     future: 'still ahead',
   },
   day: {
@@ -151,8 +166,6 @@ export const copy = {
   dialog: {
     cancel: 'Cancel',
     confirm: 'Confirm',
-    delete: 'Delete practice',
-    deleteBody: 'The practice and its marks are removed from this device and your synced devices.',
     pause: 'Pause',
     resume: 'Resume',
   },

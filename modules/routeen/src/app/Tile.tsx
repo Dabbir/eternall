@@ -25,15 +25,14 @@ function spoken(sky: DaySky, today: ISODate, week: boolean): string {
  * Shapes carry the meaning; colour only supports them. Also the 2D fallback of the dome (Task 10).
  * `week` reads the tile as a whole week (a practice's strip), dated by its Monday.
  */
-export function Tile({ sky, today, week = false }: { sky: DaySky; today?: ISODate; week?: boolean }) {
-  // Without today, an expected day with no light reads as passed. A week strip passes this week's Monday.
-  const now = today ?? '';
-  const state = skyState(sky, now);
+export function Tile({ sky, today, week = false }: { sky: DaySky; today: ISODate; week?: boolean }) {
+  // A week strip passes this week's Monday as `today`.
+  const state = skyState(sky, today);
   const isToday = !week && sky.date === today;
   return (
     <span
       role="img"
-      aria-label={spoken(sky, now, week)}
+      aria-label={spoken(sky, today, week)}
       className={`rs-tile rs-tile--${state} rs-tile--${sky.mode}${isToday ? ' is-today' : ''}`}
       data-state={state}
       data-mode={sky.mode}

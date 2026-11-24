@@ -109,6 +109,59 @@ describe('ROUTEEN, the day’s sky', () => {
     expect(within(year).getAllByRole('img', { name: /: lit, more$/ })).toHaveLength(1);
   });
 
+  it('opens a day from a This week tile', async () => {
+    const user = userEvent.setup();
+    const day = routineDay(new Date(), 3);
+    at('/routeen/sky');
+    render(<Root store={createMemoryStore([settings(), ritual])} />);
+    const week = await screen.findByRole('list', { name: copy.sky.thisWeek });
+    const tiles = within(week).getAllByRole('link');
+    await user.click(tiles[tiles.length - 1]!);
+    await waitFor(() => expect(window.location.pathname).toBe(`/routeen/day/${day}`));
+    expect(await screen.findByRole('group', { name: copy.day.thatDay })).toBeInTheDocument();
+  });
+
+  it('goes back a week in the sky and lights a day of that week', async () => {
+    const user = userEvent.setup();
+    const store = createMemoryStore([settings(), ritual]);
+    const day = routineDay(new Date(), 3);
+    const monday = addDays(day, -(((new Date(`${day}T00:00:00Z`).getUTCDay() + 6) % 7)));
+    const earlier = addDays(monday, -7);
+    at('/routeen/sky');
+    render(<Root store={store} />);
+    await screen.findByRole('heading', { level: 2, name: copy.sky.thisWeek });
+    expect(screen.queryByRole('button', { name: copy.sky.later })).toBeNull();
+    await user.click(screen.getByRole('button', { name: copy.sky.earlier }));
+    const week = screen.getByRole('list', { name: /^Week of / });
+    expect(screen.getByRole('button', { name: copy.sky.backToThisWeek })).toBeInTheDocument();
+    const tiles = within(week).getAllByRole('link');
+    expect(tiles).toHaveLength(7);
+    await user.click(tiles[0]!);
+    await waitFor(() => expect(window.location.pathname).toBe(`/routeen/day/${earlier}`));
+    await user.click(await screen.findByRole('button', { name: /^Morning run/, pressed: false }));
+    await waitFor(() => expect(store.dump().find((r) => r.key === `refrain/mark/${markId('run', earlier)}` && !r.deleted)?.value).toMatchObject({ date: earlier, tier: 'target' }));
+  });
+
+  it('counts only the lit days of practices that still exist', async () => {
+    const day = routineDay(new Date(), 3);
+    const gone = rec(`refrain/mark/${markId('gone', addDays(day, -1))}`, { id: markId('gone', addDays(day, -1)), ritualId: 'gone', date: addDays(day, -1), tier: 'target' });
+    const kept = rec(`refrain/mark/${markId('run', day)}`, { id: markId('run', day), ritualId: 'run', date: day, tier: 'target' });
+    at('/routeen/sky');
+    render(<Root store={createMemoryStore([settings(), ritual, gone, kept])} />);
+    expect(await screen.findByText(copy.sky.caption(1))).toBeInTheDocument();
+  });
+
+  it('says how each practice stood on a past day, in words', async () => {
+    const yesterday = addDays(routineDay(new Date(), 3), -1);
+    const read = rec('refrain/ritual/read', { id: 'read', name: 'Read', why: '', cadence: { kind: 'daily' }, startedOn: addDays(today, -30), pausedOn: null });
+    const lit = rec(`refrain/mark/${markId('read', yesterday)}`, { id: markId('read', yesterday), ritualId: 'read', date: yesterday, tier: 'minimum' });
+    at(`/routeen/day/${yesterday}`);
+    render(<Root store={createMemoryStore([settings(), ritual, read, lit])} />);
+    expect(await screen.findByRole('button', { name: /^Morning run/ })).toHaveAccessibleDescription(copy.dayState.unlit);
+    expect(screen.getByRole('button', { name: /^Read/ })).toHaveAccessibleDescription(copy.dayState['lit-minimum']);
+    expect(screen.getByText(copy.dayState.unlit)).toBeVisible();
+  });
+
   it('creates a practice from its name alone', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([settings()]);

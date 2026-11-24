@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import type { ISODate } from '@eternall/core';
 import { copy } from '../copy';
 import { markId, tierOf, type Practice, type Tier } from '../practices';
@@ -17,14 +18,16 @@ function amountHint(p: Practice, tier: Tier): string | null {
 
 /**
  * A chip is one tap for one practice on one date: unmarked lights it (`onTap` decides the tier),
- * marked unmarks it. The other tiers sit right after it. Used on Today and on a day's page.
+ * marked unmarks it. The other tiers sit right after it. Used on Today and on a day's page, where
+ * `note` says in words how the practice stood that day (also the button's description).
  */
-export function Chip({ practice: p, date, routine: r, state, onTap }: { practice: Practice; date: ISODate; routine: Routine; state?: string; onTap(): void }) {
+export function Chip({ practice: p, date, routine: r, state, note, onTap }: { practice: Practice; date: ISODate; routine: Routine; state?: string; note?: string; onTap(): void }) {
+  const noteId = useId();
   const mark = r.idx.get(markId(p.id, date));
   const tier = mark ? tierOf(mark) : null;
   return (
     <span className={`rs-chip ${tier ? `is-lit rs-chip--${tier}` : ''}`} data-state={state}>
-      <button type="button" className="rs-chip__main" aria-pressed={!!tier} onClick={onTap}>
+      <button type="button" className="rs-chip__main" aria-pressed={!!tier} aria-describedby={note ? noteId : undefined} onClick={onTap}>
         <span className="rs-chip__name">{p.name}</span>
         {tier && (
           <>
@@ -36,6 +39,11 @@ export function Chip({ practice: p, date, routine: r, state, onTap }: { practice
           </>
         )}
       </button>
+      {note && (
+        <span id={noteId} className="rs-chip__state">
+          {note}
+        </span>
+      )}
       {tier && (
         <span className="rs-tiers" role="group" aria-label={copy.aria.tierChoice}>
           {TIERS.filter((t) => t !== tier).map((t) => {

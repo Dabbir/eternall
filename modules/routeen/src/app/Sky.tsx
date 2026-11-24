@@ -1,5 +1,7 @@
+import { useState } from 'react';
+import { addDays } from '@eternall/core';
 import { LookPicker, type useAppLook } from '@eternall/kit';
-import { Segmented } from '@eternall/ui';
+import { Button, Segmented } from '@eternall/ui';
 import { copy } from '../copy';
 import { litDays, weekSky, yearSky, type DaySky } from '../days';
 import { ROUTEEN_LOOKS } from '../look';
@@ -19,26 +21,49 @@ function monthOf(week: readonly DaySky[], first: boolean): string | null {
 }
 
 /**
- * The Sky (spec §4.6, §4.8): this week as seven tiles, the year as 52 rows with month bands and a count
+ * The Sky (spec §4.6, §4.8): this week as seven tiles (Earlier / Later step through past weeks, so any
+ * past day opens from here), the year as 52 rows with month bands and a count
  * of lit days (never a percentage or a streak), the practices, the sky's look and when the day ends.
  */
 export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<typeof useAppLook> }) {
   const { today } = r;
-  const week = weekSky(r.practices, r.idx, barStart(today), today, r.modeOf);
+  // Weeks back from this one; the strip never goes past the current week.
+  const [back, setBack] = useState(0);
+  const start = addDays(barStart(today), -7 * back);
+  const week = weekSky(r.practices, r.idx, start, today, r.modeOf);
+  const weekTitle = back === 0 ? copy.sky.thisWeek : copy.sky.weekOf(dayName(start));
   const year = yearSky(r.practices, r.idx, today, r.modeOf);
   const practices = [...r.practices].sort(byStart);
+  // Removed practices keep their marks (Undo, export), but only practices still here light the count.
+  const here = new Set(r.practices.map((p) => p.id));
+  const lit = litDays(r.marks.filter((m) => here.has(m.ritualId)), today.slice(0, 4));
   return (
     <div className="rs-sky">
       <header className="rs-head">
         <h1 className="rs-title">{copy.sky.title}</h1>
-        <p className="rs-lede">{copy.sky.caption(litDays(r.marks, today.slice(0, 4)))}</p>
+        <p className="rs-lede">{copy.sky.caption(lit)}</p>
       </header>
 
       <section className="rs-section" aria-labelledby="rs-week-title">
         <h2 id="rs-week-title" className="rs-h2">
-          {copy.sky.thisWeek}
+          {weekTitle}
         </h2>
-        <ol className="rs-week">
+        <div className="rs-week__nav">
+          <Button variant="quiet" icon="left" onClick={() => setBack(back + 1)}>
+            {copy.sky.earlier}
+          </Button>
+          {back > 0 && (
+            <>
+              <Button variant="quiet" onClick={() => setBack(back - 1)}>
+                {copy.sky.later}
+              </Button>
+              <Button variant="quiet" onClick={() => setBack(0)}>
+                {copy.sky.backToThisWeek}
+              </Button>
+            </>
+          )}
+        </div>
+        <ol className="rs-week" aria-label={weekTitle}>
           {week.map((d) => (
             <li key={d.date} className={d.date === today ? 'is-today' : undefined} aria-current={d.date === today ? 'date' : undefined}>
               {d.future ? (

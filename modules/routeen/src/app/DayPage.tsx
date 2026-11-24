@@ -45,11 +45,14 @@ export function DayPage({ date, routine: r }: { date: ISODate; routine: Routine 
         <p className="rs-lede">{copy.day.nothing}</p>
       ) : (
         <ul className="rs-chips">
-          {list.map((p) => (
-            <li key={p.id}>
-              <Chip practice={p} date={date} routine={r} state={dayState(p, date, r.idx, r.modeOf, r.today)} onTap={() => tap(p)} />
-            </li>
-          ))}
+          {list.map((p) => {
+            const state = dayState(p, date, r.idx, r.modeOf, r.today);
+            return (
+              <li key={p.id}>
+                <Chip practice={p} date={date} routine={r} state={state} note={copy.dayState[state]} onTap={() => tap(p)} />
+              </li>
+            );
+          })}
         </ul>
       )}
 
