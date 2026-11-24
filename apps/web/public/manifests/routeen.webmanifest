@@ -2,12 +2,12 @@
   "id": "/routeen/",
   "name": "ROUTEEN",
   "short_name": "ROUTEEN",
-  "description": "Practices, woven daily. Each practice a thread, each day a row.",
+  "description": "A routine that bends with your day. Each day a sky, each practice kept a little light.",
   "start_url": "/routeen/",
   "scope": "/routeen/",
   "display": "standalone",
-  "background_color": "#efe8da",
-  "theme_color": "#2e4a7d",
+  "background_color": "#f8efe8",
+  "theme_color": "#9a5a14",
   "icons": [
     {
       "src": "/icons/routeen-192.png",
@@ -29,6 +29,19 @@
       "src": "/icons/routeen.svg",
       "sizes": "any",
       "type": "image/svg+xml"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mark today",
+      "short_name": "Today",
+      "url": "/routeen/",
+      "icons": [
+        {
+          "src": "/icons/routeen-192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

@@ -1,11 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { addDays } from '@eternall/core';
 import { LookPicker, type useAppLook } from '@eternall/kit';
 import { Button, Segmented } from '@eternall/ui';
 import { copy } from '../copy';
 import { litDays, weekSky, yearSky, type DaySky } from '../days';
 import { ROUTEEN_LOOKS } from '../look';
-import { barStart, type Practice } from '../practices';
+import { barStart, weekdayOf, type Practice } from '../practices';
 import { TIER_GLYPH } from './glyphs';
 import { Go } from './Go';
 import { Tile, dayName } from './Tile';
@@ -29,6 +29,18 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
   const { today } = r;
   // Weeks back from this one; the strip never goes past the current week.
   const [back, setBack] = useState(0);
+  // "Later" (to this week) and "Back to this week" leave with the click, so focus goes to the week's heading.
+  const weekHeading = useRef<HTMLHeadingElement>(null);
+  // The year opens at its end, where today is, when it is wider than its box (a phone).
+  const yearBox = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = yearBox.current;
+    if (el) el.scrollLeft = el.scrollWidth;
+  }, []);
+  const stepTo = (n: number) => {
+    setBack(n);
+    if (n === 0) weekHeading.current?.focus();
+  };
   const start = addDays(barStart(today), -7 * back);
   const week = weekSky(r.practices, r.idx, start, today, r.modeOf);
   const weekTitle = back === 0 ? copy.sky.thisWeek : copy.sky.weekOf(dayName(start));
@@ -45,19 +57,19 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
       </header>
 
       <section className="rs-section" aria-labelledby="rs-week-title">
-        <h2 id="rs-week-title" className="rs-h2">
+        <h2 id="rs-week-title" className="rs-h2" ref={weekHeading} tabIndex={-1}>
           {weekTitle}
         </h2>
         <div className="rs-week__nav">
-          <Button variant="quiet" icon="left" onClick={() => setBack(back + 1)}>
+          <Button variant="quiet" icon="left" onClick={() => stepTo(back + 1)}>
             {copy.sky.earlier}
           </Button>
           {back > 0 && (
             <>
-              <Button variant="quiet" onClick={() => setBack(back - 1)}>
+              <Button variant="quiet" onClick={() => stepTo(back - 1)}>
                 {copy.sky.later}
               </Button>
-              <Button variant="quiet" onClick={() => setBack(0)}>
+              <Button variant="quiet" onClick={() => stepTo(0)}>
                 {copy.sky.backToThisWeek}
               </Button>
             </>
@@ -66,6 +78,10 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
         <ol className="rs-week" aria-label={weekTitle}>
           {week.map((d) => (
             <li key={d.date} className={d.date === today ? 'is-today' : undefined} aria-current={d.date === today ? 'date' : undefined}>
+              {/* Seen, not read twice: the tile already says its full date aloud. */}
+              <span className="rs-week__label" aria-hidden="true">
+                {copy.weekdaysShort[weekdayOf(d.date)]} <span className="rs-week__date">{Number(d.date.slice(8, 10))}</span>
+              </span>
               {d.future ? (
                 <Tile sky={d} today={today} />
               ) : (
@@ -82,7 +98,7 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
         <h2 id="rs-year-title" className="rs-h2">
           {copy.sky.year}
         </h2>
-        <div className="rs-year" role="table" aria-label={copy.aria.skyGrid}>
+        <div className="rs-year" ref={yearBox} tabIndex={0} role="table" aria-label={copy.aria.skyGrid}>
           {year.map((w, i) => {
             const month = monthOf(w, i === 0);
             return (

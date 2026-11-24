@@ -142,6 +142,22 @@ describe('ROUTEEN, the day’s sky', () => {
     await waitFor(() => expect(store.dump().find((r) => r.key === `refrain/mark/${markId('run', earlier)}` && !r.deleted)?.value).toMatchObject({ date: earlier, tier: 'target' }));
   });
 
+  it('keeps focus on the week’s heading when Later or Back to this week leaves', async () => {
+    const user = userEvent.setup();
+    at('/routeen/sky');
+    render(<Root store={createMemoryStore([settings(), ritual])} />);
+    await screen.findByRole('heading', { level: 2, name: copy.sky.thisWeek });
+    await user.click(screen.getByRole('button', { name: copy.sky.earlier }));
+    await user.click(screen.getByRole('button', { name: copy.sky.later }));
+    expect(screen.queryByRole('button', { name: copy.sky.later })).toBeNull();
+    expect(screen.getByRole('heading', { level: 2, name: copy.sky.thisWeek })).toHaveFocus();
+    await user.click(screen.getByRole('button', { name: copy.sky.earlier }));
+    await user.click(screen.getByRole('button', { name: copy.sky.earlier }));
+    await user.click(screen.getByRole('button', { name: copy.sky.backToThisWeek }));
+    expect(screen.queryByRole('button', { name: copy.sky.backToThisWeek })).toBeNull();
+    expect(screen.getByRole('heading', { level: 2, name: copy.sky.thisWeek })).toHaveFocus();
+  });
+
   it('counts only the lit days of practices that still exist', async () => {
     const day = routineDay(new Date(), 3);
     const gone = rec(`refrain/mark/${markId('gone', addDays(day, -1))}`, { id: markId('gone', addDays(day, -1)), ritualId: 'gone', date: addDays(day, -1), tier: 'target' });

@@ -35,6 +35,7 @@ export const copy = {
   quietDayOff: 'A day off, and nothing asked of it.',
   greeting: { morning: 'Good morning', midday: 'Good day', evening: 'Good evening' },
   weekdays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+  weekdaysShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   dateLabel: (weekday: string, day: number, month: string) => `${weekday} ${day} ${month}`,
   times: { morning: 'Morning', midday: 'Midday', evening: 'Evening', anytime: 'Any time' },

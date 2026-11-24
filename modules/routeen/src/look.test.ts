@@ -1,4 +1,4 @@
-import { lookTokens, readLook, validateLookSpec, defaultLook } from '@eternall/core';
+import { contrast, lookTokens, readLook, validateLookSpec, defaultLook } from '@eternall/core';
 import { ROUTEEN_LOOKS } from './look';
 
 describe('the sky’s look', () => {
@@ -25,5 +25,19 @@ describe('the sky’s look', () => {
       expect(t['--sky-bottom']).toBeTruthy();
     }
     for (const p of Object.values(ROUTEEN_LOOKS.presets)) for (const k of [...Object.keys(p.light), ...Object.keys(p.dark)]) expect(k).not.toMatch(/^--dye-/);
+  });
+  it('keeps the header’s words (--ink, --ink-2) readable on both ends of every sky, in both modes', () => {
+    // The header's text sits on the gradient; --ink-3 and the accent are kept off it (routeen.css).
+    const low: string[] = [];
+    for (const [id, p] of Object.entries(ROUTEEN_LOOKS.presets))
+      for (const mode of ['light', 'dark'] as const) {
+        const t = p[mode];
+        for (const ink of ['--ink', '--ink-2'])
+          for (const end of ['--sky-top', '--sky-bottom']) {
+            const ratio = contrast(t[ink]!, t[end]!);
+            if (ratio < 4.5) low.push(`${id} ${mode} ${ink} on ${end}: ${ratio.toFixed(2)}`);
+          }
+      }
+    expect(low).toEqual([]);
   });
 });
