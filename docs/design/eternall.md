@@ -57,8 +57,8 @@ The lifeline is the page. Everything else is marginalia around it.
   Good morning, Ada.
   ┌ Journal ─────────────┐ ┌ Money ───────────────┐ ┌ Practices ───────────┐
   │ AMAZEEN · Journal    │ │ CASHEEN · Money, …   │ │ ROUTEEN · Practices… │
-  │ This week's issue ·  │ │ Money, kept plainly —│ │ 2 of 4 practices     │
-  │ 3 pieces · Sunday    │ │ one line per entry…  │ │ woven today          │
+  │ This week's issue ·  │ │ Money, kept plainly —│ │ 2 of 4 marked today  │
+  │ 3 pieces · Sunday    │ │ one line per entry…  │ │                      │
   │ [Write today's note] │ │ [Add an entry]       │ │ [Mark today]         │
   └──────────────────────┘ └──────────────────────┘ └──────────────────────┘
   Your life in weeks →

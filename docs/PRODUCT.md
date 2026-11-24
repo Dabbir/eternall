@@ -31,15 +31,15 @@ ETERNALL: a private personal toolkit                     (ADR 0014)
 ├── Home                Journal, Money and Practices, one card each, one action each
 ├── Journal: AMAZEEN    first product, the way in — with People and Letters inside
 ├── Money: CASHEEN      a parallel product, opened directly
-├── Practices: ROUTEEN  the loom: each practice a thread, each day a row
+├── Practices: ROUTEEN  the day's sky: one tap to light a practice, a hard day still counts
 └── Your life in weeks  optional: the lifeline, chapters and inscriptions
 ```
 
 - **AMAZEEN helps people reflect on their life. CASHEEN helps them manage everyday money.** They sit in one product because both are personal and both need strong privacy, but their jobs differ. Someone who only wants to track money opens CASHEEN directly, without learning about the journal or the lifeline.
 - **CASHEEN is the first companion**, made available as AMAZEEN's core flow proves itself. It stays focused on writing an entry in one line and a monthly budget. Bank links, investments and anything complicated wait.
-- **ROUTEEN (Practices)** is the third app: simple routines, woven into cloth, without streaks or pressure. It shares AMAZEEN's weekly rhythm.
+- **ROUTEEN (Practices)** is the third app: a routine that bends with your day (Langit Hari, the day's sky, ADR 0015). One tap lights a practice, a little, as planned or more; a Low energy or Day off mode keeps a hard stretch from looking failed; the front page shows only what matters now. No streaks, no percentages, no pressure.
 - **People live in the journal** (AMAZEEN · People): the people you write about, pinned on the newsroom wall, with their dates and the pieces they appear in. **Reading is a quote** in the journal. (KINDRED and MARGINALIA were folded in by ADR 0014.)
-- **Every app has personal looks** within its own world: AMAZEEN's editions, CASHEEN's books, ROUTEEN's cloths.
+- **Every app has personal looks** within its own world: AMAZEEN's editions, CASHEEN's books, ROUTEEN's skies.
 - **The lifeline is optional.** It is never the first page for a new person. It is offered once there is something to show, and only when they choose it.
 
 ## Firm boundaries between apps

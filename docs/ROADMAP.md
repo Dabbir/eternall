@@ -175,11 +175,33 @@ Status: accepted · Phases 0–9 done (ADR 0013, ADR 0014) · Each phase ends wi
 1. Docs: ADR 0014, `design/routeen.md`, product, vision and brand.
 2. Retire MARGINALIA: underlines become AMAZEEN quotes (migration `marginalia`), Overheard and `quotes.offer` go, `/marginalia/*` redirects.
 3. KINDRED becomes AMAZEEN · People (`/amazeen/people`), data paths kept, `/kindred/*` redirects.
-4. REFRAIN becomes ROUTEEN, the loom (`/routeen/`), data paths kept, audio removed, `/refrain/*` redirects.
+4. REFRAIN becomes ROUTEEN, the loom (`/routeen/`; replaced by the day's sky, ADR 0015), data paths kept, audio removed, `/refrain/*` redirects.
 5. Personal looks for every app on one engine (`packages/core/src/look.ts`, `packages/kit/src/look.tsx`).
 6. Home at `/` (no money figures) and "Your life in weeks" at `/life`.
 
 **Exit criteria:** the existing vault shows every underline, person and practice in its new home; old addresses land in the right place; a fresh vault opens on Home; every app's looks pass the contrast tests; all gates green; checked at 390/768/1440, light and dark.
+
+## ROUTEEN · Langit Hari, the day's sky (ADR 0015)
+**Done (2026-11-24),** thirteen commits (`ee6b8b8`…`1b9bc3f`), then two small fixes (`core: drop an empty fallback…`, `routeen: small caps for field legends…`) and this docs commit. The loom is replaced by a routine that bends with your day; data paths never moved. Spec: `docs/superpowers/specs/2026-11-24-routeen-langit-hari-design.md`; design: `design/routeen.md`.
+
+**Built:**
+1. The routine day (ends at 03:00 by default, a setting 00:00–05:00) and parts of day (`sky.ts`).
+2. Tiers (Minimum ◐ · Target ☀︎ · More ✺), time of day, measures and life modes (`practices.ts`, `modes.ts`); `refrain/mode`, `refrain/day-mode` and `refrain/settings` added.
+3. Day states, kept weeks (a week whose whole expectation fell on Day-off days counts as kept), the week's sky and the year (`days.ts`).
+4. The front page: For now, Not yet today, Also today, the evening recap with All as planned, and Yesterday until 11:00 (`front.ts`).
+5. The copy catalogue (`copy.ts`, no "missed", no streaks or percentages) and house contributions on the routine day, as counts.
+6. Four skies for the look (Fajar, Siang, Senja, Malam), with loom-era looks remapped through `LookSpec.aliases` (`packages/core`).
+7. Today (one tap to light, Lit), the Sky (week strip stepping back through past weeks, the year, practices, look, "My day ends at…"), a day's page with "That day" mode, the practice page and editor.
+8. The sky dome (lazy `skyScene.ts` through `@eternall/stage`, behind the immersive gate; `DimensionToggle` gained `label2d` for *Flat · Dome*), the icon and the **Mark today** shortcut.
+
+**Verified:** `npm run typecheck`, `npm test` (53 files, 368 tests) and `npm run build` green, budgets ok (`RouteenApp` 7.6 KB, `skyScene` 1.7 KB gzip); `oxlint --deny-warnings` clean on `modules/routeen`, `packages/core`, `packages/stage` and `apps/web/src`. In headless Chromium: Today and the Sky at 390/768/1440, light and dark, no horizontal scroll, no `text-transform: uppercase` (a legend that inherited the house eyebrow was fixed), Lit shown with normal motion and not mounted under reduced motion. Loom-era records (marks without a tier lighting as Target, old looks opening as their nearest sky) are covered by integration and unit tests (`apps/web/src/test/release2.test.tsx`, `modules/routeen/src/look.test.ts`), not by a browser pass on an old vault.
+
+**Still open (owner):**
+- **Pause ranges.** Resume clears `pausedOn`, so a paused stretch later reads as unlit instead of plain. Fixing it needs a list of pause ranges on the practice.
+- **The dome on a real GPU.** The development browser renders WebGL in software; the dome has not been checked on the reference GPU laptop or a phone.
+- **Icons.** `routeen-*.png` were regenerated from `routeen.svg` with macOS tools; check them on a real device (iOS install, Android maskable).
+- **The lint gate is red for a reason outside ROUTEEN.** `npm run lint` reports 4 errors and 13 warnings, all in `modules/amazeen` (`features/shelf/Shelf.tsx`, `imprint/people/PeopleRoom.tsx`, `PersonEditor.tsx`, `people.ts`, tests) from earlier phases, untouched by this work.
+- The owner's 5-second test and the deferred items in the spec §10 (insights, a rhythm page in AMAZEEN's issue, "Done" on Android reminders, alternative editions), and the Indonesian catalogue.
 
 ## Release 2
 All apps and the house. After the launch of AMAZEEN and CASHEEN.

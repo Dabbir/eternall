@@ -1,6 +1,6 @@
 # ETERNALL — Flows
 
-Status: amended by ADR 0011 and ADR 0013 · Related: `ARCHITECTURE.md` §2, `PRIVACY.md`, `BUSINESS.md`
+Status: amended by ADR 0011, ADR 0013 and ADR 0015 (F21–F24) · Related: `ARCHITECTURE.md` §2, `PRIVACY.md`, `BUSINESS.md`
 
 Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any imprint. Copy in quotes is indicative; final copy follows `BRAND.md` §6.
 
@@ -171,3 +171,33 @@ Everything except sync, licence refresh and checkout works offline. Sync and lic
 3. If neither is possible (hidden page, no notification permission), the reminder waits until the page is looked at again, for up to 7 days; after that it is dropped rather than delivered late.
 4. Delivered keys are kept in the vault (`house/reminders`), so a second device stays quiet once sync brings the log over.
 5. Honesty: a closed app cannot remind anyone. Settings and the KINDRED dialog say so; nothing is scheduled on a server.
+
+## F21 · ROUTEEN: lighting a practice (ADR 0015)
+1. Today (`/routeen/`) opens on the routine day: before `dayEndsAt` (03:00 by default) it is still yesterday. The headline names the part of day ("Tuesday morning").
+2. **One tap** on a chip lights it: Target in Normal, Minimum in Low energy. **Lit** plays (≤ 700 ms, never blocks) and a toast "Run lit" offers **Undo**.
+3. The lit chip shows its tier and the two other tiers inline ("a little", "as planned", "more", with the measure as a hint when the practice has one). One tap changes the tier.
+4. Tapping a lit chip again unmarks it ("Run unmarked", **Undo**).
+- *Keyboard:* every chip and tier is a `<button>` (`aria-pressed` on the chip); Tab reaches the tiers right after their chip.
+- *Reduced motion:* Lit is not shown; the toast still says it.
+- *Nothing is typed to mark.* A measure is a hint, never a question.
+
+## F22 · ROUTEEN: the evening recap and yesterday
+1. From 17:00 until the day ends, Today becomes **Today's recap**: every practice due today in one list, each still one tap.
+2. **All as planned** (in Low energy: **All, a little**) lights every unmarked due practice at once, except *n a week* ones; the toast offers **Undo** for all of them.
+3. The next morning (until 11:00), a row reads "Yesterday: N not marked →" and opens yesterday's page, where each practice is one tap.
+- *Day off:* there is no recap and no bulk action; every practice sits under "If you feel like it". The Yesterday row ignores a day that was a Day off.
+- *A person who marks only at night* keeps the whole day: 00:30 still counts for the evening before.
+
+## F23 · ROUTEEN: life modes
+1. The mode control in Today's header shows the current mode. One tap opens **Normal · Low energy · Day off**; choosing one sets it from today ("Low energy for today", **Undo**). It runs until changed.
+2. **Low energy:** a tap lights Minimum, and Minimum counts as kept. **Day off:** nothing is expected; the day reads as a quiet night ✦ in the Sky, never as unlit.
+3. After three days in Low energy or Day off, Today offers **Back to Normal?** once a day: **Back to Normal** or **Not yet** (remembered for the day in `refrain/settings`).
+- *Mode history is kept* (`refrain/mode`), so past days keep the mode they had. Two devices that change the mode on the same day settle on the last write.
+
+## F24 · ROUTEEN: filling in a past day
+1. In the Sky (`/routeen/sky`), **This week** shows seven tiles; each past or present day opens its page. **Earlier** steps back a week at a time; **Later** and **Back to this week** return.
+2. A day's page (`/routeen/day/<date>`) lists the practices active that day, each with its state in words ("not lit", "lit, a little", "day off", "not expected"), and lights or unlights each in one tap. Lit does not play here.
+3. **That day: Normal · Low energy · Day off** gives that date its own mode (`refrain/day-mode`) without changing the running one. Choosing the running mode removes the override.
+- *A future date* opens Today instead. *An impossible date* or an unknown practice says so, with **Back to Today**.
+- *The year grid is for reading:* days open from the week strip or, in the dome, from the list of lit days below it.
+- *Changing "My day ends at…"* (the Sky, 00:00–05:00) never re-dates an existing mark.

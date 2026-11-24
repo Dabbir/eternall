@@ -27,7 +27,7 @@ There is **no global spacing scale shared by imprints**. Each imprint derives it
 | AMAZEEN · Letters (once ENVOI) | An asymmetric writing desk: envelopes stacked at angles on open surface; one focal letter at a time; in AMAZEEN's inks | a desk, correspondence |
 | House · Chapters (once FOLIO) | Shelf rows of spines by decade; an opened chapter on Van de Graaf proportions; in the house's type | classical book design |
 | House · Almanac (once ALMANACK) | Dense two-column tables with hairline rules; information in layers (figure, unit, note); in the house's type | printed almanacs, ephemerides |
-| ROUTEEN | The loom: a row is a day, a column is a thread; square stitches with 2px of warp between | a hand loom and its cloth |
+| ROUTEEN | Langit Hari (ADR 0015): a single column for now (headline, sun arc, mode, chips that wrap); the Sky as a week of seven tiles and the year as 52 rows of seven | the day's sky |
 | KINDRED | Fixed modules in business-card ratio (85:55), arranged like drawers of a card file; generous card padding | address books, letterpress cards |
 | MARGINALIA | A text column plus a wide margin column (≈ 2:1), where notes and highlights live in the margin | an annotated book page |
 | CASHEEN | The ruled page: one row per 2.25rem ruling; a narrow date column, particulars, then money columns behind a double red rule | an accountant's ledger |
@@ -71,10 +71,10 @@ phone            [←]           NAME                                          �
 |---|---|---|---|---|---|
 | AMAZEEN | "Leave" | monogram + masthead on the ink-black band | 01 Desk · 02 Shelf · 03 People · 04 Letters · 05 Office | Write (vermilion) | the press deadline as `extra`; on its own (no ETERNALL) it keeps its left spine |
 | CASHEEN | the clasp, "Close the book" | spaced Caslon over a double rule | The month · Budget · Your words | Add an entry (focuses the quick line) | the thumb index sits in the page under the month: twelve half-moon notches |
-| ROUTEEN | a small shuttle, "Leave the loom" | Young Serif over a woven selvedge rule | The loom · The cloth | Mark today (or New practice) | the selvedge along the bar; a practice page belongs to the loom |
+| ROUTEEN | a small sun on the horizon, "Leave" | Young Serif, with the function line | Today · Sky | New practice (marking happens on the page) | a practice page belongs to Today, a day's page to the Sky |
 | MARGINALIA | the ribbon bookmark, "Back to the stacks" | the catalogue card, call number typed | Catalogue · Every underline, pencilled; the current one ringed by hand | Add a work, typed in brackets | the oak desk |
 
-**Personal looks (ADR 0014).** Every app offers looks true to its own world on one engine (`packages/core/src/look.ts`; `packages/kit/src/look.tsx` gives `useAppLook` and the headless `LookPicker`, skinned through `.lookpicker` hooks): ready-made presets, a bounded accent list, type pairings from fonts the app already self-hosts, text size and density. A look sets tokens only (layout never moves; size and density scale the app's pages, not its bar), light and dark stay with the house, and every preset × accent × mode passes `validateLookSpec` (body ≥ 7:1, secondary and accent text ≥ 4.5:1, button text ≥ 4.5:1). AMAZEEN: Office → "Your edition's look"; CASHEEN: "Your book's look"; ROUTEEN: under The cloth, "Your cloth's look".
+**Personal looks (ADR 0014).** Every app offers looks true to its own world on one engine (`packages/core/src/look.ts`; `packages/kit/src/look.tsx` gives `useAppLook` and the headless `LookPicker`, skinned through `.lookpicker` hooks): ready-made presets, a bounded accent list, type pairings from fonts the app already self-hosts, text size and density. A look sets tokens only (layout never moves; size and density scale the app's pages, not its bar), light and dark stay with the house, and every preset × accent × mode passes `validateLookSpec` (body ≥ 7:1, secondary and accent text ≥ 4.5:1, button text ≥ 4.5:1). AMAZEEN: Office → "Your edition's look"; CASHEEN: "Your book's look"; ROUTEEN: under the Sky, "Your sky's look".
 
 **Behavioural invariants for every app's chrome:**
 - the same place, in every app, for the way back, the name, the places, search (⌘K), the lock (⌘⇧L) and the primary action
@@ -132,7 +132,7 @@ AMAZEEN's "Filed" stamp set the pattern. Every app and the house mark their most
 |---|---|---|
 | AMAZEEN | a piece is filed | "Filed": a red stamp slammed onto the page (its own, unchanged) |
 | AMAZEEN · Letters | a letter is sealed | "Sealed": hot wax spreads, the seal comes down with the letter's fingerprint ring, "Sealed until <date>" |
-| ROUTEEN | a day is woven | "Woven": the shuttle crosses and today's row tightens in the practice's own thread (700ms) |
+| ROUTEEN | a practice is lit | "Lit": a small sun with the tier's glyph rises along a fixed curve in the centred ceremony layer and settles, with "<name> lit" (700ms, never blocks the next tap) |
 | KINDRED | "I saw them today", a new card | "Letterpress strike": the name presses into card stock with a ring of ink |
 | MARGINALIA | a new underline · a new work | "The sweep": the line set large, a highlighter drawn under it, a pencil tick · "Filed": a catalogue card drops into its lettered drawer |
 | CASHEEN | an entry (or several, or an import) | "Entered": the sum written digit by digit, ruled off with a double line in red pen (green for money in); the cursor stays in the quick line |
@@ -182,7 +182,7 @@ Fonts are **self-hosted** (via `@fontsource`, as AMAZEEN does today) to keep the
 - One axis only; thin marks; a hover/focus tooltip; a table view.
 - Text is set in text colours, never in series colours.
 
-Each imprint may *style* charts in its own idiom (ALMANACK engraves them, ROUTEEN weaves them as cloth), but the rules above hold.
+Each imprint may *style* charts in its own idiom (ALMANACK engraves them, ROUTEEN draws them as tiles of sky), but the rules above hold.
 
 ## 9. Shared colour semantics
 

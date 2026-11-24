@@ -26,7 +26,7 @@ Conventions:
 **Lifeline:** combines all imprints' `WeekContribution`s per week.
 - *Moments* lens: the tone of the house inscription > the AMAZEEN mood-derived tone > none.
 - *Chapters* lens: the house's Chapters section (once FOLIO).
-- Markers: AMAZEEN letters (once ENVOI), REFRAIN rituals, KINDRED people, MARGINALIA works.
+- Markers: AMAZEEN letters (once ENVOI), ROUTEEN practices (once REFRAIN rituals), KINDRED people, MARGINALIA works.
 
 **v1 (Release 1):** lifeline 2D + 3D coil, doors menu, unlock, recovery kit, binding onboarding, house inscriptions, command palette, settings.
 
@@ -91,22 +91,28 @@ Conventions:
 - **Lifeline contribution:** none (it reflects on the lifeline rather than adding to it). It may mark **red-letter days** (birthdays, letter openings) as subtle markers.
 - **v1 (Release 1):** almanac page, echoes, weather of memory, red-letter days, printable year sheet, engraved orrery 2D, mechanical orrery 3D (immersive).
 
-## 6. ROUTEEN: Practices, woven daily (`modules/routeen`; once REFRAIN), ADR 0014
+## 6. ROUTEEN: Practices, a routine that bends with your day (`modules/routeen`; once REFRAIN, then the loom), ADR 0014, ADR 0015
 
-*REFRAIN became ROUTEEN, the loom.* Records keep their `refrain/*` paths. A ritual is now a **practice**: each is a **thread** (`thread`, an index into six natural dyes and six weave patterns, so threads never rely on colour; a practice without one reads REFRAIN's old `pitch` as its thread). A day reads as a **stitch** (`stitchOf`): woven, bare warp (an expected day that passed, never red), open, plain (not expected), future or off; `weave()` gives a week's strip and `clothLine()` a year. `instrument` and `pitch` are no longer written and audio is gone. Lifeline marker `ritual` and the `rituals.list`/`rituals.week` capabilities are kept (hrefs `/routeen/practice/<id>`). `/refrain/*` redirects to `/routeen/*`; settings saved under `refrain` are read as `routeen`. The original description follows.
-
+*Langit Hari, the day's sky (ADR 0015) replaced the loom.* Records keep their `refrain/*` paths. A ritual is a **practice**, kept on a day at one of three **tiers**; the whole routine runs in a **life mode**. Domain: `sky.ts` (the routine day, parts of day, settings), `practices.ts`, `modes.ts`, `days.ts` (day states, weeks, the year), `front.ts` (the front page), all pure and tested. `/refrain/*` redirects to `/routeen/*`, `/routeen/cloth` to `/routeen/sky`; settings saved under `refrain` are read as `routeen`.
 
 | Entity | Fields |
 |---|---|
-| `refrain/ritual` | `name` (≤ 60), `why?` (≤ 400), `cadence` (`daily` · `{ timesPerWeek: n }` · `{ weekly: weekday }`), `instrument` (`piano`/`marimba`/`strings`/`bell`), `pitch` (assigned automatically from a pentatonic set), `startedOn`, `pausedOn?` |
-| `refrain/look` | id `look`: the cloth's look (ADR 0014): `preset` (`linen`/`indigo`/`madder`/`night`), `accent?`, `type` (`hand`/`bookish`), `size`, `density` |
-| `refrain/mark` | `ritualId`, `date` (one per ritual per day) |
+| `refrain/ritual` | a practice: `name` (≤ 60), `why` (≤ 400), `cadence` (`{ kind: 'daily' }` · `{ kind: 'times', n }` with n 1–6 · `{ kind: 'weekly', weekday }`, 0 = Monday), `timeOfDay?` (`morning`/`midday`/`evening`/`anytime`; absent = `anytime`), `measure?` (`{ unit ≤ 20, target, minimum }`, 0 < minimum ≤ target; a hint only), `startedOn`, `pausedOn` (date or null). Old `thread`, `pitch` and `instrument` are ignored and never written. |
+| `refrain/mark` | id `${ritualId}_${date}` (one per practice per day), `ritualId`, `date`, `tier?` (`minimum`/`target`/`more`; **absent = `target`**, so every loom-era mark reads as Target) |
+| `refrain/mode` | a change of running mode: id = `from`, `mode` (`normal`/`low`/`off`), `from` (date). A second change on the same day overwrites it. The running mode of a day is the record with the latest `from ≤ day`; none means Normal. |
+| `refrain/day-mode` | one day's own mode: id = `date`, `date`, `mode`. Overrides the running mode for that date only; choosing the running mode removes it. (Lower case: the vault allows no capitals in paths.) |
+| `refrain/settings` | id `settings`: `dayEndsAt` (hour 0–5, default 3; read defensively, clamped), `backToNormalDismissedOn` (date or null) |
+| `refrain/look` | id `look`: the sky's look (ADR 0014, ADR 0015): `preset` (`fajar`/`siang`/`senja`/`malam`; loom-era `linen`/`indigo`/`madder`/`night` read as the nearest sky), `accent?` (`amber`/`sky`/`dusk`/`leaf`/`stone`; old dye ids aliased), `type` (`hand`/`bookish`), `size`, `density` |
 
-- **Rules:** expected beats come from the cadence. A missed expected beat is a *rest* (neutral). Pausing a ritual stops expectations without deleting history.
-- **Lifeline contribution:** marker `ritual` with `count` = marks that week; line *"REFRAIN · 3 of 4 rituals kept"*.
-- **Almanack facts:** total marks, the most constant ritual, rituals kept this year.
-- **Capabilities:** provides `rituals.week`; PROLOGUE hopes can link to a ritual.
-- **v1 (Release 2):** score, marking, playback 2D, ritual pages; richer instruments and year playback (immersive).
+- **The routine day** ends at `dayEndsAt` (default 03:00), so 00:30 belongs to the day before. Parts of day: morning `dayEndsAt`–11:00, midday 11:00–17:00, evening 17:00 until the day ends. Every contribution below uses the routine day, not the shell's midnight date. Changing `dayEndsAt` never re-dates a mark.
+- **Day states** (`dayState`): `lit-minimum` / `lit-target` / `lit-more` (marked), `unlit` (expected, the day passed in Normal or Low energy, no mark), `open` (expected today), `rest` (a Day off), `plain` (not expected: cadence, paused, before start), `future`.
+- **Kept:** a mark at any tier. A week is kept when its marks meet the cadence's expectation for days that were not a Day off (`n a week`: n less Day-off days, floor 0). A finished week whose whole expectation fell on Day-off days counts as kept. Low energy changes no expectation; Minimum simply counts.
+- **Due today** (`isDueOn`): active, not a Day off, and daily, weekly on its weekday, or `n a week` while the week's other days are short of n.
+- **Home** (`home()`): "N of M marked today" over practices due today; "Day off · a quiet night" on a Day off; "Nothing due today"; with no practices, "Add something you want to return to." and **New practice**. Action **Mark today**. **Badge:** "N to mark today", none on a Day off.
+- **Lifeline contribution:** marker `ritual` on every week with a mark; week line *"ROUTEEN · 3 of 4 practices kept"* (a count, for weeks that asked something of a practice).
+- **Almanac facts:** "Days lit" (days with at least one mark this year) and "The steadiest" (the practice kept in most of the last 52 weeks, at least 2: "lit in N weeks this year"). Counts only, never a percentage.
+- **Capabilities:** provides `rituals.list` (id, name, href `/routeen/practice/<id>`) and `rituals.week` (`{ kept, notes }`, where `notes` is the number of marks that week). No consumer today.
+- **Never:** streaks, scores, percentages, red for an unlit day, or "missed" in copy (a test guards the catalogue).
 
 ## 7. PROLOGUE (retired by ADR 0011)
 
@@ -194,7 +200,7 @@ Conventions:
   CASHEEN ── nothing: money stays in CASHEEN (ADR 0013)
 
   house · Chapters ── chapters.at ──▶ house inscriptions · AMAZEEN
-  REFRAIN ── rituals.list / rituals.week ──▶ (no consumer today)
+  ROUTEEN ── rituals.list / rituals.week ──▶ (no consumer today)
 
   Every app and house section ── lifeline() / weekLines() ──▶ house lifeline
                               ── almanacFacts() ──────────▶ house · Almanac

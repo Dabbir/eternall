@@ -25,7 +25,7 @@ ETERNALL is **one place, with many doors**. Each app is a complete product with 
 | **ETERNALL** (the house) | **Home**: one card per app, one action each; and, optionally, **your life in weeks** with inscriptions, chapters and an almanac summary | a calm front door; an atlas for the long view |
 | **AMAZEEN** | your journal, pressed into a weekly magazine; the **people** you write about, pinned on its wall; and letters to your future self, sealed in its post room | a magazine, its newsroom and its post room |
 | **CASHEEN** (formerly LEDGER) | your money, in and out, and a monthly budget, written in one line | an accountant's bound ledger |
-| **ROUTEEN** (formerly REFRAIN) | the practices you return to, each day a row woven | a hand loom and its cloth |
+| **ROUTEEN** (formerly REFRAIN) | the practices you return to, one tap to light each, a hard day still counted | the day's sky (Langit Hari, ADR 0015) |
 
 **Three apps and Home (ADR 0014):** MARGINALIA was retired (underlines became journal quotes), KINDRED became AMAZEEN · People, REFRAIN became ROUTEEN, and the house dashboard became Home.
 
