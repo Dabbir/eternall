@@ -6,21 +6,17 @@ import { Button, Segmented } from '@eternall/ui';
 import { copy } from '../copy';
 import { litDays, weekSky, yearSky, type DaySky } from '../days';
 import { ROUTEEN_LOOKS } from '../look';
-import { barStart, weekdayOf, type Practice } from '../practices';
-import { TIER_GLYPH } from './glyphs';
+import { barStart, timeOf, weekdayOf, type Practice } from '../practices';
+import { BodyIcon } from './Body';
 import { Go } from './Go';
+import { SkyBand } from './SkyBand';
 import { Tile, dayName } from './Tile';
+import { YearStrip } from './YearStrip';
 import type { SkyProps } from './skyScene';
 import type { Routine } from './useRoutine';
 
 const HOURS = [0, 1, 2, 3, 4, 5] as const;
 const byStart = (a: Practice, b: Practice) => a.startedOn.localeCompare(b.startedOn) || a.name.localeCompare(b.name);
-
-/** The month a row of the year opens, if one starts in it (or it is the first row). */
-function monthOf(week: readonly DaySky[], first: boolean): string | null {
-  const opening = week.find((d) => d.date.endsWith('-01')) ?? (first ? week[0] : undefined);
-  return opening ? copy.months[Number(opening.date.slice(5, 7)) - 1]! : null;
-}
 
 /**
  * The Sky (spec §4.6, §4.8): this week as seven tiles (Earlier / Later step through past weeks, so any
@@ -38,11 +34,6 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
   const [back, setBack] = useState(0);
   // "Later" (to this week) and "Back to this week" leave with the click, so focus goes to the week's heading.
   const weekHeading = useRef<HTMLHeadingElement>(null);
-  // The year opens at its end, where today is, when it is wider than its box (a phone).
-  // A callback ref, so it opens at today every time the flat year mounts (also on the way back from the dome).
-  const yearBox = useCallback((el: HTMLDivElement | null) => {
-    if (el) el.scrollLeft = el.scrollWidth;
-  }, []);
   const stepTo = (n: number) => {
     setBack(n);
     if (n === 0) weekHeading.current?.focus();
@@ -55,12 +46,15 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
   // Removed practices keep their marks (Undo, export), but only practices still here light the count.
   const here = new Set(r.practices.map((p) => p.id));
   const lit = litDays(r.marks.filter((m) => here.has(m.ritualId)), today.slice(0, 4));
+  // Days each practice was lit (a mark a day), for its row.
+  const litBy = new Map<string, number>();
+  for (const m of r.marks) litBy.set(m.ritualId, (litBy.get(m.ritualId) ?? 0) + 1);
   return (
     <div className="rs-page rs-sky">
-      <header className="rs-head">
+      <SkyBand size="short" mode={r.modeOf(today)} glow={1} label={copy.sky.bandYear}>
         <h1 className="rs-title">{copy.sky.title}</h1>
         <p className="rs-lede">{copy.sky.caption(lit)}</p>
-      </header>
+      </SkyBand>
 
       <section className="rs-section" aria-labelledby="rs-week-title">
         <h2 id="rs-week-title" className="rs-h2" ref={weekHeading} tabIndex={-1}>
@@ -110,23 +104,7 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
         {view === '3d' ? (
           <Dome year={year} today={today} onOpen={openDay} onDowngrade={() => setDimension('2d')} />
         ) : (
-          <div className="rs-year" ref={yearBox} tabIndex={0} role="table" aria-label={copy.aria.skyGrid}>
-            {year.map((w, i) => {
-              const month = monthOf(w, i === 0);
-              return (
-                <div key={w[0]!.date} className={`rs-year__row${month ? ' is-month' : ''}`} role="row">
-                  <span className="rs-year__month" role="rowheader">
-                    {month ?? <span className="visually-hidden">{copy.tile.week(dayName(w[0]!.date))}</span>}
-                  </span>
-                  {w.map((d) => (
-                    <span key={d.date} className="rs-year__cell" role="cell">
-                      <Tile sky={d} today={today} />
-                    </span>
-                  ))}
-                </div>
-              );
-            })}
-          </div>
+          <YearStrip year={year} today={today} />
         )}
       </section>
 
@@ -140,8 +118,14 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
           <ul className="rs-practices">
             {practices.map((p) => (
               <li key={p.id}>
-                <Go to={`/practice/${p.id}`}>{p.name}</Go>
-                {p.pausedOn && <span className="rs-practices__paused"> · {copy.sky.paused}</span>}
+                <Go className="rs-practices__row" to={`/practice/${p.id}`}>
+                  <BodyIcon kind={litBy.has(p.id) ? 'target' : 'unlit'} className="rs-practices__body" />
+                  <span className="rs-practices__name">{p.name}</span>
+                  <span className="rs-practices__meta">
+                    {copy.times[timeOf(p)]} · {copy.sky.litDays(litBy.get(p.id) ?? 0)}
+                    {p.pausedOn && ` · ${copy.sky.paused}`}
+                  </span>
+                </Go>
               </li>
             ))}
           </ul>
@@ -160,10 +144,8 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
           accentLegend={copy.sky.accent}
           sample={() => (
             <span className="rs-sample">
-              {(['minimum', 'target', 'more'] as const).map((t) => (
-                <span key={t} className={`rs-sample__glyph rs-tile--${t}`}>
-                  {TIER_GLYPH[t]}
-                </span>
+              {(['unlit', 'minimum', 'target', 'more'] as const).map((t) => (
+                <BodyIcon key={t} kind={t} className="rs-sample__body" />
               ))}
             </span>
           )}

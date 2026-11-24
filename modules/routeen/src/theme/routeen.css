@@ -246,17 +246,26 @@
 .rs-week__day { display: block; border-radius: var(--tile-radius); text-decoration: none; }
 .rs-week__day:hover .rs-tile { box-shadow: inset 0 0 0 2px var(--ink); }
 
-/* The year: a column per week (52), seven days down, month names on top. Scrolls in its own box. */
-.rs-year { --cell: 14px; position: relative; display: flex; gap: 3px; padding: 4px 5.5rem 10px 2px; overflow-x: auto; overscroll-behavior-x: contain; }
+/* The year: a strip of sky, a column per week (52), seven days down, month names on top (ADR 0016).
+   Points, not squares: a lit day is its shape in the accent, a day off a star, an expected day with no
+   light a faint ring, a day with nothing planned nothing. Scrolls in its own box. */
+.rs-year {
+  --cell: 14px; position: relative; display: flex; gap: 4px; padding: 10px 5.5rem 12px 12px; overflow-x: auto; overscroll-behavior-x: contain;
+  border-radius: 8px; background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
+}
 .rs-year:focus-visible { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
-.rs-year__row { flex: none; display: grid; grid-template-rows: 1.25rem repeat(7, var(--cell)); gap: 3px; width: var(--cell); }
-.rs-year__row.is-month { margin-left: 5px; }
-.rs-year__month { width: 0; overflow: visible; white-space: nowrap; font-size: 0.8125rem; color: var(--ink-2); }
+.rs-year__row { flex: none; display: grid; grid-template-rows: 1.25rem repeat(7, var(--cell)); gap: 4px; width: var(--cell); }
+.rs-year__row.is-month { margin-left: 6px; }
+.rs-year__month { width: 0; overflow: visible; white-space: nowrap; font-size: 0.8125rem; color: var(--ink); }
 .rs-year__cell { display: block; width: var(--cell); height: var(--cell); }
-.rs-year .rs-tile { --tile-glyph: 10px; border-radius: 2px; }
+.rs-year .rs-tile { background: transparent; border-radius: 50%; box-shadow: none; }
+.rs-year .rs-tile__light { width: 100%; height: 100%; }
+.rs-year .rs-tile--unlit { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink-2) 55%, transparent); transform: scale(0.6); }
+.rs-year .rs-tile--open { box-shadow: inset 0 0 0 1.5px var(--ink-2); transform: scale(0.7); }
+.rs-year .rs-tile--rest { color: var(--ink-2); }
+.rs-year .rs-tile--future { box-shadow: none; background: radial-gradient(circle, color-mix(in srgb, var(--ink-2) 45%, transparent) 0 1.5px, transparent 2px); }
 .rs-year .rs-tile__mode { display: none; }
-.rs-year .rs-tile__light ~ .rs-tile__mode { display: none; }
-.rs-year .rs-tile.is-today { outline-width: 1.5px; outline-offset: 1px; }
+.rs-year .rs-tile.is-today { outline-width: 1.5px; outline-offset: 2px; }
 @media (min-width: 1100px) { .rs-year { --cell: 15px; } }
 
 /* The year as a dome (immersive only); the flat year is its complete equivalent. */
@@ -278,16 +287,20 @@
 .rs-strip .rs-tile { border-radius: 2px; }
 .rs-strip .rs-tile__mode { display: none; }
 
-/* The sky's practices, the look and the day's end. */
-.rs-practices { display: grid; gap: 2px; margin: 0; padding: 0; list-style: none; }
-.rs-practices > li { display: flex; align-items: center; min-height: 44px; border-bottom: 1px solid var(--rule); font-size: 1.0625rem; }
-.rs-practices a { font-family: var(--font-display); }
-.rs-practices__paused { color: var(--ink-2); font-size: 0.9375rem; }
+/* The sky's practices as rows, the look and the day's end. */
+.rs-practices { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
+.rs-practices > li { border-bottom: 1px solid var(--rule); }
+.rs .rs-practices__row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 4px 14px; min-height: 56px; padding: 6px 8px 6px 4px; border-radius: var(--tile-radius); color: var(--ink); text-decoration: none; }
+.rs .rs-practices__row:hover { background: color-mix(in srgb, var(--accent) 7%, transparent); color: var(--ink); }
+.rs-practices__body { width: 22px; height: 22px; color: var(--ink-2); }
+.rs-practices__body.rs-shape--target { color: var(--accent); }
+.rs-practices__name { font-family: var(--font-display); font-size: 1.125rem; overflow-wrap: anywhere; }
+.rs-practices__meta { font-size: 0.9375rem; color: var(--ink-2); text-align: right; }
 .rs-look { margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--rule-strong); }
-.rs-sample { display: flex; align-items: center; justify-content: center; gap: 12px; height: 84px; border-radius: var(--tile-radius); background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom)); }
-.rs-sample__glyph { display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--tile-radius); font-size: 1.2rem; line-height: 1; background: var(--paper-raised); color: var(--accent-text); box-shadow: inset 0 0 0 1px var(--accent-text); }
-.rs-sample__glyph.rs-tile--more { background: var(--accent); color: var(--on-accent); box-shadow: none; }
-.rs-sample__glyph.rs-tile--target { background: color-mix(in srgb, var(--accent) 16%, var(--paper-raised)); }
+.rs-sample { position: relative; display: flex; align-items: center; justify-content: center; gap: 14px; height: 84px; border-radius: var(--tile-radius); background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom)); color: var(--accent); }
+.rs-sample::after { content: ''; position: absolute; left: 10%; right: 10%; bottom: 16px; height: 1px; background: var(--ink-2); }
+.rs-sample__body { width: 26px; height: 26px; }
+.rs-sample__body.rs-shape--unlit { color: var(--ink-2); }
 .rs-dayends .segmented { min-inline-size: 0; max-width: 100%; }
 .rs-dayends .segmented__opt { padding: 6px clamp(4px, 1.6vw, 14px); }
 
@@ -325,6 +338,8 @@
   .rs-row__name { font-size: 1.0625rem; }
   .rs-measure { grid-template-columns: minmax(0, 1fr); }
   .rs-dayends .segmented__opt { padding: 6px 2px; font-size: 0.875rem; }
+  .rs .rs-practices__row { grid-template-columns: auto minmax(0, 1fr); }
+  .rs-practices__meta { grid-column: 2; text-align: left; }
   .rs-band__head { grid-template-columns: minmax(0, 1fr); }
 }
 

@@ -147,6 +147,16 @@ describe('ROUTEEN, the day’s sky', () => {
     expect(within(year).getAllByRole('img', { name: /: lit, more$/ })).toHaveLength(1);
   });
 
+  it('lists each practice as a row with its lit days', async () => {
+    const day = routineDay(new Date(), 3);
+    const lit = rec(`refrain/mark/${markId('run', day)}`, { id: markId('run', day), ritualId: 'run', date: day, tier: 'target' });
+    at('/routeen/sky');
+    render(<Root store={createMemoryStore([settings(), ritual, lit])} />);
+    const row = await screen.findByRole('link', { name: /^Morning run/ });
+    expect(row).toHaveTextContent(copy.sky.litDays(1));
+    expect(screen.getByRole('img', { name: copy.sky.bandYear })).toBeInTheDocument();
+  });
+
   it('opens a day from a This week tile', async () => {
     const user = userEvent.setup();
     const day = routineDay(new Date(), 3);

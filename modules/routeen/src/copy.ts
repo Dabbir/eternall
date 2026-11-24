@@ -83,6 +83,7 @@ export const copy = {
     practices: 'Practices',
     noPractices: 'Your first practice starts the sky.',
     paused: 'paused',
+    litDays: (n: number) => `${plural(n, 'day')} lit`,
     look: 'Your sky’s look',
     lookNote: 'Choose the sky over your days. Every choice applies at once and stays readable; the shapes never change. Day or night follows ETERNALL.',
     accent: 'Accent',
