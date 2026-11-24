@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
-import { addDays } from '@eternall/core';
-import { LookPicker, type useAppLook } from '@eternall/kit';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { addDays, type ISODate } from '@eternall/core';
+import { LookPicker, useHouse, type useAppLook } from '@eternall/kit';
+import { DimensionToggle, Stage3D, themeColors } from '@eternall/stage';
 import { Button, Segmented } from '@eternall/ui';
 import { copy } from '../copy';
 import { litDays, weekSky, yearSky, type DaySky } from '../days';
@@ -9,6 +10,7 @@ import { barStart, weekdayOf, type Practice } from '../practices';
 import { TIER_GLYPH } from './glyphs';
 import { Go } from './Go';
 import { Tile, dayName } from './Tile';
+import type { SkyProps } from './skyScene';
 import type { Routine } from './useRoutine';
 
 const HOURS = [0, 1, 2, 3, 4, 5] as const;
@@ -27,6 +29,11 @@ function monthOf(week: readonly DaySky[], first: boolean): string | null {
  */
 export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<typeof useAppLook> }) {
   const { today } = r;
+  const house = useHouse();
+  // The flat year is the default and the complete equivalent; the dome only behind the immersive gate.
+  const [dimension, setDimension] = useState<'2d' | '3d'>('2d');
+  const view = house.immersive.allowed ? dimension : '2d';
+  const openDay = useCallback((date: ISODate) => house.navigate(house.href(`/day/${date}`)), [house]);
   // Weeks back from this one; the strip never goes past the current week.
   const [back, setBack] = useState(0);
   // "Later" (to this week) and "Back to this week" leave with the click, so focus goes to the week's heading.
@@ -44,7 +51,7 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
   const start = addDays(barStart(today), -7 * back);
   const week = weekSky(r.practices, r.idx, start, today, r.modeOf);
   const weekTitle = back === 0 ? copy.sky.thisWeek : copy.sky.weekOf(dayName(start));
-  const year = yearSky(r.practices, r.idx, today, r.modeOf);
+  const year = useMemo(() => yearSky(r.practices, r.idx, today, r.modeOf), [r.practices, r.idx, today, r.modeOf]);
   const practices = [...r.practices].sort(byStart);
   // Removed practices keep their marks (Undo, export), but only practices still here light the count.
   const here = new Set(r.practices.map((p) => p.id));
@@ -98,23 +105,30 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
         <h2 id="rs-year-title" className="rs-h2">
           {copy.sky.year}
         </h2>
-        <div className="rs-year" ref={yearBox} tabIndex={0} role="table" aria-label={copy.aria.skyGrid}>
-          {year.map((w, i) => {
-            const month = monthOf(w, i === 0);
-            return (
-              <div key={w[0]!.date} className={`rs-year__row${month ? ' is-month' : ''}`} role="row">
-                <span className="rs-year__month" role="rowheader">
-                  {month ?? <span className="visually-hidden">{copy.tile.week(dayName(w[0]!.date))}</span>}
-                </span>
-                {w.map((d) => (
-                  <span key={d.date} className="rs-year__cell" role="cell">
-                    <Tile sky={d} today={today} />
-                  </span>
-                ))}
-              </div>
-            );
-          })}
+        <div className="rs-year__view">
+          <DimensionToggle value={view} onChange={setDimension} allowed={house.immersive.allowed} reason={house.immersive.reason} label3d={copy.sky.dome} />
         </div>
+        {view === '3d' ? (
+          <Dome year={year} today={today} onOpen={openDay} onDowngrade={() => setDimension('2d')} />
+        ) : (
+          <div className="rs-year" ref={yearBox} tabIndex={0} role="table" aria-label={copy.aria.skyGrid}>
+            {year.map((w, i) => {
+              const month = monthOf(w, i === 0);
+              return (
+                <div key={w[0]!.date} className={`rs-year__row${month ? ' is-month' : ''}`} role="row">
+                  <span className="rs-year__month" role="rowheader">
+                    {month ?? <span className="visually-hidden">{copy.tile.week(dayName(w[0]!.date))}</span>}
+                  </span>
+                  {w.map((d) => (
+                    <span key={d.date} className="rs-year__cell" role="cell">
+                      <Tile sky={d} today={today} />
+                    </span>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       <section className="rs-section" aria-labelledby="rs-practices-title">
@@ -170,6 +184,41 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
         />
         <p className="rs-hint">{copy.dayEndsAtHint}</p>
       </section>
+    </div>
+  );
+}
+
+const loadSky = () => import('./skyScene');
+
+/** The year as a dome (immersive only): the same days as the flat year, past and present, in the sky's own colours. */
+function Dome({ year, today, onOpen, onDowngrade }: { year: DaySky[][]; today: ISODate; onOpen(date: ISODate): void; onDowngrade(): void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [colors, setColors] = useState<SkyProps['colors'] | null>(null);
+  useEffect(() => {
+    if (ref.current) {
+      const c = themeColors(ref.current, ['ink', 'accent']);
+      setColors({ paper: c.paper, ink: c.ink, accent: c.accent });
+    }
+  }, []);
+  const days = useMemo(() => year.flat().filter((d) => !d.future).map(({ date, light, mode }) => ({ date, light, mode })), [year]);
+  const props = useMemo<SkyProps | null>(() => (colors ? { days, colors, onOpen } : null), [colors, days, onOpen]);
+  const marked = days.filter((d) => d.light || d.mode === 'off');
+  const byDate = new Map(year.flat().map((d) => [d.date, d]));
+  return (
+    <div ref={ref} className="rs-dome">
+      {props && <Stage3D load={loadSky} props={props} label={copy.sky.domeLabel} onDowngrade={onDowngrade} className="rs-dome__stage" />}
+      <ul className="visually-hidden" aria-label={copy.sky.domeDays}>
+        {marked.map((d) => (
+          <li key={d.date}>
+            <Go to={`/day/${d.date}`}>
+              <Tile sky={byDate.get(d.date)!} today={today} />
+            </Go>
+          </li>
+        ))}
+      </ul>
+      <p className="rs-dome__hint" aria-hidden="true">
+        {copy.sky.domeHint}
+      </p>
     </div>
   );
 }

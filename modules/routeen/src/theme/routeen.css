@@ -199,6 +199,13 @@
 .rs-year .rs-tile.is-today { outline-width: 1.5px; outline-offset: 1px; }
 @media (min-width: 1100px) { .rs-year { --cell: 15px; } }
 
+/* The year as a dome (immersive only); the flat year is its complete equivalent. */
+.rs-year__view { display: flex; justify-content: flex-end; margin: 0 0 12px; }
+.rs-dome { position: relative; }
+.rs-dome__stage { height: min(70vh, 640px); background: radial-gradient(75% 65% at 50% 70%, color-mix(in srgb, var(--accent) 10%, transparent), transparent); }
+@media (max-width: 600px) { .rs-dome__stage { height: min(60vh, 440px); } }
+.rs-dome__hint { position: absolute; left: 12px; bottom: 10px; margin: 0; font-size: 0.875rem; font-style: italic; color: var(--ink-2); pointer-events: none; }
+
 /* A practice's year, a week a tile. */
 .rs-strip { display: grid; grid-template-columns: repeat(auto-fill, 20px); gap: 3px; margin: 24px 0 0; padding: 0; list-style: none; --tile-glyph: 11px; }
 .rs-strip .rs-tile { border-radius: 2px; }
