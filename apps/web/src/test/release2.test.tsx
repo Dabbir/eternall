@@ -112,27 +112,13 @@ describe('KINDRED reminders', () => {
   });
 });
 
-describe('MARGINALIA and the Overheard page', () => {
-  it('keeps underlines with the margin, and offers opted-in ones to AMAZEEN', async () => {
-    const user = userEvent.setup();
-    at('/marginalia/work/waves');
-    const { unmount } = render(<Root store={createMemoryStore([settings(), work, line])} />);
-    expect(await screen.findByText(/I have made up thousands of stories/)).toBeInTheDocument();
-    expect(screen.getByText('— p. 112')).toBeInTheDocument();
-    unmount();
 
+describe('MARGINALIA, retired (ADR 0014)', () => {
+  it('turns its underlines into AMAZEEN quotes when the vault opens, keeping the originals', async () => {
+    at('/');
     const store = createMemoryStore([settings(), work, line, magazine]);
-    at('/amazeen/');
     render(<Root store={store} />);
-    await user.click(await screen.findByRole('button', { name: /1 underline offered from MARGINALIA/ }));
-    await user.click(screen.getByRole('button', { name: 'Add to this issue' }));
-    await waitFor(() => expect(store.dump().some((r) => r.key.startsWith('amazeen/entry/') && (r.value as { kind: string }).kind === 'quote')).toBe(true));
-  });
-
-  it('offers nothing to AMAZEEN when MARGINALIA is disabled', async () => {
-    at('/amazeen/');
-    render(<Root store={createMemoryStore([settings(['marginalia']), work, line, magazine])} />);
-    expect((await screen.findAllByText(/to press/)).length).toBeGreaterThan(0);
-    expect(screen.queryByRole('button', { name: /offered from MARGINALIA/ })).not.toBeInTheDocument();
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'amazeen/entry/mg_u1')?.value).toMatchObject({ kind: 'quote', body: 'I have made up thousands of stories.', attribution: 'Virginia Woolf, The Waves, p. 112' }));
+    expect(store.dump().find((r) => r.key === 'marginalia/underline/u1')?.deleted).toBe(false);
   });
 });

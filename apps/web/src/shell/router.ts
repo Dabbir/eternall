@@ -44,6 +44,9 @@ export function retiredDoorRedirect(pathname: string, search: string): string | 
       return '/almanac';
     case 'prologue':
       return '/inscriptions';
+    // MARGINALIA was retired (docs/adr/0014): its underlines are quotes on AMAZEEN's Shelf now.
+    case 'marginalia':
+      return '/amazeen/shelf';
     // LEDGER was renamed CASHEEN (docs/adr/0013); its data still lives under `ledger/*`.
     case 'ledger':
       return `/casheen${rest.length ? `/${rest.join('/')}` : '/'}${q}`;
@@ -72,7 +75,7 @@ export function useHref(): string {
 type ViewTransitionDoc = Document & { startViewTransition?: (cb: () => void) => unknown };
 const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 const firstSegment = (href: string) => href.replace(/^\/+/, '').split(/[/?#]/)[0] ?? '';
-const APP_DOORS = new Set(['amazeen', 'refrain', 'kindred', 'marginalia', 'casheen']);
+const APP_DOORS = new Set(['amazeen', 'refrain', 'kindred', 'casheen']);
 /** Which "site" an href belongs to: an app's id, or the house. */
 const siteOf = (href: string) => (APP_DOORS.has(firstSegment(href)) ? firstSegment(href) : 'house');
 

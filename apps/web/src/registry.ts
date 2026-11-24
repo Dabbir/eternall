@@ -2,13 +2,12 @@ import type { Contributor, HouseSection, ImprintDefinition, ImprintId } from '@e
 import { amazeen } from '@eternall/amazeen';
 import { refrain } from '@eternall/refrain';
 import { kindred } from '@eternall/kindred';
-import { marginalia } from '@eternall/marginalia';
 import { casheen } from '@eternall/casheen';
 import { chaptersSection } from './house/chapters/section';
 import { almanacSection } from './house/almanac/section';
 
 /** The apps, each its own door (docs/adr/0011, 0012). Definitions are light; UIs load lazily. */
-export const IMPRINTS: readonly ImprintDefinition[] = [amazeen, casheen, refrain, kindred, marginalia];
+export const IMPRINTS: readonly ImprintDefinition[] = [amazeen, casheen, refrain, kindred];
 
 /** Parts of the house that keep records and contribute like apps do (once FOLIO and ALMANACK). */
 export const HOUSE_SECTIONS: readonly HouseSection[] = [chaptersSection, almanacSection];

@@ -26,5 +26,5 @@ export interface HostControls {
 export const HostControlsContext = createContext<HostControls | null>(null);
 export const useHostControls = (): HostControls | null => useContext(HostControlsContext);
 
-/** Something the host adds at the top of the Desk (inside ETERNALL: quotes offered from MARGINALIA). */
+/** Something the host may add at the top of the Desk (unused since MARGINALIA's Overheard was retired, docs/adr/0014). */
 export const DeskExtrasContext = createContext<ComponentType | null>(null);

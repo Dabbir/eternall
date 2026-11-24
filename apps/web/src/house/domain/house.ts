@@ -61,6 +61,8 @@ export const DEFAULT_SETTINGS: HouseSettings = {
 
 /** Apps that were renamed, old id → new id (docs/adr/0013: LEDGER became CASHEEN). Their data paths never moved. */
 export const RENAMED_APPS: Readonly<Record<string, string>> = { ledger: 'casheen' };
+/** Apps that were retired (docs/adr/0014): their ids drop out of saved settings. Their data stays in the vault. */
+export const RETIRED_APPS: ReadonlySet<string> = new Set(['marginalia']);
 
 /**
  * Settings saved before a rename still name the old app id (`hidden: ['ledger']`, `intro:ledger`).
@@ -69,8 +71,9 @@ export const RENAMED_APPS: Readonly<Record<string, string>> = { ledger: 'casheen
 export function withCurrentIds(settings: HouseSettings): HouseSettings {
   const id = (x: string) => RENAMED_APPS[x] ?? x;
   const hint = (x: string) => (x.startsWith('intro:') ? `intro:${id(x.slice(6))}` : x);
-  const out: HouseSettings = { ...settings, hidden: [...new Set(settings.hidden.map(id))], dismissed: [...new Set(settings.dismissed.map(hint))] };
-  if (settings.apps) out.apps = [...new Set(settings.apps.map((x) => id(x) as ImprintId))];
+  const live = (x: string) => !RETIRED_APPS.has(x);
+  const out: HouseSettings = { ...settings, hidden: [...new Set(settings.hidden.map(id))].filter(live), dismissed: [...new Set(settings.dismissed.map(hint))] };
+  if (settings.apps) out.apps = [...new Set(settings.apps.map(id))].filter(live) as ImprintId[];
   return out;
 }
 

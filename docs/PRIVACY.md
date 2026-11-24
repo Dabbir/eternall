@@ -154,6 +154,10 @@ Sync and immersive modes require an active licence (`BUSINESS.md`). The licence 
 
 Consolidating to four apps changed no keys, no encryption and no sync. Records of the retired imprints keep their paths and stay encrypted in the vault and in exports. The only new writes are house inscriptions created from PROLOGUE seasons and a migration log (`house/migrations`), both ordinary encrypted vault records. Each app's theme is scoped on `<body data-imprint>`, which carries only the app's id, never content.
 
+### MARGINALIA, retired (ADR 0014)
+
+Retiring MARGINALIA changed no keys, encryption or sync. Its records keep their paths and stay encrypted in the vault and in exports; the only new writes are AMAZEEN entries made from them and a migration log in `house/migrations`, both ordinary encrypted records.
+
 ### Data boundaries between apps (ADR 0013)
 
 Apps share foundations, not data. The vault, export, recovery, the lock and sync are shared; content is not.

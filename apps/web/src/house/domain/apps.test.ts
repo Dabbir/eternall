@@ -13,7 +13,7 @@ describe('appsOn', () => {
     expect(appsOn({ hidden: ['kindred', 'amazeen'] }, ['kindred'])).toEqual(['amazeen', 'casheen']);
   });
   it('follows the person’s choice once made, always with AMAZEEN', () => {
-    expect(appsOn({ apps: ['marginalia'], hidden: [] }, ['kindred'])).toEqual(['amazeen', 'marginalia']);
+    expect(appsOn({ apps: ['refrain'], hidden: [] }, ['kindred'])).toEqual(['amazeen', 'refrain']);
   });
 });
 

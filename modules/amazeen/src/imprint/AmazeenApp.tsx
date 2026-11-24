@@ -17,8 +17,7 @@ import { NowProvider } from '../state/now';
 import { StoreProvider } from '../state/store';
 import { SyncProvider } from '../sync/SyncProvider';
 import { Frame, Screens } from '../Screens';
-import { DeskExtrasContext, EmbeddedContext, HostControlsContext, ImmersiveContext, type HostControls } from './embedded';
-import { OfferedQuotes } from './OfferedQuotes';
+import { EmbeddedContext, HostControlsContext, ImmersiveContext, type HostControls } from './embedded';
 import { amazeen } from '../index';
 import { createVaultAdapter, type VaultLike } from './vaultAdapter';
 import { MoveIn } from './MoveIn';
@@ -50,7 +49,6 @@ export default function AmazeenApp() {
       <MentionContext.Provider value={house.capability('people.mention')}>
       <HostControlsContext.Provider value={host}>
       <LookContext.Provider value={lookControls}>
-      <DeskExtrasContext.Provider value={OfferedQuotes}>
         <ErrorBoundary>
           <NowProvider>
             <StoreProvider fallback={<PressLoader label="Opening the archive…" />} adapter={adapter}>
@@ -66,7 +64,6 @@ export default function AmazeenApp() {
             </StoreProvider>
           </NowProvider>
         </ErrorBoundary>
-      </DeskExtrasContext.Provider>
       </LookContext.Provider>
       </HostControlsContext.Provider>
       </MentionContext.Provider>

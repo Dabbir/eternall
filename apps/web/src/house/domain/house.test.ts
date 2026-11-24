@@ -44,5 +44,6 @@ describe('withCurrentIds', () => {
     const s = withCurrentIds({ ...DEFAULT_SETTINGS, hidden: ['ledger', 'kindred'], dismissed: ['intro:ledger', 'intro:casheen', 'lens-hint'] });
     expect(s.hidden).toEqual(['casheen', 'kindred']);
     expect(s.dismissed).toEqual(['intro:casheen', 'lens-hint']);
+    expect(withCurrentIds({ ...DEFAULT_SETTINGS, apps: ['amazeen', 'marginalia' as never], hidden: ['marginalia'] })).toMatchObject({ apps: ['amazeen'], hidden: [] });
   });
 });

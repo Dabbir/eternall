@@ -43,7 +43,7 @@ Conventions:
 
 - **Lifeline contribution:** per ISO week with entries, give `tone` = mood mapped to tones (5 sunny → joy, 4 → calm, 3 → wonder, 2 → tender, 1 → grief; mapping documented, and overridden by the house inscription tone if present), `count`, and line *"Issue 47 · '<cover story title>'"*. AMAZEEN uses ISO weeks while the lifeline uses birthday-anchored weeks, so an issue contributes to the lifeline week containing its Sunday press date.
 - **Almanack facts:** issues published, words written, weather of the year (mood distribution), longest run of issues.
-- **Capabilities:** consumes `people.mention`, `quotes.offer` (Overheard candidates, opt-in), `chapters.at` (an issue's chapter on its contents page), `letters.compose` ("Seal this cover story as a letter").
+- **Capabilities:** consumes `people.mention`, `chapters.at` (an issue's chapter on its contents page), `letters.compose` ("Seal this cover story as a letter").
 - **v1 (Release 1):** everything in v1.4 + vault storage + lifeline contribution + turnable covers (immersive).
 - **Later:** a printed bound annual volume (à la carte).
 
@@ -136,7 +136,10 @@ Conventions:
 - **Capabilities:** provides `people.mention` (picker + resolver). A mention in another imprint adds to the person's shared timeline (resolved at read time, no back-writes into other imprints).
 - **v1 (Release 2):** card file, card front/back, seen-today, constellation 2D, constellation 3D (immersive), local birthday reminders (opt-in), optional photos.
 
-## 9. MARGINALIA: Reading & underlines (`modules/marginalia`), Release 2
+## 9. MARGINALIA (retired by ADR 0014)
+
+*Retired.* Each `marginalia/underline` becomes one AMAZEEN quote (`amazeen/entry/mg_<underline id>`: the passage, attribution "By, Title, locator" (≤ 80), the margin note as a second paragraph, section *culture*, dated at the underline). A finished work without underlines becomes one note (`mg_<work id>`, "Finished “Title” by X." with its landing). The migration (`migrateMarginalia`, `apps/web/src/house/domain/migrations.ts`) runs once per record, including records that arrive later by sync, and is logged in `house/migrations` (id `marginalia`); deleting a quote does not bring it back. The original records stay in the vault and in exports. `/marginalia/*` redirects to `/amazeen/shelf`. The description below is historical.
+
 
 | Entity | Fields |
 |---|---|
@@ -176,7 +179,7 @@ Conventions:
 ## Cross-app map (since ADR 0011)
 
 ```
-            people.mention                     quotes.offer
+            people.mention
   KINDRED ───────────────▶ AMAZEEN ◀─────────────── MARGINALIA
                         (pieces + Letters)
 

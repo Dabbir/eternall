@@ -57,7 +57,7 @@ Named dark mode: **Night edition**.
 | Routes | `/`, `/write/:kind`, `/issue/:week`, `/shelf`, `/settings` | Same, under `/amazeen/` | One origin, many doors |
 | PWA | `amazeen-app` manifest | Its own manifest with `scope: /amazeen/`, installable as **AMAZEEN** | Keeps its identity |
 | Entries on the lifeline | none | Each issue contributes to its week: dominant mood → tone, cover story title, piece count | Lifeline principle |
-| Cross-links | none | Mentions of KINDRED people; MARGINALIA quotes as candidates for "Overheard" (opt-in) | Bonuses, never requirements |
+| Cross-links | none | Mentions of KINDRED people; (MARGINALIA's "Overheard" was retired by ADR 0014; its underlines are quotes in the journal now) | Bonuses, never requirements |
 
 ## 7. Signature moments
 - **Existing (2D):** the Sunday *press*: the issue is compiled, the cover is riso-printed, and the *FILED* rubber stamp lands.

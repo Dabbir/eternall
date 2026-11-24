@@ -148,6 +148,7 @@ describe('retired doors', () => {
   it('send old links to where their pages live now', async () => {
     const { retiredDoorRedirect } = await import('../shell/router');
     expect(retiredDoorRedirect('/envoi/', '')).toBe('/amazeen/letters');
+    expect(retiredDoorRedirect('/marginalia/work/waves', '')).toBe('/amazeen/shelf');
     expect(retiredDoorRedirect('/envoi/letter/l1', '')).toBe('/amazeen/letters/letter/l1');
     expect(retiredDoorRedirect('/envoi/write', '?opensOn=2030-01-01')).toBe('/amazeen/letters/write?opensOn=2030-01-01');
     expect(retiredDoorRedirect('/folio/chapter/c1', '')).toBe('/chapters?open=c1');
@@ -245,7 +246,6 @@ describe('one app bar (ADR 0013)', () => {
     ['/casheen/', /^Add an entry$/],
     ['/refrain/', /^(Mark today|New ritual)$/],
     ['/kindred/', /^Add a person$/],
-    ['/marginalia/', /^Add a work$/],
   ];
   it.each(apps)('%s keeps back, search and its primary action in the same order', async (door, primary) => {
     at(door);

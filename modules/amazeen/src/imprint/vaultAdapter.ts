@@ -35,12 +35,18 @@ export function readFromVault(vault: Pick<VaultLike, 'collection'>): AppData {
 /**
  * AMAZEEN's StorageAdapter, backed by the vault: one record per entry plus one for the masthead
  * and covers. Deletions become vault tombstones, which replaces AMAZEEN's own tombstone map.
+ *
+ * Only entries this adapter has loaded or saved can be deleted by a save: an entry written into the
+ * vault meanwhile (by sync, or a house migration such as MARGINALIA's quotes) is never mistaken for
+ * one the person removed. It appears the next time AMAZEEN loads.
  */
 export function createVaultAdapter(vault: VaultLike): StorageAdapter {
+  let known = new Set<string>();
   return {
     kind: 'indexeddb',
     async load() {
       const data = readFromVault(vault);
+      known = new Set(data.entries.map((e) => e.id));
       return data.magazine || data.entries.length ? { status: 'ok', data, skipped: 0 } : { status: 'empty', data: EMPTY_DATA };
     },
     async save(data) {
@@ -52,7 +58,8 @@ export function createVaultAdapter(vault: VaultLike): StorageAdapter {
         const prev = current.get(e.id);
         if (!prev || JSON.stringify(prev) !== JSON.stringify(e)) entries.put(e);
       }
-      for (const id of current.keys()) if (!keep.has(id)) entries.remove(id);
+      for (const id of current.keys()) if (!keep.has(id) && known.has(id)) entries.remove(id);
+      known = keep;
       const meta: AmazeenMeta = {
         id: 'main',
         magazine: data.magazine,

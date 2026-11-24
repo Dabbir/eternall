@@ -26,9 +26,6 @@ export interface Capabilities {
     nameOf(id: string): string | null;
     href(id: string): string;
   };
-  'quotes.offer': {
-    offered(): { id: string; text: string; by: string; workTitle: string }[];
-  };
   'chapters.at': {
     at(date: ISODate): { id: string; title: string; color: string; href: string } | null;
   };

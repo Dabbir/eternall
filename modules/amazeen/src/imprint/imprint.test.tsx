@@ -24,6 +24,17 @@ describe('vault adapter', () => {
     expect(loaded.data.magazine?.title).toBe('The Weekly Me');
   });
 
+  it('never deletes an entry that arrived in the vault after it last loaded (sync, a house migration)', async () => {
+    const vault = await Vault.open(createMemoryStore());
+    const adapter = createVaultAdapter(vault);
+    await adapter.load();
+    await adapter.save(data([entry('a', '2026-11-16T10:00:00.000Z')]));
+    vault.collection<Entry>(ENTRY_PATH).put(entry('mg_u1', '2026-09-20T08:30:00.000Z'));
+    await adapter.save(data([entry('a', '2026-11-16T10:00:00.000Z')]));
+    expect(vault.collection(ENTRY_PATH).get('mg_u1')).toBeTruthy();
+    expect((await adapter.load()).data.entries.map((e) => e.id).sort()).toEqual(['a', 'mg_u1']);
+  });
+
   it('only writes what changed', async () => {
     const vault = await Vault.open(createMemoryStore());
     const adapter = createVaultAdapter(vault);

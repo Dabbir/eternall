@@ -238,6 +238,6 @@ Used on every screen, in every imprint, before it ships:
 | AMAZEEN (with Letters) | `design/amazeen.md` |
 | REFRAIN | `design/refrain.md` |
 | KINDRED | `design/kindred.md` |
-| MARGINALIA | `design/marginalia.md` |
+| MARGINALIA (retired) | `design/archive/marginalia.md` |
 | CASHEEN | `design/casheen.md` |
 | Retired: ENVOI, FOLIO, ALMANACK, PROLOGUE | `design/archive/*.md` (their systems live on in Letters, Chapters and the Almanac) |

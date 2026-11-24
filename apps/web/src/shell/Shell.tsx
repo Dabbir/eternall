@@ -4,7 +4,7 @@ import { HouseProvider, type CapabilityId, type Capabilities, type House, type P
 import { useToast } from '@eternall/ui';
 import { useVault, useVaultVersion } from '@eternall/vault';
 import { IMPRINTS, IMPRINT_IDS, contributorsOf, imprintById } from '../registry';
-import { migratePrologue } from '../house/domain/migrations';
+import { migrateMarginalia, migratePrologue } from '../house/domain/migrations';
 import { appsOn } from '../house/domain/apps';
 import { INSCRIPTION_PATH, type Inscription } from '../house/domain/house';
 import { HousePages } from '../house/HousePages';
@@ -65,6 +65,8 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   // Retired PROLOGUE seasons become inscriptions, once each, including ones that arrive by sync.
   useEffect(() => {
     migratePrologue(vault, today);
+    // Retired MARGINALIA's underlines become AMAZEEN quotes (docs/adr/0014).
+    migrateMarginalia(vault);
   }, [vault, version, today]);
   const used = useMemo(() => enabled.filter((d) => d.hasData(ctx)), [enabled, ctx]);
   useReminders(contributors, ctx, settings.systemNotifications);
