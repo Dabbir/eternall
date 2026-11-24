@@ -152,3 +152,16 @@
 @keyframes lr-write { to { width: calc(var(--chars, 10) * 1ch); } }
 @keyframes lr-rule { to { transform: scaleX(1); } }
 @keyframes lr-in { to { opacity: 1; } }
+
+/* ---------- your book's look (ADR 0014) ---------- */
+/* Size and density scale the book's pages, never the bar. */
+[data-imprint='casheen'] .lc-body { --gutter: calc(clamp(16px, 4vw, 48px) * var(--look-space, 1)); line-height: calc(1.5 * var(--look-leading, 1)); zoom: var(--look-scale, 1); }
+[data-imprint='casheen'] .lookpicker__preset { border-radius: 0; }
+[data-imprint='casheen'] .lookpicker__label { font-family: var(--font-display); }
+[data-imprint='casheen'] .lookpicker__option { border-radius: 0; font-family: var(--font-ui); }
+.lk-sample { display: grid; gap: 0; padding: 8px 8px 10px; background: var(--paper-raised); border-left: 3px double var(--margin-red); background-image: repeating-linear-gradient(to bottom, transparent 0 21px, var(--ruling) 21px 22px); }
+.lk-sample__row { display: flex; justify-content: space-between; gap: 8px; min-height: 22px; align-items: center; font-family: var(--font-ui); font-size: 0.875rem; color: var(--ink); }
+.lk-sample__in { color: var(--accent); }
+.lk-sample__rule { height: 4px; margin-top: 6px; border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.lk-preview { padding: 14px 16px; background: var(--paper-raised); border-left: 3px double var(--margin-red); color: var(--ink-2); }
+.lk-preview__month { font-family: var(--font-display); font-size: 1.3rem; color: var(--ink); }

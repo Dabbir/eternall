@@ -1,10 +1,15 @@
-import { ACCENTS, DEFAULT_LOOK, PRESETS, contrast, isDefaultLook, lookCss, lookTokens, readLook, withPreset, type AccentId, type Mode, type PresetId } from './look';
+import { validateLookSpec } from '@eternall/core';
+import { ACCENTS, AMAZEEN_LOOKS, DEFAULT_LOOK, PRESETS, contrast, isDefaultLook, lookCss, lookTokens, readLook, withPreset, type AccentId, type Mode, type PresetId } from './look';
 
 const presets = Object.keys(PRESETS) as PresetId[];
 const accents = Object.keys(ACCENTS) as AccentId[];
 const modes: Mode[] = ['light', 'dark'];
 
 describe('your edition’s look', () => {
+  it('passes the shared contrast check for every preset, accent and mode', () => {
+    expect(validateLookSpec(AMAZEEN_LOOKS)).toEqual([]);
+  });
+
   it('measures contrast the WCAG way', () => {
     expect(contrast('#000000', '#ffffff')).toBeCloseTo(21, 0);
     expect(contrast('#777777', '#777777')).toBeCloseTo(1, 5);

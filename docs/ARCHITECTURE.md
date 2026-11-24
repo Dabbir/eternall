@@ -227,3 +227,6 @@ To wrap the PWA later without rewriting:
 - **No third-party scripts, analytics or CDNs at runtime.**
 - **Input validation** at every boundary: imprint schemas on write, `readArchive`-style validation on import, and strict wire validation in the Worker.
 - **Rate limiting and quotas** on the Worker (as AMAZEEN's README prescribes).
+
+## Looks (ADR 0014)
+`packages/core/src/look.ts` holds the pure engine (`LookSpec`, `readLook`, `lookTokens`, `lookCss`, `validateLookSpec`, `withPreset`); each app declares its spec (`modules/amazeen/src/imprint/look/look.ts`, `modules/casheen/src/look.ts`, `modules/routeen/src/look.ts`). `packages/kit/src/look.tsx` reads the vault record (`useAppLook`), injects one `<style data-look=<id>>` for light and dark keyed on `[data-imprint=<id>][data-look]`, and renders the headless `LookPicker`.

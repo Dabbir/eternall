@@ -43,3 +43,33 @@ describe('your edition’s look', () => {
     expect(window.localStorage.getItem('amazeen:theme')).toBeNull();
   });
 });
+
+describe('every app has its own looks (ADR 0014)', () => {
+  const quietAll = rec('house/settings/prefs', { id: 'prefs', theme: 'light', lens: 'moments', flatPages: false, dismissed: ['intro:amazeen', 'intro:casheen', 'intro:routeen'], hidden: [], autoLockMinutes: 15 });
+
+  it('CASHEEN: a book is chosen, worn at once and kept in the vault', async () => {
+    const user = userEvent.setup();
+    window.history.replaceState(null, '', '/casheen/look');
+    const store = createMemoryStore([quietAll]);
+    render(<Root store={store} />);
+    await user.click(await screen.findByRole('radio', { name: /^Blue ruling/ }, { timeout: 4000 }));
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'ledger/look/look')?.value).toMatchObject({ preset: 'blue' }));
+    expect(document.head.querySelector("style[data-look='casheen']")?.textContent).toContain('--paper: #edf1f5');
+    await user.click(screen.getByRole('radio', { name: 'Clerk' }));
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'ledger/look/look')?.value).toMatchObject({ type: 'clerk' }));
+    expect(Object.keys(window.localStorage)).toEqual([]);
+  });
+
+  it('ROUTEEN: a cloth is chosen under the year’s cloth, and Reset offers Undo', async () => {
+    const user = userEvent.setup();
+    window.history.replaceState(null, '', '/routeen/cloth');
+    const store = createMemoryStore([quietAll]);
+    render(<Root store={store} />);
+    await user.click(await screen.findByRole('radio', { name: /^Madder Warm/ }, { timeout: 4000 }));
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'refrain/look/look')?.value).toMatchObject({ preset: 'madder' }));
+    expect(document.body.dataset.look).toBe('');
+    await user.click(screen.getByRole('button', { name: 'Reset to Linen' }));
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'refrain/look/look')?.value).toMatchObject({ preset: 'linen' }));
+    expect(await screen.findByRole('button', { name: 'Undo' })).toBeInTheDocument();
+  });
+});

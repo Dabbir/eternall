@@ -1,3 +1,5 @@
+import { LOOK_DENSITIES, LOOK_SIZES, contrast, isDefaultLook as coreIsDefault, lookCss as coreCss, lookTokens as coreTokens, readLook as coreReadLook, withPreset as coreWithPreset, type LookSpec } from '@eternall/core';
+
 /**
  * Your edition's look (docs/design/amazeen.md §13; docs/PRODUCT.md): a few ready-made looks and a
  * small, bounded set of choices — accent, typeface, text size and density — so every combination stays
@@ -88,104 +90,42 @@ export const TYPES: Record<TypeId, { label: string; note: string; display: strin
   typewriter: { label: 'Typewriter', note: 'Mono headlines over Newsreader copy', display: MONO, text: TEXT },
 };
 
-export const SIZES: Record<SizeId, { label: string; scale: number }> = {
-  s: { label: 'Small', scale: 0.92 },
-  m: { label: 'Medium', scale: 1 },
-  l: { label: 'Large', scale: 1.12 },
-  xl: { label: 'Extra large', scale: 1.25 },
-};
+export const SIZES: Record<SizeId, { label: string; scale: number }> = LOOK_SIZES;
 
-export const DENSITIES: Record<DensityId, { label: string; space: number; leading: number }> = {
-  compact: { label: 'Compact', space: 0.7, leading: 0.94 },
-  regular: { label: 'Regular', space: 1, leading: 1 },
-  airy: { label: 'Airy', space: 1.35, leading: 1.08 },
-};
-
-const has = <K extends string>(rec: Record<K, unknown>, k: unknown): k is K => typeof k === 'string' && Object.prototype.hasOwnProperty.call(rec, k);
-
-/** A stored look, read safely: anything unknown falls back to the default, never to a broken page. */
-export function readLook(raw: unknown): Look {
-  const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
-  const look: Look = {
-    id: 'look',
-    preset: has(PRESETS, r.preset) ? r.preset : DEFAULT_LOOK.preset,
-    type: has(TYPES, r.type) ? r.type : DEFAULT_LOOK.type,
-    size: has(SIZES, r.size) ? r.size : DEFAULT_LOOK.size,
-    density: has(DENSITIES, r.density) ? r.density : DEFAULT_LOOK.density,
-  };
-  if (has(ACCENTS, r.accent)) look.accent = r.accent;
-  return look;
-}
-
-/** Choose a ready-made look: it brings its own accent, and keeps the person's type, size and density. */
-export function withPreset(look: Look, preset: PresetId): Look {
-  return { id: 'look', preset, type: look.type, size: look.size, density: look.density };
-}
-
-export function isDefaultLook(look: Look): boolean {
-  const accent = look.accent ?? PRESETS[look.preset].accent;
-  return look.preset === 'press' && accent === 'vermilion' && look.type === 'classic' && look.size === 'm' && look.density === 'regular';
-}
+export const DENSITIES: Record<DensityId, { label: string; space: number; leading: number }> = LOOK_DENSITIES;
 
 const rgba = (hex: string, a: number) => {
   const h = hex.replace('#', '');
   return `rgb(${parseInt(h.slice(0, 2), 16)} ${parseInt(h.slice(2, 4), 16)} ${parseInt(h.slice(4, 6), 16)} / ${a})`;
 };
+const paperTokens = (p: Paper): Record<string, string> => ({ '--paper': p.paper, '--paper-2': p.paper2, '--paper-3': p.paper3, '--sheet': p.sheet, '--ink': p.ink, '--ink-2': p.ink2, '--ink-3': p.ink3 });
 
+/** AMAZEEN's looks on the shared engine (packages/core/src/look.ts, docs/adr/0014). */
+export const AMAZEEN_LOOKS: LookSpec = {
+  imprint: 'amazeen',
+  presets: Object.fromEntries(Object.entries(PRESETS).map(([id, p]) => [id, { label: p.label, note: p.note, accent: p.accent, light: paperTokens(p.light), dark: paperTokens(p.dark) }])),
+  defaultPreset: 'press',
+  accents: ACCENTS,
+  accentTokens: ['--press', '--press-text', '--press-ink'],
+  types: Object.fromEntries(Object.entries(TYPES).map(([id, t]) => [id, { label: t.label, note: t.note, tokens: { '--font-display': t.display, '--font-text': t.text } }])),
+  defaultType: 'classic',
+  sizes: SIZES,
+  densities: DENSITIES,
+  contrast: { backgrounds: ['--paper', '--sheet'], body: '--ink', secondary: ['--ink-2', '--ink-3'] },
+  derive: (t, mode) => ({
+    '--rule': rgba(t['--ink']!, mode === 'dark' ? 0.85 : 0.92),
+    '--hairline': rgba(t['--ink']!, mode === 'dark' ? 0.14 : 0.16),
+    '--press-soft': rgba(t['--press']!, mode === 'dark' ? 0.14 : 0.1),
+  }),
+};
+
+/** A stored look, read safely: anything unknown falls back to the default, never to a broken page. */
+export const readLook = (raw: unknown): Look => coreReadLook(AMAZEEN_LOOKS, raw) as Look;
+export const isDefaultLook = (look: Look): boolean => coreIsDefault(AMAZEEN_LOOKS, look);
 /** The design tokens a look sets for one mode. */
-export function lookTokens(look: Look, mode: Mode): Record<string, string> {
-  const p = PRESETS[look.preset][mode];
-  const [press, pressText, pressInk] = ACCENTS[look.accent ?? PRESETS[look.preset].accent][mode];
-  const t = TYPES[look.type];
-  return {
-    '--paper': p.paper,
-    '--paper-2': p.paper2,
-    '--paper-3': p.paper3,
-    '--sheet': p.sheet,
-    '--ink': p.ink,
-    '--ink-2': p.ink2,
-    '--ink-3': p.ink3,
-    '--rule': rgba(p.ink, mode === 'dark' ? 0.85 : 0.92),
-    '--hairline': rgba(p.ink, mode === 'dark' ? 0.14 : 0.16),
-    '--press': press,
-    '--press-text': pressText,
-    '--press-ink': pressInk,
-    '--press-soft': rgba(press, mode === 'dark' ? 0.14 : 0.1),
-    '--font-display': t.display,
-    '--font-text': t.text,
-    '--look-scale': String(SIZES[look.size].scale),
-    '--look-space': String(DENSITIES[look.density].space),
-    '--look-leading': String(DENSITIES[look.density].leading),
-  };
-}
-
-/**
- * The stylesheet for a look, for both modes, with the same selectors as AMAZEEN's own tokens
- * (styles/global.css) plus `[data-look]`, so it wins over them and light/dark still follows the house.
- */
-export function lookCss(look: Look): string {
-  const block = (mode: Mode) =>
-    Object.entries(lookTokens(look, mode))
-      .map(([k, v]) => `${k}: ${v};`)
-      .join(' ');
-  const sel = "[data-imprint='amazeen'][data-look]";
-  return [
-    `${sel} { ${block('light')} }`,
-    `@media (prefers-color-scheme: dark) { :root:not([data-theme='light']) ${sel} { ${block('dark')} } }`,
-    `:root[data-theme='dark'] ${sel} { ${block('dark')} }`,
-  ].join('\n');
-}
-
-/** WCAG contrast ratio between two #rrggbb colours. */
-export function contrast(a: string, b: string): number {
-  const lum = (hex: string) => {
-    const h = hex.replace('#', '');
-    const [r, g, bl] = [0, 2, 4].map((i) => {
-      const c = parseInt(h.slice(i, i + 2), 16) / 255;
-      return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-    }) as [number, number, number];
-    return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
-  };
-  const [x, y] = [lum(a), lum(b)].sort((m, n) => n - m) as [number, number];
-  return (x + 0.05) / (y + 0.05);
-}
+export const lookTokens = (look: Look, mode: Mode): Record<string, string> => coreTokens(AMAZEEN_LOOKS, look, mode);
+/** The stylesheet for a look, for both modes, following the house's light and dark. */
+export const lookCss = (look: Look): string => coreCss(AMAZEEN_LOOKS, look);
+/** Choose a ready-made look: it brings its own accent, and keeps the person's type, size and density. */
+export const withPreset = (look: Look, preset: PresetId): Look => coreWithPreset(look, preset) as Look;
+export { contrast };

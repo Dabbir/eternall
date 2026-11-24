@@ -133,3 +133,11 @@ How it stays honest:
 
 The rules are in `src/terms.ts` and `src/quick.ts`, with tests in `terms.test.ts`.
 
+## 14. Your book's look (ADR 0014)
+Reached from Budget ("Your book's look") and from the head of Your words, at `/casheen/look`.
+- **Books:** Green ledger (as it came), Blue ruling (a clerk's blue-ruled cashbook), Carbon copy (grey duplicate-book paper, violet carbon), Night ledger (warm lamplit pages, sepia ink). Each is drawn as a small ruled sample in its own tokens.
+- **Ink** (the accent): bookkeeper green, ledger blue, sepia, carbon violet, slate. **Red is never an accent**: it means "over" only, and "over by …" is always written out (tested).
+- **Typeface:** Caslon & figures (Caslon for words, DM Mono for every figure), or Clerk (DM Mono throughout).
+- **Text size** and **density** scale the pages, never the bar.
+- Every book × ink × mode passes the shared contrast check, "over" red included (`look.test.ts`). Stored as `ledger/look` (id `look`); never localStorage.
+

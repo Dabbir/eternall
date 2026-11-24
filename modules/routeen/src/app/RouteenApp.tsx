@@ -8,7 +8,8 @@ import '../theme/routeen.css';
 import '../theme/routeen.kit.css';
 import { useMemo, useState } from 'react';
 import { addDays, formatMedium, plural, type ISODate, type ImprintAppProps } from '@eternall/core';
-import { useHouse, usePrimaryAction } from '@eternall/kit';
+import { LookPicker, useAppLook, useHouse, usePrimaryAction } from '@eternall/kit';
+import { LOOK_PATH, ROUTEEN_LOOKS } from '../look';
 import { Button, Dialog, Icon } from '@eternall/ui';
 import { useCollection } from '@eternall/vault';
 import {
@@ -47,12 +48,14 @@ export default function RouteenApp({ path }: ImprintAppProps) {
   const m = /^\/practice\/([A-Za-z0-9_-]+)$/.exec(path);
   const open = m ? practices.find((p) => p.id === m[1]) : undefined;
   const here: RouteenPlace = path === '/cloth' ? 'cloth' : m ? 'practice' : 'loom';
+  // The person's look for their cloth (docs/adr/0014), worn while ROUTEEN is open.
+  const look = useAppLook(ROUTEEN_LOOKS, LOOK_PATH);
   usePrimaryAction(practices.length ? { label: 'Mark today', run: () => setSheet(true) } : { label: 'New practice', run: () => setEditing({}) });
 
   return (
     <Chrome here={here}>
       <div className="rt">
-        {open ? <PracticePage practice={open} onEdit={() => setEditing({ existing: open })} /> : here === 'cloth' ? <Cloth practices={practices} /> : <Loom practices={practices} onNew={() => setEditing({})} />}
+        {open ? <PracticePage practice={open} onEdit={() => setEditing({ existing: open })} /> : here === 'cloth' ? <Cloth practices={practices} look={look} /> : <Loom practices={practices} onNew={() => setEditing({})} />}
         {editing && <PracticeEditor key={editing.existing?.id ?? 'new'} {...editing} onClose={() => setEditing(null)} />}
         {sheet && (
           <TodaySheet
@@ -215,7 +218,7 @@ function ClothLine({ practice, marks, today }: { practice: Practice; marks: read
   );
 }
 
-function Cloth({ practices }: { practices: readonly Practice[] }) {
+function Cloth({ practices, look }: { practices: readonly Practice[]; look: ReturnType<typeof useAppLook> }) {
   const house = useHouse();
   const { marks } = useMarks(practices);
   const year = house.today.slice(0, 4);
@@ -243,6 +246,25 @@ function Cloth({ practices }: { practices: readonly Practice[] }) {
           ))}
         </section>
       )}
+      <section className="rt-look" aria-labelledby="rt-look-title">
+        <h2 id="rt-look-title" className="rt-h2">
+          Your cloth’s look
+        </h2>
+        <p className="rt-lede">Choose the cloth on your loom. Every choice applies at once and stays readable; each thread keeps its own dye and weave. Day or night follows ETERNALL.</p>
+        <LookPicker
+          spec={ROUTEEN_LOOKS}
+          look={look.look}
+          onChange={look.setLook}
+          accentLegend="Accent thread"
+          sample={() => (
+            <span className="rt-sample">
+              {(['indigo', 'madder', 'weld', 'walnut', 'lichen', 'iron'] as const).map((d, i) => (
+                <span key={d} className={`rt-stitch rt-stitch--${i === 2 ? 'warp' : 'woven'} rt-dye--${d} rt-pattern--${(['plain', 'twill', 'dotted', 'rib', 'herringbone', 'basket'] as const)[i]}`} />
+              ))}
+            </span>
+          )}
+        />
+      </section>
     </>
   );
 }

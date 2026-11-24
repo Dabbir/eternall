@@ -1,4 +1,5 @@
 import { addDays, plural, type ImprintDefinition, type LifelineMarker } from '@eternall/core';
+import { LOOK_PATH } from './look';
 import { MARK_PATH, PRACTICE_PATH, barSummary, dueToday, isKeptIn, keptIn, keySet, markId, practiceStats, type Mark, type Practice } from './practices';
 
 type Readable = { data: { collection<T extends { id: string }>(p: string): { all(): readonly T[] } } };
@@ -20,7 +21,7 @@ export const routeen: ImprintDefinition = {
   intro: 'Each practice is a thread on the loom, and every day weaves a row. A day you kept is a coloured stitch; a day that passed shows the bare warp. Nothing breaks.',
   brand: { icon: '/icons/routeen.svg', themeColor: { light: '#efe8da', dark: '#15130f' }, lockTitle: 'The loom is covered.', leaveLabel: 'Leave the loom' },
   load: () => import('./app/RouteenApp'),
-  collections: [PRACTICE_PATH, MARK_PATH],
+  collections: [PRACTICE_PATH, MARK_PATH, LOOK_PATH],
   hasData: (ctx) => practices(ctx).length > 0,
 
   lifeline(ctx) {

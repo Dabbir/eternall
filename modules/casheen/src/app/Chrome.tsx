@@ -3,7 +3,7 @@ import { AppBar, IntroNote, useHouse } from '@eternall/kit';
 import { casheen } from '../index';
 import { monthKey, monthLabel } from '../ledger';
 
-export type LedgerPlace = 'month' | 'budget' | 'import' | 'words';
+export type LedgerPlace = 'month' | 'budget' | 'import' | 'words' | 'look';
 
 const LETTERS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 

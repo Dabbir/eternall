@@ -99,6 +99,7 @@ Conventions:
 | Entity | Fields |
 |---|---|
 | `refrain/ritual` | `name` (≤ 60), `why?` (≤ 400), `cadence` (`daily` · `{ timesPerWeek: n }` · `{ weekly: weekday }`), `instrument` (`piano`/`marimba`/`strings`/`bell`), `pitch` (assigned automatically from a pentatonic set), `startedOn`, `pausedOn?` |
+| `refrain/look` | id `look`: the cloth's look (ADR 0014): `preset` (`linen`/`indigo`/`madder`/`night`), `accent?`, `type` (`hand`/`bookish`), `size`, `density` |
 | `refrain/mark` | `ritualId`, `date` (one per ritual per day) |
 
 - **Rules:** expected beats come from the cadence. A missed expected beat is a *rest* (neutral). Pausing a ritual stops expectations without deleting history.
@@ -172,6 +173,7 @@ Conventions:
 | `ledger/budget` | id `YYYY-MM`; `limits` (category id → rupiah). A month without one starts from the last month that had one. |
 | `ledger/words` | one record, `map` (word → category id), at most 500 words, learned from what you write and correct |
 | `ledger/pref` | `remindBudget` (off by default) |
+| `ledger/look` | id `look`: the book's look (ADR 0014): `preset` (`green`/`blue`/`carbon`/`night`), `accent?`, `type` (`classic`/`clerk`), `size`, `density`; read safely (`readLook`) |
 | `ledger/terms` | your shorthand: `units` (word → × 1.000 / × 1.000.000), `fixed` (word → an amount, e.g. goceng → 5.000), `days` (word → today/yesterday/… or a weekday), `income` (words meaning money in); at most 40 of each; a word means one thing, and never collides with a built-in word of another kind |
 
 - **Rules:** Rupiah only. The quick line is the main way in (`docs/design/casheen.md` §6). Going over is said plainly, never scored.

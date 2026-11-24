@@ -13,6 +13,7 @@
   --rule: rgb(34 32 27 / 0.14);
   --rule-strong: rgb(34 32 27 / 0.32);
   --accent: #2e4a7d;
+  --accent-text: #2e4a7d;
   --accent-deep: #233a63;
   --accent-soft: rgb(46 74 125 / 0.12);
   --on-accent: #ffffff;
@@ -38,7 +39,7 @@
     --paper: #15130f; --paper-sunk: #0f0d0a; --paper-raised: #1c1a15;
     --ink: #ece5d6; --ink-2: #c6bead; --ink-3: #a39b8b;
     --rule: rgb(236 229 214 / 0.13); --rule-strong: rgb(236 229 214 / 0.3);
-    --accent: #9db4e3; --accent-deep: #87a1d6; --accent-soft: rgb(157 180 227 / 0.14); --on-accent: #0d1424;
+    --accent: #9db4e3; --accent-text: #a9bfea; --accent-deep: #87a1d6; --accent-soft: rgb(157 180 227 / 0.14); --on-accent: #0d1424;
     --warp: rgb(236 229 214 / 0.22); --veil: rgb(0 0 0 / 0.62);
     --dye-indigo: #8ea9dc; --dye-madder: #e98a76; --dye-weld: #d9b44a; --dye-walnut: #c49a74; --dye-lichen: #9cc07f; --dye-iron: #a9b3bd;
   }
@@ -47,7 +48,7 @@
   --paper: #15130f; --paper-sunk: #0f0d0a; --paper-raised: #1c1a15;
   --ink: #ece5d6; --ink-2: #c6bead; --ink-3: #a39b8b;
   --rule: rgb(236 229 214 / 0.13); --rule-strong: rgb(236 229 214 / 0.3);
-  --accent: #9db4e3; --accent-deep: #87a1d6; --accent-soft: rgb(157 180 227 / 0.14); --on-accent: #0d1424;
+  --accent: #9db4e3; --accent-text: #a9bfea; --accent-deep: #87a1d6; --accent-soft: rgb(157 180 227 / 0.14); --on-accent: #0d1424;
   --warp: rgb(236 229 214 / 0.22); --veil: rgb(0 0 0 / 0.62);
   --dye-indigo: #8ea9dc; --dye-madder: #e98a76; --dye-weld: #d9b44a; --dye-walnut: #c49a74; --dye-lichen: #9cc07f; --dye-iron: #a9b3bd;
 }
@@ -90,14 +91,14 @@ button.rt-stitch:focus-visible { outline: 2px solid var(--accent); outline-offse
 .rt-head { display: grid; gap: 6px; margin-bottom: 26px; }
 .rt-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.1em; font-variant-caps: all-small-caps; color: var(--ink-2); }
 .rt-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.2rem, 1.5rem + 2.6vw, 3.8rem); line-height: 1.02; }
-.rt-title em { font-style: normal; color: var(--accent); }
+.rt-title em { font-style: normal; color: var(--accent-text); }
 .rt-lede { color: var(--ink-2); font-size: 1.0625rem; max-width: 56ch; }
 .rt-h2 { margin: 28px 0 10px; font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; }
 
 .rt-nav { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 14px; }
 .rt-nav__week { font-family: var(--font-display); }
 .rt-nav__btn { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--ink-2); }
-.rt-nav__btn:hover:not(:disabled) { color: var(--accent); }
+.rt-nav__btn:hover:not(:disabled) { color: var(--accent-text); }
 .rt-nav__btn:disabled { opacity: 0.35; }
 
 /* The loom: names in a 15rem selvedge, seven stitch columns, a woven rule under the head. */
@@ -106,17 +107,17 @@ button.rt-stitch:focus-visible { outline: 2px solid var(--accent); outline-offse
 .rt-row--head { padding-bottom: 6px; margin-bottom: 4px; border-bottom: 3px double var(--rule-strong); }
 .rt-row.is-paused { opacity: 0.6; }
 .rt-day { display: grid; justify-items: center; font-weight: 600; font-size: 0.875rem; color: var(--ink-3); }
-.rt-day.is-today { color: var(--accent); }
+.rt-day.is-today { color: var(--accent-text); }
 .rt-day__date { font-weight: 400; font-size: 0.75rem; }
 .rt-cell.is-today { transform: translateY(-3px); }
 .rt-name__btn { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center; width: 100%; min-height: 44px; text-align: left; color: var(--ink); }
 .rt-name__btn .rt-swatch { grid-row: 1 / 3; }
 .rt-name__text { font-family: var(--font-display); font-size: 1.05rem; line-height: 1.1; }
 .rt-name__cadence { font-size: 0.8125rem; color: var(--ink-3); }
-.rt-name__btn:hover .rt-name__text { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.rt-name__btn:hover .rt-name__text { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
 .rt-legend { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin-top: 14px; font-size: 0.8125rem; color: var(--ink-2); }
 .rt-legend .rt-stitch { display: inline-block; width: 18px; min-height: 18px; }
-.rt-add { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 10px; color: var(--accent); font-weight: 600; }
+.rt-add { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 10px; color: var(--accent-text); font-weight: 600; }
 
 .rt-empty { display: grid; justify-items: start; gap: 16px; padding: 30px 0; }
 .rt-empty__loom { display: grid; grid-template-columns: repeat(7, 34px); gap: 2px; padding: 12px; background: var(--paper-raised); }
@@ -141,8 +142,8 @@ button.rt-stitch:focus-visible { outline: 2px solid var(--accent); outline-offse
 .rt-checks { display: grid; gap: 6px; }
 .rt-checks__head { margin: 16px 0 6px; font-size: 0.8125rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-3); }
 .rt-check { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 12px; border: 1px solid var(--rule-strong); cursor: pointer; }
-.rt-check:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
-.rt-check input { width: 20px; height: 20px; accent-color: var(--accent); }
+.rt-check:has(input:checked) { border-color: var(--accent-text); background: var(--accent-soft); }
+.rt-check input { width: 20px; height: 20px; accent-color: var(--accent-text); }
 
 /* The editor. */
 .rt-editor__progress { height: 6px; background: repeating-linear-gradient(90deg, var(--warp) 0 1.5px, transparent 1.5px 6px); }
@@ -151,7 +152,7 @@ button.rt-stitch:focus-visible { outline: 2px solid var(--accent); outline-offse
 .rt-cadence legend, .rt-threads legend { margin-bottom: 6px; font-weight: 600; }
 .rt-choice { position: relative; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border: 1px solid var(--rule-strong); cursor: pointer; }
 .rt-choice input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.rt-choice:has(input:checked) { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.rt-choice:has(input:checked) { border-color: var(--accent-text); box-shadow: inset 3px 0 0 var(--accent); }
 .rt-choice:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
 .rt-inline select { min-height: 40px; }
 

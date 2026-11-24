@@ -14,12 +14,18 @@ import { useLedgerData } from './QuickLine';
  * collide with one that already means something else. Try any line at the top to see how it reads.
  */
 export function WordsPage() {
+  const house = useHouse();
   const { terms, termsCol, words, wordsCol, categories } = useLedgerData();
   const save = (t: Terms) => termsCol.put(t);
   return (
     <>
       <h1 className="lg-month">Your words</h1>
-      <p className="lg-note">Teach the quick line the shorthand you really use. Its own words keep working beside yours.</p>
+      <p className="lg-note">
+        Teach the quick line the shorthand you really use. Its own words keep working beside yours.{' '}
+        <button type="button" className="lg-link" onClick={() => house.navigate(house.href('/look'))}>
+          Your book’s look
+        </button>
+      </p>
       <TryLine />
       <AmountWords terms={terms} onChange={save} />
       <DayWords terms={terms} onChange={save} />

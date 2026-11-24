@@ -7,7 +7,10 @@ import '../theme/casheen.css';
 import '../theme/casheen.kit.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createId, formatMedium, type FieldErrors, type ImprintAppProps } from '@eternall/core';
-import { usePrimaryAction, useHouse } from '@eternall/kit';
+import { useAppLook, usePrimaryAction, useHouse } from '@eternall/kit';
+import { CASHEEN_LOOKS, LOOK_PATH } from '../look';
+import { LookPage } from './LookPage';
+import { CasheenLookContext } from './lookContext';
 import { Button, Dialog, TextField } from '@eternall/ui';
 import { useCollection } from '@eternall/vault';
 import { BUDGET_PATH, DEFAULT_CATEGORIES, DEFAULT_PREF, PREF_PATH, addMonths, budgetFor, budgetRows, budgetTotal, byDay, entriesIn, isMonthKey, monthKey, monthLabel, totals, validateCategoryName, validateEntry, type Budget, type Category, type Entry, type EntryInput, type Kind, type LedgerPref } from '../ledger';
@@ -23,7 +26,9 @@ export default function CasheenApp({ path, search }: ImprintAppProps) {
   const current = monthKey(house.today);
   const quickRef = useRef<HTMLTextAreaElement>(null);
   const seg = path.split('/').filter(Boolean);
-  const place: LedgerPlace = seg[0] === 'budget' ? 'budget' : seg[0] === 'import' ? 'import' : seg[0] === 'words' ? 'words' : 'month';
+  const place: LedgerPlace = seg[0] === 'budget' ? 'budget' : seg[0] === 'import' ? 'import' : seg[0] === 'words' ? 'words' : seg[0] === 'look' ? 'look' : 'month';
+  // The person's look for their book (docs/adr/0014), worn while CASHEEN is open.
+  const lookControls = useAppLook(CASHEEN_LOOKS, LOOK_PATH);
   const asked = place === 'budget' ? seg[1] : seg[0];
   const month = asked && isMonthKey(asked) ? asked : current;
 
@@ -47,7 +52,9 @@ export default function CasheenApp({ path, search }: ImprintAppProps) {
   return (
     <Chrome here={place} month={month}>
       <div className="lg">
-        {place === 'budget' ? <BudgetPage month={month} /> : place === 'import' ? <ImportPage /> : place === 'words' ? <WordsPage /> : <MonthPage month={month} quickRef={quickRef} />}
+        <CasheenLookContext.Provider value={lookControls}>
+          {place === 'budget' ? <BudgetPage month={month} /> : place === 'import' ? <ImportPage /> : place === 'words' ? <WordsPage /> : place === 'look' ? <LookPage /> : <MonthPage month={month} quickRef={quickRef} />}
+        </CasheenLookContext.Provider>
       </div>
     </Chrome>
   );
@@ -398,6 +405,9 @@ function BudgetPage({ month }: { month: string }) {
         </label>
         <button type="button" className="lg-link" onClick={() => house.navigate(house.href('/import'))}>
           Bring in a bank statement (CSV)
+        </button>
+        <button type="button" className="lg-link" onClick={() => house.navigate(house.href('/look'))}>
+          Your book’s look
         </button>
       </section>
     </>

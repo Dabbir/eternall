@@ -74,6 +74,8 @@ phone            [←]           NAME                                          �
 | ROUTEEN | a small shuttle, "Leave the loom" | Young Serif over a woven selvedge rule | The loom · The cloth | Mark today (or New practice) | the selvedge along the bar; a practice page belongs to the loom |
 | MARGINALIA | the ribbon bookmark, "Back to the stacks" | the catalogue card, call number typed | Catalogue · Every underline, pencilled; the current one ringed by hand | Add a work, typed in brackets | the oak desk |
 
+**Personal looks (ADR 0014).** Every app offers looks true to its own world on one engine (`packages/core/src/look.ts`; `packages/kit/src/look.tsx` gives `useAppLook` and the headless `LookPicker`, skinned through `.lookpicker` hooks): ready-made presets, a bounded accent list, type pairings from fonts the app already self-hosts, text size and density. A look sets tokens only (layout never moves; size and density scale the app's pages, not its bar), light and dark stay with the house, and every preset × accent × mode passes `validateLookSpec` (body ≥ 7:1, secondary and accent text ≥ 4.5:1, button text ≥ 4.5:1). AMAZEEN: Office → "Your edition's look"; CASHEEN: "Your book's look"; ROUTEEN: under The cloth, "Your cloth's look".
+
 **Behavioural invariants for every app's chrome:**
 - the same place, in every app, for the way back, the name, the places, search (⌘K), the lock (⌘⇧L) and the primary action
 - 44px touch targets; a visible label on the way back, or an accessible name ("…, back to ETERNALL") where a phone hides it

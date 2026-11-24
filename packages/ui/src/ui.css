@@ -355,3 +355,24 @@ html.has-modal { overflow: hidden; }
   .appbar__primary-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   /* An app with no places still keeps its raised primary action. */
 }
+
+/* ---------- The look picker (docs/adr/0014): structure only; each app skins it ---------- */
+.lookpicker { display: grid; gap: 26px; justify-items: start; margin: 18px 0 32px; }
+.lookpicker__presets, .lookpicker__group { border: 0; padding: 0; margin: 0; width: 100%; }
+.lookpicker__presets { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; }
+.lookpicker__presets legend, .lookpicker__group legend { grid-column: 1 / -1; margin-bottom: 10px; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.06em; font-variant-caps: all-small-caps; color: var(--ink-2); }
+.lookpicker__preset { position: relative; display: grid; gap: 4px; padding: 10px; cursor: pointer; background: var(--paper); color: var(--ink); border: 1.5px solid var(--rule-strong, rgb(0 0 0 / 0.2)); }
+.lookpicker__preset input, .lookpicker__option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.lookpicker__preset:has(input:checked) { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+.lookpicker__preset:has(input:focus-visible), .lookpicker__option:has(input:focus-visible) { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; }
+.lookpicker__sample { display: block; min-height: 84px; }
+.lookpicker__label { font-weight: 600; }
+.lookpicker__note { font-size: 0.875rem; color: var(--ink-2); }
+.lookpicker__options { display: flex; flex-wrap: wrap; gap: 8px; }
+.lookpicker__option { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; cursor: pointer; border: 1.5px solid var(--rule-strong, rgb(0 0 0 / 0.2)); }
+.lookpicker__option:has(input:checked) { border-color: var(--ink); background: var(--ink); color: var(--paper); }
+.lookpicker__swatch { width: 14px; height: 14px; border-radius: 50%; box-shadow: 0 0 0 1px rgb(0 0 0 / 0.2); }
+.lookpicker__preview { width: 100%; }
+.lookpicker__reset { min-height: 44px; text-decoration: underline; text-underline-offset: 4px; color: var(--ink-2); }
+.lookpicker__reset:disabled { opacity: 0.45; cursor: default; }
+@media (max-width: 640px) { .lookpicker__presets { grid-template-columns: repeat(2, minmax(0, 1fr)); } }

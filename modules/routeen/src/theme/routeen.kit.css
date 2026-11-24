@@ -64,10 +64,10 @@
 }
 /* A stitched border: a dashed line set just inside the edge, like a running stitch. */
 [data-imprint='routeen'] .btn--ghost { border-color: var(--rule-strong); box-shadow: inset 0 0 0 3px var(--paper-raised), inset 0 0 0 4px transparent; outline: 1px dashed var(--rule-strong); outline-offset: -5px; }
-[data-imprint='routeen'] .btn--ghost:hover:not(:disabled) { color: var(--accent); outline-color: var(--accent); }
-[data-imprint='routeen'] .btn--quiet:hover:not(:disabled) { background: transparent; color: var(--accent); text-decoration: underline; text-underline-offset: 4px; }
+[data-imprint='routeen'] .btn--ghost:hover:not(:disabled) { color: var(--accent-text); outline-color: var(--accent-text); }
+[data-imprint='routeen'] .btn--quiet:hover:not(:disabled) { background: transparent; color: var(--accent-text); text-decoration: underline; text-underline-offset: 4px; }
 [data-imprint='routeen'] .dialog__panel { border-top: 6px solid transparent; border-image: repeating-linear-gradient(90deg, var(--accent) 0 6px, var(--paper-raised) 6px 9px) 6; }
-[data-imprint='routeen'] .dialog .eyebrow { font-family: var(--font-ui); letter-spacing: 0.12em; font-variant-caps: all-small-caps; font-size: 0.9375rem; color: var(--accent); }
+[data-imprint='routeen'] .dialog .eyebrow { font-family: var(--font-ui); letter-spacing: 0.12em; font-variant-caps: all-small-caps; font-size: 0.9375rem; color: var(--accent-text); }
 [data-imprint='routeen'] .toast { border-left: 6px solid var(--accent); }
 [data-imprint='routeen'] .toast__dot { display: none; }
 
@@ -88,9 +88,9 @@
 [data-imprint='routeen'] .appbar__fn { font-size: 0.9375rem; color: var(--ink-2); font-style: italic; }
 [data-imprint='routeen'] .appbar__place { font-weight: 600; color: var(--ink-3); border-bottom: 3px solid transparent; }
 [data-imprint='routeen'] .appbar__place:hover { color: var(--ink); }
-[data-imprint='routeen'] .appbar__place[aria-current] { color: var(--ink); border-bottom-color: var(--accent); }
+[data-imprint='routeen'] .appbar__place[aria-current] { color: var(--ink); border-bottom-color: var(--accent-text); }
 [data-imprint='routeen'] .appbar__tool { color: var(--ink-2); }
-[data-imprint='routeen'] .appbar__tool:hover { color: var(--accent); }
+[data-imprint='routeen'] .appbar__tool:hover { color: var(--accent-text); }
 [data-imprint='routeen'] .appbar__primary { height: 44px; border-radius: 2px; font-weight: 600; background: var(--accent); color: var(--on-accent); }
 [data-imprint='routeen'] .appbar__primary:hover { background: var(--accent-deep); }
 @media (max-width: 819px) {
@@ -122,3 +122,14 @@
 @keyframes rr-veil { 0% { opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
 @keyframes rr-shuttle { 0% { transform: translateX(-80px); } 70% { transform: translateX(calc(7 * clamp(30px, 7vw, 56px) + 60px)); } 100% { transform: translateX(calc(7 * clamp(30px, 7vw, 56px) + 120px)); } }
 @keyframes rr-tighten { 0% { transform: scaleY(0.3); opacity: 0; } 50% { transform: scaleY(1.06); opacity: 1; } 100% { transform: scaleY(1); opacity: 1; } }
+
+/* ---------- your cloth's look (ADR 0014) ---------- */
+/* Size and density scale the loom's pages, never the bar; the threads keep their dyes and weaves. */
+[data-imprint='routeen'] .rc-body { --gutter: calc(clamp(16px, 4vw, 48px) * var(--look-space, 1)); line-height: calc(1.5 * var(--look-leading, 1)); zoom: var(--look-scale, 1); }
+.rt-look { margin-top: 48px; padding-top: 8px; border-top: 6px solid transparent; border-image: repeating-linear-gradient(90deg, var(--rule-strong) 0 4px, transparent 4px 7px) 6; }
+[data-imprint='routeen'] .lookpicker__preset { border-radius: 2px; }
+[data-imprint='routeen'] .lookpicker__label { font-family: var(--font-display); font-weight: 400; }
+[data-imprint='routeen'] .lookpicker__option { border-radius: 2px; }
+[data-imprint='routeen'] .lookpicker__option:has(input:checked) { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.rt-sample { display: grid; grid-template-columns: repeat(6, 1fr); gap: 2px; padding: 8px; background: var(--paper-raised); }
+.rt-sample .rt-stitch { min-height: 20px; }

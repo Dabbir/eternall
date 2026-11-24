@@ -1,4 +1,6 @@
 import type { ImprintDefinition } from '@eternall/core';
+import { LOOK_PATH } from './look';
+import { TERMS_PATH } from './terms';
 import { BUDGET_PATH, CATEGORY_PATH, DEFAULT_PREF, ENTRY_PATH, PREF_PATH, WORDS_PATH, addMonths, monthKey, monthLabel, type Budget, type Entry, type LedgerPref } from './ledger';
 
 type Readable = { data: { collection<T extends { id: string }>(p: string): { all(): readonly T[]; get(id: string): T | undefined } } };
@@ -21,7 +23,7 @@ export const casheen: ImprintDefinition = {
   intro: 'Write money down in one line, like a message to yourself: “kopi 25rb”, “gaji 8jt”, “grab 32.500 kemarin”. It learns your words as you go. The months sit under the title, like a ledger’s thumb index.',
   brand: { icon: '/icons/casheen.svg', themeColor: { light: '#eef1e4', dark: '#111611' }, lockTitle: 'The book is closed.', leaveLabel: 'Close the book' },
   load: () => import('./app/CasheenApp'),
-  collections: [ENTRY_PATH, CATEGORY_PATH, BUDGET_PATH, WORDS_PATH, PREF_PATH],
+  collections: [ENTRY_PATH, CATEGORY_PATH, BUDGET_PATH, WORDS_PATH, PREF_PATH, TERMS_PATH, LOOK_PATH],
   hasData: (ctx) => entries(ctx).length > 0,
 
 
