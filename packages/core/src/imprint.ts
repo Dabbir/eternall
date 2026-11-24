@@ -98,6 +98,12 @@ export interface Reminder {
   href: string;
 }
 
+/** One app's card on Home: a status line and the one thing to do next. */
+export interface HomeCard {
+  status: string;
+  action: { label: string; href: string };
+}
+
 export interface ImprintAppProps {
   /** Path inside the imprint, always starting with "/" (e.g. "/letter/abc"). */
   path: string;
@@ -117,6 +123,11 @@ export interface Contributions {
   reminders?(ctx: ReadContext): Reminder[];
   /** Cross-imprint capabilities this imprint offers (typed in @eternall/kit). */
   provides?(ctx: ProvideContext): Record<string, unknown>;
+  /**
+   * The app's card on Home (docs/adr/0014): one short status line and one action. Plain words; an
+   * app may keep its status free of figures (CASHEEN's never contains a number).
+   */
+  home?(ctx: ReadContext): HomeCard;
 }
 
 export interface ImprintDefinition extends Contributions {

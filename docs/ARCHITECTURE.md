@@ -230,3 +230,6 @@ To wrap the PWA later without rewriting:
 
 ## Looks (ADR 0014)
 `packages/core/src/look.ts` holds the pure engine (`LookSpec`, `readLook`, `lookTokens`, `lookCss`, `validateLookSpec`, `withPreset`); each app declares its spec (`modules/amazeen/src/imprint/look/look.ts`, `modules/casheen/src/look.ts`, `modules/routeen/src/look.ts`). `packages/kit/src/look.tsx` reads the vault record (`useAppLook`), injects one `<style data-look=<id>>` for light and dark keyed on `[data-imprint=<id>][data-look]`, and renders the headless `LookPicker`.
+
+## Home (ADR 0014)
+`/` renders `apps/web/src/house/Home.tsx`: a card per app that is on, from `ImprintDefinition.home(ctx)` (`{ status, action: { label, href } }`). Apps open straight into the action through their own search params (`/casheen/?write=1`, `/routeen/?mark=1`, `/routeen/?new=1`). The lifeline moved to `/life`; Chapters, Inscriptions and Almanac keep their addresses and show as tabs of "Your life in weeks" (`house/LifeTabs.tsx`).

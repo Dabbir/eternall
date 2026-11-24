@@ -40,11 +40,12 @@ const STITCH_LABEL: Record<Stitch, string> = { woven: 'woven', warp: 'bare warp,
 const byLoomOrder = (a: Practice, b: Practice) => a.startedOn.localeCompare(b.startedOn) || a.name.localeCompare(b.name);
 const threadClass = (p: Practice) => `rt-dye--${dyeOf(p)} rt-pattern--${patternOf(p)}`;
 
-export default function RouteenApp({ path }: ImprintAppProps) {
+export default function RouteenApp({ path, search }: ImprintAppProps) {
   const { items } = useCollection<Practice>(PRACTICE_PATH);
   const practices = useMemo(() => [...items].sort(byLoomOrder), [items]);
-  const [editing, setEditing] = useState<null | { existing?: Practice }>(null);
-  const [sheet, setSheet] = useState(false);
+  // Home's "Mark today" and "Add a practice" arrive as ?mark=1 and ?new=1.
+  const [editing, setEditing] = useState<null | { existing?: Practice }>(search.get('new') ? {} : null);
+  const [sheet, setSheet] = useState(!!search.get('mark') && items.length > 0);
   const m = /^\/practice\/([A-Za-z0-9_-]+)$/.exec(path);
   const open = m ? practices.find((p) => p.id === m[1]) : undefined;
   const here: RouteenPlace = path === '/cloth' ? 'cloth' : m ? 'practice' : 'loom';

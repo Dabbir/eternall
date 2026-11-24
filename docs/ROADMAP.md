@@ -1,6 +1,6 @@
 # ETERNALL — Roadmap
 
-Status: accepted · Phases 0–8 done, Phase 9 in progress (ADR 0014) · Each phase ends with its exit criteria met, then a review, before the next begins.
+Status: accepted · Phases 0–9 done (ADR 0013, ADR 0014) · Each phase ends with its exit criteria met, then a review, before the next begins.
 
 ---
 
@@ -169,6 +169,8 @@ Status: accepted · Phases 0–8 done, Phase 9 in progress (ADR 0014) · Each ph
 **Order after launch:** AMAZEEN's core flow is tested with prospective users first (`PRODUCT.md`, next steps). CASHEEN grows only within quick entry and the monthly budget. REFRAIN is the next companion, then the others, only when people ask for them.
 
 ## Phase 9: Three apps and Home (ADR 0014)
+**Done (2026-11-24),** six commits. Inscriptions, Chapters and Almanac kept their addresses and appear as tabs of "Your life in weeks" rather than moving under `/life/*`, so no old link breaks.
+
 **Steps, one commit each:**
 1. Docs: ADR 0014, `design/routeen.md`, product, vision and brand.
 2. Retire MARGINALIA: underlines become AMAZEEN quotes (migration `marginalia`), Overheard and `quotes.offer` go, `/marginalia/*` redirects.

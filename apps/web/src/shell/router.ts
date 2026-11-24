@@ -7,7 +7,7 @@ import type { ImprintId } from '@eternall/core';
  * The shell owns the first path segment: an imprint id, or a house page.
  */
 
-export const HOUSE_PAGES = ['', 'inscriptions', 'chapters', 'almanac', 'settings', 'welcome', 'begin', 'patron'] as const;
+export const HOUSE_PAGES = ['', 'life', 'inscriptions', 'chapters', 'almanac', 'settings', 'welcome', 'begin', 'patron'] as const;
 export type HousePage = (typeof HOUSE_PAGES)[number];
 
 export type Location =

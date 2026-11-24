@@ -8,6 +8,8 @@ const isMac = () => /Mac|iPhone|iPad/.test(navigator.platform || navigator.userA
 
 interface Props {
   current: ImprintDefinition | null;
+  /** The house page, for the title's plain word (Home, Your life in weeks, Settings). */
+  page?: string;
   primary: PrimaryAction | null;
   focus: boolean;
   badge: boolean;
@@ -19,10 +21,10 @@ interface Props {
  * The spine: the only UI identical in every imprint (docs/DESIGN.md §2).
  * Ink-black in both themes, so each imprint's colour owns the page.
  */
-export function Spine({ current, primary, focus, badge, onDoors, onSearch }: Props) {
+export function Spine({ current, page = '', primary, focus, badge, onDoors, onSearch }: Props) {
   const { canLock, lock } = useLock();
   const name = current?.name ?? 'ETERNALL';
-  const fn = current?.functionLine ?? 'Your life in weeks';
+  const fn = current?.functionLine ?? (page === '' || page === 'welcome' ? 'Home' : page === 'settings' ? 'Settings' : 'Your life in weeks');
   return (
     <header className={`spine ${focus ? 'spine--focus' : ''}`}>
       <button type="button" className="spine__house" onClick={onDoors} aria-label="Open the doors menu" aria-haspopup="dialog">

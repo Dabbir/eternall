@@ -229,7 +229,7 @@ function Spread({ chapter, onEdit }: { chapter: Chapter; onEdit(): void }) {
               Edit chapter
             </Button>
             {house.profile && (
-              <Button variant="quiet" icon="grid" onClick={() => house.navigate(`/?week=${Math.max(0, Math.floor(diffDays(house.profile!.birthDate, chapter.start) / 7))}`)}>
+              <Button variant="quiet" icon="grid" onClick={() => house.navigate(`/life?week=${Math.max(0, Math.floor(diffDays(house.profile!.birthDate, chapter.start) / 7))}`)}>
                 Show on lifeline
               </Button>
             )}

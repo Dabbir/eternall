@@ -16,8 +16,9 @@ Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any
 **States and edge cases**
 - *Storage blocked* (private mode, or IndexedDB denied): a banner in the imprint's style: "This browser won't let ETERNALL save. You can look around, but nothing will be kept." Writes are disabled, never silently lost.
 - *Old browser* (no Web Crypto, no IndexedDB): a "Your browser can't keep things private" page with supported-browser guidance.
-- *Visitor arrives at the house `/` first (ADR 0013):* the welcome leads with **Start writing** (AMAZEEN) and **Track money** (CASHEEN), which open the app at once with nothing asked. "Begin your lifeline", "Explore a sample life" and "I already have a vault" sit below as plain links. The lifeline is never forced.
-- *Someone who has been writing, with no lifeline, returns to `/`* (e.g. through an app's way back): "Your lifeline — here when you want it", with **Back to Journal** (and Money, if used) and **Begin your lifeline**.
+- *Visitor arrives at the house `/` first (ADR 0014):* **Home** shows one card per app (Journal, Money, Practices) with one action each — Start writing, Add an entry, Add a practice — which open the app at once with nothing asked. "Draw your life in weeks →" and "I already have a vault" sit below. The lifeline is never forced.
+- *Anyone returning to `/`* (e.g. through an app's way back) lands on Home: each card's status and next step. **Money never shows a figure there.**
+- *`/life` without a birth date:* the lifeline's own beginning, "Your life, in weeks — optional", with Begin your lifeline, Back to Home and a sample life.
 - *The door of an app that is off* (old bookmark, installed shortcut): "ROUTEEN is off." with **Turn on ROUTEEN** and **Back**. It never opens on its own.
 
 ## F2 · Creating the vault and choosing a lock

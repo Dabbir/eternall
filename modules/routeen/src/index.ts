@@ -48,6 +48,16 @@ export const routeen: ImprintDefinition = {
     return facts;
   },
 
+  home(ctx) {
+    const all = practices(ctx);
+    if (!all.length) return { status: 'An empty loom: add something you want to return to.', action: { label: 'Add a practice', href: '/routeen/?new=1' } };
+    const kept = keySet(marks(ctx));
+    const due = dueToday(all, ctx.today);
+    const woven = due.filter((p) => kept.has(markId(p.id, ctx.today))).length;
+    const status = due.length ? `${woven} of ${plural(due.length, 'practice')} woven today` : 'Nothing due today · a day off is plain weave';
+    return { status, action: { label: 'Mark today', href: '/routeen/?mark=1' } };
+  },
+
   badge(ctx) {
     const kept = keySet(marks(ctx));
     const left = dueToday(practices(ctx), ctx.today).filter((p) => !kept.has(markId(p.id, ctx.today))).length;

@@ -20,12 +20,14 @@ beforeEach(() => {
 });
 
 describe('the house', () => {
-  it('welcomes a new visitor straight to writing or money, never to the lifeline (ADR 0013)', async () => {
+  it('welcomes a new visitor on Home: one card per app, never the lifeline (ADR 0014)', async () => {
     const user = userEvent.setup();
     at('/');
     render(<Root store={createMemoryStore()} />);
     expect(await screen.findByRole('heading', { name: /Write as usual\.\s*See your week again\./ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Track money' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add an entry' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Add a practice' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Draw your life in weeks/ })).toBeInTheDocument();
     expect(screen.queryByText('KINDRED')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Start writing' }));
     await waitFor(() => expect(window.location.pathname).toBe('/amazeen/'));
@@ -33,16 +35,29 @@ describe('the house', () => {
     expect(screen.queryByRole('dialog', { name: /lock it to you/ })).not.toBeInTheDocument();
   });
 
-  it('offers the lifeline, without pushing it, to someone already writing', async () => {
+  it('shows each app’s next step on Home, and Money never shows a figure', async () => {
+    const entry = rec('amazeen/entry/e1', { id: 'e1', kind: 'note', body: 'x', section: 'life', mood: 4, starred: false, createdAt: stamp, updatedAt: stamp });
+    const spent = rec('ledger/entry/a', { id: 'a', kind: 'out', amount: 777777, categoryId: 'food', date: today, note: 'warung', createdAt: stamp });
     at('/');
-    render(<Root store={createMemoryStore([quiet, rec('amazeen/entry/e1', { id: 'e1', date: today, title: 'A day', body: 'x', mood: 'calm', createdAt: stamp, updatedAt: stamp })])} />);
-    expect(await screen.findByRole('heading', { name: /Here when you\s*want it/ })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Back to Journal' })).toBeInTheDocument();
+    render(<Root store={createMemoryStore([profile, quiet, entry, spent])} />);
+    expect(await screen.findByRole('heading', { level: 1, name: /Ada\./ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Write today’s note' })).toBeInTheDocument();
+    expect(screen.getByText(/This week's issue · 1 piece/)).toBeInTheDocument();
+    const money = document.querySelector('.home-card--casheen')!;
+    expect(money.textContent).not.toMatch(/\d/);
+    expect(document.body.textContent).not.toMatch(/777|warung/);
+  });
+
+  it('offers the lifeline, without pushing it, on its own page', async () => {
+    at('/life');
+    render(<Root store={createMemoryStore([quiet])} />);
+    expect(await screen.findByRole('heading', { name: /Your life,\s*in weeks/ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Begin your lifeline/ })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Back to Home' })).toBeInTheDocument();
   });
 
   it('shows the lifeline and spine action once a profile exists', async () => {
-    at('/');
+    at('/life');
     render(<Root store={createMemoryStore([profile, quiet])} />);
     expect(await screen.findByRole('heading', { level: 1, name: /Ada, this is week/ })).toBeInTheDocument();
     expect(screen.getAllByRole('button', { name: /Inscribe this week/ }).length).toBeGreaterThan(0);
@@ -125,7 +140,7 @@ describe('apps as their own sites', () => {
   });
 
   it('gives the house back its spine and identity', async () => {
-    at('/');
+    at('/life');
     render(<Root store={createMemoryStore([profile, quiet])} />);
     expect(await screen.findByRole('heading', { level: 1, name: /Ada, this is week/ })).toBeInTheDocument();
     expect(document.querySelector('.spine')).not.toBeNull();

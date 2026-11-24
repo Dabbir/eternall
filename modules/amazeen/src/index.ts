@@ -109,6 +109,15 @@ export const amazeen: ImprintDefinition = {
 
   reminders: peopleReminders,
 
+  home(ctx) {
+    const entries = entriesOf(ctx);
+    const ready = lettersReady(ctx);
+    const thisWeek = entries.filter((e) => weekKey(new Date(e.createdAt)) === weekKey(new Date())).length;
+    if (!entries.length) return { status: 'Your weekly magazine, waiting for its first piece.', action: { label: 'Start writing', href: '/amazeen/' } };
+    const status = [thisWeek ? `This week's issue · ${plural(thisWeek, 'piece')}` : 'A new issue, nothing filed yet', ready ? `${plural(ready, 'letter')} ready to open` : 'goes to press on Sunday'].join(' · ');
+    return { status, action: { label: 'Write today’s note', href: '/amazeen/write/note' } };
+  },
+
   badge(ctx) {
     const ready = lettersReady(ctx);
     if (ready) return `${plural(ready, 'letter')} ready`;

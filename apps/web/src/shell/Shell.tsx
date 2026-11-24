@@ -70,6 +70,7 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   }, [vault, version, today]);
   const used = useMemo(() => enabled.filter((d) => d.hasData(ctx)), [enabled, ctx]);
   useReminders(contributors, ctx, settings.systemNotifications);
+  const housePage = loc.kind === 'house' ? loc.page : null;
   const asked = loc.kind === 'imprint' ? imprintById(loc.id) ?? null : null;
   // An app that is off never opens from its address: the house offers to turn it on instead.
   const current = asked && enabled.includes(asked) ? asked : null;
@@ -125,8 +126,8 @@ export function Shell({ today: fixedToday }: { today?: string }) {
   const house = useMemo(() => makeHouse(current), [makeHouse, current]);
 
   useEffect(() => {
-    document.title = current ? `${current.name} · ${current.functionLine}` : 'ETERNALL · Your life in weeks';
-  }, [current]);
+    document.title = current ? `${current.name} · ${current.functionLine}` : housePage === 'life' ? 'ETERNALL · Your life in weeks' : 'ETERNALL · Home';
+  }, [current, housePage]);
   useDoorHead(current);
 
   useEffect(() => {
@@ -159,6 +160,7 @@ export function Shell({ today: fixedToday }: { today?: string }) {
         {!app && (
           <Spine
             current={null}
+            page={loc.kind === 'house' ? loc.page : ''}
             primary={primary}
             focus={false}
             onDoors={() => setDoorsOpen(true)}

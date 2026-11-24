@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
-import { formatNumber, locate, ordinal, type FieldErrors, type HouseProfile, type ImprintDefinition } from '@eternall/core';
+import { formatNumber, locate, ordinal, type FieldErrors, type HouseProfile } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button, Wordmark, useToast } from '@eternall/ui';
 import { createMemoryStore, useVault, Vault } from '@eternall/vault';
@@ -20,7 +20,7 @@ function guessHemisphere(): 'north' | 'south' {
 type Step = 'welcome' | 'name' | 'birth' | 'horizon' | 'reveal';
 const QUESTION_STEPS: Step[] = ['name', 'birth', 'horizon'];
 
-export function Onboarding({ startAt = 'welcome', enabled = [], used = [] }: { startAt?: 'welcome' | 'name'; enabled?: readonly ImprintDefinition[]; used?: readonly ImprintDefinition[] }) {
+export function Onboarding({ startAt = 'welcome' }: { startAt?: 'welcome' | 'name' }) {
   const { today } = useHouse();
   const vault = useVault();
   const toast = useToast();
@@ -49,7 +49,7 @@ export function Onboarding({ startAt = 'welcome', enabled = [], used = [] }: { s
     try {
       vault.merge(await (await import('../../boot/sample')).createSampleRecords(today));
       await vault.flush();
-      navigate('/', { replace: true });
+      navigate('/life', { replace: true });
       toast({ message: 'Welcome to Mira’s lifeline. Erase it from Settings whenever you’re ready to begin your own.' });
     } catch {
       setLoadingSample(false);
@@ -72,64 +72,30 @@ export function Onboarding({ startAt = 'welcome', enabled = [], used = [] }: { s
 
       {step === 'welcome' && (
         <section className="welcome">
-          {used.length > 0 ? (
-            // Someone who has been writing (or keeping money) without a lifeline: offer it, never push it.
-            <div className="welcome__text">
-              <p className="eyebrow rise">Your lifeline</p>
-              <h1 className="display welcome__title rise" style={{ ['--i' as string]: 1 }}>
-                Here when you<br /><em>want it.</em>
-              </h1>
-              <p className="welcome__lede muted rise" style={{ ['--i' as string]: 2 }}>
-                The lifeline lays every week of your life on one page, with your issues and inscriptions on the weeks they belong to. It asks for your birth date, and it is
-                entirely optional.
-              </p>
-              <div className="welcome__actions rise" style={{ ['--i' as string]: 3 }}>
-                {used.map((d, i) => (
-                  <Button key={d.id} variant={i === 0 ? 'primary' : 'ghost'} onClick={() => navigate(d.basePath)} autoFocus={i === 0}>
-                    Back to {d.label}
-                  </Button>
-                ))}
-                <Button variant="ghost" iconAfter="arrow" onClick={() => setStep('name')}>Begin your lifeline</Button>
-              </div>
+          {/* Home welcomes new people now (docs/adr/0014); this is the optional lifeline's own beginning. */}
+          <div className="welcome__text">
+            <p className="eyebrow rise">Your life in weeks · optional</p>
+            <h1 className="display welcome__title rise" style={{ ['--i' as string]: 1 }}>
+              Your life,<br /><em>in weeks.</em>
+            </h1>
+            <p className="welcome__lede muted rise" style={{ ['--i' as string]: 2 }}>
+              A long life is about four thousand weeks. This page lays every one of yours out on a single page, with your issues, practices and inscriptions on the weeks
+              they belong to. It asks for your birth date, and it is entirely optional.
+            </p>
+            <div className="welcome__actions rise" style={{ ['--i' as string]: 3 }}>
+              <Button variant="primary" iconAfter="arrow" onClick={() => setStep('name')} autoFocus>
+                Begin your lifeline
+              </Button>
+              <Button variant="ghost" onClick={() => navigate('/')}>
+                Back to Home
+              </Button>
             </div>
-          ) : (
-            <div className="welcome__text">
-              <p className="eyebrow rise">A private journal, and money kept plainly</p>
-              <h1 className="display welcome__title rise" style={{ ['--i' as string]: 1 }}>
-                Write as usual.<br /><em>See your week again.</em>
-              </h1>
-              <p className="welcome__lede muted rise" style={{ ['--i' as string]: 2 }}>
-                AMAZEEN presses what you write into a weekly issue with a cover, one you will want to read again, and keeps every issue on a shelf. Everything stays on this
-                device, encrypted. Nothing to set up first.
-              </p>
-              <div className="welcome__actions rise" style={{ ['--i' as string]: 3 }}>
-                {enabled.some((d) => d.id === 'amazeen') && (
-                  <Button variant="primary" iconAfter="arrow" onClick={() => navigate('/amazeen/')} autoFocus>
-                    Start writing
-                  </Button>
-                )}
-                {enabled.some((d) => d.id === 'casheen') && (
-                  <Button variant="ghost" onClick={() => navigate('/casheen/')}>
-                    Track money
-                  </Button>
-                )}
-              </div>
-              <p className="welcome__privacy faint rise" style={{ ['--i' as string]: 4 }}>
-                Journal · AMAZEEN — your week, as a magazine. Money · CASHEEN — one line per entry, a budget per month.
-              </p>
-              <div className="welcome__more rise" style={{ ['--i' as string]: 5 }}>
-                <button type="button" className="welcome__adopt" onClick={() => setStep('name')}>
-                  Begin your lifeline: every week of your life on one page
-                </button>
-                <button type="button" className="welcome__adopt" disabled={loadingSample} onClick={() => void exploreSample()}>
-                  {loadingSample ? 'Preparing a sample…' : 'Explore a sample life'}
-                </button>
-                <button type="button" className="welcome__adopt" onClick={() => window.dispatchEvent(new CustomEvent('eternall:setup', { detail: { mode: 'adopt' } }))}>
-                  I already have an ETERNALL vault on another device
-                </button>
-              </div>
+            <div className="welcome__more rise" style={{ ['--i' as string]: 4 }}>
+              <button type="button" className="welcome__adopt" disabled={loadingSample} onClick={() => void exploreSample()}>
+                {loadingSample ? 'Preparing a sample…' : 'Explore a sample life first'}
+              </button>
             </div>
-          )}
+          </div>
           <WelcomeArt />
         </section>
       )}
@@ -227,7 +193,7 @@ export function Onboarding({ startAt = 'welcome', enabled = [], used = [] }: { s
           profile={profile}
           onEnter={() => {
             vault.collection<Profile>(PROFILE_PATH).put(profile);
-            navigate('/', { replace: true });
+            navigate('/life', { replace: true });
           }}
         />
       )}

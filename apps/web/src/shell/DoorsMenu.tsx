@@ -27,9 +27,8 @@ export function DoorsMenu({ open, onClose, ctx, enabled, used, current, hasProfi
     <Dialog open={open} onClose={onClose} title="Doors" hideTitle className="doors">
       <nav aria-label="Doors">
         <button type="button" className={`door door--house ${current === null ? 'is-here' : ''}`} onClick={() => go('/')}>
-          <span className="door__name door__name--house">Your lifeline</span>
-          <span className="door__fn">{hasProfile ? 'Every week of your life, on one page' : 'See it all on one page'}</span>
-          {offerLifeline && <span className="door__badge">New</span>}
+          <span className="door__name door__name--house">Home</span>
+          <span className="door__fn">Your apps, and what to do today</span>
         </button>
 
         {used.length > 0 && <p className="doors__group">Your apps</p>}
@@ -48,14 +47,8 @@ export function DoorsMenu({ open, onClose, ctx, enabled, used, current, hasProfi
         </button>
       )}
       <div className="doors__foot">
-        <button type="button" className="doors__link" onClick={() => go('/inscriptions')}>
-          <Icon name="book" size={16} /> Inscriptions
-        </button>
-        <button type="button" className="doors__link" onClick={() => go('/chapters')}>
-          <Icon name="grid" size={16} /> Chapters
-        </button>
-        <button type="button" className="doors__link" onClick={() => go('/almanac')}>
-          <Icon name="today" size={16} /> Almanac
+        <button type="button" className="doors__link" onClick={() => go('/life')}>
+          <Icon name="today" size={16} /> Your life in weeks{offerLifeline ? ' · new' : ''}
         </button>
         <button type="button" className="doors__link" onClick={() => go('/settings')}>
           <Icon name="settings" size={16} /> Settings

@@ -41,8 +41,8 @@ export function LifelineView({ ctx, enabled, contributors, search }: { ctx: Cont
   const selected = hasParam ? param : model.now;
   const sheetOpen = narrow && hasParam;
 
-  const select = useCallback((i: number) => navigate(`/?week=${i}`, { replace: true }), []);
-  const closeSheet = useCallback(() => navigate('/', { replace: true }), []);
+  const select = useCallback((i: number) => navigate(`/life?week=${i}`, { replace: true }), []);
+  const closeSheet = useCallback(() => navigate('/life', { replace: true }), []);
   usePrimaryAction({ label: 'Inscribe this week', run: () => navigate(`/inscriptions?new=1&date=${ctx.today}`) });
 
   const house = useHouse();

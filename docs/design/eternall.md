@@ -50,6 +50,27 @@ The lifeline is the page. Everything else is marginalia around it.
 
 ## 5. Key screens
 
+### 5.0 Home (`/`; ADR 0014)
+```
+┌ L. ETERNALL · Home                                         ⌕  🔒  ⚙ ┐
+  TUESDAY 24 NOVEMBER
+  Good morning, Ada.
+  ┌ Journal ─────────────┐ ┌ Money ───────────────┐ ┌ Practices ───────────┐
+  │ AMAZEEN · Journal    │ │ CASHEEN · Money, …   │ │ ROUTEEN · Practices… │
+  │ This week's issue ·  │ │ Money, kept plainly —│ │ 2 of 4 practices     │
+  │ 3 pieces · Sunday    │ │ one line per entry…  │ │ woven today          │
+  │ [Write today's note] │ │ [Add an entry]       │ │ [Mark today]         │
+  └──────────────────────┘ └──────────────────────┘ └──────────────────────┘
+  Your life in weeks →
+```
+- **One card per app that is on**, in house type: the plain word (Journal, Money, Practices) in Instrument Serif, the name and function line in small caps, the app's colour as a top rule, a status line from the app's `home(ctx)`, and **one action**.
+- **Money shows no figures on Home, ever** (CASHEEN's `home` is fixed text; a test asserts no digit).
+- **A new person** sees the same cards with "Write as usual. *See your week again.*" above, "Start writing" / "Add an entry" / "Add a practice" as the actions, and "I already have an ETERNALL vault on another device" below. Nothing is written by looking, so no lock is asked for.
+- **Your life in weeks →** leads to `/life` ("Draw your life in weeks →" without a birth date).
+
+### 5.0b Your life in weeks (`/life`; ADR 0014)
+The lifeline (5.1) with its sections as tabs: **Weeks · Chapters · Inscriptions · Almanac** (`/life`, `/chapters`, `/inscriptions`, `/almanac`). Without a birth date, `/life` opens the lifeline's own beginning ("Your life, in weeks — optional": Begin your lifeline · Back to Home · Explore a sample life first). Week links are `/life?week=N`.
+
 ### 5.1 Lifeline (dashboard)
 ```
 ┌ spine ─────────────────────────────────────────────────────────────────────────────┐
@@ -77,22 +98,18 @@ The lifeline is the page. Everything else is marginalia around it.
 ### 5.2 Doors menu (from the house mark)
 ```
 ┌──────────────────────────────────────────────┐
-│  Your lifeline        See it all on one page │
+│  Home         Your apps, and what to do today │
 │  ──────────────────────────────────────────── │
 │  YOUR APPS                                   │
 │  Journal     AMAZEEN · Journal       1 ready │
 │  Money       CASHEEN · Money, kept plainly   │
 │  ──────────────────────────────────────────── │
-│  3 more apps in Settings                     │
-│  Inscriptions · Chapters · Almanac · Settings │
+│  Your life in weeks · Settings                │
 └──────────────────────────────────────────────┘
 ```
 Each app leads with its **plain word** (Journal, Money, Practices, People, Reading) in house serif; its name and function line follow (ADR 0013). Only apps that are on are listed; "N more apps in Settings" leads to Settings → Apps.
 
-### 5.2b Welcome (`/` with no lifeline yet; ADR 0013)
-- **New person:** "Write as usual. *See your week again.*" with **Start writing** (opens AMAZEEN) and **Track money** (opens CASHEEN). Below a rule, plain links: "Begin your lifeline", "Explore a sample life", "I already have an ETERNALL vault on another device". The lifeline art stays on the right as a quiet hint.
-- **Someone already writing:** "Your lifeline — here when you *want it*", with **Back to Journal** (and Money) and **Begin your lifeline**.
-- **An app that is off, opened by its address:** "KINDRED is off." with **Turn on KINDRED** and **Back**.
+*(5.2b, the welcome of ADR 0013, is replaced by Home, 5.0.)*
 
 ### 5.3 Unlock (vault locked)
 A centred paper card, the only centred layout in the house, on purpose: the threshold. It holds the wordmark, "Your archive is locked", a passphrase field or a passkey button, and a quiet link to "Use recovery kit". At an app's door the unlock card is **that app's own lock**, with nothing of the house: its name and function line instead of the wordmark, its own heading ("The card file is locked."), and its kit's look (ADR 0011).

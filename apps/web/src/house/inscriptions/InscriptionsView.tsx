@@ -156,7 +156,7 @@ export function InscriptionsView({ search }: { search: URLSearchParams }) {
                               <button
                                 type="button"
                                 className="entry__locate"
-                                onClick={() => navigate(`/?week=${week}`)}
+                                onClick={() => navigate(`/life?week=${week}`)}
                                 aria-label={`Show “${ins.title}” on the lifeline`}
                                 title="Show on lifeline"
                               >

@@ -27,6 +27,9 @@ export const casheen: ImprintDefinition = {
   hasData: (ctx) => entries(ctx).length > 0,
 
 
+  /** Home shows no figures from CASHEEN, ever (docs/adr/0014): only the way in. */
+  home: () => ({ status: 'Money, kept plainly — one line per entry, a budget per month.', action: { label: 'Add an entry', href: '/casheen/?write=1' } }),
+
   reminders(ctx) {
     const pref = ctx.data.collection<LedgerPref>(PREF_PATH).get('pref') ?? DEFAULT_PREF;
     if (!pref.remindBudget || ctx.today.slice(8) !== '01') return [];

@@ -54,7 +54,7 @@ export function CommandPalette({ open, onClose, ctx, enabled, current = null }: 
             run: () => updateSettings({ theme: isDark ? 'light' : 'dark' }),
           },
           { id: 'go-home', label: `${current.name} · home`, icon: 'arrow', group: 'Go to', run: () => navigate(current.basePath) },
-          { id: 'leave', label: current.brand.leaveLabel, hint: 'Back to your lifeline', icon: 'left', group: 'Go to', run: () => navigate('/') },
+          { id: 'leave', label: current.brand.leaveLabel, hint: 'Back to Home', icon: 'left', group: 'Go to', run: () => navigate('/') },
         ]
       : [];
     const base: Command[] = current ? appBase : [
@@ -66,7 +66,8 @@ export function CommandPalette({ open, onClose, ctx, enabled, current = null }: 
         group: 'Actions',
         run: () => updateSettings({ theme: isDark ? 'light' : 'dark' }),
       },
-      { id: 'go-house', label: 'Your lifeline', hint: 'ETERNALL', icon: 'grid', group: 'Go to', run: () => navigate('/') },
+      { id: 'go-home', label: 'Home', hint: 'ETERNALL', icon: 'grid', group: 'Go to', run: () => navigate('/') },
+      { id: 'go-life', label: 'Your life in weeks', icon: 'today', group: 'Go to', run: () => navigate('/life') },
       ...enabled.map<Command>((d) => ({ id: `go-${d.id}`, label: `${d.label} · ${d.name}`, hint: d.functionLine, icon: 'arrow', group: 'Go to', run: () => navigate(d.basePath) })),
       { id: 'go-inscriptions', label: 'Inscriptions', icon: 'book', group: 'Go to', run: () => navigate('/inscriptions') },
       { id: 'go-chapters', label: 'Chapters', icon: 'grid', group: 'Go to', run: () => navigate('/chapters') },
@@ -78,7 +79,7 @@ export function CommandPalette({ open, onClose, ctx, enabled, current = null }: 
     if (!current && DATE_RE.test(q) && ctx.profile) {
       const idx = locateIndex(ctx.profile.birthDate, q);
       if (idx !== null && idx < ctx.profile.horizonYears * 52) {
-        out.push({ id: 'jump', label: `Jump to the week of ${formatMedium(q)}`, icon: 'today', group: 'Jump', run: () => navigate(`/?week=${idx}`) });
+        out.push({ id: 'jump', label: `Jump to the week of ${formatMedium(q)}`, icon: 'today', group: 'Jump', run: () => navigate(`/life?week=${idx}`) });
       }
     }
     const lower = q.toLowerCase();

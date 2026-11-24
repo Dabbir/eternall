@@ -13,7 +13,7 @@ Conventions:
 
 ---
 
-## 1. ETERNALL: the house (`apps/web`)
+## 1. ETERNALL: the house (`apps/web`) — Home and Your life in weeks (ADR 0014)
 
 **Purpose:** the overview of a life in weeks, the doors between imprints, the vault UI.
 
