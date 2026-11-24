@@ -1,6 +1,5 @@
-import { barStart } from './practices';
 import { dayState, daySky, indexMarks, isKeptInWeek, litDays, steadiest, weekSky, weekSummary, weekTarget, yearSky, isScheduledOn, marksInWeek } from './days';
-import { markId, type Mark, type Practice, type Tier } from './practices';
+import { barStart, markId, type Mark, type Practice, type Tier } from './practices';
 import type { ModeOf } from './modes';
 
 const today = '2026-11-25'; // Wednesday; the week starts 2026-11-23
@@ -73,4 +72,28 @@ it('counts lit days, not marks, and finds the steadiest practice by kept weeks',
   const weekly = { ...run, id: 'w', cadence: { kind: 'times', n: 1 } as const, startedOn: '2026-10-01' };
   const m = [mark('w', '2026-11-03'), mark('w', '2026-11-10'), mark('w', '2026-11-17')];
   expect(steadiest([weekly], indexMarks(m), today, normal)).toEqual({ practice: weekly, weeks: 3 });
+});
+it('counts a week rested away as kept, but not a week not yet asked', () => {
+  const start = '2026-11-16';
+  const empty = indexMarks([]);
+  const off = (days: string[]): ModeOf => (d) => (days.includes(d) ? 'off' : 'normal');
+  const threeOff = off(['2026-11-16', '2026-11-17', '2026-11-18']);
+  expect(weekTarget(read, start, today, threeOff)).toBe(0);
+  expect(isKeptInWeek(read, start, empty, today, threeOff)).toBe(true);
+  const allOff: ModeOf = () => 'off';
+  expect(isKeptInWeek(run, start, empty, today, allOff)).toBe(true);
+  expect(isKeptInWeek(mum, start, empty, today, allOff)).toBe(true);
+  expect(isKeptInWeek(run, start, empty, today, normal)).toBe(false);
+  // the current week: nothing asked yet, so no marks is not kept
+  expect(isKeptInWeek(read, '2026-11-23', empty, today, normal)).toBe(false);
+  expect(isKeptInWeek(run, '2026-11-23', empty, today, allOff)).toBe(false);
+});
+it('subtracts only Day-off days on which the practice was active', () => {
+  const late = { ...read, startedOn: '2026-11-19' }; // active Thu-Sun of 2026-11-16
+  const offAll: ModeOf = () => 'off';
+  expect(weekTarget(late, '2026-11-16', today, offAll)).toBe(0);
+  const offEarly: ModeOf = (d) => (d < '2026-11-19' ? 'off' : 'normal');
+  expect(weekTarget(late, '2026-11-16', today, offEarly)).toBe(3);
+  const paused = { ...read, pausedOn: '2026-11-18' };
+  expect(weekTarget(paused, '2026-11-16', today, (d) => (d >= '2026-11-18' ? 'off' : 'normal'))).toBe(3);
 });

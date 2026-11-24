@@ -26,18 +26,26 @@ export function dayState(p: Practice, date: ISODate, idx: MarkIndex, modeOf: Mod
   return date === today ? 'open' : 'unlit';
 }
 
+/** What the week asks of a practice before Day-off days are taken away. */
+function baseTarget(p: Practice, start: ISODate, today: ISODate): number {
+  const days = barDays(start).filter((d) => isActiveOn(p, d));
+  const sofar = days.filter((d) => d <= today);
+  if (p.cadence.kind === 'daily') return sofar.length;
+  if (p.cadence.kind === 'weekly') {
+    const weekday = p.cadence.weekday;
+    return sofar.some((d) => weekdayOf(d) === weekday) ? 1 : 0;
+  }
+  // n a week: asked of only once the week has ended.
+  return today < addDays(start, 6) || !days.length ? 0 : p.cadence.n;
+}
+
 /** What the week asks of a practice so far; Day-off days are never asked for. Low energy changes nothing. */
 export function weekTarget(p: Practice, start: ISODate, today: ISODate, modeOf: ModeOf): number {
   const days = barDays(start).filter((d) => isActiveOn(p, d));
-  const onDays = days.filter((d) => d <= today && modeOf(d) !== 'off');
-  if (p.cadence.kind === 'daily') return onDays.length;
-  if (p.cadence.kind === 'weekly') {
-    const weekday = p.cadence.weekday;
-    return onDays.some((d) => weekdayOf(d) === weekday) ? 1 : 0;
-  }
-  // n a week: asked of only once the week has ended, less the days off.
-  if (today < addDays(start, 6) || !days.length) return 0;
-  return Math.max(0, p.cadence.n - barDays(start).filter((d) => modeOf(d) === 'off').length);
+  if (p.cadence.kind === 'times') return Math.max(0, baseTarget(p, start, today) - days.filter((d) => modeOf(d) === 'off').length);
+  if (p.cadence.kind === 'daily') return days.filter((d) => d <= today && modeOf(d) !== 'off').length;
+  const weekday = p.cadence.weekday;
+  return days.some((d) => d <= today && modeOf(d) !== 'off' && weekdayOf(d) === weekday) ? 1 : 0;
 }
 
 export const marksInWeek = (p: Practice, start: ISODate, idx: MarkIndex): number => barDays(start).filter((d) => idx.has(markId(p.id, d))).length;
@@ -46,7 +54,10 @@ export function isKeptInWeek(p: Practice, start: ISODate, idx: MarkIndex, today:
   if (!barDays(start).some((d) => d <= today && isActiveOn(p, d))) return false;
   const target = weekTarget(p, start, today, modeOf);
   const marks = marksInWeek(p, start, idx);
-  return target === 0 ? marks > 0 : marks >= target;
+  if (target > 0) return marks >= target;
+  if (marks > 0) return true;
+  // A finished week whose every ask fell on a Day off is kept: rest is not a gap.
+  return today >= addDays(start, 6) && baseTarget(p, start, today) > 0;
 }
 
 /** Only practices the week has asked something of so far (or that already have a mark) are counted. */
