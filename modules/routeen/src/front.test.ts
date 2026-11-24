@@ -1,4 +1,4 @@
-import { allAsPlanned, frontPage, fullWeekTarget, isDueOn, tapTier, type FrontInput } from './front';
+import { allAsPlanned, frontPage, groupByTime, fullWeekTarget, isDueOn, tapTier, type FrontInput } from './front';
 import { indexMarks } from './days';
 import { markId, type Mark, type Practice, type Tier } from './practices';
 import type { ModeOf } from './modes';
@@ -98,4 +98,26 @@ it('decides whether a practice is due on a day', () => {
   expect(isDueOn(run, '2026-11-26', idx, () => 'off')).toBe(false);
   expect(isDueOn(mum, '2026-11-28', idx, normal)).toBe(true);
   expect(isDueOn(mum, '2026-11-27', idx, normal)).toBe(false);
+});
+
+const shape = (gs: readonly { time: string; practices: readonly Practice[] }[]) => gs.map((g) => [g.time, g.practices.map((p) => p.id)]);
+it('groups due practices by time of day in a fixed order', () => {
+  expect(shape(frontPage(input()).groups)).toEqual([['morning', ['water']], ['evening', ['med']], ['anytime', ['run', 'read']]]);
+});
+it('keeps the groups whatever is lit', () => {
+  const p = frontPage(input({ marks: [mark('med', '2026-11-25'), mark('run', '2026-11-25')] }));
+  expect(shape(p.groups)).toEqual([['morning', ['water']], ['evening', ['med']], ['anytime', ['run', 'read']]]);
+});
+it('puts every active practice in the groups on a Day off', () => {
+  const off = frontPage(input({ modes: [{ id: '2026-11-25', from: '2026-11-25', mode: 'off' }] }));
+  expect(off.groups.flatMap((g) => g.practices.map((p) => p.id))).toEqual(['water', 'med', 'run', 'mum', 'read']);
+  expect(off.alsoToday).toEqual([]);
+});
+it('glows with the share of due practices lit', () => {
+  expect(frontPage(input()).glow).toBe(0);
+  expect(frontPage(input({ marks: [mark('run', '2026-11-25'), mark('med', '2026-11-25')] })).glow).toBe(0.5);
+  expect(frontPage(input({ modes: [{ id: '2026-11-25', from: '2026-11-25', mode: 'off' }] })).glow).toBe(0);
+});
+it('groups any list by time of day', () => {
+  expect(shape(groupByTime([read, med, water]))).toEqual([['morning', ['water']], ['evening', ['med']], ['anytime', ['read']]]);
 });

@@ -1,7 +1,7 @@
 import { addDays, type ISODate } from '@eternall/core';
 import { indexMarks, isScheduledOn, type MarkIndex } from './days';
 import { modeOfFn, type DayModeRecord, type Mode, type ModeOf, type ModeRecord } from './modes';
-import { barDays, barStart, isActiveOn, markId, timeOf, weekdayOf, type Mark, type Practice, type Tier } from './practices';
+import { barDays, barStart, isActiveOn, markId, timeOf, weekdayOf, type Mark, type Practice, type Tier, type TimeOfDay } from './practices';
 import { partOfDay, routineDay, type Part } from './sky';
 
 /** The front page of ROUTEEN: what is for now, what comes later, and yesterday's gaps. */
@@ -14,6 +14,12 @@ export interface FrontInput {
   dayEndsAt: number;
 }
 
+/** Practices that share a time of day; the page lists them in a fixed order (ADR 0016). */
+export interface Group {
+  time: TimeOfDay;
+  practices: Practice[];
+}
+
 export interface FrontPage {
   today: ISODate;
   yesterday: ISODate;
@@ -21,6 +27,10 @@ export interface FrontPage {
   mode: Mode;
   /** In the evening the page recaps everything due. */
   recap: boolean;
+  /** Due practices (every active one on a Day off) by time of day, in a fixed order; never moved by a mark. */
+  groups: Group[];
+  /** How much of what is due is lit, 0..1; the sky brightens with it. Never shown as a number. */
+  glow: number;
   forNow: Practice[];
   notYet: Practice[];
   alsoToday: Practice[];
@@ -53,6 +63,13 @@ export const tapTier = (mode: Mode): Tier => (mode === 'low' ? 'minimum' : 'targ
 const byStartThenName = (a: Practice, b: Practice): number => (a.startedOn < b.startedOn ? -1 : a.startedOn > b.startedOn ? 1 : a.name.localeCompare(b.name));
 const ordered = (ps: readonly Practice[]): Practice[] => [...ps].sort(byStartThenName); // Array.sort is stable
 
+const TIMES: readonly TimeOfDay[] = ['morning', 'midday', 'evening', 'anytime'];
+
+/** Any list by time of day: morning, midday, evening, any time; empty groups left out; each in start-then-name order. */
+export function groupByTime(ps: readonly Practice[]): Group[] {
+  return TIMES.map((time) => ({ time, practices: ordered(ps.filter((p) => timeOf(p) === time)) })).filter((g) => g.practices.length > 0);
+}
+
 export function frontPage(input: FrontInput): FrontPage {
   const { now, dayEndsAt } = input;
   const today = routineDay(now, dayEndsAt);
@@ -77,19 +94,23 @@ export function frontPage(input: FrontInput): FrontPage {
   const yesterdayUnmarked =
     part === 'morning' && modeOf(yesterday) !== 'off' ? input.practices.filter((p) => isScheduledOn(p, yesterday) && !idx.has(markId(p.id, yesterday))) : [];
 
+  const dueCount = dueSet.size;
+  const markedDueCount = [...dueSet].filter(marked).length;
   return {
     today,
     yesterday,
     part,
     mode,
     recap,
+    groups: groupByTime(mode === 'off' ? active : due),
+    glow: dueCount ? markedDueCount / dueCount : 0,
     forNow: ordered(forNow),
     notYet: ordered(notYet),
     alsoToday: ordered(mode === 'off' ? [] : active.filter((p) => !dueSet.has(p))),
     ifYouLike: mode === 'off' ? ordered(active) : [],
     yesterdayUnmarked: ordered(yesterdayUnmarked),
-    dueCount: dueSet.size,
-    markedDueCount: [...dueSet].filter(marked).length,
+    dueCount,
+    markedDueCount,
   };
 }
 
