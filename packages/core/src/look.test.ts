@@ -32,6 +32,14 @@ describe('looks', () => {
     expect(readLook(spec, { preset: 'neon', accent: '#f00', size: 99 })).toEqual(defaultLook(spec));
   });
 
+  it('reads an aliased preset and accent as their new ids', () => {
+    const aliased = { ...spec, aliases: { presets: { old: spec.defaultPreset }, accents: { oldA: Object.keys(spec.accents)[0]! } } };
+    const look = readLook(aliased, { id: 'look', preset: 'old', accent: 'oldA', type: spec.defaultType, size: 'l', density: 'regular' });
+    expect(look.preset).toBe(spec.defaultPreset);
+    expect(look.accent).toBe(Object.keys(spec.accents)[0]);
+    expect(look.size).toBe('l');
+  });
+
   it('takes a preset with its own accent, keeping type, size and density', () => {
     expect(withPreset({ ...defaultLook(spec), accent: 'blue', size: 'l' }, 'sepia')).toEqual({ id: 'look', preset: 'sepia', type: 'plain', size: 'l', density: 'regular' });
   });

@@ -45,6 +45,11 @@ export interface LookSpec {
   densities: Record<string, { label: string; space: number; leading: number }>;
   /** Preset token names checked for contrast: the backgrounds, the body ink and the secondary inks. */
   contrast: { backgrounds: string[]; body: string; secondary: string[] };
+  /**
+   * Old ids an app has renamed, mapped to their current ones: a stored look with an aliased preset or
+   * accent opens as the target, keeping its other choices. Optional; apps without it behave as before.
+   */
+  aliases?: { presets?: Record<string, string>; accents?: Record<string, string> };
   /** Further tokens worked out from the chosen ones (e.g. rules from the ink, a soft accent). */
   derive?(tokens: Readonly<Record<string, string>>, mode: LookMode): Record<string, string>;
 }
@@ -63,18 +68,22 @@ export const defaultLook = (spec: LookSpec): Look => ({ id: 'look', preset: spec
 
 const has = <K extends string>(rec: Record<K, unknown>, k: unknown): k is K => typeof k === 'string' && Object.prototype.hasOwnProperty.call(rec, k);
 
+const alias = (map: Record<string, string> | undefined, v: unknown): unknown => (map && typeof v === 'string' && Object.prototype.hasOwnProperty.call(map, v) ? map[v] : v);
+
 /** A stored look, read safely: anything unknown falls back to the default, never to a broken page. */
 export function readLook(spec: LookSpec, raw: unknown): Look {
   const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
   const d = defaultLook(spec);
+  const preset = alias(spec.aliases?.presets, r.preset);
+  const accent = alias(spec.aliases?.accents, r.accent);
   const look: Look = {
     id: 'look',
-    preset: has(spec.presets, r.preset) ? r.preset : d.preset,
+    preset: has(spec.presets, preset) ? preset : d.preset,
     type: has(spec.types, r.type) ? r.type : d.type,
     size: has(spec.sizes, r.size) ? r.size : d.size,
     density: has(spec.densities, r.density) ? r.density : d.density,
   };
-  if (has(spec.accents, r.accent)) look.accent = r.accent;
+  if (has(spec.accents, accent)) look.accent = accent;
   return look;
 }
 

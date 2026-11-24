@@ -1,34 +1,38 @@
 import { LOOK_DENSITIES, LOOK_SIZES, type LookSpec } from '@eternall/core';
 
 /**
- * Your cloth's look (docs/design/routeen.md §9; ADR 0014): four cloths for the loom, an accent thread,
- * two type pairings, text size and density. The threads' own dyes and weave patterns never change with
- * the look, so practices stay told apart without colour. Stored in the vault as `refrain/look`.
+ * The sky's look (docs/design/routeen.md; spec §4.8): four skies for the day, an accent, two type pairings,
+ * text size and density. Looks change tokens only, never layout, and the glyph shapes never change.
+ * Stored in the vault as `refrain/look`; loom-era ids (linen, indigo, madder, night) open as their nearest sky.
  */
 export const LOOK_PATH = 'refrain/look';
 
-const cloth = (paper: string, raised: string, ink: string, ink2: string, ink3: string) => ({ '--paper': paper, '--paper-raised': raised, '--ink': ink, '--ink-2': ink2, '--ink-3': ink3 });
+const sky = (paper: string, raised: string, ink: string, ink2: string, ink3: string, top: string, bottom: string) => ({ '--paper': paper, '--paper-raised': raised, '--ink': ink, '--ink-2': ink2, '--ink-3': ink3, '--sky-top': top, '--sky-bottom': bottom });
 const WORK = "'Work Sans', system-ui, sans-serif";
 
 export const ROUTEEN_LOOKS: LookSpec = {
   imprint: 'routeen',
   presets: {
-    linen: { label: 'Linen', note: 'Undyed linen, as it came', accent: 'indigo', light: cloth('#efe8da', '#f7f2e7', '#22201b', '#4a453b', '#5f584b'), dark: cloth('#15130f', '#1c1a15', '#ece5d6', '#c6bead', '#a39b8b') },
-    indigo: { label: 'Indigo vat', note: 'Cloth dipped in blue', accent: 'indigo', light: cloth('#e7ebf1', '#f3f5f8', '#16202f', '#3b4658', '#525d70'), dark: cloth('#0f1420', '#151b29', '#e3e9f4', '#bac4d6', '#97a2b8') },
-    madder: { label: 'Madder', note: 'Warm red-earth cloth', accent: 'madder', light: cloth('#f2e3dc', '#f9efea', '#2a1612', '#553a33', '#6b4f47'), dark: cloth('#1a0f0c', '#221512', '#f2e1da', '#cfb6ad', '#ae958c') },
-    night: { label: 'Night loom', note: 'Lamplight on the warp', accent: 'walnut', light: cloth('#e9e1d0', '#f3ecdf', '#1f1b14', '#4a4236', '#5f5648'), dark: cloth('#100e0b', '#18150f', '#e8dfcc', '#c2b8a3', '#a09681') },
+    fajar: { label: 'Fajar', note: 'Dawn, peach to pale blue', accent: 'amber', light: sky('#f8efe8', '#fdf8f3', '#27201f', '#4d4240', '#605452', '#f7d9c6', '#d6e6f3'), dark: sky('#1a1618', '#221d20', '#f1e6e0', '#cfc1ba', '#ada09a', '#4a3a3c', '#2b3a4d') },
+    siang: { label: 'Siang', note: 'Midday, clear blue and bright paper', accent: 'sky', light: sky('#eef4fa', '#f8fbfe', '#142030', '#38485c', '#4d5d71', '#bcd8f2', '#e6f1fa'), dark: sky('#0f1722', '#16202e', '#e4edf8', '#b9c8da', '#95a7bd', '#1f3a5c', '#16283d') },
+    senja: { label: 'Senja', note: 'Dusk, amber into violet', accent: 'dusk', light: sky('#f7eee6', '#fcf6ef', '#2a1d22', '#52404a', '#65535d', '#f5c98a', '#cdbde3'), dark: sky('#181220', '#211a2b', '#f0e5ea', '#cfbfca', '#ac9ca9', '#5a3a3a', '#3a2c57') },
+    malam: { label: 'Malam', note: 'Night, deep blue paper and warm ink', accent: 'amber', light: sky('#e6e9f1', '#f1f3f8', '#1b1d2a', '#40445a', '#555a70', '#b9c0d9', '#d4d7e8'), dark: sky('#0c1220', '#131a2c', '#f0e4cf', '#cbbfa8', '#a89e89', '#16213b', '#0c1220') },
   },
-  defaultPreset: 'linen',
+  defaultPreset: 'fajar',
   accents: {
-    indigo: { label: 'Indigo', light: ['#2e4a7d', '#2e4a7d', '#ffffff'], dark: ['#9db4e3', '#a9bfea', '#0d1424'] },
-    madder: { label: 'Madder', light: ['#9c3628', '#93311f', '#ffffff'], dark: ['#e98a76', '#ef9a88', '#220b06'] },
-    walnut: { label: 'Walnut', light: ['#6b4a2e', '#634427', '#ffffff'], dark: ['#c49a74', '#cfa883', '#1e1209'] },
-    lichen: { label: 'Lichen', light: ['#46612f', '#405a2a', '#ffffff'], dark: ['#9cc07f', '#a8ca8c', '#0f1a08'] },
-    iron: { label: 'Iron', light: ['#4c5560', '#46505a', '#ffffff'], dark: ['#a9b3bd', '#b6bfc8', '#12161a'] },
+    amber: { label: 'Amber', light: ['#9a5a14', '#8f5210', '#ffffff'], dark: ['#f0b968', '#f4c47e', '#1e1204'] },
+    sky: { label: 'Sky', light: ['#2a5a94', '#254f84', '#ffffff'], dark: ['#9cc4f2', '#a9cdf5', '#08121f'] },
+    dusk: { label: 'Dusk', light: ['#6a4a94', '#5f4287', '#ffffff'], dark: ['#c4a8ee', '#cdb5f1', '#150c22'] },
+    leaf: { label: 'Leaf', light: ['#46612f', '#405a2a', '#ffffff'], dark: ['#9cc07f', '#a8ca8c', '#0f1a08'] },
+    stone: { label: 'Stone', light: ['#4c5560', '#46505a', '#ffffff'], dark: ['#a9b3bd', '#b6bfc8', '#12161a'] },
+  },
+  aliases: {
+    presets: { linen: 'fajar', indigo: 'siang', madder: 'senja', night: 'malam' },
+    accents: { indigo: 'sky', madder: 'dusk', walnut: 'amber', lichen: 'leaf', iron: 'stone' },
   },
   accentTokens: ['--accent', '--accent-text', '--on-accent'],
   types: {
-    hand: { label: 'Hand-loomed', note: 'Young Serif headings over Work Sans', tokens: { '--font-display': "'Young Serif', Georgia, serif", '--font-ui': WORK } },
+    hand: { label: 'Hand-drawn', note: 'Young Serif headings over Work Sans', tokens: { '--font-display': "'Young Serif', Georgia, serif", '--font-ui': WORK } },
     bookish: { label: 'Bookish', note: 'Literata headings over Work Sans', tokens: { '--font-display': "'Literata', Georgia, serif", '--font-ui': WORK } },
   },
   defaultType: 'hand',
@@ -41,6 +45,5 @@ export const ROUTEEN_LOOKS: LookSpec = {
     '--accent-soft': `color-mix(in srgb, ${t['--accent']} 13%, transparent)`,
     '--rule': `color-mix(in srgb, ${t['--ink']} 13%, transparent)`,
     '--rule-strong': `color-mix(in srgb, ${t['--ink']} 31%, transparent)`,
-    '--warp': `color-mix(in srgb, ${t['--ink']} 22%, transparent)`,
   }),
 };
