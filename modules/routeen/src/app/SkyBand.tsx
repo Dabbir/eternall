@@ -38,7 +38,7 @@ export function SkyBand({
   groups?: readonly Group[];
   kindOf?(id: string): BodyKind;
   nameOf?(id: string): string;
-  sun?: number;
+  sun?: number | undefined;
   label: string;
   justLit?: string | null;
   children?: ReactNode;
