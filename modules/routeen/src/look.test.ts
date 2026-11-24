@@ -40,4 +40,30 @@ describe('the sky’s look', () => {
       }
     expect(low).toEqual([]);
   });
+  it('keeps every accent visible as a body on both ends of every sky, in both modes', () => {
+    // Bodies in the sky are graphical objects: at least 3:1 against the sky behind them (WCAG 1.4.11).
+    const low: string[] = [];
+    for (const [id, p] of Object.entries(ROUTEEN_LOOKS.presets))
+      for (const mode of ['light', 'dark'] as const)
+        for (const [aid, a] of Object.entries(ROUTEEN_LOOKS.accents))
+          for (const end of ['--sky-top', '--sky-bottom']) {
+            const ratio = contrast(a[mode][0], p[mode][end]!);
+            if (ratio < 3) low.push(`${id} ${mode} ${aid} on ${end}: ${ratio.toFixed(2)}`);
+          }
+    expect(low).toEqual([]);
+  });
+  it('keeps every dark sky clear, never a muddy grey', () => {
+    // HSL saturation of both ends of each dark sky: a night sky with colour in it, not brown-grey.
+    const sat = (hex: string) => {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255) as [number, number, number];
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      const l = (max + min) / 2;
+      return max === min ? 0 : (max - min) / (1 - Math.abs(2 * l - 1));
+    };
+    const dull: string[] = [];
+    for (const [id, p] of Object.entries(ROUTEEN_LOOKS.presets))
+      for (const end of ['--sky-top', '--sky-bottom']) if (sat(p.dark[end]!) < 0.25) dull.push(`${id} ${end}: ${sat(p.dark[end]!).toFixed(2)}`);
+    expect(dull).toEqual([]);
+  });
 });

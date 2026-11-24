@@ -36,7 +36,7 @@
   :root:not([data-theme='light']) [data-imprint='routeen'] {
     --paper: #1a1618; --paper-raised: #221d20; --paper-sunk: color-mix(in srgb, var(--paper) 90%, #000);
     --ink: #f1e6e0; --ink-2: #cfc1ba; --ink-3: #ada09a;
-    --sky-top: #4a3a3c; --sky-bottom: #2b3a4d;
+    --sky-top: #4a2c3f; --sky-bottom: #1d2a3f;
     --accent: #f0b968; --accent-text: #f4c47e; --on-accent: #1e1204;
     --veil: rgb(0 0 0 / 0.62);
   }
@@ -44,7 +44,7 @@
 :root[data-theme='dark'] [data-imprint='routeen'] {
   --paper: #1a1618; --paper-raised: #221d20; --paper-sunk: color-mix(in srgb, var(--paper) 90%, #000);
   --ink: #f1e6e0; --ink-2: #cfc1ba; --ink-3: #ada09a;
-  --sky-top: #4a3a3c; --sky-bottom: #2b3a4d;
+  --sky-top: #4a2c3f; --sky-bottom: #1d2a3f;
   --accent: #f0b968; --accent-text: #f4c47e; --on-accent: #1e1204;
   --veil: rgb(0 0 0 / 0.62);
 }

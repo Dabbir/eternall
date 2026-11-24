@@ -13,9 +13,9 @@ const WORK = "'Work Sans', system-ui, sans-serif";
 export const ROUTEEN_LOOKS: LookSpec = {
   imprint: 'routeen',
   presets: {
-    fajar: { label: 'Fajar', note: 'Dawn, peach to pale blue', accent: 'amber', light: sky('#f8efe8', '#fdf8f3', '#27201f', '#4d4240', '#605452', '#f7d9c6', '#d6e6f3'), dark: sky('#1a1618', '#221d20', '#f1e6e0', '#cfc1ba', '#ada09a', '#4a3a3c', '#2b3a4d') },
+    fajar: { label: 'Fajar', note: 'Dawn, peach to pale blue', accent: 'amber', light: sky('#f8efe8', '#fdf8f3', '#27201f', '#4d4240', '#605452', '#f7d9c6', '#d6e6f3'), dark: sky('#1a1618', '#221d20', '#f1e6e0', '#cfc1ba', '#ada09a', '#4a2c3f', '#1d2a3f') },
     siang: { label: 'Siang', note: 'Midday, clear blue and bright paper', accent: 'sky', light: sky('#eef4fa', '#f8fbfe', '#142030', '#38485c', '#4d5d71', '#bcd8f2', '#e6f1fa'), dark: sky('#0f1722', '#16202e', '#e4edf8', '#b9c8da', '#95a7bd', '#1f3a5c', '#16283d') },
-    senja: { label: 'Senja', note: 'Dusk, amber into violet', accent: 'dusk', light: sky('#f7eee6', '#fcf6ef', '#2a1d22', '#52404a', '#65535d', '#f5c98a', '#cdbde3'), dark: sky('#181220', '#211a2b', '#f0e5ea', '#cfbfca', '#ac9ca9', '#5a3a3a', '#3a2c57') },
+    senja: { label: 'Senja', note: 'Dusk, amber into violet', accent: 'dusk', light: sky('#f7eee6', '#fcf6ef', '#2a1d22', '#52404a', '#65535d', '#f5c98a', '#cdbde3'), dark: sky('#181220', '#211a2b', '#f0e5ea', '#cfbfca', '#ac9ca9', '#5c3540', '#2a2148') },
     malam: { label: 'Malam', note: 'Night, deep blue paper and warm ink', accent: 'amber', light: sky('#e6e9f1', '#f1f3f8', '#1b1d2a', '#40445a', '#555a70', '#b9c0d9', '#d4d7e8'), dark: sky('#0c1220', '#131a2c', '#f0e4cf', '#cbbfa8', '#a89e89', '#16213b', '#0c1220') },
   },
   defaultPreset: 'fajar',
