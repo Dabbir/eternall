@@ -9,8 +9,8 @@ Status: draft for review · Phase 0 · Related: `PRIVACY.md`, `MODULES.md`, `adr
 ```
 ┌──────────────────────────────── one origin: eternall.app ────────────────────────────────┐
 │                                                                                            │
-│  /         /amazeen/   /refrain/   /kindred/   /marginalia/   /casheen/  ← doors (HTML entries,│
-│  ETERNALL  AMAZEEN     REFRAIN     KINDRED     MARGINALIA     CASHEEN      one manifest each)  │
+│  /         /amazeen/            /casheen/          /routeen/      ← doors (HTML entries,    │
+│  Home      AMAZEEN (+People)    CASHEEN            ROUTEEN          one manifest each)      │
 │  (house)      (+ Letters)                                                                   │
 │     │             │              │           │             │                                │
 │     └─────────────┴──────┬───────┴───────────┴─────────────┘                                │
@@ -36,7 +36,7 @@ Status: draft for review · Phase 0 · Related: `PRIVACY.md`, `MODULES.md`, `adr
 | URLs | `eternall.app/` (house) and `eternall.app/<imprint>/…` per imprint. Deep links like `/amazeen/issue/2026-W46?p=3` keep working. |
 | Why not subdomains | `amazeen.eternall.app` is a different **origin**: different IndexedDB and different service worker, so the vault could not be shared without syncing through the server. One origin keeps local-first true. |
 | Marketing domains | `amazeen.app`, `kindred.app` etc. **301-redirect** to `eternall.app/<imprint>/`. The old AMAZEEN origin redirects after its migration window (`FLOWS.md` F15). |
-| HTML entries | Vite multi-page build emits `index.html` per door (`/`, `/amazeen/`, `/refrain/`, `/kindred/`, `/marginalia/`, `/casheen/`). Each entry links **its own manifest**, theme colour, icons and OG image. All entries share the same JS chunks. |
+| HTML entries | Vite multi-page build emits `index.html` per door (`/`, `/amazeen/`, `/casheen/`, `/routeen/`; retired doors `/refrain/`, `/kindred/`, `/marginalia/`, `/ledger/` redirect). Each entry links **its own manifest**, theme colour, icons and OG image. All entries share the same JS chunks. |
 | PWA install | One manifest per door: `{ id: "/amazeen/", scope: "/amazeen/", start_url: "/amazeen/", name: "AMAZEEN" }`. Each installs as its own app icon. The house manifest has `scope: "/"`. |
 | Service worker | **One** SW at `/` (scope covers all doors), precaching the shell and lazily caching imprint chunks on first visit. Installed imprint apps share it. |
 | Apps as their own sites | Since ADR 0011 an app never shows the house spine. Its own chrome is always on, standalone or not. Switching doors swaps `<body data-imprint>`, the tab icon, theme colour and manifest (`apps/web/src/shell/doorHead.ts`). Retired doors (`/envoi`, `/folio`, `/almanack`, `/prologue`) redirect at boot (`retiredDoorRedirect`). |
@@ -50,7 +50,7 @@ Every imprint is a workspace package under `modules/<id>/` that default-exports 
 ```ts
 // packages/core/src/imprint.ts (sketch)
 export interface Imprint {
-  id: ImprintId;                         // 'amazeen' | 'refrain' | 'kindred' | 'marginalia'
+  id: ImprintId;                         // 'amazeen' | 'casheen' | 'routeen' (ADR 0014)
   name: string;                          // 'KINDRED'
   functionLine: string;                  // 'Letters to your future'  (BRAND.md §4)
   basePath: `/${string}/`;               // '/kindred/'
@@ -111,7 +111,7 @@ eternall/
 │  ├─ ui/                     behavioural primitives (Dialog, Field, Toast, Segmented, Menu, Sheet), skinned by shared token names
 │  └─ stage/                  capability detection, on-demand render loop, three.js loader, 2D fallback switch
 ├─ modules/
-│  ├─ amazeen/  refrain/  kindred/  marginalia/      (each: index.ts, app/Chrome.tsx, theme/<id>.css + <id>.kit.css)
+│  ├─ amazeen/  casheen/  routeen/                   (each: index.ts, app/Chrome.tsx, theme/<id>.css + <id>.kit.css)
 │  │  ├─ src/domain/          pure logic + tests
 │  │  ├─ src/app/             React UI (lazy)
 │  │  ├─ src/scene/           optional 3D scene (separate lazy chunk)
@@ -136,7 +136,7 @@ Imprints can enrich each other without depending on each other:
 | ~~`people.mention`~~ | (internal to AMAZEEN since ADR 0014: People lives inside it) | | |
 | ~~`quotes.offer`~~ | (retired with MARGINALIA, ADR 0014) | | |
 | `chapters.at` | house (Chapters section) | house inscriptions, AMAZEEN | "This issue is part of *Lisbon*" |
-| `rituals.list` · `rituals.week` | REFRAIN | (none since PROLOGUE retired; kept for future consumers) | |
+| `rituals.list` · `rituals.week` | ROUTEEN (once REFRAIN) | (none since PROLOGUE retired; kept for future consumers) | |
 
 *`letters.compose` is gone:* letters live inside AMAZEEN now, so sealing a cover story as a letter is an internal action.
 

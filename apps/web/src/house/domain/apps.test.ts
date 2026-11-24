@@ -3,17 +3,18 @@ import { appsOn, withApp } from './apps';
 const none = { hidden: [] as string[] };
 
 describe('appsOn', () => {
-  it('starts a new vault with Journal and Money only', () => {
-    expect(appsOn(none, [])).toEqual(['amazeen', 'casheen']);
+  it('starts a new vault with Journal, Money and Practices (ADR 0014)', () => {
+    expect(appsOn(none, [])).toEqual(['amazeen', 'casheen', 'routeen']);
   });
   it('keeps every app that already holds data on, with nothing written', () => {
-    expect(appsOn(none, ['kindred', 'refrain'])).toEqual(['amazeen', 'casheen', 'kindred', 'refrain']);
+    expect(appsOn({ hidden: ['routeen'] }, [])).toEqual(['amazeen', 'casheen']);
+    expect(appsOn({ apps: ['amazeen'], hidden: [] }, ['casheen'])).toEqual(['amazeen']);
   });
   it('honours the old hidden list until a choice is made, but never hides AMAZEEN', () => {
-    expect(appsOn({ hidden: ['kindred', 'amazeen'] }, ['kindred'])).toEqual(['amazeen', 'casheen']);
+    expect(appsOn({ hidden: ['casheen', 'amazeen'] }, ['casheen'])).toEqual(['amazeen', 'routeen']);
   });
   it('follows the person’s choice once made, always with AMAZEEN', () => {
-    expect(appsOn({ apps: ['refrain'], hidden: [] }, ['kindred'])).toEqual(['amazeen', 'refrain']);
+    expect(appsOn({ apps: ['routeen'], hidden: [] }, ['casheen'])).toEqual(['amazeen', 'routeen']);
   });
 });
 

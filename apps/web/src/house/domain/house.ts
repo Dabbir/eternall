@@ -60,7 +60,7 @@ export const DEFAULT_SETTINGS: HouseSettings = {
 };
 
 /** Apps that were renamed, old id → new id (docs/adr/0013: LEDGER became CASHEEN). Their data paths never moved. */
-export const RENAMED_APPS: Readonly<Record<string, string>> = { ledger: 'casheen' };
+export const RENAMED_APPS: Readonly<Record<string, string>> = { ledger: 'casheen', refrain: 'routeen' };
 /** Apps that were retired (docs/adr/0014): their ids drop out of saved settings. Their data stays in the vault. */
 export const RETIRED_APPS: ReadonlySet<string> = new Set(['marginalia', 'kindred']);
 

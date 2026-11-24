@@ -2,11 +2,11 @@ import type { ImprintId } from '@eternall/core';
 import type { HouseSettings } from './house';
 
 /**
- * Which apps are on (docs/adr/0013, docs/PRODUCT.md). AMAZEEN is the way in and is always on;
- * CASHEEN sits beside it. The others are built but switched on by the person in Settings → Apps.
+ * Which apps are on (docs/adr/0013, docs/adr/0014, docs/PRODUCT.md). AMAZEEN is the way in and is
+ * always on; CASHEEN (Money) and ROUTEEN (Practices) are on by default and can be switched off.
  */
 export const ALWAYS_ON: ImprintId = 'amazeen';
-export const DEFAULT_APPS: readonly ImprintId[] = ['amazeen', 'casheen'];
+export const DEFAULT_APPS: readonly ImprintId[] = ['amazeen', 'casheen', 'routeen'];
 
 const uniq = <T,>(xs: readonly T[]) => [...new Set(xs)];
 

@@ -6,7 +6,7 @@ import type { ISODate, Tone } from './tones';
  * The house knows imprints only through `ImprintDefinition`; imprints never import each other.
  */
 
-export type ImprintId = 'amazeen' | 'refrain' | 'casheen';
+export type ImprintId = 'amazeen' | 'routeen' | 'casheen';
 /** Where a contribution comes from: one of the apps, or the house itself (chapters, almanac, inscriptions). */
 export type SourceId = ImprintId | 'house';
 

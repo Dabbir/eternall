@@ -1,0 +1,167 @@
+/* ─────────────────────────────────────────────────────────────
+   ROUTEEN · a hand loom and its cloth (docs/design/routeen.md)
+   Spatial system: a row is a day, a column is a thread; square stitches with 2px of warp between.
+   Palette validated in docs/design/routeen.md §2 (and by look.test when looks land).
+   ───────────────────────────────────────────────────────────── */
+[data-imprint='routeen'] {
+  --paper: #efe8da;
+  --paper-sunk: #e4dcc9;
+  --paper-raised: #f7f2e7;
+  --ink: #22201b;
+  --ink-2: #4a453b;
+  --ink-3: #5f584b;
+  --rule: rgb(34 32 27 / 0.14);
+  --rule-strong: rgb(34 32 27 / 0.32);
+  --accent: #2e4a7d;
+  --accent-deep: #233a63;
+  --accent-soft: rgb(46 74 125 / 0.12);
+  --on-accent: #ffffff;
+  --warp: rgb(34 32 27 / 0.22);
+  --veil: rgb(20 18 14 / 0.45);
+  /* The six natural dyes (threads are fills: ≥ 3:1 against the cloth). */
+  --dye-indigo: #2e4a7d;
+  --dye-madder: #a33a2b;
+  --dye-weld: #7d6000;
+  --dye-walnut: #6b4a2e;
+  --dye-lichen: #4a6636;
+  --dye-iron: #4c5560;
+  --font-display: 'Young Serif', 'Iowan Old Style', Georgia, serif;
+  --font-ui: 'Work Sans', system-ui, sans-serif;
+  --font-mono: 'Work Sans', system-ui, sans-serif;
+  --st: clamp(34px, 5.6vw, 68px);
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-ui);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) [data-imprint='routeen'] {
+    --paper: #15130f; --paper-sunk: #0f0d0a; --paper-raised: #1c1a15;
+    --ink: #ece5d6; --ink-2: #c6bead; --ink-3: #a39b8b;
+    --rule: rgb(236 229 214 / 0.13); --rule-strong: rgb(236 229 214 / 0.3);
+    --accent: #9db4e3; --accent-deep: #87a1d6; --accent-soft: rgb(157 180 227 / 0.14); --on-accent: #0d1424;
+    --warp: rgb(236 229 214 / 0.22); --veil: rgb(0 0 0 / 0.62);
+    --dye-indigo: #8ea9dc; --dye-madder: #e98a76; --dye-weld: #d9b44a; --dye-walnut: #c49a74; --dye-lichen: #9cc07f; --dye-iron: #a9b3bd;
+  }
+}
+:root[data-theme='dark'] [data-imprint='routeen'] {
+  --paper: #15130f; --paper-sunk: #0f0d0a; --paper-raised: #1c1a15;
+  --ink: #ece5d6; --ink-2: #c6bead; --ink-3: #a39b8b;
+  --rule: rgb(236 229 214 / 0.13); --rule-strong: rgb(236 229 214 / 0.3);
+  --accent: #9db4e3; --accent-deep: #87a1d6; --accent-soft: rgb(157 180 227 / 0.14); --on-accent: #0d1424;
+  --warp: rgb(236 229 214 / 0.22); --veil: rgb(0 0 0 / 0.62);
+  --dye-indigo: #8ea9dc; --dye-madder: #e98a76; --dye-weld: #d9b44a; --dye-walnut: #c49a74; --dye-lichen: #9cc07f; --dye-iron: #a9b3bd;
+}
+
+/* ---------- threads: a dye and a weave pattern each ---------- */
+.rt-dye--indigo { --dye: var(--dye-indigo); }
+.rt-dye--madder { --dye: var(--dye-madder); }
+.rt-dye--weld { --dye: var(--dye-weld); }
+.rt-dye--walnut { --dye: var(--dye-walnut); }
+.rt-dye--lichen { --dye: var(--dye-lichen); }
+.rt-dye--iron { --dye: var(--dye-iron); }
+/* The weave shows in a lighter shade of the same dye, so threads differ by pattern as well as colour. */
+[class*='rt-pattern--'] { --shade: color-mix(in srgb, var(--dye) 62%, var(--paper)); }
+.rt-pattern--plain { --weave: none; }
+.rt-pattern--twill { --weave: repeating-linear-gradient(45deg, var(--shade) 0 2px, transparent 2px 7px); }
+.rt-pattern--dotted { --weave: radial-gradient(var(--shade) 1.4px, transparent 1.6px) 0 0 / 7px 7px; }
+.rt-pattern--rib { --weave: repeating-linear-gradient(90deg, var(--shade) 0 2px, transparent 2px 6px); }
+.rt-pattern--herringbone { --weave: repeating-linear-gradient(45deg, var(--shade) 0 2px, transparent 2px 8px) 0 0 / 100% 50% no-repeat, repeating-linear-gradient(-45deg, var(--shade) 0 2px, transparent 2px 8px) 0 100% / 100% 50% no-repeat; }
+.rt-pattern--basket { --weave: conic-gradient(var(--shade) 25%, transparent 0 50%, var(--shade) 0 75%, transparent 0) 0 0 / 10px 10px; }
+
+.rt-swatch { display: inline-block; flex: none; width: 18px; height: 18px; background: var(--weave, none), var(--dye, var(--ink-3)); box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.12); }
+
+/* ---------- stitches ---------- */
+.rt-stitch { display: block; width: 100%; aspect-ratio: 1; min-height: 28px; border: 0; padding: 0; background: transparent; }
+.rt-stitch--woven { background: var(--weave, none), var(--dye, var(--accent)); box-shadow: inset 0 -2px 0 rgb(0 0 0 / 0.18); }
+/* The bare warp: the loom's vertical threads with nothing woven across them. Never red. */
+.rt-stitch--warp { background: repeating-linear-gradient(90deg, var(--warp) 0 1.5px, transparent 1.5px 6px), var(--paper-sunk); }
+.rt-stitch--open { box-shadow: inset 0 0 0 2px var(--dye, var(--accent)); background: transparent; border: 0; outline: 1px dashed var(--rule-strong); outline-offset: -6px; }
+/* Plain undyed weave for a day off. */
+.rt-stitch--plain { background: repeating-linear-gradient(0deg, var(--rule) 0 1px, transparent 1px 5px), repeating-linear-gradient(90deg, var(--rule) 0 1px, transparent 1px 5px), var(--paper-raised); }
+.rt-stitch--future { background: radial-gradient(var(--rule-strong) 1.5px, transparent 2px) center / 100% 100% no-repeat; }
+.rt-stitch--off { background: none; }
+button.rt-stitch { cursor: pointer; transition: transform 140ms var(--ease-out); }
+button.rt-stitch:hover:not(:disabled) { transform: translateY(-2px); }
+button.rt-stitch:disabled { cursor: default; }
+button.rt-stitch:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---------- pages ---------- */
+.rt { max-width: 1100px; margin: 0 auto; padding: clamp(24px, 4vw, 52px) var(--gutter) 120px; }
+.rt-head { display: grid; gap: 6px; margin-bottom: 26px; }
+.rt-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; font-weight: 600; letter-spacing: 0.1em; font-variant-caps: all-small-caps; color: var(--ink-2); }
+.rt-title { font-family: var(--font-display); font-weight: 400; font-size: clamp(2.2rem, 1.5rem + 2.6vw, 3.8rem); line-height: 1.02; }
+.rt-title em { font-style: normal; color: var(--accent); }
+.rt-lede { color: var(--ink-2); font-size: 1.0625rem; max-width: 56ch; }
+.rt-h2 { margin: 28px 0 10px; font-family: var(--font-display); font-weight: 400; font-size: 1.35rem; }
+
+.rt-nav { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 16px; margin-bottom: 14px; }
+.rt-nav__week { font-family: var(--font-display); }
+.rt-nav__btn { display: inline-flex; align-items: center; gap: 4px; min-height: 44px; color: var(--ink-2); }
+.rt-nav__btn:hover:not(:disabled) { color: var(--accent); }
+.rt-nav__btn:disabled { opacity: 0.35; }
+
+/* The loom: names in a 15rem selvedge, seven stitch columns, a woven rule under the head. */
+.rt-grid { display: grid; gap: 2px; padding: 14px; background: var(--paper-raised); box-shadow: 0 0 0 1px var(--rule), 0 20px 40px -30px rgb(0 0 0 / 0.4); }
+.rt-row { display: grid; grid-template-columns: minmax(9rem, 15rem) repeat(7, var(--st)); gap: 2px; align-items: center; }
+.rt-row--head { padding-bottom: 6px; margin-bottom: 4px; border-bottom: 3px double var(--rule-strong); }
+.rt-row.is-paused { opacity: 0.6; }
+.rt-day { display: grid; justify-items: center; font-weight: 600; font-size: 0.875rem; color: var(--ink-3); }
+.rt-day.is-today { color: var(--accent); }
+.rt-day__date { font-weight: 400; font-size: 0.75rem; }
+.rt-cell.is-today { transform: translateY(-3px); }
+.rt-name__btn { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center; width: 100%; min-height: 44px; text-align: left; color: var(--ink); }
+.rt-name__btn .rt-swatch { grid-row: 1 / 3; }
+.rt-name__text { font-family: var(--font-display); font-size: 1.05rem; line-height: 1.1; }
+.rt-name__cadence { font-size: 0.8125rem; color: var(--ink-3); }
+.rt-name__btn:hover .rt-name__text { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.rt-legend { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin-top: 14px; font-size: 0.8125rem; color: var(--ink-2); }
+.rt-legend .rt-stitch { display: inline-block; width: 18px; min-height: 18px; }
+.rt-add { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-top: 10px; color: var(--accent); font-weight: 600; }
+
+.rt-empty { display: grid; justify-items: start; gap: 16px; padding: 30px 0; }
+.rt-empty__loom { display: grid; grid-template-columns: repeat(7, 34px); gap: 2px; padding: 12px; background: var(--paper-raised); }
+
+/* The cloth: a band per thread, 52 week-cells; a week's density is its stitches. */
+.rt-cloth { display: grid; gap: 14px; padding: 18px; background: var(--paper-raised); box-shadow: 0 0 0 1px var(--rule); }
+.rt-band { display: grid; grid-template-columns: minmax(8rem, 13rem) 1fr; gap: 12px; align-items: center; }
+.rt-clothline { display: grid; grid-template-columns: repeat(52, minmax(0, 1fr)); gap: 1px; height: 30px; }
+.rt-weekcell { display: block; height: 100%; }
+.rt-weekcell.rt-stitch--woven { opacity: calc(0.35 + var(--fill, 1) * 0.65); }
+
+.rt-practice { max-width: 760px; }
+.rt-back { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-bottom: 12px; color: var(--ink-2); }
+.rt-back:hover { color: var(--ink); }
+.rt-why { margin-top: 10px; font-family: var(--font-display); font-size: 1.2rem; color: var(--ink-2); }
+.rt-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 14px; margin-top: 20px; padding: 16px 0; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); }
+.rt-facts dt { font-size: 0.8125rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-3); }
+.rt-facts dd { font-family: var(--font-display); font-size: 1.1rem; }
+.rt-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+
+/* Mark today. */
+.rt-checks { display: grid; gap: 6px; }
+.rt-checks__head { margin: 16px 0 6px; font-size: 0.8125rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-3); }
+.rt-check { display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 0 12px; border: 1px solid var(--rule-strong); cursor: pointer; }
+.rt-check:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); }
+.rt-check input { width: 20px; height: 20px; accent-color: var(--accent); }
+
+/* The editor. */
+.rt-editor__progress { height: 6px; background: repeating-linear-gradient(90deg, var(--warp) 0 1.5px, transparent 1.5px 6px); }
+.rt-editor__progress span { display: block; height: 100%; width: calc(var(--p) * 100%); background: var(--accent); transition: width 200ms var(--ease-out); }
+.rt-cadence, .rt-threads { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
+.rt-cadence legend, .rt-threads legend { margin-bottom: 6px; font-weight: 600; }
+.rt-choice { position: relative; display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border: 1px solid var(--rule-strong); cursor: pointer; }
+.rt-choice input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.rt-choice:has(input:checked) { border-color: var(--accent); box-shadow: inset 3px 0 0 var(--accent); }
+.rt-choice:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 2px; }
+.rt-inline select { min-height: 40px; }
+
+@media (max-width: 720px) {
+  .rt-row { grid-template-columns: repeat(7, minmax(0, 1fr)); }
+  .rt-row > .rt-name { grid-column: 1 / -1; }
+  .rt-row--head > .rt-name { display: none; }
+  .rt-band { grid-template-columns: 1fr; }
+  .rt-clothline { height: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  button.rt-stitch, .rt-editor__progress span { transition: none; }
+}

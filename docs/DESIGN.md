@@ -27,7 +27,7 @@ There is **no global spacing scale shared by imprints**. Each imprint derives it
 | AMAZEEN · Letters (once ENVOI) | An asymmetric writing desk: envelopes stacked at angles on open surface; one focal letter at a time; in AMAZEEN's inks | a desk, correspondence |
 | House · Chapters (once FOLIO) | Shelf rows of spines by decade; an opened chapter on Van de Graaf proportions; in the house's type | classical book design |
 | House · Almanac (once ALMANACK) | Dense two-column tables with hairline rules; information in layers (figure, unit, note); in the house's type | printed almanacs, ephemerides |
-| REFRAIN | The five-line staff: vertical rhythm = staff spacing; horizontal rhythm = beats (7 per bar, one per day) | engraved sheet music |
+| ROUTEEN | The loom: a row is a day, a column is a thread; square stitches with 2px of warp between | a hand loom and its cloth |
 | KINDRED | Fixed modules in business-card ratio (85:55), arranged like drawers of a card file; generous card padding | address books, letterpress cards |
 | MARGINALIA | A text column plus a wide margin column (≈ 2:1), where notes and highlights live in the margin | an annotated book page |
 | CASHEEN | The ruled page: one row per 2.25rem ruling; a narrow date column, particulars, then money columns behind a double red rule | an accountant's ledger |
@@ -71,7 +71,7 @@ phone            [←]           NAME                                          �
 |---|---|---|---|---|---|
 | AMAZEEN | "Leave" | monogram + masthead on the ink-black band | 01 Desk · 02 Shelf · 03 People · 04 Letters · 05 Office | Write (vermilion) | the press deadline as `extra`; on its own (no ETERNALL) it keeps its left spine |
 | CASHEEN | the clasp, "Close the book" | spaced Caslon over a double rule | The month · Budget · Your words | Add an entry (focuses the quick line) | the thumb index sits in the page under the month: twelve half-moon notches |
-| REFRAIN | "Fine" with the end barline | spaced Bodoni | I. The score (a ritual's notes are movement II, named under the bar) | Mark today, a marking | five staff hairlines run under the bar |
+| ROUTEEN | a small shuttle, "Leave the loom" | Young Serif over a woven selvedge rule | The loom · The cloth | Mark today (or New practice) | the selvedge along the bar; a practice page belongs to the loom |
 | MARGINALIA | the ribbon bookmark, "Back to the stacks" | the catalogue card, call number typed | Catalogue · Every underline, pencilled; the current one ringed by hand | Add a work, typed in brackets | the oak desk |
 
 **Behavioural invariants for every app's chrome:**
@@ -100,7 +100,7 @@ Opening an app is opening another site, and it should feel like it.
 - **Keyboard:** everything is reachable, focus is always visible (2px accent outline, 3px offset), dialogs trap focus (native `<dialog>`), and canvases and 3D scenes expose a parallel DOM structure with arrow-key navigation and live-region announcements (the pattern proven in the current lifeline canvas).
 - **Motion:** `prefers-reduced-motion` turns all choreography into fades, and 3D scenes into their 2D equivalents (§6).
 - **Text:** body text ≥ 16px at default zoom; layouts survive 200% zoom and 320px width without horizontal scroll; handwriting or display faces are never used for paragraphs.
-- **Audio** (REFRAIN) never autoplays, and always has a visual equivalent and a visible stop control.
+- **Audio**: none since REFRAIN became ROUTEEN (ADR 0014). Any future sound never autoplays, always has a visual equivalent and a visible stop control.
 
 ## 5. Motion
 
@@ -130,7 +130,7 @@ AMAZEEN's "Filed" stamp set the pattern. Every app and the house mark their most
 |---|---|---|
 | AMAZEEN | a piece is filed | "Filed": a red stamp slammed onto the page (its own, unchanged) |
 | AMAZEEN · Letters | a letter is sealed | "Sealed": hot wax spreads, the seal comes down with the letter's fingerprint ring, "Sealed until <date>" |
-| REFRAIN | a ritual is marked kept | "A held note": five hairlines draw across, the ritual's note drops onto its pitch under a fermata; when every ritual due today is kept, the final double bar and "Fine" |
+| ROUTEEN | a day is woven | "Woven": the shuttle crosses and today's row tightens in the practice's own thread (700ms) |
 | KINDRED | "I saw them today", a new card | "Letterpress strike": the name presses into card stock with a ring of ink |
 | MARGINALIA | a new underline · a new work | "The sweep": the line set large, a highlighter drawn under it, a pencil tick · "Filed": a catalogue card drops into its lettered drawer |
 | CASHEEN | an entry (or several, or an import) | "Entered": the sum written digit by digit, ruled off with a double line in red pen (green for money in); the cursor stays in the quick line |
@@ -180,7 +180,7 @@ Fonts are **self-hosted** (via `@fontsource`, as AMAZEEN does today) to keep the
 - One axis only; thin marks; a hover/focus tooltip; a table view.
 - Text is set in text colours, never in series colours.
 
-Each imprint may *style* charts in its own idiom (ALMANACK engraves them, REFRAIN writes them on a staff), but the rules above hold.
+Each imprint may *style* charts in its own idiom (ALMANACK engraves them, ROUTEEN weaves them as cloth), but the rules above hold.
 
 ## 9. Shared colour semantics
 
@@ -235,7 +235,7 @@ Used on every screen, in every imprint, before it ships:
 |---|---|
 | ETERNALL (house: lifeline, inscriptions, chapters, almanac) | `design/eternall.md` |
 | AMAZEEN (with Letters) | `design/amazeen.md` |
-| REFRAIN | `design/refrain.md` |
+| ROUTEEN (once REFRAIN) | `design/routeen.md` (archived: `design/archive/refrain.md`) |
 | KINDRED (now AMAZEEN · People) | `design/archive/kindred.md`, `design/amazeen.md` §14 |
 | MARGINALIA (retired) | `design/archive/marginalia.md` |
 | CASHEEN | `design/casheen.md` |

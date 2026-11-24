@@ -91,7 +91,10 @@ Conventions:
 - **Lifeline contribution:** none (it reflects on the lifeline rather than adding to it). It may mark **red-letter days** (birthdays, letter openings) as subtle markers.
 - **v1 (Release 1):** almanac page, echoes, weather of memory, red-letter days, printable year sheet, engraved orrery 2D, mechanical orrery 3D (immersive).
 
-## 6. REFRAIN: Rituals & habits (`modules/refrain`), Release 2
+## 6. ROUTEEN: Practices, woven daily (`modules/routeen`; once REFRAIN), ADR 0014
+
+*REFRAIN became ROUTEEN, the loom.* Records keep their `refrain/*` paths. A ritual is now a **practice**: each is a **thread** (`thread`, an index into six natural dyes and six weave patterns, so threads never rely on colour; a practice without one reads REFRAIN's old `pitch` as its thread). A day reads as a **stitch** (`stitchOf`): woven, bare warp (an expected day that passed, never red), open, plain (not expected), future or off; `weave()` gives a week's strip and `clothLine()` a year. `instrument` and `pitch` are no longer written and audio is gone. Lifeline marker `ritual` and the `rituals.list`/`rituals.week` capabilities are kept (hrefs `/routeen/practice/<id>`). `/refrain/*` redirects to `/routeen/*`; settings saved under `refrain` are read as `routeen`. The original description follows.
+
 
 | Entity | Fields |
 |---|---|

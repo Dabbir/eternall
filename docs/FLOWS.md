@@ -18,7 +18,7 @@ Each flow lists **steps**, then **states and edge cases**. "Imprint X" means any
 - *Old browser* (no Web Crypto, no IndexedDB): a "Your browser can't keep things private" page with supported-browser guidance.
 - *Visitor arrives at the house `/` first (ADR 0013):* the welcome leads with **Start writing** (AMAZEEN) and **Track money** (CASHEEN), which open the app at once with nothing asked. "Begin your lifeline", "Explore a sample life" and "I already have a vault" sit below as plain links. The lifeline is never forced.
 - *Someone who has been writing, with no lifeline, returns to `/`* (e.g. through an app's way back): "Your lifeline — here when you want it", with **Back to Journal** (and Money, if used) and **Begin your lifeline**.
-- *The door of an app that is off* (old bookmark, installed shortcut): "REFRAIN is off." with **Turn on REFRAIN** and **Back**. It never opens on its own.
+- *The door of an app that is off* (old bookmark, installed shortcut): "ROUTEEN is off." with **Turn on ROUTEEN** and **Back**. It never opens on its own.
 
 ## F2 · Creating the vault and choosing a lock
 1. Triggered by the first meaningful write in any imprint (or explicitly from the house).

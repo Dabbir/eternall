@@ -1,8 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { addDays, todayISO } from '@eternall/core';
 import { createMemoryStore, type VaultRecord } from '@eternall/vault';
-import { barStart, markId } from '@eternall/refrain/rituals';
+import { barStart, markId } from '@eternall/routeen/practices';
 import { Root } from '../shell/Root';
 
 /**
@@ -12,7 +12,7 @@ import { Root } from '../shell/Root';
 const today = todayISO();
 const stamp = new Date().toISOString();
 const rec = (key: string, value: unknown): VaultRecord => ({ key, updatedAt: stamp, deleted: false, value });
-const INTROS = ['refrain', 'kindred', 'marginalia', 'amazeen'].map((i) => `intro:${i}`);
+const INTROS = ['routeen', 'amazeen', 'casheen'].map((i) => `intro:${i}`);
 const settings = (hidden: string[] = []) => rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: INTROS, hidden, autoLockMinutes: 15 });
 
 const ritual = rec('refrain/ritual/run', { id: 'run', name: 'Morning run', why: '', cadence: { kind: 'daily' }, instrument: 'piano', pitch: 0, startedOn: addDays(today, -30), pausedOn: null });
@@ -28,17 +28,37 @@ beforeEach(() => {
   window.matchMedia = ((q: string) => ({ matches: q.includes('reduce'), media: q, addEventListener() {}, removeEventListener() {} })) as unknown as typeof window.matchMedia;
 });
 
-describe('REFRAIN on its own', () => {
-  it('shows the score and keeps a beat as a note in the vault', async () => {
+describe('ROUTEEN, the loom (once REFRAIN, ADR 0014)', () => {
+  it('weaves a REFRAIN ritual as a thread, and keeps a stitch in the old place in the vault', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([settings(), ritual]);
-    at('/refrain/');
+    at('/routeen/');
     render(<Root store={store} />);
-    expect(await screen.findByRole('heading', { name: /The lines you\s*come back to/ })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /The\s*loom/ })).toBeInTheDocument();
     const monday = barStart(today);
-    const beat = screen.getAllByRole('switch', { name: new RegExp(`^Morning run, Monday`) }).find((b) => !b.hasAttribute('disabled') && b.getAttribute('aria-label')!.includes(String(Number(monday.slice(8)))))!;
-    await user.click(beat);
+    const stitch = screen.getAllByRole('switch', { name: /^Morning run, Monday/ }).find((b) => !b.hasAttribute('disabled'))!;
+    await user.click(stitch);
     await waitFor(() => expect(store.dump().some((r) => r.key === `refrain/mark/${markId('run', monday)}`)).toBe(true));
+  });
+
+  it('marks today from the sheet, and Weave writes only what changed', async () => {
+    const user = userEvent.setup();
+    const store = createMemoryStore([settings(), ritual]);
+    at('/routeen/');
+    render(<Root store={store} />);
+    await screen.findByRole('heading', { name: /The\s*loom/ });
+    await user.click((await screen.findAllByRole('button', { name: 'Mark today' }))[0]!);
+    const dialog = await screen.findByRole('dialog', { name: 'Mark today' });
+    await user.click(within(dialog).getByRole('checkbox', { name: /Morning run/ }));
+    await user.click(within(dialog).getByRole('button', { name: 'Weave' }));
+    await waitFor(() => expect(store.dump().some((r) => r.key === `refrain/mark/${markId('run', today)}`)).toBe(true));
+  });
+
+  it('shows the year as cloth', async () => {
+    at('/routeen/cloth');
+    render(<Root store={createMemoryStore([settings(), ritual])} />);
+    expect(await screen.findByRole('heading', { name: /The\s*cloth/ })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: /Morning run: woven 0 times in the last 52 weeks/ })).toBeInTheDocument();
   });
 });
 

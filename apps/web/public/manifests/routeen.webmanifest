@@ -1,0 +1,34 @@
+{
+  "id": "/routeen/",
+  "name": "ROUTEEN",
+  "short_name": "ROUTEEN",
+  "description": "Practices, woven daily. Each practice a thread, each day a row.",
+  "start_url": "/routeen/",
+  "scope": "/routeen/",
+  "display": "standalone",
+  "background_color": "#efe8da",
+  "theme_color": "#2e4a7d",
+  "icons": [
+    {
+      "src": "/icons/routeen-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/routeen-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/routeen-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/routeen.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

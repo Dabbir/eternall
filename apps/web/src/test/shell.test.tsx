@@ -9,7 +9,7 @@ const today = todayISO();
 const stamp = new Date().toISOString();
 const rec = (key: string, value: unknown): VaultRecord => ({ key, updatedAt: stamp, deleted: false, value });
 const profile = rec('house/profile/me', { id: 'me', name: 'Ada', birthDate: addYears(today, -30), horizonYears: 90, hemisphere: 'north', createdAt: stamp });
-const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:amazeen', 'intro:refrain', 'intro:kindred', 'intro:marginalia'], hidden: [], autoLockMinutes: 15, apps: ['amazeen', 'refrain', 'kindred', 'marginalia', 'casheen'] });
+const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:amazeen', 'intro:routeen', 'intro:casheen'], hidden: [], autoLockMinutes: 15, apps: ['amazeen', 'routeen', 'casheen'] });
 
 function at(path: string) {
   window.history.replaceState(null, '', path);
@@ -156,6 +156,8 @@ describe('retired doors', () => {
     expect(retiredDoorRedirect('/almanack/', '')).toBe('/almanac');
     expect(retiredDoorRedirect('/prologue/lobby', '')).toBe('/inscriptions');
     expect(retiredDoorRedirect('/kindred/', '')).toBe('/amazeen/people');
+    expect(retiredDoorRedirect('/refrain/ritual/run', '')).toBe('/routeen/practice/run');
+    expect(retiredDoorRedirect('/refrain/', '')).toBe('/routeen/');
     expect(retiredDoorRedirect('/kindred/person/dad', '')).toBe('/amazeen/people/dad');
     expect(retiredDoorRedirect('/', '')).toBeNull();
   });
@@ -197,33 +199,34 @@ describe('apps on and off (ADR 0013)', () => {
     return screen.findByRole('option', { name: /Journal · AMAZEEN/ });
   };
 
-  it('starts with Journal and Money only', async () => {
+  it('starts with Journal, Money and Practices (ADR 0014)', async () => {
     at('/');
     render(<Root store={createMemoryStore([profile, fresh])} />);
     await screen.findByRole('heading', { level: 1 });
     await open();
     expect(screen.getByRole('option', { name: /Money · CASHEEN/ })).toBeInTheDocument();
-    expect(screen.queryByRole('option', { name: /Practices · REFRAIN/ })).not.toBeInTheDocument();
+    expect(screen.getByRole('option', { name: /Practices · ROUTEEN/ })).toBeInTheDocument();
   });
 
-  it('keeps an app that already holds data on, with no setting written', async () => {
+  it('reads a choice saved under REFRAIN as ROUTEEN', async () => {
     at('/');
-    render(<Root store={createMemoryStore([profile, fresh, rec('refrain/ritual/run', { id: 'run', name: 'Run', why: '', cadence: { kind: 'daily' }, instrument: 'piano', pitch: 0, startedOn: today, pausedOn: null })])} />);
+    render(<Root store={createMemoryStore([profile, rec('house/settings/prefs', { ...(fresh.value as object), apps: ['amazeen', 'refrain'] })])} />);
     await screen.findByRole('heading', { level: 1 });
     await open();
-    expect(screen.getByRole('option', { name: /Practices · REFRAIN/ })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: /Practices · ROUTEEN/ })).toBeInTheDocument();
+    expect(screen.queryByRole('option', { name: /Money · CASHEEN/ })).not.toBeInTheDocument();
   });
 
   it('never opens an app that is off from its address; it offers to turn it on', async () => {
     const user = userEvent.setup();
-    at('/refrain/');
-    const store = createMemoryStore([profile, fresh]);
+    at('/routeen/');
+    const store = createMemoryStore([profile, rec('house/settings/prefs', { ...(fresh.value as object), apps: ['amazeen', 'casheen'] })]);
     render(<Root store={store} />);
-    expect(await screen.findByRole('heading', { name: 'REFRAIN is off.' })).toBeInTheDocument();
-    expect(document.body.dataset.imprint).not.toBe('refrain');
-    await user.click(screen.getByRole('button', { name: 'Turn on REFRAIN' }));
-    await waitFor(() => expect(document.body.dataset.imprint).toBe('refrain'));
-    await waitFor(() => expect(store.dump().find((r) => r.key === 'house/settings/prefs')?.value).toMatchObject({ apps: ['amazeen', 'casheen', 'refrain'], hidden: [] }));
+    expect(await screen.findByRole('heading', { name: 'ROUTEEN is off.' })).toBeInTheDocument();
+    expect(document.body.dataset.imprint).not.toBe('routeen');
+    await user.click(screen.getByRole('button', { name: 'Turn on ROUTEEN' }));
+    await waitFor(() => expect(document.body.dataset.imprint).toBe('routeen'));
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'house/settings/prefs')?.value).toMatchObject({ apps: ['amazeen', 'casheen', 'routeen'], hidden: [] }));
   });
 
   it('switches apps on and off in Settings, keeping Journal always on', async () => {
@@ -232,9 +235,9 @@ describe('apps on and off (ADR 0013)', () => {
     render(<Root store={createMemoryStore([profile, fresh])} />);
     const practices = await screen.findByRole('checkbox', { name: 'Practices' });
     expect(screen.getByRole('checkbox', { name: 'Journal' })).toBeDisabled();
-    expect(practices).not.toBeChecked();
+    expect(practices).toBeChecked();
     await user.click(practices);
-    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Practices' })).toBeChecked());
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Practices' })).not.toBeChecked());
     await user.click(screen.getByRole('checkbox', { name: 'Money' }));
     await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Money' })).not.toBeChecked());
   });
@@ -244,7 +247,7 @@ describe('one app bar (ADR 0013)', () => {
   const apps: [door: string, primary: RegExp][] = [
     ['/amazeen/', /^Write$/],
     ['/casheen/', /^Add an entry$/],
-    ['/refrain/', /^(Mark today|New ritual)$/],
+    ['/routeen/', /^(Mark today|New practice)$/],
   ];
   it.each(apps)('%s keeps back, search and its primary action in the same order', async (door, primary) => {
     at(door);

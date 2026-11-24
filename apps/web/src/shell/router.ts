@@ -44,6 +44,9 @@ export function retiredDoorRedirect(pathname: string, search: string): string | 
       return '/almanac';
     case 'prologue':
       return '/inscriptions';
+    // REFRAIN became ROUTEEN (docs/adr/0014): `/refrain/ritual/x` → `/routeen/practice/x`.
+    case 'refrain':
+      return rest[0] === 'ritual' && rest[1] ? `/routeen/practice/${rest[1]}` : `/routeen/${q}`;
     // KINDRED became AMAZEEN · People (docs/adr/0014): `/kindred/person/x` → `/amazeen/people/x`.
     case 'kindred':
       return rest[0] === 'person' && rest[1] ? `/amazeen/people/${rest[1]}` : '/amazeen/people';
@@ -78,7 +81,7 @@ export function useHref(): string {
 type ViewTransitionDoc = Document & { startViewTransition?: (cb: () => void) => unknown };
 const reducedMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
 const firstSegment = (href: string) => href.replace(/^\/+/, '').split(/[/?#]/)[0] ?? '';
-const APP_DOORS = new Set(['amazeen', 'refrain', 'casheen']);
+const APP_DOORS = new Set(['amazeen', 'routeen', 'casheen']);
 /** Which "site" an href belongs to: an app's id, or the house. */
 const siteOf = (href: string) => (APP_DOORS.has(firstSegment(href)) ? firstSegment(href) : 'house');
 
