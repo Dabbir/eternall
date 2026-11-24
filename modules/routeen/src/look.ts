@@ -45,5 +45,6 @@ export const ROUTEEN_LOOKS: LookSpec = {
     '--accent-soft': `color-mix(in srgb, ${t['--accent']} 13%, transparent)`,
     '--rule': `color-mix(in srgb, ${t['--ink']} 13%, transparent)`,
     '--rule-strong': `color-mix(in srgb, ${t['--ink']} 31%, transparent)`,
+    '--warp': `color-mix(in srgb, ${t['--ink']} 22%, transparent)`,
   }),
 };

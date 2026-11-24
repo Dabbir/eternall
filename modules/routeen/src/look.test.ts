@@ -24,6 +24,6 @@ describe('the sky’s look', () => {
       expect(t['--sky-top']).toBeTruthy();
       expect(t['--sky-bottom']).toBeTruthy();
     }
-    for (const p of Object.values(ROUTEEN_LOOKS.presets)) for (const k of Object.keys(p.light)) expect(k).not.toMatch(/^--dye-/);
+    for (const p of Object.values(ROUTEEN_LOOKS.presets)) for (const k of [...Object.keys(p.light), ...Object.keys(p.dark)]) expect(k).not.toMatch(/^--dye-/);
   });
 });
