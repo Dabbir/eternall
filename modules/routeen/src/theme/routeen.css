@@ -137,7 +137,7 @@
 .rs-band__horizon { stroke: var(--ink-2); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .rs-band__bodies { position: absolute; inset: 0 var(--gutter) 22px; }
 .rs-body { position: absolute; display: grid; justify-items: center; width: 0; height: 0; color: var(--accent); }
-.rs-body .rs-shape { position: absolute; width: 26px; height: 26px; transform: translate(-50%, -50%); }
+.rs-body .rs-shape { position: absolute; max-width: none; width: 26px; height: 26px; transform: translate(-50%, -50%); }
 .rs-body--unlit, .rs-body--rest { color: var(--ink-2); }
 .rs-body--target .rs-shape, .rs-body--more .rs-shape, .rs-body--minimum .rs-shape { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 60%, transparent)); }
 .rs-body--sun { color: var(--accent); }
