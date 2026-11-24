@@ -27,16 +27,19 @@ Journals get written and then never reread. Entries pile up in a list nobody ope
 ## The family behind it
 
 ```
-ETERNALL: a private personal toolkit
-├── Journal: AMAZEEN    first product, the way in
+ETERNALL: a private personal toolkit                     (ADR 0014)
+├── Home                Journal, Money and Practices, one card each, one action each
+├── Journal: AMAZEEN    first product, the way in — with People and Letters inside
 ├── Money: CASHEEN      a parallel product, opened directly
-├── Practices: REFRAIN  later
-└── Lifeline            optional: time across apps, once there is enough of it
+├── Practices: ROUTEEN  the loom: each practice a thread, each day a row
+└── Your life in weeks  optional: the lifeline, chapters and inscriptions
 ```
 
 - **AMAZEEN helps people reflect on their life. CASHEEN helps them manage everyday money.** They sit in one product because both are personal and both need strong privacy, but their jobs differ. Someone who only wants to track money opens CASHEEN directly, without learning about the journal or the lifeline.
 - **CASHEEN is the first companion**, made available as AMAZEEN's core flow proves itself. It stays focused on writing an entry in one line and a monthly budget. Bank links, investments and anything complicated wait.
-- **People and Reading (KINDRED, MARGINALIA) and Practices (REFRAIN)** exist in the code and can be switched on in Settings, but they are not part of the launch and are not marketed until people ask for them.
+- **ROUTEEN (Practices)** is the third app: simple routines, woven into cloth, without streaks or pressure. It shares AMAZEEN's weekly rhythm.
+- **People live in the journal** (AMAZEEN · People): the people you write about, pinned on the newsroom wall, with their dates and the pieces they appear in. **Reading is a quote** in the journal. (KINDRED and MARGINALIA were folded in by ADR 0014.)
+- **Every app has personal looks** within its own world: AMAZEEN's editions, CASHEEN's books, ROUTEEN's cloths.
 - **The lifeline is optional.** It is never the first page for a new person. It is offered once there is something to show, and only when they choose it.
 
 ## Firm boundaries between apps
@@ -45,10 +48,10 @@ Apps share foundations, not data:
 - **Not shared:** an app never reads another app's content automatically. AMAZEEN does not see transactions. The lifeline and the house never show amounts, categories or spending habits; CASHEEN contributes nothing to them. A person who wants to reflect on money writes that in the journal themselves.
 
 ## Launch scope
-**In:** AMAZEEN (Journal) and CASHEEN (Money), the vault and lock, export and recovery, personal looks for AMAZEEN, and the installable app on phone and desktop.
+**In:** Home, AMAZEEN (Journal, with People and Letters), CASHEEN (Money) and ROUTEEN (Practices), the vault and lock, export and recovery, personal looks for each app, and the installable app on phone and desktop. **Home never shows money figures.**
 
 **Not in launch:**
-1. All apps at once. The others stay switched off until a person turns them on.
+1. More apps than these three.
 2. The lifeline as a home page for new people.
 3. Making everything fit the "life in weeks" idea. A journal needs an archive that is easy to read; money needs fast input.
 4. Looks, animation or setup as a condition for writing.

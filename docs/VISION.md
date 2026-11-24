@@ -22,12 +22,12 @@ ETERNALL is **one place, with many doors**. Each app is a complete product with 
 
 | | What it keeps | The object it borrows from |
 |---|---|---|
-| **ETERNALL** (the house) | the overview: your life in weeks, plus inscriptions, the chapters of your life, and an almanac of your time | an atlas / ledger with a wax seal |
-| **AMAZEEN** | your journal, pressed into a weekly magazine, and letters to your future self, sealed in its post room | a magazine and its post room |
-| **REFRAIN** | the rituals you return to | a musical score, a repeated verse |
-| **KINDRED** | the people who matter | an address book, letterpress cards |
-| **MARGINALIA** | what you read, watch and underline | an annotated page, a card catalogue |
+| **ETERNALL** (the house) | **Home**: one card per app, one action each; and, optionally, **your life in weeks** with inscriptions, chapters and an almanac summary | a calm front door; an atlas for the long view |
+| **AMAZEEN** | your journal, pressed into a weekly magazine; the **people** you write about, pinned on its wall; and letters to your future self, sealed in its post room | a magazine, its newsroom and its post room |
 | **CASHEEN** (formerly LEDGER) | your money, in and out, and a monthly budget, written in one line | an accountant's bound ledger |
+| **ROUTEEN** (formerly REFRAIN) | the practices you return to, each day a row woven | a hand loom and its cloth |
+
+**Three apps and Home (ADR 0014):** MARGINALIA was retired (underlines became journal quotes), KINDRED became AMAZEEN · People, REFRAIN became ROUTEEN, and the house dashboard became Home.
 
 **Launch (ADR 0013):** AMAZEEN is the first product and the way in, with CASHEEN (formerly LEDGER, labelled *Money*) beside it as a parallel product. REFRAIN, KINDRED and MARGINALIA are built but opt-in, and the lifeline is optional, never a new person's first page. Apps share the vault, not data: money never reaches the house.
 

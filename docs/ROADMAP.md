@@ -1,6 +1,6 @@
 # ETERNALL — Roadmap
 
-Status: accepted · Phases 0–8 done (ADR 0013) · Each phase ends with its exit criteria met, then a review, before the next begins.
+Status: accepted · Phases 0–8 done, Phase 9 in progress (ADR 0014) · Each phase ends with its exit criteria met, then a review, before the next begins.
 
 ---
 
@@ -167,6 +167,17 @@ Status: accepted · Phases 0–8 done (ADR 0013) · Each phase ends with its exi
 **Exit criteria (met):** a fresh vault starts writing in one tap with no lifeline; existing vaults lose no app; every app passes the same-positions test at 390/768/1440; looks never touch `localStorage`; all gates green.
 
 **Order after launch:** AMAZEEN's core flow is tested with prospective users first (`PRODUCT.md`, next steps). CASHEEN grows only within quick entry and the monthly budget. REFRAIN is the next companion, then the others, only when people ask for them.
+
+## Phase 9: Three apps and Home (ADR 0014)
+**Steps, one commit each:**
+1. Docs: ADR 0014, `design/routeen.md`, product, vision and brand.
+2. Retire MARGINALIA: underlines become AMAZEEN quotes (migration `marginalia`), Overheard and `quotes.offer` go, `/marginalia/*` redirects.
+3. KINDRED becomes AMAZEEN · People (`/amazeen/people`), data paths kept, `/kindred/*` redirects.
+4. REFRAIN becomes ROUTEEN, the loom (`/routeen/`), data paths kept, audio removed, `/refrain/*` redirects.
+5. Personal looks for every app on one engine (`packages/core/src/look.ts`, `packages/kit/src/look.tsx`).
+6. Home at `/` (no money figures) and "Your life in weeks" at `/life`.
+
+**Exit criteria:** the existing vault shows every underline, person and practice in its new home; old addresses land in the right place; a fresh vault opens on Home; every app's looks pass the contrast tests; all gates green; checked at 390/768/1440, light and dark.
 
 ## Release 2
 All apps and the house. After the launch of AMAZEEN and CASHEEN.

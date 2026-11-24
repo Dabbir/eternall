@@ -13,7 +13,7 @@ ETERNALL is modelled on a **publishing house**. The house has one name, one prom
            (the lifeline · inscriptions · chapters · almanac, on the house's own pages)
                                        │
         ┌──────────────┬───────────┴──┬──────────────┬──────────────┐
-     AMAZEEN         REFRAIN        KINDRED       MARGINALIA       CASHEEN
+     AMAZEEN (+ People, Letters)        CASHEEN        ROUTEEN
      journal+letters rituals        people        reading          money
 ```
 
@@ -37,7 +37,7 @@ New imprints are named under these rules, so the family stays coherent as it gro
 5. **No collisions** with existing imprint names, initials or first letters where avoidable (the doors menu uses the initial as a fallback glyph).
 6. **Checked before launch** (§8).
 
-Retired names: ENVOI, FOLIO, ALMANACK, PROLOGUE (ADR 0011) and **LEDGER** (renamed CASHEEN, ADR 0013); they still name old data paths and redirect old doors. Reserved names for possible future imprints: **COLOPHON** (about you, your profile and settings as a printed colophon), **ERRATA** (corrections and regrets, a reflection practice), **GAZETTE** (a yearly printed review), **LEDGER** (finances, only if it can honour the privacy and "not a dashboard" principles).
+Retired names: ENVOI, FOLIO, ALMANACK, PROLOGUE (ADR 0011) **LEDGER** (renamed CASHEEN, ADR 0013), and **MARGINALIA**, **KINDRED** (now AMAZEEN · People) and **REFRAIN** (renamed ROUTEEN) (ADR 0014); they still name old data paths and redirect old doors. Reserved names for possible future imprints: **COLOPHON** (about you, your profile and settings as a printed colophon), **ERRATA** (corrections and regrets, a reflection practice), **GAZETTE** (a yearly printed review), **LEDGER** (finances, only if it can honour the privacy and "not a dashboard" principles).
 
 ## 3. The imprints
 
@@ -50,11 +50,12 @@ Accent values come from the validated palettes in `design/<imprint>.md`.
 | ~~ENVOI~~ (now AMAZEEN · Letters; reserved) | *Letters to your future* | the closing stanza of a poem, addressed to someone | *Write to the person you're becoming.* | A postmark ring with a date line | airmail red `#b3202f` / `#f06a5a` |
 | ~~FOLIO~~ (now house · Chapters; reserved) | *Chapters of your life* | a sheet folded into pages; a bound volume | *Every life is a book. Name its chapters.* | A book spine with two gilt bands | bookcloth `#2f4a3a` / `#7fae8f` |
 | ~~ALMANACK~~ (now house · Almanac; reserved) | *Measures & reflections* | the old almanac of days, moons and seasons | *A life, measured gently.* | A crescent inside an engraved circle | prussian `#1f3d6b` / `#9db4e8` |
-| **REFRAIN** | *Rituals & habits* | the line that returns in a song or poem | *The lines you come back to.* | A repeat sign (𝄆 𝄇) | indigo `#3b3a8f` / `#a6a4ff` |
+| **ROUTEEN** (ADR 0014; "routine" + the -EEN of AMAZEEN and CASHEEN) | *Practices, woven daily* | a routine, kept by hand | *Every day, one row.* | A shuttle crossing a woven square | indigo `#2e4a7d` / `#9db4e3` |
+| ~~REFRAIN~~ (now ROUTEEN; retired) | *Rituals & habits* | the line that returns in a song or poem | *The lines you come back to.* | A repeat sign (𝄆 𝄇) | indigo `#3b3a8f` / `#a6a4ff` |
 | ~~PROLOGUE~~ (retired; reserved) | *Hopes for the season* | the opening of a play, before the first act | *Every season opens with a prologue.* | A proscenium arch | curtain `#8e1b2a` / `#e05a6a` |
-| **KINDRED** | *The people who matter* | of the same kind; family by blood or by choice | *Keep the people close.* | Two overlapping letterpress circles | press green `#1f5f5b` / `#6fc2b8` |
+| ~~KINDRED~~ (now AMAZEEN · People; retired) | *The people who matter* | of the same kind; family by blood or by choice | *Keep the people close.* | Two overlapping letterpress circles | press green `#1f5f5b` / `#6fc2b8` |
 | **CASHEEN** (ADR 0012, renamed from LEDGER in ADR 0013; "cash" + the -EEN of AMAZEEN, its sibling) | *Money, kept plainly* | the accountant's book where every sum is entered | *Write it in one line.* | A ruled page with a double red rule | bookkeeper green `#2f5d3a` / `#8fc79b` |
-| **MARGINALIA** | *Reading & underlines* | notes written in the margins of a book | *Everything you underlined, kept.* | A pencil bracket in a margin | marginal blue `#1d4ea8` / `#8db0ff` |
+| ~~MARGINALIA~~ (retired; underlines became journal quotes) | *Reading & underlines* | notes written in the margins of a book | *Everything you underlined, kept.* | A pencil bracket in a margin | marginal blue `#1d4ea8` / `#8db0ff` |
 
 ## 4. Plain words beside every name (a hard rule)
 
@@ -130,6 +131,7 @@ These checks need legal and commercial judgement, so they are listed here as **T
 
 - [ ] Trademark search for ETERNALL and each imprint name in target markets (at minimum Indonesia (DJKI), US (USPTO), EU (EUIPO)) in classes 9 (software) and 42 (SaaS).
 - [ ] Domain: primary `eternall.app` (or alternative), and redirect-only marketing domains per imprint where available (e.g. `amazeen.app`, which already exists for AMAZEEN, and `envoi.app`). All of them redirect to `/<imprint>` on the primary origin (see `ARCHITECTURE.md` §2).
+- [ ] **ROUTEEN** (ADR 0014): check "routeen" in classes 9 and 42, close sound-alikes of "routine", and `routeen.app`.
 - [ ] **CASHEEN** first (ADR 0013): it ships at launch beside AMAZEEN. Check "casheen" for marks in finance and software classes (9, 36, 42) and for close sound-alikes, plus `casheen.app`.
 - [ ] App store name availability (for the later Capacitor builds).
 - [ ] Social handles for ETERNALL (imprints do not get separate social accounts in v1).

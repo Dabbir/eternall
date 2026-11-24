@@ -2,16 +2,17 @@
 
 > `CLAUDE.md` and `AGENTS.md` are kept identical. Change both together.
 
-ETERNALL is **a private personal toolkit**: one local-first, end-to-end-encrypted platform of apps that share a vault, not data. **AMAZEEN is the first product and the way in** (`docs/PRODUCT.md`, ADR 0013):
-- **Journal · AMAZEEN**: a journal pressed into a weekly issue, plus Letters to your future. Launch.
-- **Money · CASHEEN** (formerly LEDGER, renamed in ADR 0013): money in and out and a monthly budget, written in one line (ADR 0012). Launch, beside AMAZEEN.
-- **Practices · REFRAIN**, **People · KINDRED**, **Reading · MARGINALIA**: built, opt-in in Settings, not part of the launch.
+ETERNALL is **a private personal toolkit**: one local-first, end-to-end-encrypted platform of apps that share a vault, not data. **Three apps and Home** (`docs/PRODUCT.md`, ADR 0013, ADR 0014):
+- **Journal · AMAZEEN**: a journal pressed into a weekly issue, with **People** (the people you write about, once KINDRED) and **Letters** to your future. The first product and the way in.
+- **Money · CASHEEN** (formerly LEDGER): money in and out and a monthly budget, written in one line (ADR 0012).
+- **Practices · ROUTEEN** (formerly REFRAIN): the loom — each practice a thread, each day a row.
 
-The **house** (ETERNALL) keeps the optional lifeline (a life shown in weeks), inscriptions, Chapters and the Almanac. Read `docs/PRODUCT.md`, then `docs/VISION.md`, ADR 0011 and ADR 0013.
+The **house** (ETERNALL) is **Home** (one card per app, no money figures) and the optional **Your life in weeks** (the lifeline, with chapters and inscriptions). MARGINALIA was retired; its underlines became journal quotes. Read `docs/PRODUCT.md`, then ADR 0014, ADR 0013 and ADR 0011.
 
 ## Current state (read this before changing anything)
 
 - The owner approved the docs and asked to build through every phase. Work happens on branch `platform`, one commit per verified phase, never pushed (`docs/ROADMAP.md` tracks progress).
+- **Phase 9 is in progress (ADR 0014):** three apps and Home; steps in `docs/ROADMAP.md`. Data paths never move: `kindred/*`, `refrain/*` and `marginalia/*` stay.
 - **Phase 8 is done (ADR 0013):** AMAZEEN first. The steps (`docs/ROADMAP.md`): LEDGER was renamed CASHEEN (done: `modules/casheen`, door `/casheen/`, `/ledger/*` redirects, collection paths stay `ledger/*`, old settings ids read through `withCurrentIds`); Journal and Money on by default, other apps opt-in in Settings → Apps, new people land in the app not the lifeline, CASHEEN contributes nothing to the house (done: `house/domain/apps.ts` `appsOn`/`withApp`, `house/AppOff.tsx`); one app bar with the same positions in every app (done: kit `AppBar`, `packages/kit/src/appbar.tsx`, structure in `packages/ui/src/ui.css`; AMAZEEN mirrors it in `AppShell`); personal looks for AMAZEEN (done: `modules/amazeen/src/imprint/look/`, vault record `amazeen/prefs`; the house owns light/dark via `<html data-host-theme>`). Phase 8's code is complete; the owner's next steps are in `docs/PRODUCT.md`.
 - **Phase 7 is done (ADR 0012):** LEDGER, now CASHEEN (`modules/casheen`). The quick-line parser is `quick.ts`; amounts never leave CASHEEN.
 - **Phase 6 is done (ADR 0011):** consolidated from 8 imprints to 4 apps.
@@ -43,7 +44,7 @@ npm run dev:api    # sync + licence API on :8788 (services/sync-worker); writes 
 
 | Need | Read |
 |---|---|
-| What ships first, for whom, and why | `docs/PRODUCT.md` |
+| What ships first, for whom, and why | `docs/PRODUCT.md` (and ADR 0014) |
 | Why / what / for whom | `docs/VISION.md` |
 | Names, voice, logo | `docs/BRAND.md` |
 | Shared design rules, spine, 3D, budgets | `docs/DESIGN.md` |
