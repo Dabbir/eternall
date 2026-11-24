@@ -9,19 +9,21 @@ export function DimensionToggle({
   onChange,
   allowed,
   reason,
+  label2d = 'Flat',
   label3d = '3D',
 }: {
   value: '2d' | '3d';
   onChange(v: '2d' | '3d'): void;
   allowed: boolean;
   reason: ImmersiveReason;
+  label2d?: string;
   label3d?: string;
 }) {
   const why = reason === 'ok' ? undefined : IMMERSIVE_REASON_TEXT[reason];
   return (
     <div className="dimension-toggle" role="group" aria-label="View">
       <button type="button" className={value === '2d' ? 'is-on' : ''} aria-pressed={value === '2d'} onClick={() => onChange('2d')}>
-        Flat
+        {label2d}
       </button>
       <button
         type="button"

@@ -39,9 +39,8 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
   // "Later" (to this week) and "Back to this week" leave with the click, so focus goes to the week's heading.
   const weekHeading = useRef<HTMLHeadingElement>(null);
   // The year opens at its end, where today is, when it is wider than its box (a phone).
-  const yearBox = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = yearBox.current;
+  // A callback ref, so it opens at today every time the flat year mounts (also on the way back from the dome).
+  const yearBox = useCallback((el: HTMLDivElement | null) => {
     if (el) el.scrollLeft = el.scrollWidth;
   }, []);
   const stepTo = (n: number) => {
@@ -106,7 +105,7 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
           {copy.sky.year}
         </h2>
         <div className="rs-year__view">
-          <DimensionToggle value={view} onChange={setDimension} allowed={house.immersive.allowed} reason={house.immersive.reason} label3d={copy.sky.dome} />
+          <DimensionToggle value={view} onChange={setDimension} allowed={house.immersive.allowed} reason={house.immersive.reason} label2d={copy.sky.flat} label3d={copy.sky.dome} />
         </div>
         {view === '3d' ? (
           <Dome year={year} today={today} onOpen={openDay} onDowngrade={() => setDimension('2d')} />
@@ -206,8 +205,15 @@ function Dome({ year, today, onOpen, onDowngrade }: { year: DaySky[][]; today: I
   const byDate = new Map(year.flat().map((d) => [d.date, d]));
   return (
     <div ref={ref} className="rs-dome">
-      {props && <Stage3D load={loadSky} props={props} label={copy.sky.domeLabel} onDowngrade={onDowngrade} className="rs-dome__stage" />}
-      <ul className="visually-hidden" aria-label={copy.sky.domeDays}>
+      {/* The hint sits on the stage; the days list below shows when a link has keyboard focus. */}
+      <div className="rs-dome__frame">
+        {props && <Stage3D load={loadSky} props={props} label={copy.sky.domeLabel} onDowngrade={onDowngrade} className="rs-dome__stage" />}
+        <p className="rs-dome__hint" aria-hidden="true">
+          {copy.sky.domeHint}
+          <span className="rs-dome__zoom"> · {copy.sky.domeZoom}</span>
+        </p>
+      </div>
+      <ul className="rs-dome__days" aria-label={copy.sky.domeDays}>
         {marked.map((d) => (
           <li key={d.date}>
             <Go to={`/day/${d.date}`}>
@@ -216,9 +222,6 @@ function Dome({ year, today, onOpen, onDowngrade }: { year: DaySky[][]; today: I
           </li>
         ))}
       </ul>
-      <p className="rs-dome__hint" aria-hidden="true">
-        {copy.sky.domeHint}
-      </p>
     </div>
   );
 }

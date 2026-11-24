@@ -61,10 +61,12 @@ export const copy = {
   sky: {
     title: 'The sky',
     caption: (n: number) => `${plural(n, 'day')} lit this year`,
-    dome: 'View the sky as a dome',
-    flat: 'View the sky flat',
+    dome: 'Dome',
+    flat: 'Flat',
     domeLabel: 'The year as a dome of light: a week to each step around the horizon, Monday low and Sunday high; brighter, larger points where you did more, faint stars for days off.',
-    domeHint: 'Drag to turn the sky · Ctrl or ⌘ + scroll to zoom · click a light to open its day',
+    domeHint: 'Drag to turn the sky · choose a light to open its day',
+    /** Shown only with a mouse or trackpad. */
+    domeZoom: 'Ctrl or ⌘ + scroll to zoom',
     domeDays: 'Lit days and days off this year',
     thisWeek: 'This week',
     weekOf: (date: string) => `Week of ${date}`,
