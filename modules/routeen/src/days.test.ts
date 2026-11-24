@@ -1,4 +1,4 @@
-import { dayState, daySky, indexMarks, isKeptInWeek, litDays, steadiest, weekSky, weekSummary, weekTarget, yearSky, isScheduledOn, marksInWeek } from './days';
+import { dayState, daySky, indexMarks, practiceWeeks, skyState, isKeptInWeek, litDays, steadiest, weekSky, weekSummary, weekTarget, yearSky, isScheduledOn, marksInWeek } from './days';
 import { barStart, markId, type Mark, type Practice, type Tier } from './practices';
 import type { ModeOf } from './modes';
 
@@ -96,4 +96,27 @@ it('subtracts only Day-off days on which the practice was active', () => {
   expect(weekTarget(late, '2026-11-16', today, offEarly)).toBe(3);
   const paused = { ...read, pausedOn: '2026-11-18' };
   expect(weekTarget(paused, '2026-11-16', today, (d) => (d >= '2026-11-18' ? 'off' : 'normal'))).toBe(3);
+});
+
+it('draws a practice over 52 weeks, one sky per week at its brightest', () => {
+  const idx = indexMarks([mark('run', '2026-11-16', 'minimum'), mark('run', '2026-11-18', 'more'), mark('mum', '2026-11-23')]);
+  const weeks = practiceWeeks(run, idx, today, normal);
+  expect(weeks).toHaveLength(52);
+  expect(weeks[51]).toMatchObject({ date: '2026-11-23', light: null, expected: true, future: false });
+  expect(weeks[50]).toMatchObject({ date: '2026-11-16', light: 'more', expected: true });
+  expect(weeks[0]!.date).toBe('2025-12-01');
+  expect(practiceWeeks({ ...run, startedOn: '2026-11-20' }, idx, today, normal)[49]).toMatchObject({ light: null, expected: false });
+  // A week of only Day off asks nothing.
+  expect(practiceWeeks(run, idx, today, (d) => (d >= '2026-11-09' && d <= '2026-11-15' ? 'off' : 'normal'))[49]).toMatchObject({ expected: false, mode: 'off' });
+});
+it('reads how a day tile looks: lit, a quiet night, unlit, open, plain or ahead', () => {
+  const sky = (over: Partial<Parameters<typeof skyState>[0]>) => ({ date: '2026-11-24', light: null, mode: 'normal' as const, expected: true, future: false, ...over });
+  expect(skyState(sky({ light: 'minimum' }), today)).toBe('lit');
+  expect(skyState(sky({ light: 'target', mode: 'off' }), today)).toBe('lit');
+  expect(skyState(sky({ mode: 'off' }), today)).toBe('rest');
+  expect(skyState(sky({}), today)).toBe('unlit');
+  expect(skyState(sky({ mode: 'low' }), today)).toBe('unlit');
+  expect(skyState(sky({ date: today }), today)).toBe('open');
+  expect(skyState(sky({ expected: false }), today)).toBe('plain');
+  expect(skyState(sky({ date: '2026-11-26', future: true }), today)).toBe('future');
 });

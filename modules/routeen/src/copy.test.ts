@@ -14,6 +14,7 @@ describe('copy', () => {
     expect(copy.home.status(1, 2)).toBe('1 of 2 marked today');
     expect(copy.sky.title).toBe('The sky');
     expect(copy.day.thatDay).toBe('That day');
+    expect(copy.tile.label(copy.dateLabel('Monday', 23, 'November'), copy.tile.lit(copy.tiers.target))).toBe('Monday 23 November: lit, as planned');
     expect(copy.weekLine(1, 2)).toMatch(/^ROUTEEN · 1 of 2/);
   });
 });

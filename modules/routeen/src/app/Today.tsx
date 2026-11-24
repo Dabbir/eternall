@@ -6,37 +6,29 @@ import { useCollection } from '@eternall/vault';
 import { copy } from '../copy';
 import { allAsPlanned, frontPage, tapTier } from '../front';
 import { offerBackToNormal, type Mode } from '../modes';
-import { LIMITS, PRACTICE_PATH, markId, tierOf, validatePractice, weekdayOf, type Practice, type Tier } from '../practices';
+import { LIMITS, PRACTICE_PATH, markId, validatePractice, weekdayOf, type Practice } from '../practices';
 import { sunPosition } from '../sky';
 import { Lit } from './Ceremony';
-import { MODE_GLYPH, TIER_GLYPH } from './glyphs';
+import { Chip } from './Chip';
+import { MODE_GLYPH } from './glyphs';
+import { Go } from './Go';
 import { SunArc } from './SunArc';
-import { useNow, useRoutine, type Routine } from './useRoutine';
+import type { Routine } from './useRoutine';
 
-const TIERS: readonly Tier[] = ['minimum', 'target', 'more'];
 const MODES: readonly Mode[] = ['normal', 'low', 'off'];
-
-/** The amount a tier stands for, when the practice has a measure ("10 menit"). */
-function amountHint(p: Practice, tier: Tier): string | null {
-  const m = p.measure;
-  if (!m) return null;
-  if (tier === 'minimum') return copy.amount.exact(m.minimum, m.unit);
-  if (tier === 'target') return copy.amount.exact(m.target, m.unit);
-  return copy.amount.more(m.target, m.unit);
-}
 
 /**
  * The front page (spec §4.3–§4.5b): the day and its part, the sun's arc, the mode, and what is for now.
  * One tap lights a practice; the evening turns into the day's recap.
  */
-export function Today() {
+export function Today({ routine: r, onNew }: { routine: Routine; onNew(): void }) {
   const house = useHouse();
-  const r = useRoutine();
-  const now = useNow();
+  const { now } = r;
   const page = frontPage({ practices: r.practices, marks: r.marks, modes: r.modes, dayModes: r.dayModes, now, dayEndsAt: r.settings.dayEndsAt });
   const { today, mode } = page;
   const offer = offerBackToNormal(today, r.modes, r.settings.backToNormalDismissedOn);
   const bulk = allAsPlanned(page, r.marks);
+  const nothingListed = mode === 'off' ? page.ifYouLike.length === 0 : page.forNow.length + page.notYet.length + page.alsoToday.length === 0;
 
   const tap = (p: Practice) => {
     if (r.idx.has(markId(p.id, today))) {
@@ -55,7 +47,7 @@ export function Today() {
         <ul className="rs-chips">
           {list.map((p) => (
             <li key={p.id}>
-              <Chip practice={p} today={today} routine={r} onTap={() => tap(p)} />
+              <Chip practice={p} date={today} routine={r} onTap={() => tap(p)} />
             </li>
           ))}
         </ul>
@@ -84,6 +76,13 @@ export function Today() {
 
       {r.practices.length === 0 ? (
         <EmptySky today={today} />
+      ) : nothingListed ? (
+        <div className="rs-quiet">
+          <p className="rs-lede">{mode === 'off' ? copy.quietDayOff : copy.resting}</p>
+          <Button variant="ghost" icon="plus" onClick={onNew}>
+            {copy.newPractice}
+          </Button>
+        </div>
       ) : mode === 'off' ? (
         chips(copy.ifYouLike, page.ifYouLike)
       ) : page.recap ? (
@@ -105,53 +104,11 @@ export function Today() {
       )}
 
       {page.yesterdayUnmarked.length > 0 && (
-        <a
-          className="rs-yesterday"
-          href={house.href(`/day/${page.yesterday}`)}
-          onClick={(e) => {
-            e.preventDefault();
-            house.navigate(house.href(`/day/${page.yesterday}`));
-          }}
-        >
+        <Go className="rs-yesterday" to={`/day/${page.yesterday}`}>
           {copy.yesterday(page.yesterdayUnmarked.length)} <span aria-hidden="true">→</span>
-        </a>
+        </Go>
       )}
     </div>
-  );
-}
-
-/** A chip is one tap: unmarked lights it at the mode's tier, marked unmarks it. The other tiers sit right after it. */
-function Chip({ practice: p, today, routine: r, onTap }: { practice: Practice; today: ISODate; routine: Routine; onTap(): void }) {
-  const mark = r.idx.get(markId(p.id, today));
-  const tier = mark ? tierOf(mark) : null;
-  return (
-    <span className={`rs-chip ${tier ? `is-lit rs-chip--${tier}` : ''}`}>
-      <button type="button" className="rs-chip__main" aria-pressed={!!tier} onClick={onTap}>
-        <span className="rs-chip__name">{p.name}</span>
-        {tier && (
-          <>
-            {' '}
-            <span className="rs-chip__glyph" aria-hidden="true">
-              {TIER_GLYPH[tier]}
-            </span>{' '}
-            <span className="rs-chip__tier">{copy.tiers[tier]}</span>
-          </>
-        )}
-      </button>
-      {tier && (
-        <span className="rs-tiers" role="group" aria-label={copy.aria.tierChoice}>
-          {TIERS.filter((t) => t !== tier).map((t) => {
-            const hint = amountHint(p, t);
-            return (
-              <button key={t} type="button" className={`rs-tier rs-tier--${t}`} onClick={() => r.setTier(p, today, t)}>
-                <span aria-hidden="true">{TIER_GLYPH[t]}</span> {copy.tiers[t]}
-                {hint && <span className="rs-tier__hint"> · {hint}</span>}
-              </button>
-            );
-          })}
-        </span>
-      )}
-    </span>
   );
 }
 
@@ -195,7 +152,8 @@ function EmptySky({ today }: { today: ISODate }) {
       setError(v.errors.name);
       return;
     }
-    col.put({ id: createId(), pausedOn: null, ...v.value });
+    // A name is all it takes; time of day and a measure stay absent until the practice's page sets them.
+    col.put({ id: createId(), name: v.value.name, why: '', cadence: { kind: 'daily' }, startedOn: today, pausedOn: null });
     house.toast({ message: copy.toast.added(v.value.name), tone: 'accent' });
     setName('');
   };

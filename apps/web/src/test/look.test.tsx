@@ -1,6 +1,7 @@
 import { act, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createMemoryStore, type VaultRecord } from '@eternall/vault';
+import { copy as routeenCopy } from '@eternall/routeen/copy';
 import { Root } from '../shell/Root';
 
 /** AMAZEEN personal looks (docs/design/amazeen.md §13, ADR 0013): in the vault, applied at once, never in localStorage. */
@@ -60,16 +61,17 @@ describe('every app has its own looks (ADR 0014)', () => {
     expect(Object.keys(window.localStorage)).toEqual([]);
   });
 
-  it('ROUTEEN: a cloth is chosen under the year’s cloth, and Reset offers Undo', async () => {
+  it('ROUTEEN: a sky is chosen under the sky’s look, and Reset offers Undo', async () => {
     const user = userEvent.setup();
-    window.history.replaceState(null, '', '/routeen/cloth');
+    window.history.replaceState(null, '', '/routeen/sky');
     const store = createMemoryStore([quietAll]);
     render(<Root store={store} />);
-    await user.click(await screen.findByRole('radio', { name: /^Madder Warm/ }, { timeout: 4000 }));
-    await waitFor(() => expect(store.dump().find((r) => r.key === 'refrain/look/look')?.value).toMatchObject({ preset: 'madder' }));
+    expect(await screen.findByRole('heading', { name: routeenCopy.sky.look }, { timeout: 4000 })).toBeInTheDocument();
+    await user.click(await screen.findByRole('radio', { name: /^Senja/ }));
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'refrain/look/look')?.value).toMatchObject({ preset: 'senja' }));
     expect(document.body.dataset.look).toBe('');
-    await user.click(screen.getByRole('button', { name: 'Reset to Linen' }));
-    await waitFor(() => expect(store.dump().find((r) => r.key === 'refrain/look/look')?.value).toMatchObject({ preset: 'linen' }));
+    await user.click(screen.getByRole('button', { name: 'Reset to Fajar' }));
+    await waitFor(() => expect(store.dump().find((r) => r.key === 'refrain/look/look')?.value).toMatchObject({ preset: 'fajar' }));
     expect(await screen.findByRole('button', { name: 'Undo' })).toBeInTheDocument();
   });
 });

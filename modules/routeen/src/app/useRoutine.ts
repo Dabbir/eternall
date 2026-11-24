@@ -41,6 +41,8 @@ export interface Routine {
   dayModes: DayModeRecord[];
   settings: RouteenSettings;
   modeOf: ModeOf;
+  /** The one clock every page reads, so every write keys by the same day. */
+  now: Date;
   /** The routine day (it ends at `settings.dayEndsAt`), never the shell's midnight day. */
   today: ISODate;
   /** `null` removes the mark. Toasts with Undo. */
@@ -135,5 +137,5 @@ export function useRoutine(): Routine {
     settingsCol.col.put(s);
   };
 
-  return { practices, marks, idx, modes, dayModes, settings, modeOf, today, setTier, setMode, setDayMode, putMarks, saveSettings };
+  return { practices, marks, idx, modes, dayModes, settings, modeOf, now, today, setTier, setMode, setDayMode, putMarks, saveSettings };
 }

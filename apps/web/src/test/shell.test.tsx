@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { addDays, addYears, todayISO } from '@eternall/core';
 import { createMemoryStore, type VaultRecord } from '@eternall/vault';
 import { fingerprintOf } from '@eternall/amazeen/imprint/letters/letters';
+import { copy as routeenCopy } from '@eternall/routeen/copy';
 import { Root } from '../shell/Root';
 
 const today = todayISO();
@@ -26,7 +27,7 @@ describe('the house', () => {
     render(<Root store={createMemoryStore()} />);
     expect(await screen.findByRole('heading', { name: /Write as usual\.\s*See your week again\./ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Add an entry' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Add a practice' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: routeenCopy.newPractice })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Draw your life in weeks/ })).toBeInTheDocument();
     expect(screen.queryByText('KINDRED')).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Start writing' }));

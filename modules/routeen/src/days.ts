@@ -114,3 +114,33 @@ export function steadiest(ps: readonly Practice[], idx: MarkIndex, today: ISODat
   }
   return best;
 }
+
+/** How a day tile reads (spec §4.6): lit at its brightest, a quiet night, unlit, still open today, plain or still ahead. */
+export type SkyState = 'lit' | 'rest' | 'unlit' | 'open' | 'plain' | 'future';
+
+export function skyState(sky: DaySky, today: ISODate): SkyState {
+  if (sky.light) return 'lit';
+  if (sky.future) return 'future';
+  if (sky.mode === 'off') return 'rest';
+  if (!sky.expected) return 'plain';
+  return sky.date === today ? 'open' : 'unlit';
+}
+
+/**
+ * One practice over the last 52 weeks, one sky per week (dated by its Monday): the brightest tier kept,
+ * expected when the week has asked something of it so far, and a quiet night when its every active day was a Day off.
+ */
+export function practiceWeeks(p: Practice, idx: MarkIndex, today: ISODate, modeOf: ModeOf): DaySky[] {
+  const first = addDays(barStart(today), -7 * 51);
+  return Array.from({ length: 52 }, (_, i) => {
+    const start = addDays(first, 7 * i);
+    let light: Tier | null = null;
+    for (const d of barDays(start)) {
+      const m = idx.get(markId(p.id, d));
+      if (m && (!light || RANK[tierOf(m)] > RANK[light])) light = tierOf(m);
+    }
+    const lived = barDays(start).filter((d) => d <= today && isActiveOn(p, d));
+    const mode: Mode = lived.length > 0 && lived.every((d) => modeOf(d) === 'off') ? 'off' : 'normal';
+    return { date: start, light, mode, expected: start <= today && weekTarget(p, start, today, modeOf) > 0, future: start > today };
+  });
+}
