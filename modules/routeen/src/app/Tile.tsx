@@ -2,7 +2,8 @@ import type { ISODate } from '@eternall/core';
 import { copy } from '../copy';
 import { skyState, type DaySky } from '../days';
 import { weekdayOf } from '../practices';
-import { MODE_GLYPH, TIER_GLYPH } from './glyphs';
+import { BodyIcon } from './Body';
+import { MODE_GLYPH } from './glyphs';
 
 /** "Monday 23 November", from the catalogue. */
 export const dayName = (date: ISODate): string => copy.dateLabel(copy.weekdays[weekdayOf(date)]!, Number(date.slice(8, 10)), copy.months[Number(date.slice(5, 7)) - 1]!);
@@ -20,7 +21,8 @@ function spoken(sky: DaySky, today: ISODate, week: boolean): string {
 }
 
 /**
- * One day of the sky (spec §4.6): the brightest tier kept (◐ ☀︎ ✺), the day's weather (☁︎ ✦), or nothing.
+ * One day as a small sky (spec §4.6, ADR 0016): the brightest tier kept as its shape (◐ ☀︎ ✺), a star for a
+ * day off, ☁︎ for low energy, or nothing. Unlit and plain days are a dimmed sky.
  * An expected day that passed with no light is `unlit`: dim, with a faint outline, never red and never a word.
  * Shapes carry the meaning; colour only supports them. Also the 2D fallback of the dome (Task 10).
  * `week` reads the tile as a whole week (a practice's strip), dated by its Monday.
@@ -38,8 +40,12 @@ export function Tile({ sky, today, week = false }: { sky: DaySky; today: ISODate
       data-mode={sky.mode}
       data-light={sky.light ?? undefined}
     >
-      {sky.light && <span className="rs-tile__light">{TIER_GLYPH[sky.light]}</span>}
-      {sky.mode !== 'normal' && <span className="rs-tile__mode">{MODE_GLYPH[sky.mode]}</span>}
+      {sky.light ? <BodyIcon kind={sky.light} className="rs-tile__light" /> : state === 'rest' && <BodyIcon kind="rest" className="rs-tile__light" />}
+      {sky.mode === 'low' && (
+        <span className="rs-tile__mode" aria-hidden="true">
+          {MODE_GLYPH.low}
+        </span>
+      )}
     </span>
   );
 }
