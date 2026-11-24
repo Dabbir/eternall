@@ -115,7 +115,7 @@ export function lookTokens(spec: LookSpec, look: Look, mode: LookMode): Record<s
     '--look-space': String(spec.densities[look.density]?.space ?? 1),
     '--look-leading': String(spec.densities[look.density]?.leading ?? 1),
   };
-  return { ...tokens, ...(spec.derive?.(tokens, mode) ?? {}) };
+  return { ...tokens, ...spec.derive?.(tokens, mode) };
 }
 
 /**
