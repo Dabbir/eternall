@@ -35,7 +35,7 @@ export function PracticePage({ practice: p, routine: r, onEdit }: { practice: Pr
   };
 
   return (
-    <article className="rs-practice">
+    <article className="rs-page rs-practice">
       <header className="rs-head">
         <h1 className="rs-title">{p.name}</h1>
         {p.why && <p className="rs-why">“{p.why}”</p>}

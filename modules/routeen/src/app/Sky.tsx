@@ -56,7 +56,7 @@ export function Sky({ routine: r, look }: { routine: Routine; look: ReturnType<t
   const here = new Set(r.practices.map((p) => p.id));
   const lit = litDays(r.marks.filter((m) => here.has(m.ritualId)), today.slice(0, 4));
   return (
-    <div className="rs-sky">
+    <div className="rs-page rs-sky">
       <header className="rs-head">
         <h1 className="rs-title">{copy.sky.title}</h1>
         <p className="rs-lede">{copy.sky.caption(lit)}</p>

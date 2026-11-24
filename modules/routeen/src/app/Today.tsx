@@ -1,25 +1,28 @@
-import { useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { createId, type ISODate } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button, Segmented, TextField } from '@eternall/ui';
 import { useCollection } from '@eternall/vault';
 import { copy } from '../copy';
-import { allAsPlanned, frontPage, tapTier } from '../front';
+import { allAsPlanned, frontPage, groupByTime, tapTier, type Group } from '../front';
 import { offerBackToNormal, type Mode } from '../modes';
-import { LIMITS, PRACTICE_PATH, markId, validatePractice, weekdayOf, type Practice } from '../practices';
+import { LIMITS, PRACTICE_PATH, markId, tierOf, validatePractice, weekdayOf, type Practice, type Tier } from '../practices';
 import { sunPosition } from '../sky';
 import { Lit } from './Ceremony';
-import { Chip } from './Chip';
 import { MODE_GLYPH } from './glyphs';
 import { Go } from './Go';
-import { SunArc } from './SunArc';
+import { PracticeRow } from './PracticeRow';
+import { SkyBand } from './SkyBand';
 import type { Routine } from './useRoutine';
 
 const MODES: readonly Mode[] = ['normal', 'low', 'off'];
+const LIT_MS = 700;
 
 /**
- * The front page (spec §4.3–§4.5b): the day and its part, the sun's arc, the mode, and what is for now.
- * One tap lights a practice; the evening turns into the day's recap.
+ * The front page (ADR 0015, ADR 0016): the day's sky across the page, with every practice in it at its
+ * own place, then the practices as rows grouped by time of day in a fixed order. One tap lights a row;
+ * its body lights in the sky, in place. Nothing on the page moves when something is lit. In the evening
+ * the page offers All as planned; on a Day off nothing is asked, and anything can still be lit.
  */
 export function Today({ routine: r, onNew }: { routine: Routine; onNew(): void }) {
   const house = useHouse();
@@ -28,39 +31,76 @@ export function Today({ routine: r, onNew }: { routine: Routine; onNew(): void }
   const { today, mode } = page;
   const offer = offerBackToNormal(today, r.modes, r.settings.backToNormalDismissedOn);
   const bulk = allAsPlanned(page, r.marks);
-  const nothingListed = mode === 'off' ? page.ifYouLike.length === 0 : page.forNow.length + page.notYet.length + page.alsoToday.length === 0;
+  const nothingListed = page.groups.length + page.alsoToday.length === 0;
+  const [justLit, setJustLit] = useState<string | null>(null);
+  const band = useRef<HTMLElement>(null);
+  const bandInView = useRef(true);
+  const litTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const tap = (p: Practice) => {
-    if (r.idx.has(markId(p.id, today))) {
-      r.setTier(p, today, null);
-      return;
-    }
-    const tier = tapTier(mode);
+  // Lit plays in the sky when the sky can be seen; otherwise (a long list on a phone) as the house's moment.
+  useEffect(() => {
+    const el = band.current;
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(([e]) => {
+      bandInView.current = !!e?.isIntersecting;
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => () => clearTimeout(litTimer.current), []);
+
+  const tierNow = (p: Practice): Tier | null => {
+    const m = r.idx.get(markId(p.id, today));
+    return m ? tierOf(m) : null;
+  };
+  const light = (p: Practice, tier: Tier | null) => {
+    const was = tierNow(p);
     r.setTier(p, today, tier);
-    house.ceremony(<Lit name={p.name} tier={tier} />, 700);
+    if (!tier || was) return;
+    setJustLit(p.id);
+    clearTimeout(litTimer.current);
+    litTimer.current = setTimeout(() => setJustLit(null), LIT_MS);
+    if (!bandInView.current) house.ceremony(<Lit name={p.name} tier={tier} />, LIT_MS);
   };
 
-  const chips = (title: string, list: readonly Practice[]) =>
-    list.length > 0 && (
-      <section className="rs-section" aria-label={title}>
-        <h2 className="rs-h2">{title}</h2>
-        <ul className="rs-chips">
-          {list.map((p) => (
-            <li key={p.id}>
-              <Chip practice={p} date={today} routine={r} onTap={() => tap(p)} />
-            </li>
-          ))}
-        </ul>
-      </section>
-    );
+  const row = (p: Practice) => (
+    <li key={p.id}>
+      <PracticeRow practice={p} date={today} routine={r} onTap={() => light(p, tierNow(p) ? null : tapTier(mode))} onTier={(t) => light(p, tierNow(p) === t ? null : t)} />
+    </li>
+  );
+  const group = (g: Group) => (
+    <section key={g.time} className="rs-section rs-group" aria-labelledby={`rs-group-${g.time}`}>
+      <h2 id={`rs-group-${g.time}`} className="rs-h2">
+        {copy.times[g.time]}
+        {mode !== 'off' && g.time === page.part && <span className="rs-now"> {copy.now}</span>}
+      </h2>
+      <ul className="rs-rows">{g.practices.map(row)}</ul>
+    </section>
+  );
+  const onSky = groupByTime([...page.groups.flatMap((g) => g.practices), ...page.alsoToday]);
+  const kindOf = (id: string) => {
+    const m = r.idx.get(markId(id, today));
+    return m ? tierOf(m) : 'unlit';
+  };
+  const names = new Map(r.practices.map((p) => [p.id, p.name]));
 
   return (
-    <div className={`rs-today rs-mode--${mode}`} data-mode={mode}>
-      <header className="rs-head">
+    <div className="rs-page rs-today" data-mode={mode}>
+      <SkyBand
+        ref={band}
+        size="full"
+        mode={mode}
+        glow={page.glow}
+        groups={onSky}
+        kindOf={kindOf}
+        nameOf={(id) => names.get(id) ?? ''}
+        sun={sunPosition(now, r.settings.dayEndsAt)}
+        label={copy.sky.band(page.markedDueCount, page.dueCount)}
+        justLit={justLit}
+      >
         <h1 className="rs-title">{copy.headline(copy.weekdays[weekdayOf(today)]!, copy.parts[page.part])}</h1>
-        <SunArc position={sunPosition(now, r.settings.dayEndsAt)} />
         <ModeControl mode={mode} onChoose={r.setMode} />
-      </header>
+      </SkyBand>
 
       {offer && (
         <div className="rs-offer" role="group" aria-label={copy.backToNormal}>
@@ -83,24 +123,28 @@ export function Today({ routine: r, onNew }: { routine: Routine; onNew(): void }
             {copy.newPractice}
           </Button>
         </div>
-      ) : mode === 'off' ? (
-        chips(copy.ifYouLike, page.ifYouLike)
-      ) : page.recap ? (
-        <>
-          {chips(copy.recap, page.forNow)}
-          {bulk.length > 0 && (
-            <Button variant="primary" className="rs-bulk" onClick={() => r.putMarks(bulk)}>
-              {mode === 'low' ? copy.allALittle : copy.allAsPlanned}
-            </Button>
-          )}
-          {chips(copy.alsoToday, page.alsoToday)}
-        </>
       ) : (
-        <>
-          {chips(copy.forNow, page.forNow)}
-          {chips(copy.notYet, page.notYet)}
-          {chips(copy.alsoToday, page.alsoToday)}
-        </>
+        <div className="rs-list">
+          {mode === 'off' && <p className="rs-lede rs-dayoff">{copy.dayOffLine}</p>}
+          {page.recap && mode !== 'off' && (
+            <div className="rs-recap">
+              <p className="rs-eyebrow">{copy.recap}</p>
+              {/* Kept in the layout once nothing is left for it, so the rows below never jump. */}
+              <Button variant="primary" className="rs-bulk" onClick={() => r.putMarks(bulk)} disabled={bulk.length === 0} style={bulk.length === 0 ? { visibility: 'hidden' } : undefined}>
+                {mode === 'low' ? copy.allALittle : copy.allAsPlanned}
+              </Button>
+            </div>
+          )}
+          {page.groups.map(group)}
+          {page.alsoToday.length > 0 && (
+            <section className="rs-section rs-group" aria-labelledby="rs-group-also">
+              <h2 id="rs-group-also" className="rs-h2">
+                {copy.alsoToday}
+              </h2>
+              <ul className="rs-rows">{page.alsoToday.map(row)}</ul>
+            </section>
+          )}
+        </div>
       )}
 
       {page.yesterdayUnmarked.length > 0 && (

@@ -31,10 +31,8 @@ export interface FrontPage {
   groups: Group[];
   /** How much of what is due is lit, 0..1; the sky brightens with it. Never shown as a number. */
   glow: number;
-  forNow: Practice[];
-  notYet: Practice[];
+  /** Active but not due today (an n-a-week practice already met, a weekly one on another day); empty on a Day off. */
   alsoToday: Practice[];
-  ifYouLike: Practice[];
   yesterdayUnmarked: Practice[];
   dueCount: number;
   markedDueCount: number;
@@ -84,12 +82,6 @@ export function frontPage(input: FrontInput): FrontPage {
   const active = input.practices.filter((p) => isActiveOn(p, today));
   const due = active.filter((p) => isDueOn(p, today, idx, modeOf));
 
-  let forNow: Practice[] = [];
-  let notYet: Practice[] = [];
-  if (mode !== 'off') {
-    forNow = recap ? due : due.filter((p) => marked(p) || timeOf(p) === 'anytime' || timeOf(p) === part);
-    notYet = due.filter((p) => !forNow.includes(p));
-  }
   const dueSet = new Set(mode === 'off' ? [] : due);
   const yesterdayUnmarked =
     part === 'morning' && modeOf(yesterday) !== 'off' ? input.practices.filter((p) => isScheduledOn(p, yesterday) && !idx.has(markId(p.id, yesterday))) : [];
@@ -104,10 +96,7 @@ export function frontPage(input: FrontInput): FrontPage {
     recap,
     groups: groupByTime(mode === 'off' ? active : due),
     glow: dueCount ? markedDueCount / dueCount : 0,
-    forNow: ordered(forNow),
-    notYet: ordered(notYet),
     alsoToday: ordered(mode === 'off' ? [] : active.filter((p) => !dueSet.has(p))),
-    ifYouLike: mode === 'off' ? ordered(active) : [],
     yesterdayUnmarked: ordered(yesterdayUnmarked),
     dueCount,
     markedDueCount,
@@ -118,7 +107,8 @@ export function frontPage(input: FrontInput): FrontPage {
 export function allAsPlanned(page: FrontPage, marks: readonly Mark[]): Mark[] {
   if (page.mode === 'off' || !page.recap) return [];
   const idx = indexMarks(marks);
-  return page.forNow
+  return page.groups
+    .flatMap((g) => g.practices)
     .filter((p) => p.cadence.kind !== 'times' && !idx.has(markId(p.id, page.today)))
     .map((p) => ({ id: markId(p.id, page.today), ritualId: p.id, date: page.today, tier: tapTier(page.mode) }));
 }

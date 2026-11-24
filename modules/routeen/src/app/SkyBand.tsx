@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { CSSProperties, ReactNode, Ref } from 'react';
 import type { Group } from '../front';
 import type { Mode } from '../modes';
 import { arcY, placeBodies } from '../placement';
@@ -21,6 +21,7 @@ const ARC = Array.from({ length: 49 }, (_, i) => {
  * below are the way to act. `children` (headline, mode) sit on the sky, outside the picture.
  */
 export function SkyBand({
+  ref,
   size,
   mode,
   glow,
@@ -32,6 +33,7 @@ export function SkyBand({
   justLit = null,
   children,
 }: {
+  ref?: Ref<HTMLElement>;
   size: 'full' | 'short' | 'small';
   mode: Mode;
   glow: number;
@@ -48,7 +50,7 @@ export function SkyBand({
   const sunX = sun === undefined ? null : 0.04 + 0.92 * Math.min(1, Math.max(0, sun));
   const at = (x: number, y: number) => ({ left: `${(x * 100).toFixed(2)}%`, top: `${(y * 100).toFixed(2)}%` });
   return (
-    <section className={`rs-band rs-band--${size} rs-mode--${mode}`} style={{ '--glow': Math.min(1, Math.max(0, glow)).toFixed(3) } as CSSProperties}>
+    <section ref={ref} className={`rs-band rs-band--${size} rs-mode--${mode}`} style={{ '--glow': Math.min(1, Math.max(0, glow)).toFixed(3) } as CSSProperties}>
       {children && <div className="rs-band__head">{children}</div>}
       <div className="rs-band__sky">
         <svg className="rs-band__arc" role="img" aria-label={label} viewBox="0 0 1000 400" preserveAspectRatio="none">

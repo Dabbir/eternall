@@ -21,24 +21,10 @@ const input = (over: Partial<FrontInput> = {}): FrontInput => ({
   ...over,
 });
 
-it('orders by time of day but never hides what is due', () => {
-  const p = frontPage(input());
-  expect(p.part).toBe('morning');
-  expect(p.recap).toBe(false);
-  expect(p.forNow.map((x) => x.id)).toEqual(['run', 'water', 'read']);
-  expect(p.notYet.map((x) => x.id)).toEqual(['med']);
-  expect(p.alsoToday.map((x) => x.id)).toEqual(['mum']);
-});
-it('keeps a just-marked chip where it was', () => {
-  const p = frontPage(input({ marks: [mark('med', '2026-11-25')] }));
-  expect(p.forNow.map((x) => x.id)).toContain('med');
-  expect(p.notYet).toEqual([]);
-});
 it('turns the evening into a recap of everything due', () => {
   const p = frontPage(input({ now: new Date('2026-11-25T19:00:00') }));
   expect(p.recap).toBe(true);
-  expect(p.forNow.map((x) => x.id).sort()).toEqual(['med', 'read', 'run', 'water']);
-  expect(p.notYet).toEqual([]);
+  expect(p.groups.flatMap((g) => g.practices.map((x) => x.id)).sort()).toEqual(['med', 'read', 'run', 'water']);
 });
 it('moves n-a-week practices aside once the week is met, and never bulk-marks them', () => {
   const twice: Practice = { ...read, cadence: { kind: 'times', n: 2 } };
@@ -54,8 +40,6 @@ it('marks a little in Low energy, and asks nothing on a Day off', () => {
   expect(tapTier('normal')).toBe('target');
   expect(allAsPlanned(low, []).every((m) => m.tier === 'minimum')).toBe(true);
   const off = frontPage(input({ modes: [{ id: '2026-11-25', from: '2026-11-25', mode: 'off' }] }));
-  expect(off.forNow).toEqual([]);
-  expect(off.ifYouLike.map((x) => x.id).sort()).toEqual(['med', 'mum', 'read', 'run', 'water']);
   expect(allAsPlanned(off, [])).toEqual([]);
   expect(off.dueCount).toBe(0);
 });
@@ -71,7 +55,7 @@ it('uses the routine day after midnight', () => {
 });
 it('leaves out paused and not-yet-started practices', () => {
   const p = frontPage(input({ practices: [{ ...run, pausedOn: '2026-11-20' }, { ...water, startedOn: '2026-12-01' }] }));
-  expect([...p.forNow, ...p.notYet, ...p.alsoToday]).toEqual([]);
+  expect([...p.groups, ...p.alsoToday]).toEqual([]);
   expect(p.dueCount).toBe(0);
 });
 it('counts what is due today for Home', () => {
@@ -83,7 +67,7 @@ it('sorts stably by start then name', () => {
   const a: Practice = { ...run, id: 'a', name: 'Zed', startedOn: '2026-01-01' };
   const b: Practice = { ...run, id: 'b', name: 'Amy', startedOn: '2026-01-01' };
   const c: Practice = { ...run, id: 'c', name: 'Old', startedOn: '2025-01-01' };
-  expect(frontPage(input({ practices: [a, b, c] })).forNow.map((x) => x.id)).toEqual(['c', 'b', 'a']);
+  expect(frontPage(input({ practices: [a, b, c] })).groups[0]!.practices.map((x) => x.id)).toEqual(['c', 'b', 'a']);
 });
 it('asks of a times practice the week less its Day-off days', () => {
   const oneOff: ModeOf = (d) => (d === '2026-11-27' ? 'off' : 'normal');
@@ -102,7 +86,11 @@ it('decides whether a practice is due on a day', () => {
 
 const shape = (gs: readonly { time: string; practices: readonly Practice[] }[]) => gs.map((g) => [g.time, g.practices.map((p) => p.id)]);
 it('groups due practices by time of day in a fixed order', () => {
-  expect(shape(frontPage(input()).groups)).toEqual([['morning', ['water']], ['evening', ['med']], ['anytime', ['run', 'read']]]);
+  const p = frontPage(input());
+  expect(p.part).toBe('morning');
+  expect(p.recap).toBe(false);
+  expect(shape(p.groups)).toEqual([['morning', ['water']], ['evening', ['med']], ['anytime', ['run', 'read']]]);
+  expect(p.alsoToday.map((x) => x.id)).toEqual(['mum']);
 });
 it('keeps the groups whatever is lit', () => {
   const p = frontPage(input({ marks: [mark('med', '2026-11-25'), mark('run', '2026-11-25')] }));

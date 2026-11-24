@@ -51,11 +51,49 @@ describe('ROUTEEN, the day’s sky', () => {
     const key = `refrain/mark/${markId('run', day)}`;
     const live = () => store.dump().find((r) => r.key === key && !r.deleted);
     await user.click(await screen.findByRole('button', { name: /^Morning run/, pressed: false }));
-    await user.click(await screen.findByRole('button', { name: copy.tiers.minimum }));
+    await user.click(await screen.findByRole('button', { name: copy.aria.tierFor('minimum', 'Morning run', null) }));
     await waitFor(() => expect(live()?.value).toMatchObject({ tier: 'minimum' }));
     await user.click(await screen.findByRole('button', { name: /^Morning run/, pressed: true }));
     await waitFor(() => expect(live()).toBeUndefined());
     expect(await screen.findByRole('button', { name: /^Morning run/, pressed: false })).toBeInTheDocument();
+  });
+
+  it('lights at a chosen tier in one tap from the row', async () => {
+    const user = userEvent.setup();
+    const store = createMemoryStore([settings(), ritual]);
+    at('/routeen/');
+    render(<Root store={store} />);
+    await user.click(await screen.findByRole('button', { name: copy.aria.tierFor('more', 'Morning run', null), pressed: false }));
+    const day = routineDay(new Date(), 3);
+    await waitFor(() => expect(store.dump().find((r) => r.key === `refrain/mark/${markId('run', day)}` && !r.deleted)?.value).toMatchObject({ tier: 'more' }));
+    expect(screen.getByRole('button', { name: copy.aria.tierFor('more', 'Morning run', null) })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('keeps every row, and every tier, in place when a practice is lit', async () => {
+    const user = userEvent.setup();
+    const evening = rec('refrain/ritual/read', { id: 'read', name: 'Read', why: '', cadence: { kind: 'daily' }, timeOfDay: 'evening', startedOn: addDays(today, -30), pausedOn: null });
+    at('/routeen/');
+    render(<Root store={createMemoryStore([settings(), ritual, evening])} />);
+    await screen.findByRole('button', { name: /^Morning run/, pressed: false });
+    // jsdom has no layout: the same rows, in the same order, each with the same buttons (pixels: browser check).
+    const layout = () => [...document.querySelectorAll('[data-practice]')].map((row) => `${row.getAttribute('data-practice')}:${row.querySelectorAll('button').length}`);
+    const before = layout();
+    await user.click(screen.getByRole('button', { name: /^Read/, pressed: false }));
+    await screen.findByRole('button', { name: /^Read/, pressed: true });
+    expect(layout()).toEqual(before);
+    expect(before).toEqual(['read:4', 'run:4']); // evening before any time
+  });
+
+  it('groups practices by time of day, in a fixed order', async () => {
+    const evening = rec('refrain/ritual/read', { id: 'read', name: 'Read', why: '', cadence: { kind: 'daily' }, timeOfDay: 'evening', startedOn: addDays(today, -30), pausedOn: null });
+    const morning = rec('refrain/ritual/med', { id: 'med', name: 'Meditate', why: '', cadence: { kind: 'daily' }, timeOfDay: 'morning', startedOn: addDays(today, -30), pausedOn: null });
+    at('/routeen/');
+    render(<Root store={createMemoryStore([settings(), evening, morning, ritual])} />);
+    await screen.findByRole('button', { name: /^Meditate/ });
+    const heads = screen.getAllByRole('heading', { level: 2 }).map((h) => h.textContent ?? '');
+    const order = [copy.times.morning, copy.times.evening, copy.times.anytime].map((t) => heads.findIndex((h) => h.startsWith(t)));
+    expect(order.every((i) => i >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
   });
 
   it('switches the whole routine to Low energy in one tap and writes one mode record', async () => {

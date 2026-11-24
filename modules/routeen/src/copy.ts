@@ -5,17 +5,18 @@ import { plural } from '@eternall/core';
  * Plain data and small pure functions; no React. Plural helpers tolerate any numbers.
  * Voice: never "missed", never a streak or a percentage.
  */
+const TIERS = { minimum: 'a little', target: 'as planned', more: 'more' } as const;
+
 export const copy = {
   fn: 'A routine that bends with your day',
   intro: 'Each day is a sky. Mark a practice and it lights up; a hard day can be lit a little, and a day off is a quiet night.',
   lock: 'The sky is drawn.',
   leave: 'Leave',
-  forNow: 'For now',
-  notYet: 'Not yet today',
   recap: "Today's recap",
   alsoToday: 'Also today',
-  ifYouLike: 'If you feel like it',
-  tiers: { minimum: 'a little', target: 'as planned', more: 'more' },
+  now: 'now',
+  dayOffLine: 'A day off, and nothing asked of it. Light anything if you feel like it.',
+  tiers: TIERS,
   allAsPlanned: 'All as planned',
   allALittle: 'All, a little',
   modes: { normal: 'Normal', low: 'Low energy', off: 'Day off' },
@@ -200,6 +201,8 @@ export const copy = {
   },
   aria: {
     tierChoice: 'How much did you do?',
+    /** A tier button's name: "a little · Morning run · 10 minutes". Starts with the tier, so a row's own button keeps its name. */
+    tierFor: (tier: keyof typeof TIERS, name: string, hint: string | null) => `${TIERS[tier]} · ${name}${hint ? ` · ${hint}` : ''}`,
     markedTier: (tier: string) => `Marked: ${tier}`,
     modePicker: 'Mode for today',
     skyGrid: 'The sky: one row for each week, one cell for each day',

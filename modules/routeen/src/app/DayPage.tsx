@@ -6,8 +6,8 @@ import { copy } from '../copy';
 import { dayState } from '../days';
 import { tapTier } from '../front';
 import type { Mode } from '../modes';
-import { isActiveOn, markId, type Practice } from '../practices';
-import { Chip } from './Chip';
+import { isActiveOn, markId, tierOf, type Practice, type Tier } from '../practices';
+import { PracticeRow } from './PracticeRow';
 import { MODE_GLYPH } from './glyphs';
 import { Go } from './Go';
 import { dayName } from './Tile';
@@ -30,10 +30,14 @@ export function DayPage({ date, routine: r }: { date: ISODate; routine: Routine 
 
   const mode = r.modeOf(date);
   const list = r.practices.filter((p) => isActiveOn(p, date) || r.idx.has(markId(p.id, date))).sort(byStart);
-  const tap = (p: Practice) => r.setTier(p, date, r.idx.has(markId(p.id, date)) ? null : tapTier(mode));
+  const tierNow = (p: Practice): Tier | null => {
+    const m = r.idx.get(markId(p.id, date));
+    return m ? tierOf(m) : null;
+  };
+  const tap = (p: Practice) => r.setTier(p, date, tierNow(p) ? null : tapTier(mode));
 
   return (
-    <div className={`rs-day rs-mode--${mode}`} data-mode={mode}>
+    <div className={`rs-page rs-day rs-mode--${mode}`} data-mode={mode}>
       <header className="rs-head">
         <p className="rs-eyebrow">
           <span aria-hidden="true">{MODE_GLYPH[mode]}</span> {copy.modes[mode]}
@@ -44,12 +48,12 @@ export function DayPage({ date, routine: r }: { date: ISODate; routine: Routine 
       {list.length === 0 ? (
         <p className="rs-lede">{copy.day.nothing}</p>
       ) : (
-        <ul className="rs-chips">
+        <ul className="rs-rows">
           {list.map((p) => {
             const state = dayState(p, date, r.idx, r.modeOf, r.today);
             return (
               <li key={p.id}>
-                <Chip practice={p} date={date} routine={r} state={state} note={copy.dayState[state]} onTap={() => tap(p)} />
+                <PracticeRow practice={p} date={date} routine={r} state={state} note={copy.dayState[state]} onTap={() => tap(p)} onTier={(t) => r.setTier(p, date, tierNow(p) === t ? null : t)} />
               </li>
             );
           })}
