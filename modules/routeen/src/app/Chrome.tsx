@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
-import { AppBar, IntroNote } from '@eternall/kit';
+import { AppBar, AppMark, IntroNote } from '@eternall/kit';
 import { copy } from '../copy';
+import { MARK_FILL_RULE, MARK_PATH } from '../mark';
 import { routeen } from '../index';
 
 export type RouteenPlace = 'today' | 'sky' | 'practice' | 'day';
@@ -14,7 +15,7 @@ export function Chrome({ here, children }: { here: RouteenPlace; children: React
     <div className="rc">
       <AppBar
         exit={{ label: routeen.brand.leaveLabel, ornament: <span className="rs-sun" aria-hidden="true" /> }}
-        title={{ name: routeen.name, fn: routeen.functionLine }}
+        title={{ name: routeen.name, fn: routeen.functionLine, mark: <AppMark path={MARK_PATH} fillRule={MARK_FILL_RULE} /> }}
         places={[
           { label: copy.places.today, to: '/', current: here === 'today' ? 'page' : here === 'practice' ? true : undefined },
           { label: copy.places.sky, to: '/sky', current: here === 'sky' ? 'page' : here === 'day' ? true : undefined },

@@ -14,8 +14,8 @@ export interface AppBarPlace {
 export interface AppBarProps {
   /** The way back to the house. The label is the app's own words ("Close the book"). */
   exit: { label: string; ornament?: ReactNode };
-  /** The app's name and function line, linking to its home. */
-  title: { name: string; fn: string; ornament?: ReactNode };
+  /** The app's name and function line, linking to its home; `mark` is its monogram (an `AppMark`), set on a tile. */
+  title: { name: string; fn: string; ornament?: ReactNode; mark?: ReactNode };
   places: readonly AppBarPlace[];
   /** Something of the app's own beside the places on a wide screen (AMAZEEN's deadline). */
   extra?: ReactNode;
@@ -25,7 +25,7 @@ export interface AppBarProps {
  * One app bar for every app (docs/adr/0013, docs/DESIGN.md §2). The kit owns **where** things are
  * and how they behave; each app owns how they look, through these class hooks in its kit stylesheet:
  *
- *   .appbar  .appbar__exit  .appbar__title  .appbar__name  .appbar__fn  .appbar__places
+ *   .appbar  .appbar__exit  .appbar__title  .appbar__mark  .appbar__name  .appbar__fn  .appbar__places
  *   .appbar__place  .appbar__extra  .appbar__tools  .appbar__tool  .appbar__primary  .appbar__dot
  *
  * Wide screens: one sticky top bar — back, name, places, then search, lock and the primary action.
@@ -51,6 +51,11 @@ export function AppBar({ exit, title, places, extra }: AppBarProps) {
 
       <a className="appbar__title" href={house.href('/')} onClick={go('/')}>
         {title.ornament}
+        {title.mark && (
+          <span className="appbar__mark" aria-hidden="true">
+            {title.mark}
+          </span>
+        )}
         <span className="appbar__name">{title.name}</span>
         <span className="appbar__fn">{title.fn}</span>
       </a>
@@ -101,5 +106,17 @@ export function AppBar({ exit, title, places, extra }: AppBarProps) {
         )}
       </div>
     </header>
+  );
+}
+
+/**
+ * An app's monogram (docs/BRAND.md §5), drawn from its one path on a 100 × 100 grid in `currentColor`.
+ * Always decorative here: the app's name sits beside it.
+ */
+export function AppMark({ path, fillRule }: { path: string; fillRule: 'evenodd' | 'nonzero' }) {
+  return (
+    <svg className="appmark" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+      <path fill="currentColor" fillRule={fillRule} d={path} />
+    </svg>
   );
 }

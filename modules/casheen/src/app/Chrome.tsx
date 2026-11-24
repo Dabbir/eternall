@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
-import { AppBar, IntroNote, useHouse } from '@eternall/kit';
+import { AppBar, AppMark, IntroNote, useHouse } from '@eternall/kit';
 import { casheen } from '../index';
+import { MARK_FILL_RULE, MARK_PATH } from '../mark';
 import { monthKey, monthLabel } from '../ledger';
 
 export type LedgerPlace = 'month' | 'budget' | 'import' | 'words' | 'look';
@@ -17,7 +18,7 @@ export function Chrome({ here, month, children }: { here: LedgerPlace; month: st
     <div className="lc">
       <AppBar
         exit={{ label: casheen.brand.leaveLabel, ornament: <span className="lc-clasp" aria-hidden="true" /> }}
-        title={{ name: casheen.name, fn: casheen.functionLine }}
+        title={{ name: casheen.name, fn: casheen.functionLine, mark: <AppMark path={MARK_PATH} fillRule={MARK_FILL_RULE} /> }}
         places={[
           { label: 'The month', short: 'Month', to: `/${month}`, current: here === 'month' ? 'page' : undefined },
           { label: 'Budget', to: `/budget/${month}`, current: here === 'budget' ? 'page' : undefined },

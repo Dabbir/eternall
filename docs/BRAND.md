@@ -79,12 +79,20 @@ The house mark already exists in `public/brand/`:
 
 Clear space equals the height of the seal dot × 3. The seal is always vermilion and never recoloured. It belongs to the house's own pages and never appears inside an app (ADR 0011).
 
-**App marks** (`apps/web/public/icons/`) carry no house mark at all:
-- **AMAZEEN** keeps its own monogram.
-- **REFRAIN** is a beamed pair of notes on a staff, in indigo.
-- **KINDRED** is a tabbed index card with a coral star, in press green.
-- **MARGINALIA** is a page with a red margin rule, a highlighted line and a pencil note, in marginal blue.
-- **CASHEEN** is a ruled ledger page with a double red rule and figures, in bookkeeper green.
+**App marks** (`apps/web/public/icons/`) carry no house mark at all. The three apps share one family: **a letter monogram with its app's idea cut into it**, set in paper on a rounded tile of the app's accent (rx 13 on a 64 grid), with the same shape in the app bar beside the name (kit `AppMark` on `.appbar__mark`).
+- **AMAZEEN** keeps its own monogram: an editorial A with a swash foot and a four-point star for its counter, on press red.
+- **CASHEEN**: a Caslon-like C (the weight on the left, where the pen presses) over the bookkeeper's double rule that closes a total, on bookkeeper green.
+- **ROUTEEN**: an R whose counter is the sun and whose leg sweeps out like the A's swash foot, on amber.
+- Retired marks (REFRAIN's beamed notes, KINDRED's index card, MARGINALIA's margin, CASHEEN's earlier ruled page, ROUTEEN's earlier sun over the horizon) are no longer used.
+
+**One source:**
+- CASHEEN's and ROUTEEN's monograms are a single path in `modules/<id>/src/mark.ts`.
+- `python3 scripts/logo/build_app_marks.py` builds their logo files from that path in `modules/<id>/assets/logo/`:
+  - the lockup, the reversed lockup, the wordmark and the standalone mark;
+  - the wordmark outlined from the app's own Libre Caslon or Young Serif, and the tagline from its italic;
+  - the rounded, square and maskable tiles.
+- It also writes the app icons and PNGs in `apps/web/public/icons/`.
+- AMAZEEN's come from `modules/amazeen/scripts/logo/build_logo.py`.
 
 Each app provides an SVG, PNGs at 180, 192 and 512 px, and a maskable 512.
 
