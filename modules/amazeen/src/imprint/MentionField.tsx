@@ -1,10 +1,15 @@
 import { createContext, useContext, useId, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from 'react';
-import type { Capabilities } from '@eternall/kit';
 import { applyMention, mentionQuery } from './mentions';
 import styles from './MentionField.module.css';
 
-/** KINDRED's `people.mention`, set by the host when KINDRED is on; null everywhere else. */
-export const MentionContext = createContext<Capabilities['people.mention'] | null>(null);
+/** The people on AMAZEEN's wall, for "@" mentions (once KINDRED's `people.mention`; docs/adr/0014). */
+export interface PeopleMention {
+  search(query: string): { id: string; name: string }[];
+  nameOf(id: string): string | null;
+  href(id: string): string;
+}
+/** Set inside ETERNALL from AMAZEEN · People; null when AMAZEEN runs on its own. */
+export const MentionContext = createContext<PeopleMention | null>(null);
 
 interface Bound {
   /** Spread onto the textarea. */
@@ -22,8 +27,8 @@ interface Bound {
 }
 
 /**
- * Type "@" and a few letters to pick someone from KINDRED. Arrow keys move, Enter or Tab picks,
- * Escape closes. Without KINDRED this does nothing and "@" is just a character.
+ * Type "@" and a few letters to pick someone from your People wall. Arrow keys move, Enter or Tab picks,
+ * Escape closes. Without anyone on the wall this does nothing and "@" is just a character.
  */
 export function useMentions(ref: RefObject<HTMLTextAreaElement | null>, value: string, onValue: (v: string) => void, max?: number): Bound {
   const people = useContext(MentionContext);

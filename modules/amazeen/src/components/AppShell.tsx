@@ -15,7 +15,7 @@ import styles from './AppShell.module.css';
 import { useHostControls } from '../imprint/embedded';
 
 interface NavItem {
-  name: Route['name'] | 'write' | 'letters';
+  name: Route['name'] | 'write' | 'letters' | 'people';
   label: string;
   to: string;
   icon: IconName;
@@ -29,6 +29,8 @@ const NAV: NavItem[] = [
 ];
 /** Inside ETERNALL, the Letters room (once ENVOI) joins the sections, before the Office. */
 const LETTERS: NavItem = { name: 'letters', label: 'Letters', to: '/letters', icon: 'mail' };
+/** Inside ETERNALL, the People wall (once KINDRED; docs/adr/0014) sits between the Shelf and Letters. */
+const PEOPLE: NavItem = { name: 'people', label: 'People', to: '/people', icon: 'user' };
 
 export function StorageBanner() {
   const { saveStatus, loadStatus } = useStore();
@@ -73,11 +75,12 @@ function shortCountdown(target: Date, now: Date): string {
 export function AppShell({ children }: { children: ReactNode }) {
   const { route, navigate, path } = useRouter();
   const host = useHostControls();
-  const nav = host ? [...NAV.slice(0, 3), LETTERS, ...NAV.slice(3)] : NAV;
+  const nav = host ? [...NAV.slice(0, 3), PEOPLE, LETTERS, ...NAV.slice(3)] : NAV;
   // Inside ETERNALL, Write is the primary action at the end of the bar, like every app's.
   const places = host ? nav.filter((item) => item.name !== 'write') : nav;
   const tabs = host ? [...places, NAV[1]!] : nav;
   const inLetters = path === '/letters' || path.startsWith('/letters/');
+  const inPeople = path === '/people' || path.startsWith('/people/');
   const { data, current } = useStore();
   const now = useNow();
   const { theme } = useTheme();
@@ -103,7 +106,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     },
   });
 
-  const isCurrent = (item: NavItem) => ((item.name === 'letters' ? inLetters : route.name === item.name && !inLetters) ? 'page' : undefined);
+  const isCurrent = (item: NavItem) => ((item.name === 'letters' ? inLetters : item.name === 'people' ? inPeople : route.name === item.name && !inLetters && !inPeople) ? 'page' : undefined);
 
   return (
     <div className={styles.shell} data-host={host ? '' : undefined}>

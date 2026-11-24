@@ -1,7 +1,7 @@
 /**
- * "@" mentions inside AMAZEEN, offered by KINDRED through `people.mention` (docs/ARCHITECTURE.md §5).
- * Picking someone writes their name as plain text; KINDRED finds the piece at read time, so nothing
- * is stored about the link and the text reads the same without KINDRED.
+ * "@" mentions inside AMAZEEN, from the People wall (docs/adr/0014). Picking someone writes their
+ * name as plain text; People finds the piece at read time (`appearsIn`), so nothing is stored about
+ * the link and the text reads the same whoever is on the wall.
  */
 
 /** The "@query" being typed just before the caret, or null. Needs a word boundary before "@". */

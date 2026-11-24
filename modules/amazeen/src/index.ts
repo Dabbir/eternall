@@ -4,6 +4,7 @@ import { LOOK_PATH } from './imprint/look/look';
 import { weekKey } from './domain/dates';
 import type { Entry } from './domain/types';
 import { ENTRY_PATH, META_PATH, type AmazeenMeta } from './imprint/vaultAdapter';
+import { PEOPLE_COLLECTIONS, peopleBadge, peopleFacts, peopleMarkers, peopleMemories, peopleOf, peopleRedLetterDays, peopleReminders, peopleWeekLines } from './imprint/people/contributions';
 import { LETTER_COLLECTIONS, letterFacts, letterMarkers, letterMemories, letterRedLetterDays, letterWeekLines, lettersOf, lettersReady } from './imprint/letters/contributions';
 
 /** Mood (1 storm … 5 sunny) → the house's shared tones (docs/MODULES.md §2). */
@@ -38,8 +39,8 @@ export const amazeen: ImprintDefinition = {
   intro: 'The weekly magazine of your own life. Write a little every day; on Sunday at midnight the week goes to press as an issue.',
   brand: { icon: '/icons/amazeen.svg', themeColor: { light: '#efe9dd', dark: '#121110' }, lockTitle: 'The newsroom is locked.', leaveLabel: 'Leave the newsroom' },
   load: () => import('./imprint/AmazeenApp'),
-  collections: [ENTRY_PATH, META_PATH, LOOK_PATH, ...LETTER_COLLECTIONS],
-  hasData: (ctx) => entriesOf(ctx).length > 0 || lettersOf(ctx).length > 0 || !!ctx.data.collection<AmazeenMeta>(META_PATH).get('main')?.magazine,
+  collections: [ENTRY_PATH, META_PATH, LOOK_PATH, ...LETTER_COLLECTIONS, ...PEOPLE_COLLECTIONS],
+  hasData: (ctx) => entriesOf(ctx).length > 0 || lettersOf(ctx).length > 0 || peopleOf(ctx).length > 0 || !!ctx.data.collection<AmazeenMeta>(META_PATH).get('main')?.magazine,
 
   lifeline(ctx) {
     const tones = new Map<number, Tone>();
@@ -53,6 +54,7 @@ export const amazeen: ImprintDefinition = {
       tones.set(i, MOOD_TONE[mood]);
     }
     letterMarkers(ctx, markers);
+    peopleMarkers(ctx, markers);
     return { tones, markers };
   },
 
@@ -73,11 +75,11 @@ export const amazeen: ImprintDefinition = {
         href: `/amazeen/issue/${key}`,
       });
     }
-    return [...out, ...letterWeekLines(ctx, start, end)];
+    return [...out, ...letterWeekLines(ctx, start, end), ...peopleWeekLines(ctx, start, end)];
   },
 
   memories(ctx): Memory[] {
-    return [...letterMemories(ctx), ...entriesOf(ctx).map((e): Memory => ({
+    return [...letterMemories(ctx), ...peopleMemories(ctx), ...entriesOf(ctx).map((e): Memory => ({
       imprint: 'amazeen',
       id: e.id,
       date: dayOf(e.createdAt),
@@ -90,7 +92,7 @@ export const amazeen: ImprintDefinition = {
 
   almanacFacts(ctx) {
     const entries = entriesOf(ctx);
-    if (!entries.length) return letterFacts(ctx);
+    if (!entries.length) return [...letterFacts(ctx), ...peopleFacts(ctx)];
     const words = entries.reduce((s, e) => s + textOf(e).split(/\s+/).filter(Boolean).length + (e.kind === 'story' ? e.title.split(/\s+/).length : 0), 0);
     const moods = entries.reduce<Record<number, number>>((m, e) => ({ ...m, [e.mood]: (m[e.mood] ?? 0) + 1 }), {});
     const top = Number(Object.entries(moods).toSorted((a, b) => b[1] - a[1])[0]?.[0] ?? 3) as 1 | 2 | 3 | 4 | 5;
@@ -99,14 +101,19 @@ export const amazeen: ImprintDefinition = {
       { imprint: 'amazeen', label: 'Words written', value: words.toLocaleString('en-GB') },
       { imprint: 'amazeen', label: 'Usual weather', value: TONE_LABEL[MOOD_TONE[top]] },
       ...letterFacts(ctx),
+      ...peopleFacts(ctx),
     ];
   },
 
-  redLetterDays: letterRedLetterDays,
+  redLetterDays: (ctx) => [...letterRedLetterDays(ctx), ...peopleRedLetterDays(ctx)],
+
+  reminders: peopleReminders,
 
   badge(ctx) {
     const ready = lettersReady(ctx);
     if (ready) return `${plural(ready, 'letter')} ready`;
+    const date = peopleBadge(ctx);
+    if (date) return date;
     const n = entriesOf(ctx).filter((e) => weekKey(new Date(e.createdAt)) === weekKey(new Date())).length;
     return n ? `${plural(n, 'piece')} this week` : null;
   },

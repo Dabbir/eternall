@@ -133,7 +133,7 @@ Imprints can enrich each other without depending on each other:
 
 | Capability | Provider | Consumers | Example |
 |---|---|---|---|
-| `people.mention` | KINDRED | AMAZEEN (pieces and letters) | "@Ana" picker in a journal piece |
+| ~~`people.mention`~~ | (internal to AMAZEEN since ADR 0014: People lives inside it) | | |
 | ~~`quotes.offer`~~ | (retired with MARGINALIA, ADR 0014) | | |
 | `chapters.at` | house (Chapters section) | house inscriptions, AMAZEEN | "This issue is part of *Lisbon*" |
 | `rituals.list` · `rituals.week` | REFRAIN | (none since PROLOGUE retired; kept for future consumers) | |

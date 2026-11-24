@@ -21,11 +21,6 @@ export interface PrimaryAction {
 
 /** Optional cross-imprint capabilities (docs/ARCHITECTURE.md §5). */
 export interface Capabilities {
-  'people.mention': {
-    search(query: string): { id: string; name: string }[];
-    nameOf(id: string): string | null;
-    href(id: string): string;
-  };
   'chapters.at': {
     at(date: ISODate): { id: string; title: string; color: string; href: string } | null;
   };

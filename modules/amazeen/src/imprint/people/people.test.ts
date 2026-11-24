@@ -1,4 +1,4 @@
-import { constellation, drawers, dueReminders, fitWithin, isPhotoSrc, PHOTO_MAX_CHARS, kindredStats, lastSeen, nextOccurrence, searchPeople, seenId, sinceLabel, upcomingDates, validatePerson, type Person, type Seen } from './people';
+import { appearsIn, drawers, dueReminders, fitWithin, isPhotoSrc, PHOTO_MAX_CHARS, kindredStats, lastSeen, nextOccurrence, searchPeople, seenId, sinceLabel, upcomingDates, validatePerson, type Person, type Seen } from './people';
 
 const today = '2026-11-23';
 const p = (id: string, name: string, drawer: string, extra: Partial<Person> = {}): Person => ({ id, name, drawer, closeness: 'close', howWeMet: '', dates: [], createdAt: '', ...extra });
@@ -8,7 +8,7 @@ const leo = p('leo', 'Leo', 'Family', { closeness: 'around' });
 const seen = (personId: string, date: string): Seen => ({ id: seenId(personId, date), personId, date, note: '' });
 const log = [seen('ana', '2026-11-20'), seen('ana', '2026-03-02'), seen('dad', '2025-12-25')];
 
-describe('kindred', () => {
+describe('people', () => {
   it('knows when you last saw someone', () => {
     expect(lastSeen(log, 'ana')).toBe('2026-11-20');
     expect(lastSeen(log, 'leo')).toBeNull();
@@ -38,12 +38,15 @@ describe('kindred', () => {
     expect(d[1]!.people.map((x) => x.id)).toEqual(['dad', 'leo']);
   });
 
-  it('places people in the sky: nearer when seen recently, at the edge when never', () => {
-    const stars = constellation([ana, dad, leo], log, today);
-    const dist = (id: string) => Math.hypot(stars.find((s) => s.id === id)!.x, stars.find((s) => s.id === id)!.y);
-    expect(dist('ana')).toBeLessThan(dist('dad'));
-    expect(dist('leo')).toBeCloseTo(0.96, 2);
-    expect(stars.find((s) => s.id === 'ana')!.size).toBe(3);
+  it('finds the pieces someone appears in, by full or first name as a whole word', () => {
+    const pieces = [
+      { id: 'a', createdAt: '2026-11-01T10:00:00.000Z', text: 'Coffee with Ana before work.' },
+      { id: 'b', createdAt: '2026-11-03T10:00:00.000Z', text: 'Ana Sousa called about the move.' },
+      { id: 'c', createdAt: '2026-11-04T10:00:00.000Z', text: 'Banana bread, again.' },
+      { id: 'd', createdAt: '2026-11-05T10:00:00.000Z', text: 'Nothing about anyone.' },
+    ];
+    expect(appearsIn({ name: 'Ana Sousa' }, pieces, (p) => p.text).map((p) => p.id)).toEqual(['b', 'a']);
+    expect(appearsIn({ name: '  ' }, pieces, (p) => p.text)).toEqual([]);
   });
 
   it('finds people by name, prefix matches first', () => {
@@ -71,7 +74,7 @@ describe('kindred', () => {
     expect(week[0]!.title).toBe('Dad’s birthday is in 7 days');
     expect(week[0]!.body).toBe('Turning 68 on 2 Dec 2026.');
     expect(dueReminders([dad], '2026-12-02', 'day')[0]!.body).toBe('Turning 68.');
-    expect(week[0]!.href).toBe('/kindred/person/dad');
+    expect(week[0]!.href).toBe('/amazeen/people/dad');
     expect(dueReminders([dad], '2026-12-01', 'eve')[0]!.title).toBe('Dad’s birthday is tomorrow');
     const day = dueReminders([dad], '2026-12-02', 'eve');
     expect(day[0]!.title).toBe('Dad’s birthday is today');

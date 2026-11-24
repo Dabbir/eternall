@@ -3,12 +3,12 @@ import { createId, type FieldErrors } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button, Dialog, TextArea, TextField } from '@eternall/ui';
 import { useCollection } from '@eternall/vault';
-import { CLOSENESS, CLOSENESS_LABEL, LIMITS, PERSON_PATH, PHOTO_PATH, SEEN_PATH, validatePerson, type Person, type PersonInput, type Photo, type Seen } from '../people';
+import { CLOSENESS, CLOSENESS_LABEL, LIMITS, PERSON_PATH, PHOTO_PATH, SEEN_PATH, validatePerson, type Person, type PersonInput, type Photo, type Seen } from './people';
 import { shrinkPhoto } from './photo';
-import { Strike } from './Ceremony';
+import { Pinned } from './Ceremony';
 
-/** Printing a card: name, drawer, closeness, how you met, dates to remember. */
-export function PersonEditor({ existing, drawers, onClose }: { existing?: Person | undefined; drawers: string[]; onClose(): void }) {
+/** A card for the wall: name, group, closeness, how you met, a photo, dates to remember. */
+export function PersonEditor({ existing, groups: drawers, onClose }: { existing?: Person | undefined; groups: string[]; onClose(): void }) {
   const house = useHouse();
   const { col } = useCollection<Person>(PERSON_PATH);
   const { items: seen, col: seenCol } = useCollection<Seen>(SEEN_PATH);
@@ -49,9 +49,9 @@ export function PersonEditor({ existing, drawers, onClose }: { existing?: Person
     col.put({ id, createdAt: existing?.createdAt ?? new Date().toISOString(), ...r.value });
     if (photo && photo !== initialPhoto) photoCol.put({ id, src: photo });
     else if (!photo && initialPhoto) photoCol.remove(id);
-    house.toast({ message: existing ? 'Card updated.' : `${r.value.name} joins the card file.`, tone: 'accent' });
-    if (!existing) house.ceremony(<Strike name={r.value.name} line={`A new card · ${r.value.drawer || 'Unfiled'}`} />, 900);
-    if (!existing) house.navigate(house.href(`/person/${id}`));
+    house.toast({ message: existing ? 'Card updated.' : `${r.value.name} is pinned on the wall.`, tone: 'accent' });
+    if (!existing) house.ceremony(<Pinned name={r.value.name} line={`Pinned · ${r.value.drawer || 'Unfiled'}`} />, 900);
+    if (!existing) house.navigate(house.href(`/people/${id}`));
     onClose();
   };
   const remove = () => {
@@ -61,8 +61,8 @@ export function PersonEditor({ existing, drawers, onClose }: { existing?: Person
     col.remove(existing.id);
     for (const s of theirs) seenCol.remove(s.id);
     if (picture) photoCol.remove(existing.id);
-    house.navigate(house.href('/'));
-    house.toast({ message: `${existing.name}’s card removed.`, action: { label: 'Undo', run: () => { col.put(existing); for (const s of theirs) seenCol.put(s); if (picture) photoCol.put(picture); } } });
+    house.navigate(house.href('/people'));
+    house.toast({ message: `${existing.name}’s card taken down.`, action: { label: 'Undo', run: () => { col.put(existing); for (const s of theirs) seenCol.put(s); if (picture) photoCol.put(picture); } } });
     onClose();
   };
   const dirty = JSON.stringify(form) !== JSON.stringify(initial) || photo !== initialPhoto;
@@ -70,13 +70,13 @@ export function PersonEditor({ existing, drawers, onClose }: { existing?: Person
     <Dialog
       open
       onClose={() => (dirty ? setConfirm('discard') : onClose())}
-      className="kd-editor"
-      eyebrow="KINDRED · The card"
-      title={existing ? `Edit ${existing.name}’s card` : 'Add a person'}
+      className="pp-editor"
+      eyebrow="People · The card"
+      title={existing ? `Edit ${existing.name}’s card` : 'Pin a person'}
       footer={
         confirm ? (
           <div className="confirm-bar">
-            <p>{confirm === 'remove' ? 'Remove this card and the days you noted?' : 'Discard your changes?'}</p>
+            <p>{confirm === 'remove' ? 'Take this card down, with the days you noted?' : 'Discard your changes?'}</p>
             <Button variant="quiet" onClick={() => setConfirm(null)}>
               Cancel
             </Button>
@@ -95,36 +95,36 @@ export function PersonEditor({ existing, drawers, onClose }: { existing?: Person
             <Button variant="quiet" onClick={() => (dirty ? setConfirm('discard') : onClose())}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit" form="kd-form">
-              {existing ? 'Save' : 'Add to the file'}
+            <Button variant="primary" type="submit" form="pp-form">
+              {existing ? 'Save' : 'Pin it'}
             </Button>
           </>
         )
       }
     >
-      <form id="kd-form" className="editor-form" noValidate onSubmit={(e) => { e.preventDefault(); save(); }}>
-        <TextField label="Name" className="kd-editor__name" autoFocus value={form.name} maxLength={LIMITS.name} error={errors.name} onChange={(e) => set('name', e.target.value)} />
-        <TextField label="Drawer" list="kd-drawers" placeholder="Family, Old friends, Workshop…" value={form.drawer} maxLength={LIMITS.drawer} error={errors.drawer} onChange={(e) => set('drawer', e.target.value)} />
-        <datalist id="kd-drawers">
+      <form id="pp-form" className="editor-form" noValidate onSubmit={(e) => { e.preventDefault(); save(); }}>
+        <TextField label="Name" className="pp-editor__name" autoFocus value={form.name} maxLength={LIMITS.name} error={errors.name} onChange={(e) => set('name', e.target.value)} />
+        <TextField label="Group" list="pp-groups" placeholder="Family, Old friends, Workshop…" value={form.drawer} maxLength={LIMITS.drawer} error={errors.drawer} onChange={(e) => set('drawer', e.target.value)} />
+        <datalist id="pp-groups">
           {drawers.map((d) => (
             <option key={d} value={d} />
           ))}
         </datalist>
-        <fieldset className="kd-closeness">
+        <fieldset className="pp-closeness">
           <legend>How close</legend>
           {CLOSENESS.map((c) => (
-            <label key={c} className="kd-pill">
+            <label key={c} className="pp-pill">
               <input type="radio" name="closeness" checked={form.closeness === c} onChange={() => set('closeness', c)} />
               <span>{CLOSENESS_LABEL[c]}</span>
             </label>
           ))}
-          <p className="field__hint">Your choice alone; it sets how bright they are in the constellation.</p>
+          <p className="field__hint">Your choice alone; nobody else sees it.</p>
         </fieldset>
-        <div className="kd-photoedit">
-          <span className="kd-photoedit__label">Photo (optional)</span>
-          <div className="kd-photoedit__row">
-            {photo ? <img className="kd-photo kd-photo--edit" src={photo} alt={`Photo of ${form.name || 'this person'}`} /> : <span className="kd-photo kd-photo--empty" aria-hidden="true" />}
-            <div className="kd-photoedit__actions">
+        <div className="pp-photoedit">
+          <span className="pp-photoedit__label">Photo (optional)</span>
+          <div className="pp-photoedit__row">
+            {photo ? <img className="pp-photo pp-photo--edit" src={photo} alt={`Photo of ${form.name || 'this person'}`} /> : <span className="pp-photo pp-photo--empty" aria-hidden="true" />}
+            <div className="pp-photoedit__actions">
               <input ref={fileRef} type="file" accept="image/*" className="visually-hidden" aria-hidden="true" tabIndex={-1} onChange={(e) => void pick(e.target.files?.[0])} />
               <Button variant="ghost" size="s" busy={photoBusy} onClick={() => fileRef.current?.click()}>
                 {photo ? 'Choose another' : 'Add a photo'}
@@ -139,10 +139,10 @@ export function PersonEditor({ existing, drawers, onClose }: { existing?: Person
           {photoError ? <p className="field__error">{photoError}</p> : <p className="field__hint">Made small on this device and encrypted with the rest of your vault.</p>}
         </div>
         <TextArea label="How you met (optional)" rows={2} value={form.howWeMet} maxLength={LIMITS.howWeMet} showCount error={errors.howWeMet} onChange={(e) => set('howWeMet', e.target.value)} />
-        <fieldset className="kd-datesedit">
+        <fieldset className="pp-datesedit">
           <legend>Dates to remember</legend>
           {form.dates.map((d, i) => (
-            <div key={i} className="kd-datesedit__row">
+            <div key={i} className="pp-datesedit__row">
               <TextField label="Label" value={d.label} maxLength={LIMITS.dateLabel} onChange={(e) => setDate(i, { label: e.target.value })} />
               <TextField label="Date" type="date" value={d.date} onChange={(e) => setDate(i, { date: e.target.value })} />
               <label className="check">
@@ -150,14 +150,14 @@ export function PersonEditor({ existing, drawers, onClose }: { existing?: Person
                 <span className="check__box" aria-hidden="true" />
                 Every year
               </label>
-              <button type="button" className="kd-datesedit__x" aria-label={`Remove ${d.label || 'this date'}`} onClick={() => set('dates', form.dates.filter((_, j) => j !== i))}>
+              <button type="button" className="pp-datesedit__x" aria-label={`Remove ${d.label || 'this date'}`} onClick={() => set('dates', form.dates.filter((_, j) => j !== i))}>
                 ×
               </button>
             </div>
           ))}
           {errors.dates && <p className="field__error">{errors.dates}</p>}
           {form.dates.length < LIMITS.dates && (
-            <button type="button" className="kd-link" onClick={() => set('dates', [...form.dates, { label: '', date: '', yearly: true }])}>
+            <button type="button" className="pp-link" onClick={() => set('dates', [...form.dates, { label: '', date: '', yearly: true }])}>
               + Add a date
             </button>
           )}

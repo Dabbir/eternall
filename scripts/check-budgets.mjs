@@ -7,7 +7,7 @@ const dir = 'apps/web/dist/assets';
 const KB = 1024;
 const budgets = [
   { name: 'shell entry (gzip)', test: (f) => /^main-.*\.js$/.test(f) || /^house-.*\.js$/.test(f), max: 140 * KB },
-  { name: 'imprint chunk (gzip)', test: (f) => /^(AmazeenApp|RefrainApp|KindredApp|CasheenApp|ChaptersView|AlmanacView)-.*\.js$/.test(f), max: 90 * KB },
+  { name: 'imprint chunk (gzip)', test: (f) => /^(AmazeenApp|RefrainApp|CasheenApp|ChaptersView|AlmanacView)-.*\.js$/.test(f), max: 90 * KB },
   { name: '3D chunk (gzip)', test: (f) => /scene|three/i.test(f) && f.endsWith('.js'), max: 220 * KB },
 ];
 let failed = false;

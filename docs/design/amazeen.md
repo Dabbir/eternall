@@ -106,3 +106,14 @@ People asked to make the magazine theirs. Inside ETERNALL, the Office's **Editio
 - **The house owns light and dark.** Inside ETERNALL there is no theme switch in AMAZEEN (the Reader's lamp and the `t` key stand down; `lib/theme.ts` does nothing under `<html data-host-theme>`). On its own, AMAZEEN keeps its Day/Night edition.
 - **3D stays optional:** the Shelf is flat; its only depth is a pointer tilt when immersive effects are allowed.
 
+## 14. People (the newsroom's wall of sources; ADR 0014, once KINDRED)
+The people you write about, pinned on cork in the newsroom (`/amazeen/people`, `imprint/people/`).
+- **The wall:** cork strips, one per group, each with a masking-tape label; index cards with a red head rule and a riso pin (the group's colour), a photo if added, the name in Fraunces, closeness in mono small caps, time since you saw them, and a date within two weeks. "Recently seen" comes first.
+- **Above the Shelf:** a short strip of the wall ("On the wall": dates coming up, then whoever you saw lately), linking to the room; on a phone, one row to swipe through.
+- **A person:** the big pinned card; **I saw them today** with an optional line; dates; **Appears in N pieces** (every piece whose text names them, linking to it); **Days together**; **Edit card** (name, group, closeness, photo, how you met, dates; Take down asks first, with Undo).
+- **Reminders** for dates are opt-in, worked out on the device.
+- **Ceremony — Pinned:** a card drops onto the cork and a pin goes in, with the name and a line beneath (900ms, skipped under reduced motion).
+- **"@" mentions** in pieces and letters pick from the wall; the name is written as plain text.
+- **Places:** Desk · Shelf · **People** · Letters · Office, and Write. On a phone, six tabs with Write raised.
+- People you add never receive anything and are never contacted.
+

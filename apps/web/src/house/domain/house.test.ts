@@ -41,9 +41,9 @@ describe('validateInscription', () => {
 
 describe('withCurrentIds', () => {
   it('reads settings saved under LEDGER as CASHEEN, without duplicates', () => {
-    const s = withCurrentIds({ ...DEFAULT_SETTINGS, hidden: ['ledger', 'kindred'], dismissed: ['intro:ledger', 'intro:casheen', 'lens-hint'] });
-    expect(s.hidden).toEqual(['casheen', 'kindred']);
+    const s = withCurrentIds({ ...DEFAULT_SETTINGS, hidden: ['ledger', 'refrain'], dismissed: ['intro:ledger', 'intro:casheen', 'lens-hint'] });
+    expect(s.hidden).toEqual(['casheen', 'refrain']);
     expect(s.dismissed).toEqual(['intro:casheen', 'lens-hint']);
-    expect(withCurrentIds({ ...DEFAULT_SETTINGS, apps: ['amazeen', 'marginalia' as never], hidden: ['marginalia'] })).toMatchObject({ apps: ['amazeen'], hidden: [] });
+    expect(withCurrentIds({ ...DEFAULT_SETTINGS, apps: ['amazeen', 'marginalia' as never, 'kindred' as never], hidden: ['marginalia', 'kindred'] })).toMatchObject({ apps: ['amazeen'], hidden: [] });
   });
 });

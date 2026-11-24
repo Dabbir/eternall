@@ -1,4 +1,4 @@
-import { PHOTO_MAX_CHARS, fitWithin, isPhotoSrc } from '../people';
+import { PHOTO_MAX_CHARS, fitWithin, isPhotoSrc } from './people';
 
 /**
  * Shrink a chosen image on this device to a small JPEG data URL. The original file never leaves

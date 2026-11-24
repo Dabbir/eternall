@@ -520,9 +520,15 @@
     padding: 0 8px env(safe-area-inset-bottom);
     background: var(--spine);
   }
+  /* Inside ETERNALL: Desk · Shelf · People · Letters · Office, then Write raised (docs/adr/0014). */
   .tabs[data-host] {
-    grid-template-columns: repeat(5, 1fr);
-    padding: 0 4px env(safe-area-inset-bottom);
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    padding: 0 2px env(safe-area-inset-bottom);
+  }
+  .tabs[data-host] .tab,
+  .tabs[data-host] .tabWrite {
+    font-size: 0.64rem;
+    letter-spacing: 0.02em;
   }
 
   .tab,

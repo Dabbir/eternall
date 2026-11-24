@@ -1,7 +1,7 @@
 import type { Reminder } from '@eternall/core';
 import { pendingReminders, recordSent, type ReminderLog } from './reminders';
 
-const r = (key: string, date: string): Reminder => ({ imprint: 'kindred', key, date, title: key, body: '', href: '/kindred/' });
+const r = (key: string, date: string): Reminder => ({ imprint: 'amazeen', key, date, title: key, body: '', href: '/amazeen/people' });
 const today = '2026-12-02';
 
 describe('reminders', () => {

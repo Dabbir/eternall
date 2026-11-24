@@ -115,13 +115,13 @@ describe('Chapters, in the house', () => {
 
 describe('apps as their own sites', () => {
   it('shows an app without the house spine, doors or name, in its own identity', async () => {
-    at('/kindred/');
+    at('/casheen/');
     render(<Root store={createMemoryStore([profile, quiet])} />);
-    await screen.findByRole('heading', { level: 1 });
+    await screen.findByLabelText('Write one line');
     expect(document.querySelector('.spine')).toBeNull();
-    expect(document.body.dataset.imprint).toBe('kindred');
+    expect(document.body.dataset.imprint).toBe('casheen');
     expect(document.body.textContent).not.toMatch(/ETERNALL/);
-    expect(document.querySelector('link[rel="manifest"]')?.getAttribute('href') ?? '/manifests/kindred.webmanifest').toBe('/manifests/kindred.webmanifest');
+    expect(document.querySelector('link[rel="manifest"]')?.getAttribute('href') ?? '/manifests/casheen.webmanifest').toBe('/manifests/casheen.webmanifest');
   });
 
   it('gives the house back its spine and identity', async () => {
@@ -133,13 +133,13 @@ describe('apps as their own sites', () => {
   });
 
   it('scopes search to the app, with one way back to the house', async () => {
-    at('/kindred/');
+    at('/casheen/');
     render(<Root store={createMemoryStore([profile, quiet])} />);
-    await screen.findByRole('heading', { level: 1 });
+    await screen.findByLabelText('Write one line');
     act(() => {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }));
     });
-    expect(await screen.findByRole('option', { name: /Close the drawer/ })).toBeInTheDocument();
+    expect(await screen.findByRole('option', { name: /Close the book/ })).toBeInTheDocument();
     expect(screen.queryByRole('option', { name: /Inscriptions/ })).not.toBeInTheDocument();
   });
 });
@@ -155,7 +155,8 @@ describe('retired doors', () => {
     expect(retiredDoorRedirect('/folio/', '')).toBe('/chapters');
     expect(retiredDoorRedirect('/almanack/', '')).toBe('/almanac');
     expect(retiredDoorRedirect('/prologue/lobby', '')).toBe('/inscriptions');
-    expect(retiredDoorRedirect('/kindred/', '')).toBeNull();
+    expect(retiredDoorRedirect('/kindred/', '')).toBe('/amazeen/people');
+    expect(retiredDoorRedirect('/kindred/person/dad', '')).toBe('/amazeen/people/dad');
     expect(retiredDoorRedirect('/', '')).toBeNull();
   });
 
@@ -182,7 +183,7 @@ describe('command palette', () => {
     act(() => {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }));
     });
-    expect(await screen.findByRole('option', { name: /People · KINDRED/ })).toBeInTheDocument();
+    expect(await screen.findByRole('option', { name: /Money · CASHEEN/ })).toBeInTheDocument();
     expect(screen.getByRole('option', { name: /Chapters/ })).toBeInTheDocument();
   });
 });
@@ -202,16 +203,15 @@ describe('apps on and off (ADR 0013)', () => {
     await screen.findByRole('heading', { level: 1 });
     await open();
     expect(screen.getByRole('option', { name: /Money · CASHEEN/ })).toBeInTheDocument();
-    expect(screen.queryByRole('option', { name: /People · KINDRED/ })).not.toBeInTheDocument();
     expect(screen.queryByRole('option', { name: /Practices · REFRAIN/ })).not.toBeInTheDocument();
   });
 
   it('keeps an app that already holds data on, with no setting written', async () => {
     at('/');
-    render(<Root store={createMemoryStore([profile, fresh, rec('kindred/person/p1', { id: 'p1', name: 'Ana', drawer: 'Family', closeness: 'inner', howWeMet: '', dates: [], createdAt: stamp })])} />);
+    render(<Root store={createMemoryStore([profile, fresh, rec('refrain/ritual/run', { id: 'run', name: 'Run', why: '', cadence: { kind: 'daily' }, instrument: 'piano', pitch: 0, startedOn: today, pausedOn: null })])} />);
     await screen.findByRole('heading', { level: 1 });
     await open();
-    expect(screen.getByRole('option', { name: /People · KINDRED/ })).toBeInTheDocument();
+    expect(screen.getByRole('option', { name: /Practices · REFRAIN/ })).toBeInTheDocument();
   });
 
   it('never opens an app that is off from its address; it offers to turn it on', async () => {
@@ -230,11 +230,11 @@ describe('apps on and off (ADR 0013)', () => {
     const user = userEvent.setup();
     at('/settings');
     render(<Root store={createMemoryStore([profile, fresh])} />);
-    const people = await screen.findByRole('checkbox', { name: 'People' });
+    const practices = await screen.findByRole('checkbox', { name: 'Practices' });
     expect(screen.getByRole('checkbox', { name: 'Journal' })).toBeDisabled();
-    expect(people).not.toBeChecked();
-    await user.click(people);
-    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'People' })).toBeChecked());
+    expect(practices).not.toBeChecked();
+    await user.click(practices);
+    await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Practices' })).toBeChecked());
     await user.click(screen.getByRole('checkbox', { name: 'Money' }));
     await waitFor(() => expect(screen.getByRole('checkbox', { name: 'Money' })).not.toBeChecked());
   });
@@ -245,7 +245,6 @@ describe('one app bar (ADR 0013)', () => {
     ['/amazeen/', /^Write$/],
     ['/casheen/', /^Add an entry$/],
     ['/refrain/', /^(Mark today|New ritual)$/],
-    ['/kindred/', /^Add a person$/],
   ];
   it.each(apps)('%s keeps back, search and its primary action in the same order', async (door, primary) => {
     at(door);

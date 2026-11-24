@@ -120,7 +120,10 @@ Conventions:
 - **Capabilities:** consumes `rituals.week`, `people.mention`, `letters.compose` ("Write to yourself at the end of this season"), `chapters.at` (suggests a FOLIO chapter when a season marks a change).
 - **v1 (Release 2):** stage, hopes, closing and epilogue, lobby, curtain 2D, stage shader (immersive).
 
-## 8. KINDRED: The people who matter (`modules/kindred`), Release 2
+## 8. KINDRED → AMAZEEN · People (ADR 0014)
+
+*Folded into AMAZEEN* as the People wall (`/amazeen/people`, code in `modules/amazeen/src/imprint/people/`). The records below keep their `kindred/*` paths and now belong to AMAZEEN's definition (its `collections`, lifeline `person` marker, week lines, memories, red-letter days, badge and reminders). Reminder keys keep their `kindred_` prefix, so nothing is delivered twice. The constellation and drawers are gone (`drawer` is now a card's **group**, shown as its pin colour). New: **appears in** — the pieces whose text names a person (`appearsIn`, read time only). The `people.mention` capability became AMAZEEN's own `MentionContext`. `/kindred/*` redirects to `/amazeen/people/*`. The original description follows.
+
 
 | Entity | Fields |
 |---|---|
@@ -179,7 +182,7 @@ Conventions:
 ## Cross-app map (since ADR 0011)
 
 ```
-            people.mention
+            (people.mention is internal to AMAZEEN since ADR 0014)
   KINDRED ───────────────▶ AMAZEEN ◀─────────────── MARGINALIA
                         (pieces + Letters)
 

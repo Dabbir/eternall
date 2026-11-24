@@ -17,11 +17,13 @@ import { NowProvider } from '../state/now';
 import { StoreProvider } from '../state/store';
 import { SyncProvider } from '../sync/SyncProvider';
 import { Frame, Screens } from '../Screens';
-import { EmbeddedContext, HostControlsContext, ImmersiveContext, type HostControls } from './embedded';
+import { EmbeddedContext, ShelfExtrasContext, HostControlsContext, ImmersiveContext, type HostControls } from './embedded';
 import { amazeen } from '../index';
 import { createVaultAdapter, type VaultLike } from './vaultAdapter';
 import { MoveIn } from './MoveIn';
-import { MentionContext } from './MentionField';
+import { MentionContext, type PeopleMention } from './MentionField';
+import { PERSON_PATH, searchPeople, type Person } from './people/people';
+import PeopleRoom, { PeopleStrip } from './people/PeopleRoom';
 
 setRouterBase('/amazeen');
 
@@ -38,6 +40,12 @@ export default function AmazeenApp() {
   const look = readLook(lookCol.get('look'));
   useApplyLook(look);
   const lookControls = useMemo(() => ({ look, setLook: (next: Look) => lookCol.put(next) }), [look, lookCol]);
+  // "@" mentions come from the People wall (once KINDRED's people.mention; docs/adr/0014).
+  const { items: people } = useCollection<Person>(PERSON_PATH);
+  const mention = useMemo<PeopleMention>(
+    () => ({ search: (q) => searchPeople(people, q).map((p) => ({ id: p.id, name: p.name })), nameOf: (id) => people.find((p) => p.id === id)?.name ?? null, href: (id) => `/amazeen/people/${id}` }),
+    [people],
+  );
   // AMAZEEN's own frame (its magazine spine) returns inside ETERNALL, with a small exit and the lock (adr/0011).
   const host = useMemo<HostControls>(
     () => ({ leave: house.leave, leaveLabel: amazeen.brand.leaveLabel, lock: house.lock, canLock: house.canLock, search: house.openSearch, notices: house.notices }),
@@ -46,7 +54,8 @@ export default function AmazeenApp() {
   return (
     <EmbeddedContext.Provider value={true}>
       <ImmersiveContext.Provider value={house.immersive.allowed}>
-      <MentionContext.Provider value={house.capability('people.mention')}>
+      <MentionContext.Provider value={mention}>
+      <ShelfExtrasContext.Provider value={PeopleStrip}>
       <HostControlsContext.Provider value={host}>
       <LookContext.Provider value={lookControls}>
         <ErrorBoundary>
@@ -66,16 +75,23 @@ export default function AmazeenApp() {
         </ErrorBoundary>
       </LookContext.Provider>
       </HostControlsContext.Provider>
+      </ShelfExtrasContext.Provider>
       </MentionContext.Provider>
       </ImmersiveContext.Provider>
     </EmbeddedContext.Provider>
   );
 }
 
-/** ETERNALL-only routes: `/amazeen/import` (F15) and the Letters room; everything else is AMAZEEN's own. */
+/** ETERNALL-only routes: `/amazeen/import` (F15), the People wall and the Letters room; everything else is AMAZEEN's own. */
 function Routed({ vault }: { vault: VaultLike }) {
   const { path, navigate } = useRouter();
   if (path === '/import') return <MoveIn vault={vault} onOpenDesk={() => navigate('/')} />;
+  if (path === '/people' || path.startsWith('/people/'))
+    return (
+      <Frame>
+        <PeopleRoom path={path.slice('/people'.length) || '/'} search={new URLSearchParams(window.location.search)} />
+      </Frame>
+    );
   if (path === '/letters' || path.startsWith('/letters/'))
     return (
       <Frame>

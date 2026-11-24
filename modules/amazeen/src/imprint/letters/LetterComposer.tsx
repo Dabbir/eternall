@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { MentionContext } from '../MentionField';
 import {
   addYears,
   birthdayAt,
@@ -53,7 +54,7 @@ export function Composer({ prefill }: { prefill: Partial<LetterInput> }) {
   const [busy, setBusy] = useState(false);
   const titleRef = useRef<HTMLInputElement>(null);
   const bodyRef = useRef<HTMLTextAreaElement>(null);
-  const people = house.capability('people.mention');
+  const people = useContext(MentionContext);
 
   // Keep the draft in the vault (debounced by the vault itself).
   useEffect(() => {
@@ -281,13 +282,13 @@ export function Composer({ prefill }: { prefill: Partial<LetterInput> }) {
 }
 
 
-/** With KINDRED: put someone's name into the letter (people.mention). Nothing is sent to anyone. */
+/** Put someone from your People wall into the letter. Nothing is sent to anyone. */
 function MentionPicker({ search, onPick }: { search(q: string): { id: string; name: string }[]; onPick(name: string): void }) {
   const [q, setQ] = useState('');
   const matches = q.trim() ? search(q).slice(0, 5) : [];
   return (
     <div className="envoi-mention">
-      <label htmlFor="envoi-mention">Mention someone from KINDRED</label>
+      <label htmlFor="envoi-mention">Mention someone from your People</label>
       <input id="envoi-mention" value={q} autoComplete="off" placeholder="Type a name" onChange={(e) => setQ(e.target.value)} />
       {matches.length > 0 && (
         <ul aria-label="Matching people">

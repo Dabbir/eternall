@@ -6,7 +6,7 @@ import { barStart, markId } from '@eternall/refrain/rituals';
 import { Root } from '../shell/Root';
 
 /**
- * The four apps, each on its own, and the capability matrix (docs/adr/0011):
+ * The apps, each on its own, and what crosses between them (docs/adr/0011, docs/adr/0014):
  * every consumer works with its provider and degrades cleanly without it.
  */
 const today = todayISO();
@@ -42,30 +42,41 @@ describe('REFRAIN on its own', () => {
   });
 });
 
-describe('KINDRED on its own', () => {
-  it('notes that you saw someone today', async () => {
+describe('AMAZEEN · People (once KINDRED, ADR 0014)', () => {
+  it('pins the people from the old card file on the wall, and notes that you saw someone today', async () => {
     const user = userEvent.setup();
-    const store = createMemoryStore([settings(), dad]);
-    at('/kindred/person/dad');
+    const store = createMemoryStore([settings(), dad, magazine]);
+    at('/amazeen/people/dad');
     render(<Root store={store} />);
-    await user.click(await screen.findByRole('button', { name: 'I saw them today' }));
+    expect(await screen.findByRole('heading', { level: 1, name: 'Dad' })).toBeInTheDocument();
+    await user.click(screen.getByRole('button', { name: 'I saw them today' }));
     await waitFor(() => expect(store.dump().some((r) => r.key === `kindred/seen/dad_${today}`)).toBe(true));
   });
 
-  it('lets AMAZEEN letters mention people only while KINDRED is on', async () => {
+  it('lists the pieces someone appears in', async () => {
+    const piece = rec('amazeen/entry/e1', { id: 'e1', kind: 'note', body: 'Lunch with Dad by the river.', section: 'people', mood: 4, starred: false, createdAt: stamp, updatedAt: stamp });
+    at('/amazeen/people/dad');
+    render(<Root store={createMemoryStore([settings(), dad, magazine, piece])} />);
+    expect(await screen.findByRole('heading', { name: 'Appears in 1 piece' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Lunch with Dad by the river/ })).toBeInTheDocument();
+  });
+
+  it('hangs a strip of the wall above the Shelf', async () => {
+    at('/amazeen/shelf');
+    render(<Root store={createMemoryStore([settings(), dad, magazine])} />);
+    expect(await screen.findByRole('heading', { name: 'On the wall' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Dad/ })).toBeInTheDocument();
+  });
+
+  it('lets letters mention people from the wall', async () => {
     at('/amazeen/letters/write');
-    const { unmount } = render(<Root store={createMemoryStore([settings(), dad])} />);
-    expect(await screen.findByLabelText('Mention someone from KINDRED')).toBeInTheDocument();
-    unmount();
-    at('/amazeen/letters/write');
-    render(<Root store={createMemoryStore([settings(['kindred']), dad])} />);
-    expect(await screen.findByLabelText('Your letter')).toBeInTheDocument();
-    expect(screen.queryByLabelText('Mention someone from KINDRED')).not.toBeInTheDocument();
+    render(<Root store={createMemoryStore([settings(), dad])} />);
+    expect(await screen.findByLabelText('Mention someone from your People')).toBeInTheDocument();
   });
 });
 
 describe('AMAZEEN @ mentions', () => {
-  it('offers KINDRED people after "@" and writes the name as plain text', async () => {
+  it('offers people from the wall after "@" and writes the name as plain text', async () => {
     const user = userEvent.setup();
     at('/amazeen/write/note');
     render(<Root store={createMemoryStore([settings(), dad, magazine])} />);
@@ -78,10 +89,10 @@ describe('AMAZEEN @ mentions', () => {
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
 
-  it('treats "@" as a character when KINDRED is off', async () => {
+  it('treats "@" as a character when nobody is on the wall', async () => {
     const user = userEvent.setup();
     at('/amazeen/write/note');
-    render(<Root store={createMemoryStore([settings(['kindred']), dad, magazine])} />);
+    render(<Root store={createMemoryStore([settings(), magazine])} />);
     const note = await screen.findByLabelText('Note');
     await user.type(note, 'Lunch with @Da');
     expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
@@ -89,29 +100,28 @@ describe('AMAZEEN @ mentions', () => {
   });
 });
 
-describe('KINDRED reminders', () => {
+describe('People reminders', () => {
   const bday = rec('kindred/person/dad', { id: 'dad', name: 'Dad', drawer: 'Family', closeness: 'inner', howWeMet: '', dates: [{ label: 'Birthday', date: `1958-${today.slice(5)}`, yearly: true }], createdAt: stamp });
   it('reminds once, on the day, only when opted in', async () => {
-    const store = createMemoryStore([settings(), bday, rec('kindred/pref/pref', { id: 'pref', remind: 'day' })]);
-    at('/kindred/');
+    const store = createMemoryStore([settings(), bday, magazine, rec('kindred/pref/pref', { id: 'pref', remind: 'day' })]);
+    at('/amazeen/people');
     const { unmount } = render(<Root store={store} />);
     expect(await screen.findByText(/Dad’s birthday is today/)).toBeInTheDocument();
     await waitFor(() => expect(store.dump().find((r) => r.key === 'house/reminders/log')?.value).toMatchObject({ sent: [{ key: `kindred_dad_birthday_${today}_0` }] }));
     unmount();
-    at('/kindred/');
+    at('/amazeen/people');
     render(<Root store={store} />);
-    expect(await screen.findByRole('heading', { name: 'Keep the people close.' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /The\s*People/ })).toBeInTheDocument();
     expect(screen.queryByText(/Dad’s birthday is today/)).not.toBeInTheDocument();
   });
 
   it('stays quiet when reminders are off', async () => {
-    at('/kindred/');
-    render(<Root store={createMemoryStore([settings(), bday])} />);
+    at('/amazeen/people');
+    render(<Root store={createMemoryStore([settings(), bday, magazine])} />);
     expect(await screen.findByRole('button', { name: /Reminders for dates · off/ })).toBeInTheDocument();
     expect(screen.queryByText(/Dad’s birthday is today/)).not.toBeInTheDocument();
   });
 });
-
 
 describe('MARGINALIA, retired (ADR 0014)', () => {
   it('turns its underlines into AMAZEEN quotes when the vault opens, keeping the originals', async () => {

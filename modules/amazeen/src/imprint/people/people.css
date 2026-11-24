@@ -1,0 +1,148 @@
+/* ─────────────────────────────────────────────────────────────
+   AMAZEEN · People: the newsroom's wall of sources (docs/design/amazeen.md §14)
+   Cork strips, riso pins, index cards set in the newsroom's type.
+   ───────────────────────────────────────────────────────────── */
+.amz-people {
+  --cork: color-mix(in srgb, #b48a5a 34%, var(--paper));
+  --cork-dot: color-mix(in srgb, #6b4a2a 22%, transparent);
+  --card-bg: var(--sheet);
+  font-family: var(--font-text);
+  color: var(--ink);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .amz-people { --cork: color-mix(in srgb, #6b4a2a 30%, var(--paper)); --cork-dot: rgb(0 0 0 / 0.35); }
+}
+:root[data-theme='dark'] .amz-people { --cork: color-mix(in srgb, #6b4a2a 30%, var(--paper)); --cork-dot: rgb(0 0 0 / 0.35); }
+
+.pp-room,
+.pp-person { max-width: 1240px; margin: 0 auto; padding: 0 0 40px; }
+
+/* ---------- head ---------- */
+.pp-head { display: grid; gap: 10px; margin-bottom: 28px; }
+.pp-eyebrow { font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.12em; font-variant-caps: all-small-caps; color: var(--proof); }
+.pp-title { font-family: var(--font-display); font-weight: 800; font-size: var(--step-5); line-height: 0.95; letter-spacing: -0.02em; }
+.pp-title em { color: var(--press-text); font-style: italic; font-weight: 400; }
+.pp-count { color: var(--ink-2); font-style: italic; max-width: 60ch; }
+.pp-head__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 6px; }
+.pp-link { color: var(--press-text); text-decoration: underline; text-underline-offset: 4px; font-family: var(--font-mono); font-size: var(--step--1); text-align: left; min-height: 44px; }
+.pp-link:hover { color: var(--ink); }
+
+.pp-dates { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 26px; }
+.pp-dates button { padding: 8px 14px; min-height: 44px; border: 1.5px dashed var(--press); font-size: var(--step--1); font-family: var(--font-mono); }
+.pp-dates button:hover { background: var(--press-soft); }
+
+/* ---------- the wall: cork strips with a label of masking tape ---------- */
+.pp-strip { margin-bottom: 26px; }
+.pp-tape {
+  display: inline-block; margin: 0 0 -10px 14px; padding: 4px 14px; position: relative; z-index: 1;
+  font-family: var(--font-mono); font-size: var(--step--1); font-weight: 600; letter-spacing: 0.08em; font-variant-caps: all-small-caps;
+  background: color-mix(in srgb, #f2e7c9 85%, transparent); color: #2a2418; transform: rotate(-1.5deg);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.15); border-left: 6px solid var(--pin);
+}
+.pp-cork {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 26px 20px;
+  padding: 30px 20px 24px;
+  background-color: var(--cork);
+  background-image: radial-gradient(var(--cork-dot) 1px, transparent 1.4px), radial-gradient(var(--cork-dot) 1px, transparent 1.4px);
+  background-size: 9px 9px, 13px 13px; background-position: 0 0, 4px 6px;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.08), inset 0 6px 14px -8px rgb(0 0 0 / 0.35);
+}
+.pp-cork > li { transform: rotate(var(--tilt, 0deg)); }
+
+/* ---------- a pinned index card ---------- */
+.pp-card {
+  position: relative; display: grid; gap: 4px; align-content: start; width: 100%; min-height: 150px; padding: 22px 16px 14px;
+  text-align: left; color: var(--ink); background: var(--card-bg);
+  border-top: 3px solid color-mix(in srgb, var(--press) 70%, transparent);
+  box-shadow: 0 1px 1px rgb(0 0 0 / 0.12), 0 10px 18px -12px rgb(0 0 0 / 0.55);
+  transition: transform 220ms var(--ease-out), box-shadow 220ms var(--ease-out);
+}
+button.pp-card:hover, button.pp-card:focus-visible { transform: translateY(-3px) rotate(0.6deg); box-shadow: 0 2px 2px rgb(0 0 0 / 0.14), 0 18px 26px -14px rgb(0 0 0 / 0.6); }
+.pp-card.is-faded { opacity: 0.72; }
+.pp-pin {
+  position: absolute; top: -7px; left: 50%; width: 16px; height: 16px; margin-left: -8px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.65), transparent 40%), var(--pin);
+  box-shadow: 0 3px 4px -1px rgb(0 0 0 / 0.45);
+}
+.pp-photo { width: 64px; height: 64px; object-fit: cover; margin-bottom: 6px; border: 3px solid #fff; box-shadow: 0 1px 3px rgb(0 0 0 / 0.3); }
+.pp-card__closeness { font-family: var(--font-mono); font-size: var(--step--2); letter-spacing: 0.1em; font-variant-caps: all-small-caps; color: var(--ink-3); }
+.pp-card__name { font-family: var(--font-display); font-weight: 800; font-size: var(--step-1); line-height: 1.05; }
+.pp-card__since { font-style: italic; font-size: var(--step--1); color: var(--ink-2); }
+.pp-card__date { font-family: var(--font-mono); font-size: var(--step--2); color: var(--press-text); }
+.pp-card__met { margin-top: 8px; color: var(--ink-2); }
+.pp-card--blank { width: 180px; min-height: 120px; }
+.pp-card--small { min-height: 110px; padding: 18px 12px 10px; }
+.pp-card--small .pp-photo { width: 44px; height: 44px; }
+.pp-card--small .pp-card__name { font-size: var(--step-0); }
+.pp-card--big { min-height: 260px; padding: 30px 24px 22px; transform: rotate(-1deg); }
+.pp-card--big .pp-photo { width: 120px; height: 120px; }
+.pp-card--big .pp-card__name { font-size: var(--step-3); }
+
+.pp-empty { display: grid; justify-items: start; gap: 16px; padding: 30px; background: var(--cork); }
+.pp-empty p { max-width: 46ch; font-style: italic; color: var(--ink); }
+.pp-missing { padding: 60px var(--gutter); }
+
+/* ---------- a person ---------- */
+.pp-back { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-bottom: 16px; font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-2); }
+.pp-back:hover { color: var(--ink); }
+.pp-person__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 36px; align-items: start; padding: 30px; background: var(--cork); }
+.pp-person__side { display: grid; gap: 22px; padding: 22px; background: var(--card-bg); box-shadow: var(--shadow-paper); }
+.pp-saw { display: grid; gap: 10px; }
+.pp-rule { padding-bottom: 6px; margin-bottom: 10px; border-bottom: 1.5px solid var(--rule); font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.1em; font-variant-caps: all-small-caps; }
+.pp-datelist li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; border-bottom: 1px solid var(--hairline); }
+.pp-datelist em { color: var(--ink-2); }
+.pp-none { color: var(--ink-2); font-style: italic; }
+.pp-appears { margin-top: 36px; max-width: 760px; }
+.pp-list li { display: grid; grid-template-columns: 8.5em minmax(0, 1fr) auto; align-items: center; gap: 12px; min-height: 44px; border-bottom: 1px solid var(--hairline); }
+.pp-list__date { font-family: var(--font-mono); font-size: var(--step--2); color: var(--ink-3); }
+.pp-list .pp-link { font-family: var(--font-text); font-size: var(--step-0); }
+.pp-x { width: 36px; height: 36px; color: var(--ink-3); }
+.pp-x:hover { color: var(--press-text); }
+
+/* ---------- the editor and reminders ---------- */
+.pp-closeness, .pp-choices, .pp-datesedit { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.pp-closeness legend, .pp-choices legend, .pp-datesedit legend { width: 100%; margin-bottom: 6px; font-family: var(--font-mono); font-size: var(--step--1); letter-spacing: 0.08em; font-variant-caps: all-small-caps; }
+.pp-pill, .pp-choice { position: relative; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1.5px solid var(--hairline); cursor: pointer; }
+.pp-pill input, .pp-choice input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.pp-pill:has(input:checked), .pp-choice:has(input:checked) { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pp-pill:has(input:focus-visible), .pp-choice:has(input:focus-visible) { outline: 2px solid var(--proof); outline-offset: 2px; }
+.pp-photoedit { display: grid; gap: 6px; }
+.pp-photoedit__label { font-family: var(--font-mono); font-size: var(--step--1); }
+.pp-photoedit__row { display: flex; align-items: center; gap: 14px; }
+.pp-photoedit__actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.pp-photo--empty { display: inline-block; background: var(--paper-2); }
+.pp-datesedit__row { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 10px; align-items: end; width: 100%; }
+.pp-datesedit__x { width: 40px; height: 40px; color: var(--ink-3); }
+
+/* ---------- above the Shelf ---------- */
+.pp-shelfwall { margin: 0 0 28px; }
+.pp-shelfwall__head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.pp-cork--strip { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); padding: 22px 16px 16px; gap: 18px 14px; }
+
+/* ---------- Pinned: the ceremony ---------- */
+.pp-pinned { position: absolute; inset: 0; display: grid; place-items: center; animation: pp-veil var(--rite-ms, 900ms) ease-out both; }
+.pp-pinned__card {
+  position: relative; display: grid; gap: 6px; justify-items: center; min-width: min(360px, 80vw); padding: 40px 34px 26px;
+  background: var(--sheet); color: var(--ink); box-shadow: 0 40px 70px -30px rgb(0 0 0 / 0.6);
+  animation: pp-drop var(--rite-ms, 900ms) var(--ease-out) both;
+}
+.pp-pinned__pin { position: absolute; top: -10px; width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgb(255 255 255 / 0.7), transparent 40%), var(--riso-pink); box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5); animation: pp-pin var(--rite-ms, 900ms) var(--ease-spring) both; }
+.pp-pinned__name { font-family: var(--font-display); font-weight: 800; font-size: var(--step-3); line-height: 1; }
+.pp-pinned__line { font-family: var(--font-mono); font-size: var(--step--1); color: var(--ink-2); }
+@keyframes pp-veil { 0% { opacity: 0; } 15% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes pp-drop { 0% { transform: translateY(-40px) rotate(-6deg); } 45% { transform: translateY(0) rotate(-1.5deg); } 100% { transform: translateY(0) rotate(-1.5deg); } }
+@keyframes pp-pin { 0%, 40% { transform: translateY(-30px) scale(1.4); opacity: 0; } 60% { transform: translateY(0) scale(1); opacity: 1; } 100% { opacity: 1; } }
+
+@media (max-width: 760px) {
+  .pp-person__grid { grid-template-columns: 1fr; padding: 22px 14px; }
+  .pp-cork { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 26px 12px 18px; gap: 20px 12px; }
+  .pp-list li { grid-template-columns: 1fr auto; }
+  .pp-list__date { grid-column: 1 / -1; }
+  .pp-datesedit__row { grid-template-columns: 1fr 1fr; }
+  /* Above the Shelf on a phone: one row of cards to swipe through, not a block. */
+  .pp-cork--strip { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: 136px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; }
+  .pp-cork--strip > li { scroll-snap-align: start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pp-card { transition: none; }
+}

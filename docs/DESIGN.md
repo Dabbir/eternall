@@ -69,10 +69,9 @@ phone            [←]           NAME                                          �
 
 | App | Way back | Name | Places | Primary action | Its own ornament |
 |---|---|---|---|---|---|
-| AMAZEEN | "Leave" | monogram + masthead on the ink-black band | 01 Desk · 02 Shelf · 03 Letters · 04 Office | Write (vermilion) | the press deadline as `extra`; on its own (no ETERNALL) it keeps its left spine |
+| AMAZEEN | "Leave" | monogram + masthead on the ink-black band | 01 Desk · 02 Shelf · 03 People · 04 Letters · 05 Office | Write (vermilion) | the press deadline as `extra`; on its own (no ETERNALL) it keeps its left spine |
 | CASHEEN | the clasp, "Close the book" | spaced Caslon over a double rule | The month · Budget · Your words | Add an entry (focuses the quick line) | the thumb index sits in the page under the month: twelve half-moon notches |
 | REFRAIN | "Fine" with the end barline | spaced Bodoni | I. The score (a ritual's notes are movement II, named under the bar) | Mark today, a marking | five staff hairlines run under the bar |
-| KINDRED | "Close the drawer" | the brass label plate | Card file · Constellation, as drawer fronts with brass pulls; the open one pulled out | Add a person, a letterpress block | the carcass of the cabinet on the phone's bottom bar |
 | MARGINALIA | the ribbon bookmark, "Back to the stacks" | the catalogue card, call number typed | Catalogue · Every underline, pencilled; the current one ringed by hand | Add a work, typed in brackets | the oak desk |
 
 **Behavioural invariants for every app's chrome:**
@@ -237,7 +236,7 @@ Used on every screen, in every imprint, before it ships:
 | ETERNALL (house: lifeline, inscriptions, chapters, almanac) | `design/eternall.md` |
 | AMAZEEN (with Letters) | `design/amazeen.md` |
 | REFRAIN | `design/refrain.md` |
-| KINDRED | `design/kindred.md` |
+| KINDRED (now AMAZEEN · People) | `design/archive/kindred.md`, `design/amazeen.md` §14 |
 | MARGINALIA (retired) | `design/archive/marginalia.md` |
 | CASHEEN | `design/casheen.md` |
 | Retired: ENVOI, FOLIO, ALMANACK, PROLOGUE | `design/archive/*.md` (their systems live on in Letters, Chapters and the Almanac) |

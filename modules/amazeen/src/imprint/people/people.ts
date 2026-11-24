@@ -1,9 +1,10 @@
 import { cleanText, diffDays, finish, formatMedium, isLeapYear, isValidISO, requireText, type FieldErrors, type ISODate, type Reminder, type Validation } from '@eternall/core';
 
 /**
- * KINDRED's domain (docs/MODULES.md §8, docs/design/kindred.md): a card per person, notes of when
- * you saw them, and dates to remember. People never receive anything and are never contacted.
- * No scores, no "overdue": time since you last met is shown plainly, as distance in the sky.
+ * AMAZEEN · People (once KINDRED; docs/adr/0014, docs/design/amazeen.md §14): a card per person on
+ * the newsroom wall, notes of when you saw them, and dates to remember. People never receive
+ * anything and are never contacted. No scores, no "overdue": time since you last met is said plainly.
+ * Records keep their `kindred/*` paths.
  */
 export const PERSON_PATH = 'kindred/person';
 export const SEEN_PATH = 'kindred/seen';
@@ -101,36 +102,17 @@ export function drawers(people: readonly Person[], seen: readonly Seen[], today:
   return recent.length ? [{ label: 'Recently seen', auto: true, people: recent }, ...named] : named;
 }
 
-export interface Star {
-  id: string;
-  name: string;
-  /** -1…1 around the centre (you). */
-  x: number;
-  y: number;
-  /** 1 (around) … 3 (inner circle). */
-  size: number;
-  days: number | null;
-  drawer: string;
-}
-
 /**
- * The constellation: angle = drawer (one sector each), distance = time since last seen (log-scaled,
- * never seen sits at the edge), size = closeness. Deterministic, so it never drifts on its own.
+ * The pieces a person appears in (docs/design/amazeen.md §14): entries whose text names them, by
+ * full name or first name as a whole word. Resolved at read time, so nothing is stored about the
+ * link and a piece reads the same whoever is on the wall. Newest first.
  */
-export function constellation(people: readonly Person[], seen: readonly Seen[], today: ISODate): Star[] {
-  const labels = [...new Set(people.map((p) => p.drawer || 'Unfiled'))].sort();
-  const sector = (Math.PI * 2) / Math.max(1, labels.length);
-  const maxLog = Math.log1p(730);
-  return labels.flatMap((label, si) => {
-    const members = people.filter((p) => (p.drawer || 'Unfiled') === label).sort((a, b) => a.name.localeCompare(b.name));
-    return members.map((p, i) => {
-      const last = lastSeen(seen, p.id);
-      const days = last ? Math.max(0, diffDays(last, today)) : null;
-      const r = 0.22 + 0.74 * (days === null ? 1 : Math.min(1, Math.log1p(days) / maxLog));
-      const a = -Math.PI / 2 + si * sector + sector * ((i + 1) / (members.length + 1));
-      return { id: p.id, name: p.name, x: Math.cos(a) * r, y: Math.sin(a) * r, size: p.closeness === 'inner' ? 3 : p.closeness === 'close' ? 2 : 1, days, drawer: label };
-    });
-  });
+export function appearsIn<E extends { id: string; createdAt: string }>(person: Pick<Person, 'name'>, entries: readonly E[], textOf: (e: E) => string): E[] {
+  const first = person.name.trim().split(/\s+/u)[0] ?? '';
+  if (!first) return [];
+  const esc = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/gu, '\\$&');
+  const re = new RegExp(`(?<![\\p{L}\\p{M}])(?:${esc(person.name.trim())}|${esc(first)})(?![\\p{L}\\p{M}])`, 'iu');
+  return entries.filter((e) => re.test(textOf(e))).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 export function searchPeople(people: readonly Person[], query: string): Person[] {
@@ -248,12 +230,12 @@ export function dueReminders(people: readonly Person[], today: ISODate, remind: 
       const what = u.label.toLocaleLowerCase();
       const when = u.days === 0 ? 'is today' : u.days === 1 ? 'is tomorrow' : `is in ${u.days} days`;
       return {
-        imprint: 'kindred' as const,
+        imprint: 'amazeen' as const,
         key: `kindred_${u.person.id}_${slug(u.label)}_${u.date}_${u.days}`,
         date: today,
         title: `${possessive(u.person.name)} ${what} ${when}`,
         body: reminderBody(what === 'birthday' && u.turns ? `Turning ${u.turns}` : u.turns ? `${u.turns} years` : '', u.days === 0 ? null : formatMedium(u.date)),
-        href: `/kindred/person/${u.person.id}`,
+        href: `/amazeen/people/${u.person.id}`,
       };
     });
 }

@@ -1,7 +1,7 @@
-import { useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useContext, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import type { CSSProperties, PointerEvent } from 'react';
 import { CoverArt } from '../../components/CoverArt';
-import { useImmersive } from '../../imprint/embedded';
+import { ShelfExtrasContext, useImmersive } from '../../imprint/embedded';
 import { Icon } from '../../components/Icon';
 import ui from '../../components/ui.module.css';
 import { KIND_INFO, SECTION_INFO } from '../../domain/catalog';
@@ -84,6 +84,8 @@ function Spine({ issue, masthead, open }: { issue: Issue; masthead: string; open
 export default function Shelf({ initialQuery }: { initialQuery: string }) {
   const { data, issues, findIssue } = useStore();
   const { navigate } = useRouter();
+  // Inside ETERNALL, a strip of the People wall hangs above the shelf (docs/adr/0014).
+  const ShelfExtras = useContext(ShelfExtrasContext);
   const [query, setQuery] = useState(initialQuery);
   const [section, setSection] = useState<Section | null>(null);
   const deferredQuery = useDeferredValue(query);
@@ -133,6 +135,7 @@ export default function Shelf({ initialQuery }: { initialQuery: string }) {
 
   return (
     <div className={styles.shelf}>
+      {ShelfExtras && <ShelfExtras />}
       <header className={styles.head}>
         <h1 className={styles.title}>
           The <em>Shelf</em>

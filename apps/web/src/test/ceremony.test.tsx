@@ -8,7 +8,7 @@ import { Root } from '../shell/Root';
 const today = todayISO();
 const stamp = new Date().toISOString();
 const rec = (key: string, value: unknown): VaultRecord => ({ key, updatedAt: stamp, deleted: false, value });
-const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:kindred', 'intro:casheen'], hidden: [], autoLockMinutes: 15 });
+const quiet = rec('house/settings/prefs', { id: 'prefs', theme: 'system', lens: 'moments', flatPages: false, dismissed: ['intro:amazeen', 'intro:casheen'], hidden: [], autoLockMinutes: 15 });
 const profile = rec('house/profile/me', { id: 'me', name: 'Ada', birthDate: '1992-03-04', horizonYears: 90, hemisphere: 'north', createdAt: stamp });
 const dad = rec('kindred/person/dad', { id: 'dad', name: 'Dad', drawer: 'Family', closeness: 'inner', howWeMet: '', dates: [], createdAt: stamp });
 
@@ -23,8 +23,9 @@ describe('ceremonies', () => {
   it('play after the save, hidden from assistive tech, and step aside on their own', async () => {
     motion(false);
     const user = userEvent.setup();
-    const store = createMemoryStore([quiet, dad]);
-    at('/kindred/person/dad');
+    const magazine = rec('amazeen/meta/main', { id: 'main', magazine: { title: 'The Weekly Me', editor: 'Ada', createdAt: stamp }, overrides: {} });
+    const store = createMemoryStore([quiet, dad, magazine]);
+    at('/amazeen/people/dad');
     render(<Root store={store} />);
     await user.click(await screen.findByRole('button', { name: 'I saw them today' }));
     const layer = document.querySelector('.ceremony');
