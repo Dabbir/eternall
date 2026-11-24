@@ -36,3 +36,24 @@ it('draws the arc high at noon and on the horizon at its ends', () => {
   expect(arcY(0.04)).toBeCloseTo(1, 5);
   expect(arcY(0)).toBeCloseTo(1, 5);
 });
+
+/** Where a name sits: under its body, or above it. */
+const labelAt = (p: ReturnType<typeof placeBodies>[number]) => ({ x: p.x, y: p.y + (p.labelAbove ? -0.075 : 0.075) });
+it('keeps every name clear of the other bodies and names', () => {
+  for (const groups of [
+    [g('morning', 'm1', 'm2', 'm3'), g('evening', 'e1', 'e2', 'e3'), g('anytime', 'a1', 'a2', 'a3', 'a4')],
+    [g('morning', 'm1', 'm2', 'm3', 'm4', 'm5'), g('midday', 'd1', 'd2'), g('evening', 'e1', 'e2', 'e3', 'e4', 'e5')],
+    [g('morning', 'm1'), g('anytime', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'a7', 'a8')],
+  ]) {
+    const ps = placeBodies(groups).slice(0, 12);
+    for (const p of ps)
+      for (const q of ps) {
+        if (p === q) continue;
+        const l = labelAt(p);
+        // A name is about 0.1 wide and 0.05 tall: nothing else may sit inside that box.
+        expect(Math.abs(l.x - q.x) < 0.07 && Math.abs(l.y - q.y) < 0.05, `${p.id}'s name on ${q.id}`).toBe(false);
+        const m = labelAt(q);
+        expect(Math.abs(l.x - m.x) < 0.11 && Math.abs(l.y - m.y) < 0.05, `${p.id}'s name on ${q.id}'s`).toBe(false);
+      }
+  }
+});

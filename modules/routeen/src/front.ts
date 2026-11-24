@@ -29,7 +29,7 @@ export interface FrontPage {
   recap: boolean;
   /** Due practices (every active one on a Day off) by time of day, in a fixed order; never moved by a mark. */
   groups: Group[];
-  /** How much of what is due is lit, 0..1; the sky brightens with it. Never shown as a number. */
+  /** How much of what is due is lit, 0..1 (of what is listed, when nothing is due); the sky brightens with it. Never a number on screen. */
   glow: number;
   /** Active but not due today (an n-a-week practice already met, a weekly one on another day); empty on a Day off. */
   alsoToday: Practice[];
@@ -88,6 +88,8 @@ export function frontPage(input: FrontInput): FrontPage {
 
   const dueCount = dueSet.size;
   const markedDueCount = [...dueSet].filter(marked).length;
+  // When nothing is due (a Day off, a quiet weekday) the sky still lights with what is listed and lit.
+  const listed = mode === 'off' ? active : active.filter((p) => !dueSet.has(p));
   return {
     today,
     yesterday,
@@ -95,7 +97,7 @@ export function frontPage(input: FrontInput): FrontPage {
     mode,
     recap,
     groups: groupByTime(mode === 'off' ? active : due),
-    glow: dueCount ? markedDueCount / dueCount : 0,
+    glow: dueCount ? markedDueCount / dueCount : listed.length ? listed.filter(marked).length / listed.length : 0,
     alsoToday: ordered(mode === 'off' ? [] : active.filter((p) => !dueSet.has(p))),
     yesterdayUnmarked: ordered(yesterdayUnmarked),
     dueCount,

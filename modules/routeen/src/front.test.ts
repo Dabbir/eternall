@@ -109,3 +109,10 @@ it('glows with the share of due practices lit', () => {
 it('groups any list by time of day', () => {
   expect(shape(groupByTime([read, med, water]))).toEqual([['morning', ['water']], ['evening', ['med']], ['anytime', ['read']]]);
 });
+it('lights the sky by what is listed when nothing is due', () => {
+  const off = { modes: [{ id: '2026-11-25', from: '2026-11-25', mode: 'off' as const }] };
+  expect(frontPage(input(off)).glow).toBe(0);
+  expect(frontPage(input({ ...off, marks: [mark('run', '2026-11-25')] })).glow).toBe(0.2);
+  // Only a weekly practice, on another day: nothing due, and lighting it still lights the sky.
+  expect(frontPage(input({ practices: [mum], marks: [mark('mum', '2026-11-25')] })).glow).toBe(1);
+});
