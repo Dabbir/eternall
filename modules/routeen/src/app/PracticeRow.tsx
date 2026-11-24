@@ -26,7 +26,8 @@ export function PracticeRow({ practice: p, date, routine: r, state, note, onTap,
   const noteId = useId();
   const mark = r.idx.get(markId(p.id, date));
   const tier = mark ? tierOf(mark) : null;
-  const sub = tier ? copy.tiers[tier] : amountHint(p, 'target');
+  // A day's page says the state in words (`note`), so the tier is not said twice.
+  const sub = tier ? (note ? null : copy.tiers[tier]) : amountHint(p, 'target');
   return (
     <div className={`rs-row${tier ? ` is-lit rs-row--${tier}` : ''}`} data-practice={p.id} data-state={state}>
       <button type="button" className="rs-row__main" aria-pressed={!!tier} aria-describedby={note ? noteId : undefined} onClick={onTap}>

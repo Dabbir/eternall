@@ -7,6 +7,7 @@ import { copy } from '../copy';
 import { practiceWeeks } from '../days';
 import { routeen } from '../index';
 import { PRACTICE_PATH, barStart, cadenceLabel, timeOf, type Practice } from '../practices';
+import { SkyBand } from './SkyBand';
 import { Tile } from './Tile';
 import type { Routine } from './useRoutine';
 
@@ -36,10 +37,10 @@ export function PracticePage({ practice: p, routine: r, onEdit }: { practice: Pr
 
   return (
     <article className="rs-page rs-practice">
-      <header className="rs-head">
+      <SkyBand size="small" mode="normal" glow={1} groups={[{ time: timeOf(p), practices: [p] }]} kindOf={() => (lit ? 'target' : 'unlit')} label={copy.sky.bandPractice(p.name)}>
         <h1 className="rs-title">{p.name}</h1>
         {p.why && <p className="rs-why">“{p.why}”</p>}
-      </header>
+      </SkyBand>
       <dl className="rs-facts">
         <div>
           <dt>{copy.practice.howOften}</dt>

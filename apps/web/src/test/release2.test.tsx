@@ -294,6 +294,19 @@ describe('ROUTEEN, the day’s sky', () => {
     await waitFor(() => expect(store.dump().find((r) => r.key === `refrain/mark/${markId('run', yesterday)}` && !r.deleted)?.value).toMatchObject({ date: yesterday, tier: 'target' }));
   });
 
+  it('draws a past day and a practice under their own sky, said in words', async () => {
+    const yesterday = addDays(routineDay(new Date(), 3), -1);
+    const lit = rec(`refrain/mark/${markId('run', yesterday)}`, { id: markId('run', yesterday), ritualId: 'run', date: yesterday, tier: 'more' });
+    at(`/routeen/day/${yesterday}`);
+    const { unmount } = render(<Root store={createMemoryStore([settings(), ritual, lit])} />);
+    const name = (await screen.findByRole('heading', { level: 1 })).textContent ?? '';
+    expect(screen.getByRole('img', { name: copy.sky.bandDay(name, 1) })).toBeInTheDocument();
+    unmount();
+    at('/routeen/practice/run');
+    render(<Root store={createMemoryStore([settings(), ritual])} />);
+    expect(await screen.findByRole('img', { name: copy.sky.bandPractice('Morning run') })).toBeInTheDocument();
+  });
+
   it('pauses a practice from its page and shows its year as weeks', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([settings(), ritual]);

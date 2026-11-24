@@ -4,10 +4,11 @@ import { useHouse } from '@eternall/kit';
 import { Segmented } from '@eternall/ui';
 import { copy } from '../copy';
 import { dayState } from '../days';
-import { tapTier } from '../front';
+import { groupByTime, tapTier } from '../front';
 import type { Mode } from '../modes';
 import { isActiveOn, markId, tierOf, type Practice, type Tier } from '../practices';
 import { PracticeRow } from './PracticeRow';
+import { SkyBand } from './SkyBand';
 import { MODE_GLYPH } from './glyphs';
 import { Go } from './Go';
 import { dayName } from './Tile';
@@ -34,16 +35,25 @@ export function DayPage({ date, routine: r }: { date: ISODate; routine: Routine 
     const m = r.idx.get(markId(p.id, date));
     return m ? tierOf(m) : null;
   };
+  const states = list.map((p) => dayState(p, date, r.idx, r.modeOf, r.today));
+  const litCount = list.filter((p) => tierNow(p)).length;
+  const expected = states.filter((st) => st.startsWith('lit') || st === 'unlit' || st === 'open').length;
+  const glow = expected ? litCount / expected : 0;
+  const kindOf = (id: string) => {
+    const m = r.idx.get(markId(id, date));
+    return m ? tierOf(m) : 'unlit';
+  };
+  const names = new Map(list.map((p) => [p.id, p.name]));
   const tap = (p: Practice) => r.setTier(p, date, tierNow(p) ? null : tapTier(mode));
 
   return (
     <div className={`rs-page rs-day rs-mode--${mode}`} data-mode={mode}>
-      <header className="rs-head">
+      <SkyBand size="full" mode={mode} glow={glow} groups={groupByTime(list)} kindOf={kindOf} nameOf={(id) => names.get(id) ?? ''} label={copy.sky.bandDay(dayName(date), litCount)}>
         <p className="rs-eyebrow">
           <span aria-hidden="true">{MODE_GLYPH[mode]}</span> {copy.modes[mode]}
         </p>
         <h1 className="rs-title">{dayName(date)}</h1>
-      </header>
+      </SkyBand>
 
       {list.length === 0 ? (
         <p className="rs-lede">{copy.day.nothing}</p>

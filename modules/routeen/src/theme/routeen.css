@@ -64,37 +64,6 @@
 .rs a:hover { color: var(--ink); }
 .rs a:focus-visible { outline: 2px solid var(--focus, var(--accent)); outline-offset: 2px; border-radius: 2px; }
 
-/* The sky over every page: the day's gradient; its weather (☁︎ low energy, ✦ day off) laid over it.
-   Only --ink and --ink-2 write on it. The weather crossfades (opacity, 320ms). */
-.rs-head {
-  position: relative; isolation: isolate; overflow: hidden;
-  display: grid; align-items: start; gap: 6px 16px;
-  margin: 0 calc(var(--gutter) * -0.5) 8px; padding: clamp(18px, 3vw, 30px) clamp(16px, 3vw, 30px) clamp(14px, 2vw, 22px);
-  border-radius: var(--tile-radius);
-  background: linear-gradient(to bottom, var(--sky-top), var(--sky-bottom));
-}
-/* Low energy: soft cloud over the sky, in the page's own paper. */
-.rs-head::before, .rs-head::after { content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; pointer-events: none; }
-.rs-head::before {
-  background:
-    radial-gradient(ellipse 38% 46% at 18% 34%, var(--paper) 0 55%, transparent 72%),
-    radial-gradient(ellipse 30% 40% at 46% 20%, var(--paper) 0 50%, transparent 70%),
-    radial-gradient(ellipse 42% 50% at 82% 40%, var(--paper) 0 52%, transparent 72%),
-    color-mix(in srgb, var(--paper) 55%, transparent);
-}
-/* Day off: a starry night, small points in the ink's own colour, nothing louder. */
-.rs-head::after {
-  background:
-    radial-gradient(circle, var(--ink-2) 0 1.2px, transparent 1.8px) 13px 17px / 97px 83px,
-    radial-gradient(circle, var(--ink-2) 0 0.9px, transparent 1.5px) 61px 5px / 131px 71px,
-    radial-gradient(circle, var(--ink) 0 1.5px, transparent 2.1px) 37px 49px / 173px 109px,
-    radial-gradient(circle, var(--ink-2) 0 1px, transparent 1.6px) 89px 31px / 211px 127px,
-    color-mix(in srgb, var(--paper) 35%, transparent);
-}
-.rs-mode--low .rs-head::before { opacity: 0.65; }
-.rs-mode--off .rs-head::after { opacity: 1; }
-
-
 /* The mode: one button on its own paper; one tap opens the three. */
 .rs-mode { display: grid; justify-items: end; gap: 8px; }
 .rs-mode__button {
@@ -194,7 +163,12 @@
 .rs-row__text { display: grid; min-width: 0; }
 .rs-row__name { font-family: var(--font-display); font-size: 1.1875rem; line-height: 1.25; overflow-wrap: anywhere; }
 .rs-row__sub, .rs-row__note { font-size: 0.9375rem; color: var(--ink-2); }
-.rs-row__note { grid-column: 1; margin: -12px 0 8px 48px; }
+.rs-row:has(.rs-row__note) { grid-template-rows: auto auto; row-gap: 0; }
+.rs-row:has(.rs-row__note) .rs-row__main { grid-column: 1; grid-row: 1; }
+.rs-row:has(.rs-row__note) .rs-row__tiers { grid-column: 2; grid-row: 1 / span 2; }
+.rs-row:has(.rs-row__note) .rs-row__main { min-height: 44px; padding-bottom: 0; }
+.rs-row__note { grid-column: 1; margin: 0 0 10px 48px; }
+.rs-row.is-lit .rs-row__note { color: var(--accent-text); font-weight: 600; }
 .rs-row.is-lit .rs-row__sub { color: var(--accent-text); font-weight: 600; }
 .rs-row[data-state='plain'] .rs-row__name, .rs-row[data-state='future'] .rs-row__name { color: var(--ink-2); }
 .rs-row__tiers { display: inline-flex; gap: 2px; }
@@ -308,7 +282,6 @@
 .rs-thatday { margin-top: 32px; }
 .rs-back { margin-top: 26px; }
 .rs-back a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
-.rs-practice { max-width: 760px; }
 .rs-why { font-family: var(--font-display); font-size: 1.2rem; color: var(--ink-2); }
 .rs-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px 20px; margin: 18px 0 0; padding: 16px 0; border-top: 1px solid var(--rule-strong); border-bottom: 1px solid var(--rule-strong); }
 .rs-facts dt { font-size: 0.9375rem; font-variant-caps: all-small-caps; letter-spacing: 0.08em; color: var(--ink-2); }
@@ -332,7 +305,6 @@
 
 /* ---------- phone ---------- */
 @media (max-width: 600px) {
-  .rs-head { margin-left: 0; margin-right: 0; }
   .rs-mode { justify-items: start; }
   .rs-row__main { gap: 10px; }
   .rs-row__name { font-size: 1.0625rem; }
@@ -346,7 +318,6 @@
 /* ---------- motion: all of it only when motion is welcome ---------- */
 @media (prefers-reduced-motion: no-preference) {
   /* The weather crossfades over the sky (clear → cloud → night), 320ms, once. */
-  .rs-head::before, .rs-head::after { transition: opacity 320ms var(--ease-out); }
   .rs-row__main, .rs-tier, .rs-row__body, .rs-mode__button { transition: background-color 160ms var(--ease-out), border-color 160ms var(--ease-out), color 160ms var(--ease-out); }
   .rs-mode__button::after { transition: transform 160ms var(--ease-out); }
   .rs-band { transition: --glow 320ms var(--ease-out); }
