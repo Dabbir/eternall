@@ -8,7 +8,7 @@ const run = { id: 'run', name: 'Run', cadence: { kind: 'daily' }, startedOn: '20
 const mark = (id: string, date: string): Mark => ({ id: `${id}_${date}`, ritualId: id, date }) as Mark;
 
 function fakeCtx({ practices = [], marks = [], modes = [], dayModes = [], today = '2026-11-25' }: { practices?: Practice[]; marks?: Mark[]; modes?: ModeRecord[]; dayModes?: DayModeRecord[]; today?: string } = {}) {
-  const byPath: Record<string, unknown[]> = { 'refrain/ritual': practices, 'refrain/mark': marks, 'refrain/mode': modes, 'refrain/dayMode': dayModes, 'refrain/settings': [] };
+  const byPath: Record<string, unknown[]> = { 'refrain/ritual': practices, 'refrain/mark': marks, 'refrain/mode': modes, 'refrain/day-mode': dayModes, 'refrain/settings': [] };
   return { today, weekIndexOf: () => null, data: { collection: (p: string) => ({ all: () => byPath[p] ?? [] }) } } as unknown as ReadContext & { weekIndexOf(d: string): number | null };
 }
 
@@ -36,6 +36,6 @@ describe('routeen contributions', () => {
     expect(JSON.stringify(routeen.almanacFacts!(ctx))).not.toMatch(/%/);
   });
   it('owns every refrain collection', () => {
-    expect(routeen.collections).toEqual(expect.arrayContaining(['refrain/ritual', 'refrain/mark', 'refrain/look', 'refrain/mode', 'refrain/dayMode', 'refrain/settings']));
+    expect(routeen.collections).toEqual(expect.arrayContaining(['refrain/ritual', 'refrain/mark', 'refrain/look', 'refrain/mode', 'refrain/day-mode', 'refrain/settings']));
   });
 });

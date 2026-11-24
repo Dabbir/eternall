@@ -1,8 +1,10 @@
-import { render, screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { addDays, todayISO } from '@eternall/core';
 import { createMemoryStore, type VaultRecord } from '@eternall/vault';
-import { barStart, markId } from '@eternall/routeen/practices';
+import { markId } from '@eternall/routeen/practices';
+import { routineDay } from '@eternall/routeen/sky';
+import { copy } from '@eternall/routeen/copy';
 import { Root } from '../shell/Root';
 
 /**
@@ -28,37 +30,53 @@ beforeEach(() => {
   window.matchMedia = ((q: string) => ({ matches: q.includes('reduce'), media: q, addEventListener() {}, removeEventListener() {} })) as unknown as typeof window.matchMedia;
 });
 
-describe('ROUTEEN, the loom (once REFRAIN, ADR 0014)', () => {
-  it('weaves a REFRAIN ritual as a thread, and keeps a stitch in the old place in the vault', async () => {
+describe('ROUTEEN, the day’s sky', () => {
+  it('lights a loom-era ritual in one tap, as Target, in the old place in the vault', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([settings(), ritual]);
     at('/routeen/');
     render(<Root store={store} />);
-    expect(await screen.findByRole('heading', { name: /The\s*loom/ })).toBeInTheDocument();
-    const monday = barStart(today);
-    const stitch = screen.getAllByRole('switch', { name: /^Morning run, Monday/ }).find((b) => !b.hasAttribute('disabled'))!;
-    await user.click(stitch);
-    await waitFor(() => expect(store.dump().some((r) => r.key === `refrain/mark/${markId('run', monday)}`)).toBe(true));
+    const chip = await screen.findByRole('button', { name: /^Morning run/, pressed: false });
+    await user.click(chip);
+    const day = routineDay(new Date(), 3);
+    await waitFor(() => expect(store.dump().find((r) => r.key === `refrain/mark/${markId('run', day)}`)?.value).toMatchObject({ tier: 'target' }));
   });
 
-  it('marks today from the sheet, and Weave writes only what changed', async () => {
+  it('changes the tier from the inline choice, and unmarks on a second tap', async () => {
     const user = userEvent.setup();
     const store = createMemoryStore([settings(), ritual]);
     at('/routeen/');
     render(<Root store={store} />);
-    await screen.findByRole('heading', { name: /The\s*loom/ });
-    await user.click((await screen.findAllByRole('button', { name: 'Mark today' }))[0]!);
-    const dialog = await screen.findByRole('dialog', { name: 'Mark today' });
-    await user.click(within(dialog).getByRole('checkbox', { name: /Morning run/ }));
-    await user.click(within(dialog).getByRole('button', { name: 'Weave' }));
-    await waitFor(() => expect(store.dump().some((r) => r.key === `refrain/mark/${markId('run', today)}`)).toBe(true));
+    const day = routineDay(new Date(), 3);
+    const key = `refrain/mark/${markId('run', day)}`;
+    const live = () => store.dump().find((r) => r.key === key && !r.deleted);
+    await user.click(await screen.findByRole('button', { name: /^Morning run/, pressed: false }));
+    await user.click(await screen.findByRole('button', { name: copy.tiers.minimum }));
+    await waitFor(() => expect(live()?.value).toMatchObject({ tier: 'minimum' }));
+    await user.click(await screen.findByRole('button', { name: /^Morning run/, pressed: true }));
+    await waitFor(() => expect(live()).toBeUndefined());
+    expect(await screen.findByRole('button', { name: /^Morning run/, pressed: false })).toBeInTheDocument();
   });
 
-  it('shows the year as cloth', async () => {
+  it('switches the whole routine to Low energy in one tap and writes one mode record', async () => {
+    const user = userEvent.setup();
+    const store = createMemoryStore([settings(), ritual]);
+    at('/routeen/');
+    render(<Root store={store} />);
+    await user.click(await screen.findByRole('button', { name: new RegExp(copy.modes.normal) }));
+    await user.click(await screen.findByRole('radio', { name: copy.modes.low }));
+    const day = routineDay(new Date(), 3);
+    await waitFor(() => {
+      const modes = store.dump().filter((r) => r.key.startsWith('refrain/mode/') && !r.deleted);
+      expect(modes).toHaveLength(1);
+      expect(modes[0]!.value).toMatchObject({ id: day, from: day, mode: 'low' });
+    });
+  });
+
+  it('opens an old /routeen/cloth link on the sky', async () => {
     at('/routeen/cloth');
     render(<Root store={createMemoryStore([settings(), ritual])} />);
-    expect(await screen.findByRole('heading', { name: /The\s*cloth/ })).toBeInTheDocument();
-    expect(screen.getByRole('img', { name: /Morning run: woven 0 times in the last 52 weeks/ })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { level: 1, name: copy.sky.title })).toBeInTheDocument();
   });
 });
 

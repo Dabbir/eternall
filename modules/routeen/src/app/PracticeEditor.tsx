@@ -3,21 +3,19 @@ import { createId, type FieldErrors } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button, Dialog, TextArea, TextField } from '@eternall/ui';
 import { useCollection } from '@eternall/vault';
-import { DYES, LIMITS, PATTERNS, PRACTICE_PATH, WEEKDAYS, nextThread, threadOf, validatePractice, type Cadence, type Practice, type PracticeInput } from '../practices';
+import { LIMITS, PRACTICE_PATH, WEEKDAYS, validatePractice, type Cadence, type Practice, type PracticeInput } from '../practices';
 
-const STEPS = ['name', 'cadence', 'why', 'thread'] as const;
-const QUESTION = { name: 'What do you want to return to?', cadence: 'How often?', why: 'Why does it matter?', thread: 'Choose its thread.' } as const;
-const DYE_LABEL: Record<(typeof DYES)[number], string> = { indigo: 'Indigo', madder: 'Madder', weld: 'Weld', walnut: 'Walnut', lichen: 'Lichen', iron: 'Iron' };
+const STEPS = ['name', 'cadence', 'why'] as const;
+const QUESTION = { name: 'What do you want to return to?', cadence: 'How often?', why: 'Why does it matter?' } as const;
 
 /** One question per step for a new practice (docs/design/routeen.md §5); one page when editing. */
 export function PracticeEditor({ existing, onClose }: { existing?: Practice; onClose(): void }) {
   const house = useHouse();
-  const { items, col } = useCollection<Practice>(PRACTICE_PATH);
+  const { col } = useCollection<Practice>(PRACTICE_PATH);
   const initial: PracticeInput = existing
-    ? { name: existing.name, why: existing.why, cadence: existing.cadence, startedOn: existing.startedOn }
-    : { name: '', why: '', cadence: { kind: 'daily' }, startedOn: house.today };
+    ? { name: existing.name, why: existing.why, cadence: existing.cadence, startedOn: existing.startedOn, timeOfDay: existing.timeOfDay ?? 'anytime', measure: existing.measure ?? null }
+    : { name: '', why: '', cadence: { kind: 'daily' }, startedOn: house.today, timeOfDay: 'anytime', measure: null };
   const [form, setForm] = useState(initial);
-  const [thread, setThread] = useState(existing ? threadOf(existing) : nextThread(items));
   const [errors, setErrors] = useState<FieldErrors<keyof PracticeInput>>({});
   const [step, setStep] = useState(0);
   const [confirm, setConfirm] = useState(false);
@@ -34,7 +32,7 @@ export function PracticeEditor({ existing, onClose }: { existing?: Practice; onC
       if (!existing) setStep(r.errors.name ? 0 : r.errors.cadence ? 1 : 2);
       return;
     }
-    col.put({ id: existing?.id ?? createId(), thread, pausedOn: existing?.pausedOn ?? null, ...r.value });
+    col.put({ id: existing?.id ?? createId(), pausedOn: existing?.pausedOn ?? null, ...r.value });
     house.toast({ message: existing ? 'Practice updated.' : `“${r.value.name}” is on the loom.`, tone: 'accent' });
     onClose();
   };
@@ -43,7 +41,7 @@ export function PracticeEditor({ existing, onClose }: { existing?: Practice; onC
     if (step < STEPS.length - 1) setStep(step + 1);
     else save();
   };
-  const dirty = JSON.stringify(form) !== JSON.stringify(initial) || (existing ? thread !== threadOf(existing) : false);
+  const dirty = JSON.stringify(form) !== JSON.stringify(initial);
   const close = () => (dirty && !confirm ? setConfirm(true) : onClose());
   const kind = form.cadence.kind;
 
@@ -141,21 +139,6 @@ export function PracticeEditor({ existing, onClose }: { existing?: Practice; onC
           </fieldset>
         )}
         {show('why') && <TextArea label="Why it matters (optional)" placeholder="In your own words." rows={3} value={form.why} maxLength={LIMITS.why} showCount error={errors.why} onChange={(e) => set('why', e.target.value)} />}
-        {show('thread') && (
-          <fieldset className="rt-threads">
-            <legend>Its thread</legend>
-            {DYES.map((d, i) => (
-              <label key={d} className="rt-choice rt-choice--thread">
-                <input type="radio" name="thread" checked={thread === i} onChange={() => setThread(i)} />
-                <span className={`rt-swatch rt-dye--${d} rt-pattern--${PATTERNS[i]}`} aria-hidden="true" />
-                <span>
-                  {DYE_LABEL[d]} · {PATTERNS[i]}
-                </span>
-              </label>
-            ))}
-            <p className="field__hint">Each thread has its own colour and its own weave, so they stay told apart in the cloth.</p>
-          </fieldset>
-        )}
         {existing && <TextField label="Started" type="date" value={form.startedOn} error={errors.startedOn} onChange={(e) => set('startedOn', e.target.value)} />}
       </form>
     </Dialog>

@@ -3,7 +3,8 @@ import { diffDays, type ISODate } from '@eternall/core';
 /** Life modes: Normal, Low energy, Day off. Paths keep their `refrain/*` names (docs/adr/0014). */
 export type Mode = 'normal' | 'low' | 'off';
 export const MODE_PATH = 'refrain/mode';
-export const DAY_MODE_PATH = 'refrain/dayMode';
+/** Vault paths are lower case (`packages/vault/src/records.ts`), so not `dayMode`. */
+export const DAY_MODE_PATH = 'refrain/day-mode';
 
 /** A change of running mode, effective from a day. The id is that day, so a second change the same day overwrites. */
 export interface ModeRecord {

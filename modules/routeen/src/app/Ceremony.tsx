@@ -1,22 +1,19 @@
-import type { Dye, Pattern } from '../practices';
+import { copy } from '../copy';
+import type { Tier } from '../practices';
+import { TIER_GLYPH } from './glyphs';
 
 /**
- * ROUTEEN's full-screen moment (docs/design/routeen.md §6): **Woven**. The shuttle crosses the
- * screen and today's row tightens into place, in the practice's own thread. Played through
- * `house.ceremony`: decorative, brief (700ms) and skipped under reduced motion.
+ * ROUTEEN's moment (spec §4.7): **Lit**. On marking, a small sun rises from the chip onto the day's
+ * arc and settles. Played through `house.ceremony(…, 700)`: decorative, never awaited, never blocks
+ * the next tap, and skipped under reduced motion.
  */
-export function Woven({ name, dye, pattern, all }: { name: string; dye: Dye; pattern: Pattern; all: boolean }) {
+export function Lit({ name, tier }: { name: string; tier: Tier }) {
   return (
-    <div className="rr-woven">
-      <div className="rr-woven__cloth" aria-hidden="true">
-        {Array.from({ length: 7 }, (_, i) => (
-          <span key={i} className={`rt-stitch rt-stitch--woven rt-dye--${dye} rt-pattern--${pattern}`} style={{ ['--i' as string]: i }} />
-        ))}
-        <span className="rr-woven__shuttle" />
-      </div>
-      <p className="rr-woven__name">
-        <strong>{name}</strong> · woven{all ? ' · every thread today' : ''}
-      </p>
+    <div className={`rs-lit rs-lit--${tier}`}>
+      <span className="rs-lit__sun" aria-hidden="true">
+        {TIER_GLYPH[tier]}
+      </span>
+      <p className="rs-lit__name">{copy.toast.marked(name)}</p>
     </div>
   );
 }
