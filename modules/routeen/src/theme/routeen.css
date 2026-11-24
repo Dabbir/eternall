@@ -118,6 +118,66 @@
 .rs-offer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin: 14px 0 0; padding: 12px 14px; border-radius: var(--tile-radius); background: var(--paper-raised); box-shadow: inset 0 0 0 1px var(--rule-strong); }
 .rs-offer__text { flex: 1 1 16rem; font-family: var(--font-display); font-size: 1.125rem; }
 
+/* ---------- the sky band: the page's own sky (ADR 0016) ----------
+   Edge to edge under the app bar, which wears the same --sky-top. The top keeps the sky's colour; the
+   foot fills in toward its full colour as the day is lit (--glow 0..1), and a soft light rises from the
+   horizon with it. Only --ink and --ink-2 write on it. Bodies sit at fractions of the drawing. */
+.rs-band {
+  --band-foot: color-mix(in srgb, var(--sky-bottom) calc(40% + 60% * var(--glow, 1)), var(--paper));
+  position: relative; isolation: isolate; overflow: hidden;
+  padding: clamp(12px, 2.4vw, 28px) 0 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 100%, color-mix(in srgb, var(--accent) calc(16% * var(--glow, 1)), transparent), transparent 75%),
+    linear-gradient(to bottom, var(--sky-top), var(--band-foot));
+  border-bottom: 1px solid var(--rule-strong);
+}
+.rs-band__head, .rs-band__sky { position: relative; max-width: 1100px; margin-inline: auto; padding-inline: var(--gutter); }
+.rs-band__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 8px 16px; }
+.rs-band__head > .rs-title, .rs-band__head > .rs-lede, .rs-band__head > .rs-eyebrow, .rs-band__head > .rs-why { grid-column: 1; }
+.rs-band__sky { container-type: inline-size; height: var(--band-h); margin-top: 8px; }
+.rs-band--full { --band-h: clamp(180px, 28vh, 280px); }
+.rs-band--short { --band-h: 72px; }
+.rs-band--small { --band-h: 110px; }
+.rs-band__arc { position: absolute; inset: 0 var(--gutter); width: calc(100% - 2 * var(--gutter)); height: calc(100% - 22px); overflow: visible; }
+.rs-band__path { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 1 6; stroke-linecap: round; vector-effect: non-scaling-stroke; opacity: 0.8; }
+.rs-band__horizon { stroke: var(--ink-2); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.rs-band__bodies { position: absolute; inset: 0 var(--gutter) 22px; }
+.rs-body { position: absolute; display: grid; justify-items: center; width: 0; height: 0; color: var(--accent); }
+.rs-body .rs-shape { position: absolute; width: 26px; height: 26px; transform: translate(-50%, -50%); }
+.rs-body--unlit, .rs-body--rest { color: var(--ink-2); }
+.rs-body--target .rs-shape, .rs-body--more .rs-shape, .rs-body--minimum .rs-shape { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--accent) 60%, transparent)); }
+.rs-body--sun { color: var(--accent); }
+.rs-body--sun .rs-shape { width: 34px; height: 34px; opacity: 0.55; filter: drop-shadow(0 0 14px var(--accent)); }
+.rs-body__name {
+  position: absolute; top: 16px; transform: translateX(-50%); max-width: 16ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font-size: 0.8125rem; font-weight: 600; line-height: 1.2; color: var(--ink);
+}
+.rs-body.is-label-above .rs-body__name { top: auto; bottom: 16px; }
+@container (max-width: 599px) { .rs-body__name { display: none; } .rs-body .rs-shape { width: 22px; height: 22px; } }
+/* Weather over the whole band: soft cloud for low energy, a quiet starry night for a day off. */
+.rs-band::before, .rs-band::after { content: ''; position: absolute; inset: 0; z-index: -1; opacity: 0; pointer-events: none; }
+.rs-band::before {
+  background:
+    radial-gradient(ellipse 26% 40% at 14% 30%, var(--paper) 0 50%, transparent 72%),
+    radial-gradient(ellipse 22% 34% at 40% 16%, var(--paper) 0 48%, transparent 70%),
+    radial-gradient(ellipse 30% 44% at 70% 34%, var(--paper) 0 50%, transparent 72%),
+    radial-gradient(ellipse 20% 30% at 92% 18%, var(--paper) 0 48%, transparent 70%),
+    color-mix(in srgb, var(--paper) 45%, transparent);
+}
+.rs-band::after {
+  background:
+    radial-gradient(circle, var(--ink-2) 0 1.2px, transparent 1.8px) 13px 17px / 97px 83px,
+    radial-gradient(circle, var(--ink-2) 0 0.9px, transparent 1.5px) 61px 5px / 131px 71px,
+    radial-gradient(circle, var(--ink) 0 1.5px, transparent 2.1px) 37px 49px / 173px 109px,
+    radial-gradient(circle, var(--ink-2) 0 1px, transparent 1.6px) 89px 31px / 211px 127px,
+    color-mix(in srgb, var(--paper) 40%, transparent);
+}
+.rs-band.rs-mode--low::before { opacity: 0.6; }
+.rs-band.rs-mode--off::after { opacity: 1; }
+
+/* Pages: the band spans the page; everything after it keeps the reading column. */
+.rs-page > :not(.rs-band) { box-sizing: border-box; max-width: 1040px; margin-inline: auto; padding-inline: var(--gutter); }
+
 /* ---------- chips: one tap for one practice ---------- */
 .rs-chips { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px 12px; margin: 0; padding: 0; list-style: none; }
 .rs-chips > li { display: flex; }
@@ -272,6 +332,7 @@
   .rs-chip, .rs-chip__main { width: 100%; }
   .rs-measure { grid-template-columns: minmax(0, 1fr); }
   .rs-dayends .segmented__opt { padding: 6px 2px; font-size: 0.875rem; }
+  .rs-band__head { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* ---------- motion: all of it only when motion is welcome ---------- */
@@ -280,4 +341,15 @@
   .rs-head::before, .rs-head::after { transition: opacity 320ms var(--ease-out); }
   .rs-chip__main, .rs-tier, .rs-mode__button { transition: background-color 160ms var(--ease-out), border-color 160ms var(--ease-out), color 160ms var(--ease-out); }
   .rs-mode__button::after { transition: transform 160ms var(--ease-out); }
+  .rs-band { transition: --glow 320ms var(--ease-out); }
+  .rs-band::before, .rs-band::after { transition: opacity 320ms var(--ease-out); }
+  .rs-body .rs-shape { transition: color 160ms var(--ease-out); }
+  /* Lit, in place: the body rises a little, blooms and settles (≤ 700ms, once). */
+  .rs-body.is-lighting .rs-shape { animation: rs-body-light 700ms var(--ease-out) both; }
+}
+@property --glow { syntax: '<number>'; inherits: true; initial-value: 1; }
+@keyframes rs-body-light {
+  0% { transform: translate(-50%, -30%) scale(0.55); filter: drop-shadow(0 0 0 transparent); }
+  55% { transform: translate(-50%, -62%) scale(1.25); filter: drop-shadow(0 0 16px var(--accent)); }
+  100% { transform: translate(-50%, -50%) scale(1); }
 }

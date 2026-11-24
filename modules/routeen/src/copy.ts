@@ -59,6 +59,11 @@ export const copy = {
     steadiestNote: (weeks: number) => `lit in ${plural(weeks, 'week')} this year`,
   },
   sky: {
+    /** The day's sky band, said aloud in place of its picture. */
+    band: (lit: number, due: number) => (due ? `Today's sky: ${lit} of ${due} lit` : "Today's sky: nothing due"),
+    bandDay: (date: string, lit: number) => (lit ? `The sky of ${date}: ${plural(lit, 'practice')} lit` : `The sky of ${date}: nothing lit`),
+    bandPractice: (name: string) => `${name} in the sky`,
+    bandYear: 'The sky over your year',
     title: 'The sky',
     caption: (n: number) => `${plural(n, 'day')} lit this year`,
     dome: 'Dome',

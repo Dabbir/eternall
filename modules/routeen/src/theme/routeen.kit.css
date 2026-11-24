@@ -75,10 +75,9 @@
 .rc { min-height: 100dvh; display: flex; flex-direction: column; }
 .rc-body { flex: 1; }
 [data-imprint='routeen'] .appbar {
-  --appbar-h: 64px; --appbar-bg: var(--paper); --appbar-dot: var(--accent);
-  /* The horizon along the foot of the bar, in the sky's two colours. */
-  border-bottom: 3px solid transparent;
-  border-image: linear-gradient(90deg, var(--sky-top), var(--sky-bottom)) 3;
+  /* The bar wears the sky's top colour, so the bar and the band below are one sky (ADR 0016). */
+  --appbar-h: 64px; --appbar-bg: var(--sky-top); --appbar-dot: var(--accent);
+  border-bottom: 0;
 }
 /* A small sun on the horizon: half a disc over a line. */
 .rs-sun { position: relative; width: 24px; height: 13px; }
@@ -98,7 +97,7 @@
 @media (max-width: 819px) {
   [data-imprint='routeen'] .appbar { --appbar-h: 56px; }
   [data-imprint='routeen'] .appbar__name { font-size: 1.2rem; }
-  [data-imprint='routeen'] .appbar__places { --appbar-dock-shadow: 0 -1px 0 var(--rule-strong); }
+  [data-imprint='routeen'] .appbar__places { --appbar-dock-bg: var(--paper-raised); --appbar-dock-shadow: 0 -1px 0 var(--rule-strong); }
   [data-imprint='routeen'] .appbar__place { border-bottom: 0; }
   [data-imprint='routeen'] .appbar__place[aria-current] { box-shadow: inset 0 -3px 0 var(--accent); }
   /* The raised New practice: a round sun lifted over the dock. */
