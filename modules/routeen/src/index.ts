@@ -1,27 +1,45 @@
-import { addDays, plural, type ImprintDefinition, type LifelineMarker } from '@eternall/core';
+import type { AlmanacFact, ImprintDefinition, LifelineMarker } from '@eternall/core';
+import { copy } from './copy';
+import { indexMarks, isKeptInWeek, litDays, marksInWeek, steadiest, weekSummary } from './days';
+import { frontPage } from './front';
 import { LOOK_PATH } from './look';
-import { MARK_PATH, PRACTICE_PATH, barSummary, dueToday, isKeptIn, keptIn, keySet, markId, practiceStats, type Mark, type Practice } from './practices';
+import { DAY_MODE_PATH, MODE_PATH, modeOfFn, type DayModeRecord, type ModeRecord } from './modes';
+import { MARK_PATH, PRACTICE_PATH, barStart, type Mark, type Practice } from './practices';
+import { SETTINGS_PATH, readSettings, routineDay } from './sky';
+
+/** The moment contributions read; tests replace `now`. */
+export const clock = { now: (): Date => new Date() };
 
 type Readable = { data: { collection<T extends { id: string }>(p: string): { all(): readonly T[] } } };
-const practices = (ctx: Readable) => ctx.data.collection<Practice>(PRACTICE_PATH).all();
-const marks = (ctx: Readable) => ctx.data.collection<Mark>(MARK_PATH).all();
+const all = <T extends { id: string }>(ctx: Readable, path: string) => ctx.data.collection<T>(path).all();
+const practices = (ctx: Readable) => all<Practice>(ctx, PRACTICE_PATH);
+const marks = (ctx: Readable) => all<Mark>(ctx, MARK_PATH);
+const settings = (ctx: Readable) => readSettings(all<{ id: string }>(ctx, SETTINGS_PATH).find((s) => s.id === 'settings'));
+
+function front(ctx: Readable) {
+  const now = clock.now();
+  const modes = all<ModeRecord>(ctx, MODE_PATH);
+  const dayModes = all<DayModeRecord>(ctx, DAY_MODE_PATH);
+  const dayEndsAt = settings(ctx).dayEndsAt;
+  return { page: frontPage({ practices: practices(ctx), marks: marks(ctx), modes, dayModes, now, dayEndsAt }), modeOf: modeOfFn(modes, dayModes), today: routineDay(now, dayEndsAt) };
+}
 
 /**
- * ROUTEEN (docs/design/routeen.md, ADR 0014; once REFRAIN): practices woven on a loom, a thread each,
- * a row a day. Records keep their `refrain/*` paths; the capabilities keep their names.
+ * ROUTEEN (docs/design/routeen.md, ADR 0014; once REFRAIN): Langit Hari, a routine that bends with your day.
+ * Records keep their `refrain/*` paths; the capabilities keep their names.
  */
 export const routeen: ImprintDefinition = {
   id: 'routeen',
   name: 'ROUTEEN',
   label: 'Practices',
-  functionLine: 'Practices, woven daily',
+  functionLine: copy.fn,
   basePath: '/routeen/',
   release: 2,
   accent: { light: '#2e4a7d', dark: '#9db4e3' },
-  intro: 'Each practice is a thread on the loom, and every day weaves a row. A day you kept is a coloured stitch; a day that passed shows the bare warp. Nothing breaks.',
-  brand: { icon: '/icons/routeen.svg', themeColor: { light: '#efe8da', dark: '#15130f' }, lockTitle: 'The loom is covered.', leaveLabel: 'Leave the loom' },
+  intro: copy.intro,
+  brand: { icon: '/icons/routeen.svg', themeColor: { light: '#efe8da', dark: '#15130f' }, lockTitle: copy.lock, leaveLabel: copy.leave },
   load: () => import('./app/RouteenApp'),
-  collections: [PRACTICE_PATH, MARK_PATH, LOOK_PATH],
+  collections: [PRACTICE_PATH, MARK_PATH, LOOK_PATH, MODE_PATH, DAY_MODE_PATH, SETTINGS_PATH],
   hasData: (ctx) => practices(ctx).length > 0,
 
   lifeline(ctx) {
@@ -34,34 +52,34 @@ export const routeen: ImprintDefinition = {
   },
 
   weekLines(ctx, start) {
-    const s = barSummary(practices(ctx), marks(ctx), start, ctx.today);
-    if (!s.active || start > ctx.today) return [];
-    return [{ imprint: 'routeen', text: `ROUTEEN · ${s.kept} of ${plural(s.active, 'practice')} kept`, href: '/routeen/' }];
+    const { modeOf, today } = front(ctx);
+    const s = weekSummary(practices(ctx), indexMarks(marks(ctx)), start, today, modeOf);
+    if (!s.active || start > today) return [];
+    return [{ imprint: 'routeen', text: copy.weekLine(s.kept, s.active), href: '/routeen/' }];
   },
 
   almanacFacts(ctx) {
-    const all = practices(ctx);
-    if (!all.length) return [];
-    const s = practiceStats(all, marks(ctx), ctx.today);
-    const facts = [{ imprint: 'routeen' as const, label: 'Stitches woven', value: String(s.totalMarks), note: `${s.keptThisYear} this year` }];
-    if (s.mostConstant) facts.push({ imprint: 'routeen', label: 'The steadiest thread', value: s.mostConstant.practice.name, note: `kept in ${Math.round(s.mostConstant.ratio * 100)}% of its weeks` });
+    const ps = practices(ctx);
+    if (!ps.length) return [];
+    const { modeOf, today } = front(ctx);
+    const year = today.slice(0, 4);
+    const facts: AlmanacFact[] = [{ imprint: 'routeen', label: copy.almanac.daysLit, value: String(litDays(marks(ctx), year)), note: copy.almanac.daysLitNote(Number(year)) }];
+    const best = steadiest(ps, indexMarks(marks(ctx)), today, modeOf);
+    if (best) facts.push({ imprint: 'routeen', label: copy.almanac.steadiest, value: best.practice.name, note: copy.almanac.steadiestNote(best.weeks) });
     return facts;
   },
 
   home(ctx) {
-    const all = practices(ctx);
-    if (!all.length) return { status: 'An empty loom: add something you want to return to.', action: { label: 'Add a practice', href: '/routeen/?new=1' } };
-    const kept = keySet(marks(ctx));
-    const due = dueToday(all, ctx.today);
-    const woven = due.filter((p) => kept.has(markId(p.id, ctx.today))).length;
-    const status = due.length ? `${woven} of ${plural(due.length, 'practice')} woven today` : 'Nothing due today · a day off is plain weave';
-    return { status, action: { label: 'Mark today', href: '/routeen/?mark=1' } };
+    if (!practices(ctx).length) return { status: copy.empty, action: { label: copy.newPractice, href: '/routeen/?new=1' } };
+    const { page } = front(ctx);
+    const status = page.mode === 'off' ? copy.home.dayOff : page.dueCount ? copy.home.status(page.markedDueCount, page.dueCount) : copy.home.nothingDue;
+    return { status, action: { label: copy.markToday, href: '/routeen/' } };
   },
 
   badge(ctx) {
-    const kept = keySet(marks(ctx));
-    const left = dueToday(practices(ctx), ctx.today).filter((p) => !kept.has(markId(p.id, ctx.today))).length;
-    return left ? `${left} to weave today` : null;
+    const { page } = front(ctx);
+    const left = page.mode === 'off' ? 0 : page.dueCount - page.markedDueCount;
+    return left > 0 ? copy.home.badge(left) : null;
   },
 
   provides(ctx) {
@@ -71,8 +89,10 @@ export const routeen: ImprintDefinition = {
         week: (id: string, start: string) => {
           const p = practices(ctx).find((x) => x.id === id);
           if (!p) return null;
-          const kept = keySet(marks(ctx).filter((m) => m.ritualId === id && m.date >= start && m.date <= addDays(start, 6)));
-          return { kept: isKeptIn(p, start, kept, ctx.today), notes: keptIn(p, start, kept) };
+          const { modeOf, today } = front(ctx);
+          const idx = indexMarks(marks(ctx));
+          const s = barStart(start);
+          return { kept: isKeptInWeek(p, s, idx, today, modeOf), notes: marksInWeek(p, s, idx) };
         },
       },
     };
