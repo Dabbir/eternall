@@ -69,7 +69,7 @@
 [data-imprint='routeen'] .segmented__opt { min-height: 44px; color: var(--ink-2); }
 /* The pale sky card: a dawn wash across the head of the dialog, fading into its paper before the fields. */
 [data-imprint='routeen'] .dialog__panel { background: linear-gradient(to bottom, color-mix(in srgb, var(--sky-top) 55%, var(--paper-raised)) 0, var(--paper-raised) 150px); }
-[data-imprint='routeen'] .dialog .eyebrow { font-family: var(--font-ui); letter-spacing: 0.1em; font-variant-caps: all-small-caps; font-size: 0.9375rem; color: var(--ink-2); }
+[data-imprint='routeen'] .dialog .eyebrow, .rs .segmented legend.eyebrow { font-family: var(--font-ui); text-transform: none; letter-spacing: 0.1em; font-variant-caps: all-small-caps; font-size: 0.9375rem; font-weight: 600; color: var(--ink-2); }
 
 /* ---------- the bar (shared positions, ADR 0013) ---------- */
 .rc { min-height: 100dvh; display: flex; flex-direction: column; }
