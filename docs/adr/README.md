@@ -17,5 +17,6 @@
 | [0013](0013-amazeen-first-and-one-app-bar.md) | AMAZEEN first, CASHEEN beside it, apps opt-in, one app bar | Accepted |
 | [0014](0014-three-apps-and-home.md) | Three apps (AMAZEEN with People, CASHEEN, ROUTEEN) and Home | Accepted |
 | [0015](0015-routeen-langit-hari.md) | ROUTEEN becomes Langit Hari, the day's sky: one tap, tiers, life modes, a routine day | Accepted |
+| [0016](0016-routeen-sky-in-full.md) | ROUTEEN's sky in full: the sky as the page, a fixed place for every practice, rows that never move | Accepted |
 
 New ADRs: copy the shape (Context · Decision · Consequences · Alternatives), number sequentially, and set Status to Accepted once the owner approves.

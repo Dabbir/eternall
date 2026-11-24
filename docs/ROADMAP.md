@@ -203,6 +203,25 @@ Status: accepted · Phases 0–9 done (ADR 0013, ADR 0014) · Each phase ends wi
 - **The lint gate is red for a reason outside ROUTEEN.** `npm run lint` reports 4 errors and 13 warnings, all in `modules/amazeen` (`features/shelf/Shelf.tsx`, `imprint/people/PeopleRoom.tsx`, `PersonEditor.tsx`, `people.ts`, tests) from earlier phases, untouched by this work.
 - The owner's 5-second test and the deferred items in the spec §10 (insights, a rhythm page in AMAZEEN's issue, "Done" on Android reminders, alternative editions), and the Indonesian catalogue.
 
+## ROUTEEN · the sky in full (ADR 0016)
+**Done (2026-11-24).** The owner wanted the sky out of its box, chips that stay put, and a concept that feels real. Spec: `docs/superpowers/specs/2026-11-24-routeen-sky-in-full-design.md`; plan: `docs/superpowers/plans/2026-11-24-routeen-sky-in-full.md`.
+
+**Built:**
+- the sky band across every ROUTEEN page, with every practice placed by time of day (`placement.ts`) and lit in place;
+- rows grouped Morning · Midday · Evening · Any time with the tiers always shown;
+- the Sky's week as small skies, and the year as a strip of sky;
+- clearer dark skies.
+
+**Verified:**
+- `npm test` (56 files, 397 tests) and `npm run build` green; budgets ok (`RouteenApp` 9.3 KB gzip); `oxlint --deny-warnings` clean on `modules/routeen` and `apps/web`.
+- In the browser:
+  - Today, Sky, a day and a practice at 390 and 768 (and 1305) pass the hit test, with no horizontal scroll;
+  - lighting and unlighting a row moves no row and no body by a pixel;
+  - Normal, Low energy and Day off checked, light and dark;
+  - under reduced motion, no animation and no ceremony.
+
+**Still open (owner):** the 5-second test on the new Today. The lint gate outside ROUTEEN is unchanged (see above).
+
 ## Release 2
 All apps and the house. After the launch of AMAZEEN and CASHEEN.
 
