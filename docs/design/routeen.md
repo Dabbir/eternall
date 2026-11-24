@@ -46,7 +46,7 @@ Accents (light / dark): **Amber** `#9a5a14` / `#f0b968`, **Sky** `#2a5a94` / `#9
 - Today is a single column: header (headline, sun arc, mode), then sections of chips that wrap.
 - A chip is a pill button; once lit it fills and the other two tiers sit right after it.
 - The Sky's week is seven tiles in a row; the year is 52 rows of seven tiles with month bands, scrolling sideways on a phone and opening at today.
-- The page is 1100px max.
+- The page is 1040px max.
 
 ## 5. Key screens
 ### 5.1 Today (home: `/routeen/`)

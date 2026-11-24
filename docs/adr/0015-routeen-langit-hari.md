@@ -1,6 +1,6 @@
 # ADR 0015 — ROUTEEN becomes Langit Hari, the day's sky
 
-Status: Proposed (built 2026-11-24, awaiting the owner's approval) · Date: 2026-11-24 · Amends: ADR 0014 §4 (ROUTEEN as the loom) · Spec: `docs/superpowers/specs/2026-11-24-routeen-langit-hari-design.md` · Design: `docs/design/routeen.md`
+Status: Accepted (built 2026-11-24; the owner approved the design spec) · Date: 2026-11-24 · Amends: ADR 0014 §4 (ROUTEEN as the loom) · Spec: `docs/superpowers/specs/2026-11-24-routeen-langit-hari-design.md` · Design: `docs/design/routeen.md`
 
 ## Context
 ETERNALL is now framed as private personal record-keeping, for Indonesian people first. Of its three apps, ROUTEEN is the one whose concept no longer fits its job.

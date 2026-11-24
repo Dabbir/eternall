@@ -35,6 +35,21 @@ describe('routeen contributions', () => {
     expect(routeen.weekLines!(ctx, '2026-11-23', '2026-11-29')[0]!.text).toMatch(/^ROUTEEN · \d+ of \d+/);
     expect(JSON.stringify(routeen.almanacFacts!(ctx))).not.toMatch(/%/);
   });
+  it('ignores the marks of removed practices on the lifeline and in the Almanac', () => {
+    clock.now = () => new Date('2026-11-25T08:00:00');
+    const ctx = fakeCtx({ practices: [run], marks: [mark('run', '2026-11-23'), mark('gone', '2026-11-22'), mark('gone', '2026-11-21')] });
+    (ctx as unknown as { weekIndexOf: (d: string) => number | null }).weekIndexOf = (d) => Number(d.slice(8));
+    expect([...(routeen.lifeline!(ctx)?.markers?.keys() ?? [])]).toEqual([23]);
+    const days = routeen.almanacFacts!(ctx).find((f) => f.label === copy.almanac.daysLit);
+    expect(days?.value).toBe('1');
+  });
+  it('answers rituals.week for one practice and null for a removed one', () => {
+    clock.now = () => new Date('2026-11-25T08:00:00');
+    const ctx = fakeCtx({ practices: [run], marks: [mark('run', '2026-11-24')] });
+    const week = routeen.provides!({ ...ctx, navigate: () => {} } as never)['rituals.week'] as { week(id: string, start: string): { kept: boolean; notes: unknown } | null };
+    expect(week.week('run', '2026-11-25')).toMatchObject({ notes: 1 });
+    expect(week.week('gone', '2026-11-25')).toBeNull();
+  });
   it('owns every refrain collection', () => {
     expect(routeen.collections).toEqual(expect.arrayContaining(['refrain/ritual', 'refrain/mark', 'refrain/look', 'refrain/mode', 'refrain/day-mode', 'refrain/settings']));
   });

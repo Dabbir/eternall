@@ -16,6 +16,6 @@
 | [0012](0012-ledger-money-kept-plainly.md) | LEDGER: personal money, sold on writing it down in one line | Accepted |
 | [0013](0013-amazeen-first-and-one-app-bar.md) | AMAZEEN first, CASHEEN beside it, apps opt-in, one app bar | Accepted |
 | [0014](0014-three-apps-and-home.md) | Three apps (AMAZEEN with People, CASHEEN, ROUTEEN) and Home | Accepted |
-| [0015](0015-routeen-langit-hari.md) | ROUTEEN becomes Langit Hari, the day's sky: one tap, tiers, life modes, a routine day | Proposed |
+| [0015](0015-routeen-langit-hari.md) | ROUTEEN becomes Langit Hari, the day's sky: one tap, tiers, life modes, a routine day | Accepted |
 
 New ADRs: copy the shape (Context · Decision · Consequences · Alternatives), number sequentially, and set Status to Accepted once the owner approves.

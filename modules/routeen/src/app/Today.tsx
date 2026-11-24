@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import { createId, type ISODate } from '@eternall/core';
 import { useHouse } from '@eternall/kit';
 import { Button, Segmented, TextField } from '@eternall/ui';
@@ -115,9 +115,19 @@ export function Today({ routine: r, onNew }: { routine: Routine; onNew(): void }
 /** The mode button shows the current mode; one tap opens the three. */
 function ModeControl({ mode, onChoose }: { mode: Mode; onChoose(m: Mode): void }) {
   const [open, setOpen] = useState(false);
+  const button = useRef<HTMLButtonElement>(null);
   return (
-    <div className="rs-mode">
-      <button type="button" className="rs-mode__button" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+    <div
+      className="rs-mode"
+      onKeyDown={(e) => {
+        if (e.key === 'Escape' && open) {
+          e.stopPropagation();
+          setOpen(false);
+          button.current?.focus();
+        }
+      }}
+    >
+      <button ref={button} type="button" className="rs-mode__button" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <span className="visually-hidden">{copy.modeLabel} </span>
         <span className="rs-mode__glyph" aria-hidden="true">
           {MODE_GLYPH[mode]}

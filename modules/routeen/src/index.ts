@@ -14,6 +14,11 @@ type Readable = { data: { collection<T extends { id: string }>(p: string): { all
 const all = <T extends { id: string }>(ctx: Readable, path: string) => ctx.data.collection<T>(path).all();
 const practices = (ctx: Readable) => all<Practice>(ctx, PRACTICE_PATH);
 const marks = (ctx: Readable) => all<Mark>(ctx, MARK_PATH);
+/** Marks of practices still here: a removed practice keeps its marks (Undo, export) but lights nothing. */
+const liveMarks = (ctx: Readable) => {
+  const here = new Set(practices(ctx).map((p) => p.id));
+  return marks(ctx).filter((m) => here.has(m.ritualId));
+};
 const settings = (ctx: Readable) => readSettings(all<{ id: string }>(ctx, SETTINGS_PATH).find((s) => s.id === 'settings'));
 
 function front(ctx: Readable) {
@@ -44,7 +49,7 @@ export const routeen: ImprintDefinition = {
 
   lifeline(ctx) {
     const markers = new Map<number, LifelineMarker>();
-    for (const m of marks(ctx)) {
+    for (const m of liveMarks(ctx)) {
       const i = ctx.weekIndexOf(m.date);
       if (i !== null) markers.set(i, 'ritual');
     }
@@ -63,7 +68,7 @@ export const routeen: ImprintDefinition = {
     if (!ps.length) return [];
     const { modeOf, today } = front(ctx);
     const year = today.slice(0, 4);
-    const facts: AlmanacFact[] = [{ imprint: 'routeen', label: copy.almanac.daysLit, value: String(litDays(marks(ctx), year)), note: copy.almanac.daysLitNote(Number(year)) }];
+    const facts: AlmanacFact[] = [{ imprint: 'routeen', label: copy.almanac.daysLit, value: String(litDays(liveMarks(ctx), year)), note: copy.almanac.daysLitNote(Number(year)) }];
     const best = steadiest(ps, indexMarks(marks(ctx)), today, modeOf);
     if (best) facts.push({ imprint: 'routeen', label: copy.almanac.steadiest, value: best.practice.name, note: copy.almanac.steadiestNote(best.weeks) });
     return facts;

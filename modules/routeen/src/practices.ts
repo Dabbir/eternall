@@ -1,3 +1,4 @@
+import { copy } from './copy';
 import { addDays, cleanText, finish, isValidISO, parseISO, requireText, type FieldErrors, type ISODate, type Validation } from '@eternall/core';
 
 /**
@@ -30,8 +31,8 @@ export interface Practice {
   pausedOn: ISODate | null;
 }
 
-/** One kept day. The id is `${ritualId}_${date}` (vault ids allow no colons), so a day can only be kept once. */
 export type Tier = 'minimum' | 'target' | 'more';
+/** One kept day. The id is `${ritualId}_${date}` (vault ids allow no colons), so a day can only be kept once. */
 export interface Mark {
   id: string;
   ritualId: string;
@@ -42,8 +43,6 @@ export interface Mark {
 
 export const tierOf = (m: Pick<Mark, 'tier'>): Tier => m.tier ?? 'target';
 export const timeOf = (p: Pick<Practice, 'timeOfDay'>): TimeOfDay => p.timeOfDay ?? 'anytime';
-
-export const WEEKDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] as const;
 
 export const markId = (ritualId: string, date: ISODate) => `${ritualId}_${date}`;
 
@@ -67,19 +66,20 @@ export interface PracticeInput {
 export function validatePractice(input: PracticeInput, today: ISODate): Validation<Omit<Practice, 'id' | 'pausedOn'>, keyof PracticeInput> {
   const errors: FieldErrors<keyof PracticeInput> = {};
   const name = requireText(input.name, LIMITS.name, 'A practice');
-  if (name.error) errors.name = name.value ? name.error : 'A practice needs a few words.';
+  if (name.error) errors.name = name.value ? name.error : copy.errors.nameEmpty;
   const why = cleanText(input.why);
-  if (why.length > LIMITS.why) errors.why = `Keep it under ${LIMITS.why} characters.`;
+  if (why.length > LIMITS.why) errors.why = copy.errors.whyLong(LIMITS.why);
   const c = input.cadence;
-  if (c.kind === 'times' && !(Number.isInteger(c.n) && c.n >= 1 && c.n <= 6)) errors.cadence = 'Choose between 1 and 6 times a week.';
-  if (c.kind === 'weekly' && !(Number.isInteger(c.weekday) && c.weekday >= 0 && c.weekday <= 6)) errors.cadence = 'Choose a day.';
-  if (!isValidISO(input.startedOn)) errors.startedOn = 'Enter a valid date.';
-  else if (input.startedOn > addDays(today, 365)) errors.startedOn = 'Start within the next year.';
+  if (c.kind === 'times' && !(Number.isInteger(c.n) && c.n >= 1 && c.n <= 6)) errors.cadence = copy.errors.times;
+  if (c.kind === 'weekly' && !(Number.isInteger(c.weekday) && c.weekday >= 0 && c.weekday <= 6)) errors.cadence = copy.errors.weekday;
+  if (!isValidISO(input.startedOn)) errors.startedOn = copy.errors.startInvalid;
+  else if (input.startedOn > addDays(today, 365)) errors.startedOn = copy.errors.startFar;
   const m = input.measure;
   const unit = m ? cleanText(m.unit) : '';
   if (m) {
-    if (unit.length < 1 || unit.length > LIMITS.unit) errors.measure = `Keep the unit under ${LIMITS.unit} characters.`;
-    else if (!(Number.isFinite(m.target) && Number.isFinite(m.minimum) && m.minimum > 0 && m.minimum <= m.target)) errors.measure = 'The minimum must be above 0 and no more than the target.';
+    if (unit.length < 1) errors.measure = copy.errors.unitBlank;
+    else if (unit.length > LIMITS.unit) errors.measure = copy.errors.unitLong(LIMITS.unit);
+    else if (!(Number.isFinite(m.target) && Number.isFinite(m.minimum) && m.minimum > 0 && m.minimum <= m.target)) errors.measure = copy.errors.measureRange;
   }
   return finish(errors, () => ({
     name: name.value,
@@ -92,7 +92,7 @@ export function validatePractice(input: PracticeInput, today: ISODate): Validati
 }
 
 export function cadenceLabel(c: Cadence): string {
-  if (c.kind === 'daily') return 'Every day';
-  if (c.kind === 'times') return c.n === 1 ? 'Once a week' : `${c.n} times a week`;
-  return `${WEEKDAYS[c.weekday]}s`;
+  if (c.kind === 'daily') return copy.cadenceLine.daily;
+  if (c.kind === 'times') return c.n === 1 ? copy.cadenceLine.once : copy.cadenceLine.times(c.n);
+  return copy.cadenceLine.weekly(copy.weekdays[c.weekday]!);
 }

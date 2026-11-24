@@ -5,7 +5,7 @@ import { useCollection } from '@eternall/vault';
 import { copy } from '../copy';
 import { indexMarks, type MarkIndex } from '../days';
 import { clock } from '../index';
-import { DAY_MODE_PATH, MODE_PATH, dayModeChange, modeOfFn, modeRecord, type DayModeRecord, type Mode, type ModeOf, type ModeRecord } from '../modes';
+import { DAY_MODE_PATH, MODE_PATH, dayModeChange, modeOfFn, isModeUnchanged, modeRecord, type DayModeRecord, type Mode, type ModeOf, type ModeRecord } from '../modes';
 import { MARK_PATH, PRACTICE_PATH, markId, type Mark, type Practice, type Tier } from '../practices';
 import { SETTINGS_PATH, readSettings, routineDay, type RouteenSettings } from '../sky';
 
@@ -109,6 +109,8 @@ export function useRoutine(): Routine {
   };
 
   const setMode = (mode: Mode) => {
+    // Choosing the mode already running (and no day override) changes nothing: keep its clock and say nothing.
+    if (isModeUnchanged(today, mode, modes, dayModes)) return;
     const prev = modeCol.col.get(today);
     const prevDay = dayModeCol.col.get(today);
     modeCol.col.put(modeRecord(today, mode));

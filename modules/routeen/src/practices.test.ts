@@ -1,5 +1,7 @@
 import { barDays, barStart, cadenceLabel, isActiveOn, markId, tierOf, timeOf, validatePractice, weekdayOf } from './practices';
 
+import { copy } from './copy';
+
 const today = '2026-11-25'; // a Wednesday
 
 describe('practices', () => {
@@ -46,6 +48,23 @@ describe('practices', () => {
     expect(validatePractice({ ...base, measure: { unit: 'menit', target: 0, minimum: 0 } }, today).ok).toBe(false);
     const ok = validatePractice({ ...base, measure: null }, today);
     expect(ok.ok && 'measure' in ok.value).toBe(false);
+  });
+  it('names a blank unit apart from a long one, and rejects non-finite numbers', () => {
+    const base = { name: 'Run', why: '', cadence: { kind: 'daily' } as const, startedOn: today, timeOfDay: 'morning' as const };
+    const err = (measure: { unit: string; target: number; minimum: number }) => {
+      const v = validatePractice({ ...base, measure }, today);
+      return v.ok ? undefined : v.errors.measure;
+    };
+    expect(err({ unit: '', target: 30, minimum: 10 })).toBe(copy.errors.unitBlank);
+    expect(err({ unit: '   ', target: 30, minimum: 10 })).toBe(copy.errors.unitBlank);
+    expect(err({ unit: 'x'.repeat(21), target: 30, minimum: 10 })).toBe(copy.errors.unitLong(20));
+    expect(err({ unit: 'menit', target: NaN, minimum: 10 })).toBe(copy.errors.measureRange);
+    expect(err({ unit: 'menit', target: 30, minimum: Infinity })).toBe(copy.errors.measureRange);
+  });
+  it('says cadences from the catalogue', () => {
+    expect(cadenceLabel({ kind: 'daily' })).toBe(copy.cadenceLine.daily);
+    expect(cadenceLabel({ kind: 'times', n: 1 })).toBe(copy.cadenceLine.once);
+    expect(cadenceLabel({ kind: 'times', n: 3 })).toBe('3 times a week');
   });
   it('never writes the old thread fields', () => {
     const v = validatePractice({ name: 'Run', why: '', cadence: { kind: 'daily' }, startedOn: today, timeOfDay: 'anytime', measure: null }, today);

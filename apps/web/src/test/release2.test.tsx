@@ -118,7 +118,8 @@ describe('ROUTEEN, the day’s sky', () => {
     const tiles = within(week).getAllByRole('link');
     await user.click(tiles[tiles.length - 1]!);
     await waitFor(() => expect(window.location.pathname).toBe(`/routeen/day/${day}`));
-    expect(await screen.findByRole('group', { name: copy.day.thatDay })).toBeInTheDocument();
+    expect(await screen.findByRole('button', { name: /^Morning run/ })).toBeInTheDocument();
+    expect(screen.queryByRole('group', { name: copy.day.thatDay })).not.toBeInTheDocument();
   });
 
   it('goes back a week in the sky and lights a day of that week', async () => {
@@ -254,6 +255,32 @@ describe('ROUTEEN, the day’s sky', () => {
     expect(within(screen.getByRole('list', { name: copy.practice.history })).getAllByRole('listitem')).toHaveLength(52);
     await user.click(screen.getByRole('button', { name: copy.dialog.pause }));
     await waitFor(() => expect(store.dump().find((r) => r.key === 'refrain/ritual/run')?.value).toMatchObject({ pausedOn: routineDay(new Date(), 3) }));
+    const written = store.dump().find((r) => r.key === 'refrain/ritual/run')?.value as Record<string, unknown>;
+    for (const old of ['thread', 'pitch', 'instrument']) expect(written).not.toHaveProperty(old);
+  });
+
+  it('closes the mode choice on Escape and returns focus to its button', async () => {
+    const user = userEvent.setup();
+    at('/routeen/');
+    render(<Root store={createMemoryStore([settings(), ritual])} />);
+    const button = await screen.findByRole('button', { name: new RegExp(copy.modes.normal) });
+    await user.click(button);
+    expect(screen.getByRole('radio', { name: copy.modes.low })).toBeInTheDocument();
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('radio', { name: copy.modes.low })).not.toBeInTheDocument();
+    expect(button).toHaveFocus();
+  });
+
+  it('leaves the mode of the day to the Today header on today’s own page', async () => {
+    const yesterday = addDays(routineDay(new Date(), 3), -1);
+    at(`/routeen/day/${routineDay(new Date(), 3)}`);
+    const { unmount } = render(<Root store={createMemoryStore([settings(), ritual])} />);
+    await screen.findByRole('button', { name: /^Morning run/ });
+    expect(screen.queryByText(copy.day.thatDay)).not.toBeInTheDocument();
+    unmount();
+    at(`/routeen/day/${yesterday}`);
+    render(<Root store={createMemoryStore([settings(), ritual])} />);
+    expect(await screen.findByText(copy.day.thatDay)).toBeInTheDocument();
   });
 });
 

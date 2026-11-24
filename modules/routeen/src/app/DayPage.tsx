@@ -56,9 +56,11 @@ export function DayPage({ date, routine: r }: { date: ISODate; routine: Routine 
         </ul>
       )}
 
-      <section className="rs-section rs-thatday">
-        <Segmented label={copy.day.thatDay} hideLabel={false} options={MODES.map((m) => ({ value: m, label: copy.modes[m] }))} value={mode} onChange={(m) => r.setDayMode(date, m)} />
-      </section>
+      {date !== r.today && (
+        <section className="rs-section rs-thatday">
+          <Segmented label={copy.day.thatDay} hideLabel={false} options={MODES.map((m) => ({ value: m, label: copy.modes[m] }))} value={mode} onChange={(m) => r.setDayMode(date, m)} />
+        </section>
+      )}
 
       <p className="rs-back">
         <Go to="/sky">

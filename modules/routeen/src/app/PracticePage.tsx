@@ -23,7 +23,9 @@ export function PracticePage({ practice: p, routine: r, onEdit }: { practice: Pr
   const thisWeek = barStart(r.today);
 
   const pause = () => {
-    col.put({ ...p, pausedOn: p.pausedOn ? null : r.today });
+    // Only the known fields: a loom-era record's thread, pitch and instrument are never written back.
+    const { id, name, why, cadence, timeOfDay, measure, startedOn } = p;
+    col.put({ id, name, why, cadence, ...(timeOfDay ? { timeOfDay } : {}), ...(measure ? { measure } : {}), startedOn, pausedOn: p.pausedOn ? null : r.today });
     house.toast({ message: p.pausedOn ? copy.toast.resumed(p.name) : copy.toast.paused(p.name) });
   };
   const remove = () => {

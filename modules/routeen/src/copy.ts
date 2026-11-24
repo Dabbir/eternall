@@ -169,6 +169,24 @@ export const copy = {
     modeSet: (mode: string) => `${mode} for today`,
     undo: 'Undo',
   },
+  /** Validation messages and the cadence line: person-facing, so they live here, not in the domain. */
+  errors: {
+    nameEmpty: 'A practice needs a few words.',
+    whyLong: (max: number) => `Keep it under ${max} characters.`,
+    times: 'Choose between 1 and 6 times a week.',
+    weekday: 'Choose a day.',
+    startInvalid: 'Enter a valid date.',
+    startFar: 'Start within the next year.',
+    unitBlank: 'Add a unit, such as minutes.',
+    unitLong: (max: number) => `Keep the unit under ${max} characters.`,
+    measureRange: 'The minimum must be above 0 and no more than the target.',
+  },
+  cadenceLine: {
+    daily: 'Every day',
+    once: 'Once a week',
+    times: (n: number) => `${n} times a week`,
+    weekly: (weekday: string) => `${weekday}s`,
+  },
   dialog: {
     cancel: 'Cancel',
     confirm: 'Confirm',

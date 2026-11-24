@@ -1,4 +1,4 @@
-import { dayModeChange, modeOfFn, modeOn, modeRecord, offerBackToNormal, runningMode, type ModeRecord } from './modes';
+import { dayModeChange, modeOfFn, modeOn, modeRecord, offerBackToNormal, runningMode, isModeUnchanged, type ModeRecord } from './modes';
 
 const r = (from: string, mode: ModeRecord['mode']): ModeRecord => ({ id: from, from, mode });
 
@@ -34,4 +34,14 @@ it('offers Back to Normal after three days away, once a day', () => {
   expect(offerBackToNormal('2026-11-25', modes, null)).toBe(true);
   expect(offerBackToNormal('2026-11-25', modes, '2026-11-25')).toBe(false);
   expect(offerBackToNormal('2026-11-25', [r('2026-11-01', 'normal')], null)).toBe(false);
+});
+
+describe('isModeUnchanged', () => {
+  const low: ModeRecord = { id: '2026-11-20', from: '2026-11-20', mode: 'low' };
+  it('is true only for the running mode with no override today', () => {
+    expect(isModeUnchanged('2026-11-25', 'low', [low], [])).toBe(true);
+    expect(isModeUnchanged('2026-11-25', 'normal', [low], [])).toBe(false);
+    expect(isModeUnchanged('2026-11-25', 'low', [low], [{ id: '2026-11-25', date: '2026-11-25', mode: 'off' }])).toBe(false);
+    expect(isModeUnchanged('2026-11-25', 'normal', [], [])).toBe(true);
+  });
 });

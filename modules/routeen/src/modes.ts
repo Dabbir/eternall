@@ -39,6 +39,10 @@ export function dayModeChange(date: ISODate, mode: Mode, modes: readonly ModeRec
   return mode === runningMode(date, modes) ? { remove: date } : { put: { id: date, date, mode } };
 }
 
+/** Choosing the mode already running, with no override today, changes nothing (so the Back-to-Normal clock keeps running). */
+export const isModeUnchanged = (today: ISODate, mode: Mode, modes: readonly ModeRecord[], dayModes: readonly DayModeRecord[]): boolean =>
+  mode === runningMode(today, modes) && !dayModes.some((d) => d.date === today);
+
 /** Offer "Back to Normal" once a non-Normal mode has run three days or more, and not again once dismissed today. */
 export function offerBackToNormal(today: ISODate, modes: readonly ModeRecord[], dismissedOn: ISODate | null): boolean {
   const run = latest(today, modes);
